@@ -47,10 +47,10 @@ function HeroMain() {
     return (
         <div className="homepage-hero">
             <ParallaxBanner style={{ height: '100vh' }}>
-                <ParallaxBannerLayer speed={isMobile ? 20 : -10} >
+                <ParallaxBannerLayer speed={isMobile ? 10 : -8}>
                     <img width={2560} height={1440} src={sky.src} className="layer joshua-hero" alt="sky hero" />
                 </ParallaxBannerLayer>
-                <ParallaxBannerLayer expanded={false} speed={isMobile ? 7 : 30}>
+                <ParallaxBannerLayer expanded={false} speed={isMobile ? 6 : 12}>
                     <div className="rocks-container">
                         <img width={2560} height={1440} src={rocks.src} className="layer rocks" alt="joshua tree hero" />
                     </div>
