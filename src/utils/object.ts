@@ -1,7 +1,7 @@
 export function getPropertyValueById(
   items: any[],
   itemId: number,
-  propertyName: keyof any,
+  propertyName: keyof any
 ): any | undefined {
   const foundItem = items.find((item) => item.id === itemId);
 

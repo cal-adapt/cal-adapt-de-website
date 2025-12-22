@@ -27,21 +27,18 @@ function HeroSecondary() {
           loop
           playsInline
           className="bg-video"
-        //poster="/fallback-image.jpg"
+          //poster="/fallback-image.jpg"
         >
-          <source
-            src="/img/homepage-misc/wildfire-footage.webm"
-            type="video/webm"
-          />
+          <source src="/img/homepage-misc/wildfire-footage.webm" type="video/webm" />
           Your browser does not support the video tag
         </video>
       </div>
       <div className="secondary-hero__content">
         <Typography variant="h2">Mapping Wildfire Weather</Typography>
         <Typography variant="body1">
-          The Data Explorer Tool provides an interactive map to visualize key
-          climate indicators, including the Fosberg Fire Weather Index (FFWI),
-          helping users explore wildfire weather across California.
+          The Data Explorer Tool provides an interactive map to visualize key climate indicators,
+          including the Fosberg Fire Weather Index (FFWI), helping users explore wildfire weather
+          across California.
         </Typography>
         <Button
           className={isMobile ? "hidden" : ""}
@@ -58,4 +55,3 @@ function HeroSecondary() {
 }
 
 export default HeroSecondary;
-

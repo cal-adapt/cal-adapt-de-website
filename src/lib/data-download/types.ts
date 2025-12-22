@@ -35,4 +35,3 @@ export interface DataPackage {
 }
 
 export type PackagesData = DataPackage[];
-

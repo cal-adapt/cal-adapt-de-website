@@ -30,4 +30,3 @@ export const gwlYearEstimateData = [
     estimatedEndYear: "2097",
   },
 ];
-

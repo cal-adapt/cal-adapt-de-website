@@ -35,11 +35,7 @@ import PackageForm from "@/components/data-download-tool/PackageForm";
 import { apiParamStrs, varUrl, modelVarUrls } from "@/lib/data-download/types";
 import { dataPackages } from "@/lib/data-download/data-packages";
 import { createOrStatement } from "@/utils/query";
-import {
-  stringToArray,
-  arrayToCommaSeparatedString,
-  splitStringByPeriod,
-} from "@/utils/string";
+import { stringToArray, arrayToCommaSeparatedString, splitStringByPeriod } from "@/utils/string";
 import { extractFilenameFromURL } from "@/utils/url";
 import { getTodaysDateAsString } from "@/utils/date";
 import { useDidMountEffect, useLocalStorageState } from "@/hooks";
@@ -93,29 +89,23 @@ export default function DataDownload({ data }: DataDownloadProps) {
   const [tentativePackage, setTentativePackage] = useState<number>(-1);
 
   // --- Local storage and package selection ---
-  const [isPackageStored, setIsPkgStored] = useLocalStorageState<boolean>(
-    "isPackageStored",
-    false,
-  );
+  const [isPackageStored, setIsPkgStored] = useLocalStorageState<boolean>("isPackageStored", false);
   const [selectedPackage, setSelectedPackage] = useState<number>(-1);
   // TODO: Memoize localpackagesettings
-  const [localPackageSettings, setPackageSettings] = useLocalStorageState<any>(
-    "package",
-    {
-      id: -1,
-      dataset: "",
-      scenarios: "",
-      models: "",
-      vars: "",
-      boundaryType: "",
-      boundaries: "",
-      frequency: "",
-      dataFormat: "",
-      rangeStart: "",
-      rangeEnd: "",
-      units: "",
-    },
-  );
+  const [localPackageSettings, setPackageSettings] = useLocalStorageState<any>("package", {
+    id: -1,
+    dataset: "",
+    scenarios: "",
+    models: "",
+    vars: "",
+    boundaryType: "",
+    boundaries: "",
+    frequency: "",
+    dataFormat: "",
+    rangeStart: "",
+    rangeEnd: "",
+    units: "",
+  });
 
   // --- Frequency selection ---
   const frequenciesList: string[] = ["Daily", "Monthly"];
@@ -144,8 +134,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
     console.warn("Unexpected data structure");
   }
 
-  const varsList: string[] =
-    data.summaries["cmip6:variable_id"].map((obj: {}) => obj) ?? [];
+  const varsList: string[] = data.summaries["cmip6:variable_id"].map((obj: {}) => obj) ?? [];
 
   const [selectedVars, setSelectedVars] = useState<any>([]);
   useDidMountEffect(() => {
@@ -165,9 +154,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
       limit: "3480",
       filter:
         (apiParams?.freqQueryStr ? apiParams?.freqQueryStr : "") +
-        (apiParams?.scenariosQueryStr
-          ? " AND " + apiParams?.scenariosQueryStr
-          : "") +
+        (apiParams?.scenariosQueryStr ? " AND " + apiParams?.scenariosQueryStr : "") +
         (apiParams?.countyQueryStr ? " AND " + apiParams?.countyQueryStr : "") +
         (apiParams?.modelQueryStr ? " AND " + apiParams?.modelQueryStr : ""),
       filter_lang: "cql2-text",
@@ -213,12 +200,9 @@ export default function DataDownload({ data }: DataDownloadProps) {
           const modelScenarioStr = data.features[modelIdx].id;
           const modelScenarioStrArr = splitStringByPeriod(modelScenarioStr);
 
-          varsInModel.model =
-            modelScenarioStrArr.length >= 0 ? modelScenarioStrArr[1] : "";
-          varsInModel.scenario =
-            modelScenarioStrArr.length >= 0 ? modelScenarioStrArr[2] : "";
-          varsInModel.countyname =
-            data.features[modelIdx].properties.countyname;
+          varsInModel.model = modelScenarioStrArr.length >= 0 ? modelScenarioStrArr[1] : "";
+          varsInModel.scenario = modelScenarioStrArr.length >= 0 ? modelScenarioStrArr[2] : "";
+          varsInModel.countyname = data.features[modelIdx].properties.countyname;
           apiResponseData.push(varsInModel);
         }
 
@@ -265,9 +249,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
 
       setSelectedVars(stringToArray(dataPackages[selectedPackage].vars));
       setModelsSelected(stringToArray(dataPackages[selectedPackage].models));
-      setSelectedScenarios(
-        stringToArray(dataPackages[selectedPackage].scenarios),
-      );
+      setSelectedScenarios(stringToArray(dataPackages[selectedPackage].scenarios));
       setSelectedCounties([]);
       setIsPkgStored(true);
       setSidebarState("settings");
@@ -306,7 +288,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
           const fileData = await response.blob();
           const fileName = extractFilenameFromURL(response.url);
           return { name: fileName, input: fileData };
-        }),
+        })
       );
 
       const blob = await downloadZip(files).blob();
@@ -328,7 +310,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
       a.click();
       a.remove();
     },
-    [selectedFrequency],
+    [selectedFrequency]
   ); // include deps here
 
   function showLoadingIndicator() {
@@ -347,9 +329,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
 
   // --- County selection ---
 
-  const countiesList: string[] = data.summaries["countyname"].map(
-    (obj: {}) => obj,
-  );
+  const countiesList: string[] = data.summaries["countyname"].map((obj: {}) => obj);
 
   const [selectedCounties, setSelectedCounties] = useState<string[]>([]);
   useEffect(() => {
@@ -367,9 +347,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
 
   // --- Model selection ---
 
-  const modelsList: string[] = data.summaries["cmip6:source_id"].map(
-    (obj: {}) => obj,
-  );
+  const modelsList: string[] = data.summaries["cmip6:source_id"].map((obj: {}) => obj);
   const genUseModelsList: string[] = filterByFlag(modelsGenUseLookupTable);
 
   const [modelsSelected, setModelsSelected] = useState<string[]>([]);
@@ -388,9 +366,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
   }, [modelsSelected]);
 
   // --- Scenario selection ---
-  const scenariosList: string[] = data.summaries["cmip6:experiment_id"].map(
-    (obj: {}) => obj,
-  );
+  const scenariosList: string[] = data.summaries["cmip6:experiment_id"].map((obj: {}) => obj);
 
   const [selectedScenarios, setSelectedScenarios] = useState<string[]>([]);
   useDidMountEffect(() => {
@@ -423,10 +399,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
 
     updateApiParams({
       countyQueryStr: createOrStatement("countyname", selectedCounties),
-      scenariosQueryStr: createOrStatement(
-        "cmip6:experiment_id",
-        selectedScenarios,
-      ),
+      scenariosQueryStr: createOrStatement("cmip6:experiment_id", selectedScenarios),
       modelQueryStr: createOrStatement("cmip6:source_id", modelsSelected),
       freqQueryStr: "collection='" + collectionStr + "'",
     });
@@ -434,34 +407,24 @@ export default function DataDownload({ data }: DataDownloadProps) {
 
   useEffect(() => {
     setSelectedPackage(
-      parseInt(localPackageSettings.id) >= 0
-        ? parseInt(localPackageSettings.id)
-        : -1,
+      parseInt(localPackageSettings.id) >= 0 ? parseInt(localPackageSettings.id) : -1
     );
     setSelectedVars(
-      localPackageSettings.vars.length > 0
-        ? stringToArray(localPackageSettings.vars)
-        : [],
+      localPackageSettings.vars.length > 0 ? stringToArray(localPackageSettings.vars) : []
     );
     setSelectedFrequency(
-      localPackageSettings.frequency !== ""
-        ? localPackageSettings.frequency
-        : "Monthly",
+      localPackageSettings.frequency !== "" ? localPackageSettings.frequency : "Monthly"
     );
     setModelsSelected(
-      localPackageSettings.models.length > 0
-        ? stringToArray(localPackageSettings.models)
-        : [],
+      localPackageSettings.models.length > 0 ? stringToArray(localPackageSettings.models) : []
     );
     setSelectedScenarios(
-      localPackageSettings.scenarios.length > 0
-        ? stringToArray(localPackageSettings.scenarios)
-        : [],
+      localPackageSettings.scenarios.length > 0 ? stringToArray(localPackageSettings.scenarios) : []
     );
     setSelectedCounties(
       localPackageSettings.boundaries.length > 0
         ? stringToArray(localPackageSettings.boundaries)
-        : [],
+        : []
     );
     setSidebarState("settings");
   }, []);
@@ -476,8 +439,8 @@ export default function DataDownload({ data }: DataDownloadProps) {
           color="primaryBlue"
           aria-label="Where to go for full LOCA2 scientific data"
         >
-          Looking for the full LOCA2 scientific data at daily resolution for the
-          entire state of California?
+          Looking for the full LOCA2 scientific data at daily resolution for the entire state of
+          California?
           <div className="cta">
             <Button
               variant="contained"
@@ -490,8 +453,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
           </div>
         </Alert>
         <Alert variant="filled" severity="info" color="infoYellow">
-          The Cal-Adapt data download tool is a beta tool. Feedback or questions
-          are always welcome.
+          The Cal-Adapt data download tool is a beta tool. Feedback or questions are always welcome.
           <div className="cta">
             <Tooltip
               TransitionComponent={Fade}
@@ -499,11 +461,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
               title="Email analytics@cal-adapt.org"
               placement="right-end"
             >
-              <Button
-                variant="contained"
-                color="primary"
-                href="mailto:support@cal-adapt.org"
-              >
+              <Button variant="contained" color="primary" href="mailto:support@cal-adapt.org">
                 Contact Us
               </Button>
             </Tooltip>
@@ -518,9 +476,8 @@ export default function DataDownload({ data }: DataDownloadProps) {
         severity="info"
         color="secondaryReversed"
       >
-        The size of data packages might be very large. In that case, you may be
-        asked for an email address to notify you when your package is ready for
-        download.{" "}
+        The size of data packages might be very large. In that case, you may be asked for an email
+        address to notify you when your package is ready for download.{" "}
       </Alert>
 
       {/** Packages container */}
@@ -537,8 +494,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
               </Typography>
               <ul className="package__settings">
                 <li>
-                  <Typography variant="body2">Dataset:</Typography>{" "}
-                  {pkg.dataset}
+                  <Typography variant="body2">Dataset:</Typography> {pkg.dataset}
                 </li>
                 <li>
                   <Typography variant="body2">Scenarios:</Typography>
@@ -546,9 +502,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
                     (scenario, index) =>
                       " " +
                       lookupValue(scenario, scenariosLookupTable) +
-                      (index !== stringToArray(pkg.scenarios).length - 1
-                        ? ","
-                        : ""),
+                      (index !== stringToArray(pkg.scenarios).length - 1 ? "," : "")
                   )}
                 </li>
                 <li>
@@ -560,24 +514,20 @@ export default function DataDownload({ data }: DataDownloadProps) {
                     (variable, index) =>
                       " " +
                       lookupValue(variable, variablesLookupTable) +
-                      (index !== stringToArray(pkg.vars).length - 1 ? "," : ""),
+                      (index !== stringToArray(pkg.vars).length - 1 ? "," : "")
                   )}
                 </li>
                 <li>
-                  <Typography variant="body2">Boundary Type:</Typography>{" "}
-                  {pkg.boundaryType}
+                  <Typography variant="body2">Boundary Type:</Typography> {pkg.boundaryType}
                 </li>
                 <li>
-                  <Typography variant="body2">Range:</Typography>{" "}
-                  {pkg.rangeStart} - {pkg.rangeEnd}
+                  <Typography variant="body2">Range:</Typography> {pkg.rangeStart} - {pkg.rangeEnd}
                 </li>
                 <li>
-                  <Typography variant="body2">Frequency:</Typography>{" "}
-                  {pkg.frequency}
+                  <Typography variant="body2">Frequency:</Typography> {pkg.frequency}
                 </li>
                 <li>
-                  <Typography variant="body2">Data Format:</Typography>{" "}
-                  {pkg.dataFormat}
+                  <Typography variant="body2">Data Format:</Typography> {pkg.dataFormat}
                 </li>
                 <li>
                   <Typography variant="body2">Units:</Typography> {pkg.units}
@@ -590,11 +540,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
                   title="This data package preset is not available"
                 >
                   <span>
-                    <Button
-                      disabled={pkg.disabled}
-                      variant="contained"
-                      color="secondary"
-                    >
+                    <Button disabled={pkg.disabled} variant="contained" color="secondary">
                       Customize and download
                     </Button>
                   </span>
@@ -638,13 +584,11 @@ export default function DataDownload({ data }: DataDownloadProps) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {"Confirm package overwrite"}
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Confirm package overwrite"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            If you proceed, the current package data that is saved will be
-            overwritten by the package that you are selecting
+            If you proceed, the current package data that is saved will be overwritten by the
+            package that you are selecting
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -667,12 +611,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
       </Dialog>
 
       {/** SidePanel */}
-      <SidePanel
-        anchor="right"
-        variant="temporary"
-        open={open}
-        onClose={toggleOpen}
-      >
+      <SidePanel anchor="right" variant="temporary" open={open} onClose={toggleOpen}>
         <Tooltip
           TransitionComponent={Fade}
           TransitionProps={{ timeout: 600 }}
@@ -750,8 +689,8 @@ export default function DataDownload({ data }: DataDownloadProps) {
         {!isPackageStored && (
           <div className="package-contents">
             <Typography variant="h6">
-              No package has been selected. Head back to the dashboard and
-              select a data package preset.
+              No package has been selected. Head back to the dashboard and select a data package
+              preset.
             </Typography>
           </div>
         )}

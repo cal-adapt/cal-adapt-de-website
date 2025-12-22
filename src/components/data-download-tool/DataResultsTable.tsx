@@ -28,13 +28,8 @@ interface DataResultsProps {
   selectedVars: string[]; // List of variable names selected by the user
 }
 
-const DataResultsTable: React.FC<DataResultsProps> = ({
-  varsResData,
-  selectedVars,
-}) => {
-  const filteredVars = varsResData.filter((variable) =>
-    searchObject(selectedVars, variable.name),
-  );
+const DataResultsTable: React.FC<DataResultsProps> = ({ varsResData, selectedVars }) => {
+  const filteredVars = varsResData.filter((variable) => searchObject(selectedVars, variable.name));
 
   return (
     <TableContainer
@@ -83,4 +78,3 @@ const DataResultsTable: React.FC<DataResultsProps> = ({
 };
 
 export default DataResultsTable;
-

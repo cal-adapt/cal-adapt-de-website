@@ -12,7 +12,7 @@ export function extractFilenameFromURL(url: string): string {
 export function extractSegment(
   url: string,
   startDelimiter: string,
-  endDelimiter: string,
+  endDelimiter: string
 ): string | null {
   // Find the start index of the segment
   const startIndex = url.indexOf(startDelimiter);
@@ -31,9 +31,7 @@ export function extractSegment(
   // Extract the segment from the URL
   // If end delimiter is not found, extract until the end of the string
   const segment =
-    endIndex === -1
-      ? url.substring(segmentStartIndex)
-      : url.substring(segmentStartIndex, endIndex);
+    endIndex === -1 ? url.substring(segmentStartIndex) : url.substring(segmentStartIndex, endIndex);
 
   return segment;
 }

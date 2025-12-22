@@ -1,28 +1,30 @@
-'use client'
+"use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
 type InstallationPrmsContextType = {
-  installationSelected: number
-  setInstallationSelected: (value: number) => void
-  installationList: string[]
-}
+  installationSelected: number;
+  setInstallationSelected: (value: number) => void;
+  installationList: string[];
+};
 
-const defaultInstallationList = ['Onshore', 'Offshore']
+const defaultInstallationList = ["Onshore", "Offshore"];
 
-const InstallationPrmsContext = createContext<InstallationPrmsContextType | undefined>(undefined)
+const InstallationPrmsContext = createContext<InstallationPrmsContextType | undefined>(undefined);
 
 export const InstallationPrmsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // 0: corresponds to onshore
   // 1: corresponds to offshore
-  const [installationSelected, setInstallationSelected] = useState(0)
+  const [installationSelected, setInstallationSelected] = useState(0);
 
   return (
-    <InstallationPrmsContext.Provider value={{
-      installationSelected,
-      setInstallationSelected,
-      installationList: defaultInstallationList,
-    }}>
+    <InstallationPrmsContext.Provider
+      value={{
+        installationSelected,
+        setInstallationSelected,
+        installationList: defaultInstallationList,
+      }}
+    >
       {children}
     </InstallationPrmsContext.Provider>
   );
@@ -31,7 +33,7 @@ export const InstallationPrmsProvider: React.FC<{ children: ReactNode }> = ({ ch
 export const useInstallationPrms = () => {
   const context = useContext(InstallationPrmsContext);
   if (!context) {
-    throw new Error('useInstallationPrms must be used within a InstallationPrmsProvider')
+    throw new Error("useInstallationPrms must be used within a InstallationPrmsProvider");
   }
-  return context
-}; 
+  return context;
+};

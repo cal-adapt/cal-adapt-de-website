@@ -73,10 +73,8 @@ export default function VizPrmsForm({
   toggleOpen,
 }: VizFormProps) {
   // Context hooks
-  const { photoConfigSelected, setPhotoConfigSelected, photoConfigList } =
-    usePhotoConfig();
-  const { installationSelected, setInstallationSelected, installationList } =
-    useInstallationPrms();
+  const { photoConfigSelected, setPhotoConfigSelected, photoConfigList } = usePhotoConfig();
+  const { installationSelected, setInstallationSelected, installationList } = useInstallationPrms();
   const { resSelected, setResSelected, resList } = useRes();
 
   // Track field validation state (not currently used but can support inline errors)
@@ -174,9 +172,7 @@ export default function VizPrmsForm({
                 })}
               </Select>
               {formErrorState.globalWarming && (
-                <div>
-                  One or more global warming levels must be selected to continue
-                </div>
+                <div>One or more global warming levels must be selected to continue</div>
               )}
             </FormControl>
           </div>
@@ -192,11 +188,9 @@ export default function VizPrmsForm({
                   textFragment={
                     <React.Fragment>
                       <p>
-                        The set of photovoltaic system design parameters.
-                        &quot;Utility&quot; is based on typical installations
-                        maintained by utility companies, while
-                        &quot;Distributed&quot; corresponds to a residential
-                        rooftop installation.
+                        The set of photovoltaic system design parameters. &quot;Utility&quot; is
+                        based on typical installations maintained by utility companies, while
+                        &quot;Distributed&quot; corresponds to a residential rooftop installation.
                       </p>
                     </React.Fragment>
                   }
@@ -243,8 +237,7 @@ export default function VizPrmsForm({
                       <p>
                         Turbine power curves from{" "}
                         <a href="https://github.com/NREL/reV" target="_blank">
-                          NREL&apos;s Renewable Energy Potential (ReV) GitHub
-                          repo
+                          NREL&apos;s Renewable Energy Potential (ReV) GitHub repo
                         </a>{" "}
                         were utilized.
                       </p>
@@ -289,4 +282,4 @@ export default function VizPrmsForm({
       </div>
     </div>
   );
-};
+}

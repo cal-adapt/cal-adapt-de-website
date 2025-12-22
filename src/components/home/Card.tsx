@@ -17,13 +17,7 @@ type CardProps = {
   isNewTab: boolean;
 };
 
-export default function Card({
-  title,
-  description,
-  cta,
-  img,
-  isNewTab,
-}: CardProps) {
+export default function Card({ title, description, cta, img, isNewTab }: CardProps) {
   const router = useRouter();
   const [hovered, setHovered] = React.useState(false);
 
@@ -80,4 +74,3 @@ export default function Card({
     </div>
   );
 }
-

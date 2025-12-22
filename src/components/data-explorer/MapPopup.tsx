@@ -67,11 +67,7 @@ export const MapPopup = ({
                 right: "10px",
               }}
             >
-              <IconButton
-                size="small"
-                onClick={onClose}
-                aria-label="Close popup"
-              >
+              <IconButton size="small" onClick={onClose} aria-label="Close popup">
                 <CloseIcon fontSize="small" />
               </IconButton>
             </div>
@@ -117,4 +113,3 @@ export const MapPopup = ({
     </Popup>
   );
 };
-

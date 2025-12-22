@@ -68,29 +68,27 @@ const DrawerHeader = styled("div")(() => ({
   zIndex: 1201,
 }));
 
-const ResponsiveSidebar = styled("div")(
-  ({ theme, open }: { theme: any; open: boolean }) => ({
+const ResponsiveSidebar = styled("div")(({ theme, open }: { theme: any; open: boolean }) => ({
+  width: open ? drawerWidth : theme.spacing(9),
+  flexShrink: 0,
+  minHeight: "100vh",
+  height: "auto",
+  transition: "width 225ms cubic-bezier(0.4, 0, 0.6, 1)",
+  backgroundImage: `url(${sidebarBg.src})`,
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  position: "relative",
+  paddingTop: "64px",
+  "& .MuiDrawer-paper": {
     width: open ? drawerWidth : theme.spacing(9),
-    flexShrink: 0,
-    minHeight: "100vh",
-    height: "auto",
+    boxSizing: "border-box",
+    minHeight: "100%",
+    border: "none",
+    overflowX: "hidden",
     transition: "width 225ms cubic-bezier(0.4, 0, 0.6, 1)",
-    backgroundImage: `url(${sidebarBg.src})`,
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    position: "relative",
-    paddingTop: "64px",
-    "& .MuiDrawer-paper": {
-      width: open ? drawerWidth : theme.spacing(9),
-      boxSizing: "border-box",
-      minHeight: "100%",
-      border: "none",
-      overflowX: "hidden",
-      transition: "width 225ms cubic-bezier(0.4, 0, 0.6, 1)",
-    },
-  }),
-);
+  },
+}));
 
 const menuItems = [
   {
@@ -117,11 +115,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const { open, toggleLeftDrawer } = useLeftDrawer();
   const pathname = usePathname();
-  const selectedPage: string | null = extractSegment(
-    pathname,
-    "dashboard/",
-    "/",
-  );
+  const selectedPage: string | null = extractSegment(pathname, "dashboard/", "/");
   const theme = useTheme();
   const isMobile = useMediaQuery("(max-width:992px)");
 
@@ -151,11 +145,7 @@ export default function Layout({ children }: LayoutProps) {
         );
       case "data-explorer":
         return (
-          <CalDashToolbar
-            drawerWidth={drawerWidth}
-            sidebarOpen={open}
-            toolName="Data Explorer"
-          />
+          <CalDashToolbar drawerWidth={drawerWidth} sidebarOpen={open} toolName="Data Explorer" />
         );
       default:
         return (
@@ -211,12 +201,7 @@ export default function Layout({ children }: LayoutProps) {
               }}
             >
               {menuItems.map((item) => (
-                <ListItem
-                  key={item.text}
-                  disablePadding
-                  component={Link}
-                  href={item.path}
-                >
+                <ListItem key={item.text} disablePadding component={Link} href={item.path}>
                   <ListItemButton>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText
@@ -259,14 +244,10 @@ export default function Layout({ children }: LayoutProps) {
       ) : (
         <div className="mobile-view">
           <div className="mobile-view__container">
-            <Image
-              src={logo}
-              alt="Cal Adapt logo"
-              className="cal-adapt-logo__mobile"
-            />
+            <Image src={logo} alt="Cal Adapt logo" className="cal-adapt-logo__mobile" />
             <Typography variant="body1">
-              Due to the nature of the tools, the Cal-Adapt Dashboard is best
-              used on a desktop or laptop computer
+              Due to the nature of the tools, the Cal-Adapt Dashboard is best used on a desktop or
+              laptop computer
             </Typography>
             <Button variant="contained" href="https://cal-adapt.org">
               Go to the homepage
@@ -277,4 +258,3 @@ export default function Layout({ children }: LayoutProps) {
     </SidePanelProvider>
   );
 }
-

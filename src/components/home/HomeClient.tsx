@@ -33,19 +33,17 @@ export default function HomeClient() {
 
   const carouselsStyle = isMobile
     ? {
-      maxWidth: "90vw",
-      display: "flex",
-      alignItems: "center",
-      flexDirection: "column",
-      textAlign: "center",
-    }
+        maxWidth: "90vw",
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        textAlign: "center",
+      }
     : { display: "flex", alignItems: "flex-start", flexDirection: "column" };
 
   const cardsCarouselClass = isMobile ? "hidden no-height" : `${styles.cards}`;
 
-  const cardsMobileCarouselClass = isMobile
-    ? `${styles["cards-mobile"]}`
-    : "hidden no-height";
+  const cardsMobileCarouselClass = isMobile ? `${styles["cards-mobile"]}` : "hidden no-height";
 
   const [emblaRef] = useEmblaCarousel({
     align: "start",
@@ -64,12 +62,11 @@ export default function HomeClient() {
           }}
           variant="body1"
         >
-          The new Cal-Adapt has been revamped to offer a more modern and
-          intuitive experience for exploring <nobr>peer-reviewed</nobr>{" "}
-          <strong>5th Assessment</strong> climate data. Our platform provides
-          interactive visualizations, downloadable datasets, the Analytics
-          Engine and the Cal-Adapt API, helping you analyze how climate change
-          may impact California at both state and local levels.
+          The new Cal-Adapt has been revamped to offer a more modern and intuitive experience for
+          exploring <nobr>peer-reviewed</nobr> <strong>5th Assessment</strong> climate data. Our
+          platform provides interactive visualizations, downloadable datasets, the Analytics Engine
+          and the Cal-Adapt API, helping you analyze how climate change may impact California at
+          both state and local levels.
         </Typography>
         <div>
           <div className={cardsCarouselClass}>
@@ -160,10 +157,7 @@ export default function HomeClient() {
           <div style={{ alignSelf: "center" }}>
             <ToolCarousel data={genCarouselData} />
           </div>
-          <Typography
-            variant="h4"
-            style={{ marginBottom: "20px", marginTop: "40px" }}
-          >
+          <Typography variant="h4" style={{ marginBottom: "20px", marginTop: "40px" }}>
             Analytics for Advanced Users
           </Typography>
           <div style={{ alignSelf: "center" }}>
@@ -181,4 +175,3 @@ export default function HomeClient() {
     </div>
   );
 }
-

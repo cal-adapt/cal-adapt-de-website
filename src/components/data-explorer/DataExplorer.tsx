@@ -28,9 +28,7 @@ export default function DataExplorer() {
   const [gwlSelected, setGwlSelected] = useState<number>(0);
   const [metricSelected, setMetricSelected] = useState<number>(0);
   const [valueType, setValueType] = useState<"abs" | "del">("abs");
-  const [globalWarmingLevelsList, setGlobalWarmingLevelsList] = useState<
-    string[]
-  >([]);
+  const [globalWarmingLevelsList, setGlobalWarmingLevelsList] = useState<string[]>([]);
 
   // --- Fetch GWL data when metric or value type changes ---
   async function fetchGWL() {
@@ -103,4 +101,3 @@ export default function DataExplorer() {
     </Grid>
   );
 }
-

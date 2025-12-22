@@ -55,8 +55,7 @@ export default function Heatmap({
 
   const interpolatorKey =
     `interpolate${currentColorMap.charAt(0).toUpperCase() + currentColorMap.slice(1)}` as keyof typeof d3;
-  const interpolator =
-    (d3[interpolatorKey] as (t: number) => string) || d3.interpolateOranges;
+  const interpolator = (d3[interpolatorKey] as (t: number) => string) || d3.interpolateOranges;
 
   const colorScale = d3
     .scaleSequential<string>()
@@ -80,13 +79,7 @@ export default function Heatmap({
       />
       <MapTooltip interactionData={hoveredCell} width={width} height={height} />
       <div className="color-legend" style={{ width: width }}>
-        <ColorLegend
-          width={405}
-          height={100}
-          colorScale={colorScale}
-          min={min}
-          max={max}
-        />
+        <ColorLegend width={405} height={100} colorScale={colorScale} min={min} max={max} />
       </div>
     </div>
   );

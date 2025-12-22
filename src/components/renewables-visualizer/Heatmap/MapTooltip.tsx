@@ -7,11 +7,7 @@ type TooltipProps = {
   height: number;
 };
 
-export default function MapTooltip({
-  interactionData,
-  width,
-  height,
-}: TooltipProps) {
+export default function MapTooltip({ interactionData, width, height }: TooltipProps) {
   if (!interactionData) {
     return null;
   }
@@ -47,10 +43,7 @@ export default function MapTooltip({
       >
         {renderTooltipRow("Year", interactionData.xLabel)}
         {renderTooltipRow("Month", interactionData.yLabel)}
-        {renderTooltipRow(
-          "Selected resource drought days",
-          interactionData.value,
-        )}
+        {renderTooltipRow("Selected resource drought days", interactionData.value)}
       </div>
     </div>
   );

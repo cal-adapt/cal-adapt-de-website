@@ -73,15 +73,11 @@ export default function MapUI({
   metrics,
 }: MapUIProps) {
   const { open, drawerWidth } = useLeftDrawer();
-  const [helpAnchorEl, setHelpAnchorEl] =
-    React.useState<HTMLButtonElement | null>(null);
+  const [helpAnchorEl, setHelpAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const helpButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const fullWidthUIItem = open ? `100%` : `calc(100% - ${drawerWidth} - 72px)`;
-  const handleValueTypeChange = (
-    event: React.SyntheticEvent,
-    newValue: ValueType,
-  ) => {
+  const handleValueTypeChange = (event: React.SyntheticEvent, newValue: ValueType) => {
     setValueType(newValue);
   };
 
@@ -326,45 +322,35 @@ export default function MapUI({
                 </Typography>
                 <Typography variant="body1" id={labelledBy}>
                   <p>
-                    Showing the absolute and change in extreme weather across
-                    heat, precipitation, and fire weather over the potential
-                    futures in California allows individuals, planners,
-                    researchers, and interested parties to examine the general
-                    shape of climate projections.
+                    Showing the absolute and change in extreme weather across heat, precipitation,
+                    and fire weather over the potential futures in California allows individuals,
+                    planners, researchers, and interested parties to examine the general shape of
+                    climate projections.
                   </p>
                 </Typography>
 
-                <Typography
-                  variant="h6"
-                  style={{ marginTop: "15px" }}
-                  id={labelledBy}
-                >
+                <Typography variant="h6" style={{ marginTop: "15px" }} id={labelledBy}>
                   Projections Type
                 </Typography>
                 <Typography variant="body1" id={labelledBy}>
                   <p>
-                    <strong>Absolute</strong>: show the average expected value
-                    for the chosen metric and at the selected Global Warming
-                    Level (GWL).
+                    <strong>Absolute</strong>: show the average expected value for the chosen metric
+                    and at the selected Global Warming Level (GWL).
                   </p>
                   <p>
-                    <strong>Delta</strong>: show the change between a 0.8° C
-                    world (roughly 2015-2020) and the selected GWL
+                    <strong>Delta</strong>: show the change between a 0.8° C world (roughly
+                    2015-2020) and the selected GWL
                   </p>
                 </Typography>
 
-                <Typography
-                  variant="h6"
-                  id={labelledBy}
-                  style={{ marginTop: "15px" }}
-                >
+                <Typography variant="h6" id={labelledBy} style={{ marginTop: "15px" }}>
                   Global Warming Level
                 </Typography>
                 <Typography variant="body1">
                   <p>
-                    Show what different parts of California will look like when
-                    the world, as a whole, has increased average temperature
-                    compared to pre-industrial by the chosen amount.
+                    Show what different parts of California will look like when the world, as a
+                    whole, has increased average temperature compared to pre-industrial by the
+                    chosen amount.
                   </p>
                   <p>
                     For additional information go to:{" "}
@@ -373,20 +359,15 @@ export default function MapUI({
                       target="_blank"
                     >
                       <span className="underline">
-                        Understanding Climate Futures through the lens of global
-                        Warming Levels
+                        Understanding Climate Futures through the lens of global Warming Levels
                       </span>
                     </a>
                   </p>
                 </Typography>
-                <Typography
-                  id={labelledBy}
-                  variant="body1"
-                  style={{ marginTop: "15px" }}
-                >
-                  Use the dropdown menu to select a global warming scenario
-                  (e.g., 1.5°C, 2.0°C). This will adjust the data overlays to
-                  reflect projected changes under the selected warming level. (
+                <Typography id={labelledBy} variant="body1" style={{ marginTop: "15px" }}>
+                  Use the dropdown menu to select a global warming scenario (e.g., 1.5°C, 2.0°C).
+                  This will adjust the data overlays to reflect projected changes under the selected
+                  warming level. (
                   <a href="https://climate.gov" target="_blank">
                     <span className="underline">Climate.gov</span>
                   </a>{" "}
@@ -398,10 +379,9 @@ export default function MapUI({
                 </Typography>
                 <Typography id={labelledBy} variant="body1">
                   <p>
-                    Choose a climate metric to display on the map (e.g., extreme
-                    temperature, extreme precipitation, fire weather index) Each
-                    metric provides a unique perspective on how climate change
-                    impacts various regions.
+                    Choose a climate metric to display on the map (e.g., extreme temperature,
+                    extreme precipitation, fire weather index) Each metric provides a unique
+                    perspective on how climate change impacts various regions.
                   </p>
                   (A plain language description of metrics can be found{" "}
                   <a
@@ -417,17 +397,16 @@ export default function MapUI({
                 </Typography>
                 <Typography id={labelledBy} variant="body1">
                   <p>
-                    <strong>Pan and Zoom:</strong> Click and drag to move the
-                    map, and use the scroll wheel or zoom buttons to focus on
-                    specific areas.
+                    <strong>Pan and Zoom:</strong> Click and drag to move the map, and use the
+                    scroll wheel or zoom buttons to focus on specific areas.
                   </p>
                   <p>
-                    <strong>Region Highlighting:</strong> Click on a region to
-                    view localized climate data and projections.
+                    <strong>Region Highlighting:</strong> Click on a region to view localized
+                    climate data and projections.
                   </p>
                   <p>
-                    <strong>Legend:</strong> The color scale on the map legend
-                    indicates the range of values for the selected metric.
+                    <strong>Legend:</strong> The color scale on the map legend indicates the range
+                    of values for the selected metric.
                   </p>
                 </Typography>
               </Popover>

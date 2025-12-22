@@ -6,7 +6,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 This project uses Node 20.9.0
 
-Run ```nvm use 20``` 
+Run `nvm use 20`
 
 First, run the development server:
 
@@ -28,23 +28,26 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 ## Tool management
 
-The tools are stored in their specific folders under ```components/```
+The tools are stored in their specific folders under `components/`
 
 ### Tool Carousel
 
-Located in ```components/home/ToolCarousel.tsx```
+Located in `components/home/ToolCarousel.tsx`
 
-Whenever a new metric within a tool or a tool is added, this component needs to be updated accordingly. Check for the data from where the instance of the tool is retrieving its data, and add the values accordingly. 
+Whenever a new metric within a tool or a tool is added, this component needs to be updated accordingly. Check for the data from where the instance of the tool is retrieving its data, and add the values accordingly.
 
 ## Context management
-All context code is stored under ```context/```
+
+All context code is stored under `context/`
 
 ## Global components
 
 ### HTML Tooltip
+
 Can be used for more complex tooltips beyond MUI's default. Links, images and any HTML content can be added
 
 ### LoadingSpinner
+
 This component was written to create an optimized version of thea loading spinner
 
 ## Learn More

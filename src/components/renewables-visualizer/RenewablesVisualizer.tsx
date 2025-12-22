@@ -3,13 +3,7 @@
 
 "use client";
 
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -107,9 +101,7 @@ export default function RenewablesViz() {
   const maskStr = useMemo(() => {
     if (resSelected == 0) {
       // solar
-      return photoConfigSelected === "Utility Configuration"
-        ? "srdumask"
-        : "srddmask";
+      return photoConfigSelected === "Utility Configuration" ? "srdumask" : "srddmask";
     } else if (resSelected == 1) {
       // wind
       return installationSelected == 0 ? "wrdnmask" : "wrdfmask";
@@ -128,9 +120,7 @@ export default function RenewablesViz() {
   const BASE_URL = "https://map.cal-adapt.org" as const;
 
   const [gwlSelected, setGwlSelected] = useState<number>(0);
-  const [globalWarmingLevelsList, setGlobalWarmingLevelsList] = useState<
-    string[]
-  >([]);
+  const [globalWarmingLevelsList, setGlobalWarmingLevelsList] = useState<string[]>([]);
 
   // Map & location state
   const mapRef = useRef<any>(null);
@@ -143,8 +133,7 @@ export default function RenewablesViz() {
       setHeatmapContainer(node);
     }
   }, []);
-  const [heatmapContainer, setHeatmapContainer] =
-    useState<HTMLDivElement | null>(null);
+  const [heatmapContainer, setHeatmapContainer] = useState<HTMLDivElement | null>(null);
   const [heatmapWidth, setHeatmapWidth] = useState(0);
   const [queriedData, setQueriedData] = useState<QueriedData | null>(null);
   const [isPointValid, setIsPointValid] = useState<boolean>(false);
@@ -300,7 +289,7 @@ export default function RenewablesViz() {
         }
       }
     },
-    [mapRef, onFormDataSubmit],
+    [mapRef, onFormDataSubmit]
   );
 
   // Check location status when photoConfigSelected or point changes
@@ -393,11 +382,10 @@ export default function RenewablesViz() {
           Renewables Visualizer
         </Typography>
         <Typography variant="body1" aria-label="Description of the tool">
-          This tool shows when there are likely to be significant reductions in
-          solar or wind energy availability in the future. To be more specific,
-          it shows the number of wind or solar resource drought days (less than
-          40% average generation) per month throughout a representative 30-year
-          period.{" "}
+          This tool shows when there are likely to be significant reductions in solar or wind energy
+          availability in the future. To be more specific, it shows the number of wind or solar
+          resource drought days (less than 40% average generation) per month throughout a
+          representative 30-year period.{" "}
         </Typography>
         <Typography variant="body1">
           <a
@@ -483,18 +471,10 @@ export default function RenewablesViz() {
               )}
 
               <Box className="flex-params__item">
-                <Typography
-                  className="inline"
-                  variant="subtitle1"
-                  aria-label="Edit parameters"
-                >
+                <Typography className="inline" variant="subtitle1" aria-label="Edit parameters">
                   Edit parameters
                 </Typography>
-                <IconButton
-                  className="inline"
-                  onClick={toggleOpen}
-                  aria-label="Open settings"
-                >
+                <IconButton className="inline" onClick={toggleOpen} aria-label="Open settings">
                   <SettingsOutlinedIcon />
                 </IconButton>
               </Box>
@@ -508,16 +488,10 @@ export default function RenewablesViz() {
                   color="info"
                   aria-label="Global models estimate information"
                 >
-                  Global models estimate that{" "}
-                  {gwlYearEstimateData[gwlSelected].name}° global warming levels
-                  (GWL) will be reached between{" "}
-                  <strong>
-                    {gwlYearEstimateData[gwlSelected].estimatedStartYear}
-                  </strong>{" "}
-                  and{" "}
-                  <strong>
-                    {gwlYearEstimateData[gwlSelected].estimatedEndYear}
-                  </strong>
+                  Global models estimate that {gwlYearEstimateData[gwlSelected].name}° global
+                  warming levels (GWL) will be reached between{" "}
+                  <strong>{gwlYearEstimateData[gwlSelected].estimatedStartYear}</strong> and{" "}
+                  <strong>{gwlYearEstimateData[gwlSelected].estimatedEndYear}</strong>
                   <Box className="cta">
                     <Button
                       variant="contained"
@@ -542,24 +516,24 @@ export default function RenewablesViz() {
         sx={[
           accordionExpanded
             ? {
-              "& .MuiAccordion-region": {
-                height: "auto",
-              },
-              "& .MuiAccordionDetails-root": {
-                display: "block",
-              },
-              "&.Mui-expanded": {
-                margin: 0,
-              },
-            }
+                "& .MuiAccordion-region": {
+                  height: "auto",
+                },
+                "& .MuiAccordionDetails-root": {
+                  display: "block",
+                },
+                "&.Mui-expanded": {
+                  margin: 0,
+                },
+              }
             : {
-              "& .MuiAccordion-region": {
-                height: 0,
+                "& .MuiAccordion-region": {
+                  height: 0,
+                },
+                "& .MuiAccordionDetails-root": {
+                  display: "none",
+                },
               },
-              "& .MuiAccordionDetails-root": {
-                display: "none",
-              },
-            },
         ]}
       >
         <Grid container xs={12} justifyContent="flex-end">
@@ -575,9 +549,7 @@ export default function RenewablesViz() {
               <AccordionSummary
                 onClick={handleSummaryClick}
                 expandIcon={
-                  apiParams.point !== null ? (
-                    <ExpandMoreIcon className="rotated-icon" />
-                  ) : null
+                  apiParams.point !== null ? <ExpandMoreIcon className="rotated-icon" /> : null
                 }
                 aria-controls="panel1-content"
                 id="panel1-header"
@@ -585,9 +557,7 @@ export default function RenewablesViz() {
                   "& .MuiAccordionSummary-content": {
                     marginTop: "20px",
                     marginBottom: "20px",
-                    justifyContent: accordionExpanded
-                      ? "flex-start"
-                      : "flex-end",
+                    justifyContent: accordionExpanded ? "flex-start" : "flex-end",
                   },
                   width: "100%",
                 }}
@@ -600,14 +570,10 @@ export default function RenewablesViz() {
                     marginLeft: "10px",
                   }}
                   aria-label={
-                    locationStatus !== "none"
-                      ? "Change your location"
-                      : "Select your location"
+                    locationStatus !== "none" ? "Change your location" : "Select your location"
                   }
                 >
-                  {locationStatus !== "none"
-                    ? "Change your location"
-                    : "Select your location"}
+                  {locationStatus !== "none" ? "Change your location" : "Select your location"}
                 </Typography>
               </AccordionSummary>
             </Box>
@@ -629,12 +595,10 @@ export default function RenewablesViz() {
                 style={{ display: accordionExpanded ? "none" : "block" }}
               >
                 <Alert variant="grey" severity="info">
-                  You have selected a location with land use or land cover
-                  restrictions. No data will be returned.&nbsp;
+                  You have selected a location with land use or land cover restrictions. No data
+                  will be returned.&nbsp;
                   <span
-                    onClick={
-                      accordionExpanded ? undefined : handleAccordionChange
-                    }
+                    onClick={accordionExpanded ? undefined : handleAccordionChange}
                     aria-label="Select another location"
                   >
                     <strong>Select another location </strong>
@@ -646,10 +610,7 @@ export default function RenewablesViz() {
             {locationStatus === "data" && (
               <Box
                 ref={heatmapContainerRef}
-                className={
-                  "renewables-tool__heatmap" +
-                  (isLoading ? " loading-screen" : "")
-                }
+                className={"renewables-tool__heatmap" + (isLoading ? " loading-screen" : "")}
                 style={{ display: accordionExpanded ? "none" : "block" }}
               >
                 {isLoading && (
@@ -680,10 +641,7 @@ export default function RenewablesViz() {
           </Grid>
 
           {/* Locator map section */}
-          <Grid
-            xs={accordionExpanded ? 12 : 3.5}
-            sx={{ alignItems: "flex-end" }}
-          >
+          <Grid xs={accordionExpanded ? 12 : 3.5} sx={{ alignItems: "flex-end" }}>
             <AccordionDetails className="custom-accordion-details">
               <Box className="renewables-tool__map">
                 <MapboxMap
@@ -716,10 +674,7 @@ export default function RenewablesViz() {
             TransitionProps={{ timeout: 600 }}
             title="Close the sidebar"
           >
-            <IconButton
-              onClick={toggleOpen}
-              aria-label="Close settings sidebar"
-            >
+            <IconButton onClick={toggleOpen} aria-label="Close settings sidebar">
               <CloseIcon />
             </IconButton>
           </Tooltip>

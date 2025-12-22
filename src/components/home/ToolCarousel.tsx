@@ -100,9 +100,7 @@ function ToolCarousel({ data }: ToolCarouselProps) {
                   <div className="right-panel__preview-box">
                     <div className="content">
                       <Typography variant="h6">{item.title}</Typography>
-                      <Typography variant="body1">
-                        {item.description}
-                      </Typography>
+                      <Typography variant="body1">{item.description}</Typography>
                     </div>
                   </div>
                 </div>
@@ -150,10 +148,7 @@ function ToolCarousel({ data }: ToolCarouselProps) {
               </button>
 
               <div className="scrollbar-track" ref={trackRef}>
-                <div
-                  className="scrollbar-thumb"
-                  style={{ height: thumbHeight, top: thumbTop }}
-                />
+                <div className="scrollbar-thumb" style={{ height: thumbHeight, top: thumbTop }} />
               </div>
 
               <button
@@ -177,19 +172,13 @@ function ToolCarousel({ data }: ToolCarouselProps) {
             className="right-panel__image"
             style={{ position: "relative", width: "100%", height: "216px" }}
           >
-            <Image
-              src={data[activeIndex].image}
-              alt={data[activeIndex].imageAlt}
-              fill
-            />
+            <Image src={data[activeIndex].image} alt={data[activeIndex].imageAlt} fill />
           </div>
 
           <div className="right-panel__preview-box">
             <div className="content">
               <Typography variant="h6">{data[activeIndex].title}</Typography>
-              <Typography variant="body1">
-                {data[activeIndex].description}
-              </Typography>
+              <Typography variant="body1">{data[activeIndex].description}</Typography>
             </div>
             <Fab
               className="link-button"

@@ -4,8 +4,7 @@ export const genCarouselData: CarouselData[] = [
   {
     id: 1,
     title: "Extreme heat days",
-    description:
-      "Understand how many extreme heat days will occur in the future",
+    description: "Understand how many extreme heat days will occur in the future",
     image: "/img/homepage-carousels/extreme-heat.png",
     imageAlt: "California agricultural workers on a field",
     link: "/dashboard/data-explorer?metric=extreme-heat",
@@ -47,4 +46,3 @@ export const genCarouselData: CarouselData[] = [
     link: "/dashboard/data-download-tool",
   },
 ];
-

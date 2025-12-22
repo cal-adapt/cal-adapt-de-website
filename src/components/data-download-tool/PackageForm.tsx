@@ -27,11 +27,7 @@ import { searchObject } from "@/utils/object";
 import { useDidMountEffect } from "@/hooks";
 import DataResultsTable from "./DataResultsTable";
 import HtmlTooltip from "../global/HtmlTooltip";
-import {
-  variablesLookupTable,
-  scenariosLookupTable,
-  lookupValue,
-} from "@/lib/lookup-tables";
+import { variablesLookupTable, scenariosLookupTable, lookupValue } from "@/lib/lookup-tables";
 import LoadingSpinner from "../global/LoadingSpinner";
 import { tooltipsList } from "@/lib/tooltips";
 
@@ -272,7 +268,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
     }
   }, [dataResponse]);
 
-  useEffect(() => { }, []);
+  useEffect(() => {}, []);
 
   // --- Utility functions ---
   function genVarsLinks(variables: varUrl[]): string[] {
@@ -293,19 +289,13 @@ const PackageForm: React.FC<ChildFormProps> = ({
   return (
     <div className="package-form">
       {sidebarState === "download" && (
-        <div
-          className={"package-contents" + (isLoading ? " loading-screen" : "")}
-        >
+        <div className={"package-contents" + (isLoading ? " loading-screen" : "")}>
           <Typography className="inline" variant="h5">
-            {isBundling
-              ? "Generating download bundle..."
-              : "Download your data"}
+            {isBundling ? "Generating download bundle..." : "Download your data"}
           </Typography>
           {dataResponse.length > 0 && !isLoading ? (
             <div>
-              <span>
-                (estimated bundle size {bytesToGBOrMB(totalDataSize)})
-              </span>
+              <span>(estimated bundle size {bytesToGBOrMB(totalDataSize)})</span>
               <IconButton
                 className="inline float-right"
                 sx={{ mt: "-8px" }}
@@ -346,7 +336,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
                         onClick={() =>
                           createZip(
                             genVarsLinks(item.vars),
-                            "variables-" + item.scenario + "-" + item.model,
+                            "variables-" + item.scenario + "-" + item.model
                           )
                         }
                       >
@@ -411,9 +401,8 @@ const PackageForm: React.FC<ChildFormProps> = ({
                     textFragment={
                       <React.Fragment>
                         <p>
-                          LOCA2 (Localized Constructed Analogs)
-                          hybrid-statistically downscaled CMIP6 climate
-                          projections
+                          LOCA2 (Localized Constructed Analogs) hybrid-statistically downscaled
+                          CMIP6 climate projections
                         </p>
                       </React.Fragment>
                     }
@@ -435,9 +424,8 @@ const PackageForm: React.FC<ChildFormProps> = ({
                     textFragment={
                       <React.Fragment>
                         <p>
-                          The timescale of the data. All LOCA2 data is
-                          downscaled at a native daily resolution. A
-                          pre-aggregated version at a monthly resolution is also
+                          The timescale of the data. All LOCA2 data is downscaled at a native daily
+                          resolution. A pre-aggregated version at a monthly resolution is also
                           available
                         </p>
                       </React.Fragment>
@@ -464,10 +452,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
                     ))}
                   </Select>
                   {formErrorState.models && (
-                    <div>
-                      One or more models need to be selected in order to
-                      continue
-                    </div>
+                    <div>One or more models need to be selected in order to continue</div>
                   )}
                 </FormControl>
               </div>
@@ -500,10 +485,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
                           describe potential pathways the world could take
                         </p>
                         <ul style={{ marginLeft: "10px", marginTop: "10px" }}>
-                          <li>
-                            SSP2-4.5: a middle of the road global emissions
-                            scenario
-                          </li>
+                          <li>SSP2-4.5: a middle of the road global emissions scenario</li>
                           <li>SSP3-7.0: high global emissions scenario</li>
                           <li>SSP5-8.5: very high global emissions scenario</li>
                         </ul>
@@ -581,10 +563,9 @@ const PackageForm: React.FC<ChildFormProps> = ({
                           >
                             Coupled Model Intercomparison Project, Phase 6
                           </a>{" "}
-                          represent physical processes in the atmosphere, ocean,
-                          cryosphere, and land surface. For guidance on how to
-                          select models, please refer to the upcoming guidance
-                          page on the Analytics Engine.{" "}
+                          represent physical processes in the atmosphere, ocean, cryosphere, and
+                          land surface. For guidance on how to select models, please refer to the
+                          upcoming guidance page on the Analytics Engine.{" "}
                         </p>
                       </React.Fragment>
                     }
@@ -600,9 +581,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
                     value={isAllSelected ? ["all"] : modelsSelected}
                     onChange={handleModelsChange}
                     renderValue={(selected) =>
-                      isAllSelected
-                        ? "All Available"
-                        : (selected as string[]).join(", ")
+                      isAllSelected ? "All Available" : (selected as string[]).join(", ")
                     }
                     MenuProps={MenuProps}
                     sx={{ mt: "15px", width: "380px" }}
@@ -623,19 +602,14 @@ const PackageForm: React.FC<ChildFormProps> = ({
                       (model) =>
                         !genUseModelsList.includes(model) && (
                           <MenuItem key={model} value={model}>
-                            <Checkbox
-                              checked={modelsSelected.includes(model)}
-                            />
+                            <Checkbox checked={modelsSelected.includes(model)} />
                             <ListItemText primary={model} />
                           </MenuItem>
-                        ),
+                        )
                     )}
                   </Select>
                   {formErrorState.models && (
-                    <div>
-                      One or more models need to be selected in order to
-                      continue
-                    </div>
+                    <div>One or more models need to be selected in order to continue</div>
                   )}
                 </FormControl>
               </div>
@@ -708,9 +682,9 @@ const PackageForm: React.FC<ChildFormProps> = ({
                     textFragment={
                       <React.Fragment>
                         <p>
-                          Data is natively represented in 3km grids. Selecting a
-                          boundary layer (e.g. county), provides data for grid
-                          cells that are intersected by the boundary file.
+                          Data is natively represented in 3km grids. Selecting a boundary layer
+                          (e.g. county), provides data for grid cells that are intersected by the
+                          boundary file.
                         </p>
                       </React.Fragment>
                     }
@@ -748,11 +722,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
                   }}
                   renderTags={(tagValue, getTagProps) => {
                     return tagValue.map((option, index) => (
-                      <Chip
-                        {...getTagProps({ index })}
-                        key={option}
-                        label={option}
-                      />
+                      <Chip {...getTagProps({ index })} key={option} label={option} />
                     ));
                   }}
                   renderInput={(params) => (
@@ -789,8 +759,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
                   />
                 </div>
                 <p>
-                  {localPackageSettings.rangeStart} -{" "}
-                  {localPackageSettings.rangeEnd}
+                  {localPackageSettings.rangeStart} - {localPackageSettings.rangeEnd}
                 </p>
               </div>
             </div>
@@ -810,8 +779,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
                           >
                             NetCDF (Network Common Data Form)
                           </a>{" "}
-                          is a machine-independent data array-oriented format
-                          for scientific data.
+                          is a machine-independent data array-oriented format for scientific data.
                         </p>
                       </React.Fragment>
                     }

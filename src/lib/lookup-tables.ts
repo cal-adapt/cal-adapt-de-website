@@ -73,9 +73,6 @@ export function filterByFlag(list: FlagTable[]): string[] {
 }
 
 // Create a lookup function that returns the value associated with a key in a lookup
-export function lookupValue(
-  key: string | number,
-  table: LookupTable,
-): string | undefined {
+export function lookupValue(key: string | number, table: LookupTable): string | undefined {
   return table[key];
 }

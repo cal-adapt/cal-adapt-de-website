@@ -8,13 +8,7 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  forwardRef,
-  useImperativeHandle,
-} from "react";
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 
 import {
   Map,
@@ -88,11 +82,7 @@ const throttledFetchPoint = throttle(
     variable: string,
     gwl: string,
     globalWarmingLevels: string[],
-    callback: (values: {
-      min: number | null;
-      max: number | null;
-      value: number | null;
-    }) => void,
+    callback: (values: { min: number | null; max: number | null; value: number | null }) => void
   ) => {
     const results: {
       min: number | null;
@@ -118,19 +108,19 @@ const throttledFetchPoint = throttle(
     // Retrieve value at point
     try {
       const valueRes = await fetchData(
-        `${BASE_URL}/point/${lng},${lat}?url=${encodeURIComponent(path)}&variable=${variable}`,
+        `${BASE_URL}/point/${lng},${lat}?url=${encodeURIComponent(path)}&variable=${variable}`
       );
       results.value = valueRes.data[gwlIndex];
 
       if (min_path) {
         const minRes = await fetchData(
-          `${BASE_URL}/point/${lng},${lat}?url=${encodeURIComponent(min_path)}&variable=${variable}`,
+          `${BASE_URL}/point/${lng},${lat}?url=${encodeURIComponent(min_path)}&variable=${variable}`
         );
         results.min = minRes.data[gwlIndex];
       }
       if (max_path) {
         const maxRes = await fetchData(
-          `${BASE_URL}/point/${lng},${lat}?url=${encodeURIComponent(max_path)}&variable=${variable}`,
+          `${BASE_URL}/point/${lng},${lat}?url=${encodeURIComponent(max_path)}&variable=${variable}`
         );
         results.max = maxRes.data[gwlIndex];
       }
@@ -144,15 +134,12 @@ const throttledFetchPoint = throttle(
   {
     leading: true, // Execute on the leading edge (immediate first call)
     trailing: true, // Execute on the trailing edge (final call)
-  },
+  }
 );
 
 // --- Component function ---
 const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
-  (
-    { metricSelected, gwlSelected, globalWarmingLevels, metrics, valueType },
-    ref,
-  ) => {
+  ({ metricSelected, gwlSelected, globalWarmingLevels, metrics, valueType }, ref) => {
     // --- Refs ---
     const mapRef = useRef<MapRef | null>(null);
     useImperativeHandle(ref, () => mapRef.current || undefined);
@@ -198,8 +185,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
 
     const currentVariable = paths.variable;
 
-    const currentGwl =
-      globalWarmingLevels[gwlSelected] || globalWarmingLevels[0];
+    const currentGwl = globalWarmingLevels[gwlSelected] || globalWarmingLevels[0];
 
     const isLoading = !mounted || !tileJson;
 
@@ -247,13 +233,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
 
     useEffect(() => {
       fetchTileJson();
-    }, [
-      metricSelected,
-      gwlSelected,
-      currentVariable,
-      currentVariableData,
-      currentGwl,
-    ]);
+    }, [metricSelected, gwlSelected, currentVariable, currentVariableData, currentGwl]);
 
     useEffect(() => {
       if (mapRef.current) {
@@ -263,11 +243,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
           const error = e.error;
 
           // Suppress specific tile errors
-          if (
-            error &&
-            error.status === 404 &&
-            error.url?.includes("WebMercatorQuad")
-          ) {
+          if (error && error.status === 404 && error.url?.includes("WebMercatorQuad")) {
             return;
           }
 
@@ -317,9 +293,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
 
       // Find the first layer that is either a symbol or a road line
       const referenceLayer = layers.find(
-        (layer) =>
-          layer.type === "symbol" ||
-          (layer.type === "line" && layer.id.includes("road")),
+        (layer) => layer.type === "symbol" || (layer.type === "line" && layer.id.includes("road"))
       )?.id;
 
       // Insert raster layer directly below reference layer
@@ -332,7 +306,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
             "raster-opacity": RASTER_TILE_LAYER_OPACITY,
           },
         },
-        referenceLayer,
+        referenceLayer
       );
 
       map.on("click", handleClick);
@@ -363,8 +337,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
         currentGwl,
         globalWarmingLevels,
         (info) => {
-          const isValid =
-            info.value !== null || info.min !== null || info.max !== null;
+          const isValid = info.value !== null || info.min !== null || info.max !== null;
 
           if (isValid) {
             setIsDataValid(true);
@@ -374,7 +347,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
           }
 
           setIsPopupLoading(false);
-        },
+        }
       );
     };
 
@@ -493,8 +466,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
                   const location =
                     result &&
                     (result.center ||
-                      (result.geometry?.type === "Point" &&
-                        result.geometry.coordinates));
+                      (result.geometry?.type === "Point" && result.geometry.coordinates));
                   if (location && mapRef.current) {
                     mapRef.current.flyTo({
                       center: location,
@@ -504,10 +476,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
                 }}
                 aria-label="Search location"
               />
-              <NavigationControl
-                position="top-right"
-                aria-label="Navigation controls"
-              />
+              <NavigationControl position="top-right" aria-label="Navigation controls" />
               <ScaleControl
                 position="bottom-right"
                 maxWidth={100}
@@ -554,7 +523,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
         </Box>
       </Grid>
     );
-  },
+  }
 );
 
 MapboxMap.displayName = "MapboxMap";

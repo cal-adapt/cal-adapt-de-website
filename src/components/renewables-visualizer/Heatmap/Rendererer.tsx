@@ -46,35 +46,23 @@ export default function Renderer({
       x: year,
       y: month,
       value: dataArr[yIdx][xIdx],
-    })),
+    }))
   );
 
   // scales
   const xScale = useMemo(() => {
-    return d3
-      .scaleBand<number>()
-      .range([-15, boundsWidth])
-      .domain(allXGroups)
-      .padding(0.01);
+    return d3.scaleBand<number>().range([-15, boundsWidth]).domain(allXGroups).padding(0.01);
   }, [boundsWidth, allXGroups]);
 
   const yScale = useMemo(() => {
-    return d3
-      .scaleBand<number>()
-      .range([boundsHeight, 0])
-      .domain(allYGroups)
-      .padding(0.01);
+    return d3.scaleBand<number>().range([boundsHeight, 0]).domain(allYGroups).padding(0.01);
   }, [boundsHeight, allYGroups]);
 
   // Create x-axis labels (for years)
   const xLabels = allXGroups.map((year: number, i: number) => {
     const xPos = xScale(year) ?? 0;
 
-    if (
-      (year && Number(year) % 5 == 0) ||
-      Number(year) == 0 ||
-      Number(year) == 14
-    ) {
+    if ((year && Number(year) % 5 == 0) || Number(year) == 0 || Number(year) == 14) {
       return (
         <text
           key={i}
@@ -106,35 +94,33 @@ export default function Renderer({
     );
   });
 
-  const allRects = heatmapData.map(
-    (d: { x: number; y: number; value: number }, i: number) => {
-      const x = xScale(d.x) ?? 0;
-      const y = yScale(d.y) ?? 0;
+  const allRects = heatmapData.map((d: { x: number; y: number; value: number }, i: number) => {
+    const x = xScale(d.x) ?? 0;
+    const y = yScale(d.y) ?? 0;
 
-      return (
-        <rect
-          key={i}
-          x={x}
-          y={y}
-          width={xScale.bandwidth()}
-          height={yScale.bandwidth()}
-          fill={colorScale(d.value)}
-          stroke="white"
-          onMouseEnter={() => {
-            setHoveredCell({
-              xLabel: `${d.x}`,
-              yLabel: lookupValue(String(d.y), monthsLookupTable) ?? "Unknown",
-              xPos: x + xScale.bandwidth() / 2 + MARGIN.left,
-              yPos: y + yScale.bandwidth() / 2 + MARGIN.top,
-              value: Math.round(d.value * 100) / 100,
-            });
-          }}
-          onMouseLeave={() => setHoveredCell(null)}
-          cursor="pointer"
-        />
-      );
-    },
-  );
+    return (
+      <rect
+        key={i}
+        x={x}
+        y={y}
+        width={xScale.bandwidth()}
+        height={yScale.bandwidth()}
+        fill={colorScale(d.value)}
+        stroke="white"
+        onMouseEnter={() => {
+          setHoveredCell({
+            xLabel: `${d.x}`,
+            yLabel: lookupValue(String(d.y), monthsLookupTable) ?? "Unknown",
+            xPos: x + xScale.bandwidth() / 2 + MARGIN.left,
+            yPos: y + yScale.bandwidth() / 2 + MARGIN.top,
+            value: Math.round(d.value * 100) / 100,
+          });
+        }}
+        onMouseLeave={() => setHoveredCell(null)}
+        cursor="pointer"
+      />
+    );
+  });
 
   return (
     <div className="heatmap">
@@ -148,9 +134,9 @@ export default function Renderer({
           {xLabels.map((label: React.ReactElement<any> | null, i: number) =>
             label
               ? React.cloneElement(label, {
-                y: boundsHeight + 60,
-              })
-              : null,
+                  y: boundsHeight + 60,
+                })
+              : null
           )}
           <text
             x={boundsWidth / 2}
@@ -167,4 +153,3 @@ export default function Renderer({
     </div>
   );
 }
-

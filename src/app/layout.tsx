@@ -5,10 +5,9 @@ import { Inter } from "next/font/google";
 
 import { LeftDrawerProvider } from "@/context/LeftDrawerContext";
 
-const ThemeRegistry = dynamic(
-  () => import("@/components/global/theme-registry/ThemeRegistry"),
-  { ssr: false },
-);
+const ThemeRegistry = dynamic(() => import("@/components/global/theme-registry/ThemeRegistry"), {
+  ssr: false,
+});
 const Navigation = dynamic(() => import("@/components/home/Navigation"), {
   ssr: false,
 });
@@ -32,9 +31,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className={inter.className}>
         <Navigation />
         <LeftDrawerProvider>
-          <ThemeRegistry options={{ key: "mui-theme" }}>
-            {children}
-          </ThemeRegistry>
+          <ThemeRegistry options={{ key: "mui-theme" }}>{children}</ThemeRegistry>
         </LeftDrawerProvider>
       </body>
     </html>

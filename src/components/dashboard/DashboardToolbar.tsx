@@ -13,7 +13,6 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 
-
 import { useSidePanel } from "@/context/SidePanelContext";
 
 interface ToolbarProps {
@@ -48,11 +47,7 @@ export default function CalDashToolbar({
         <Typography color="text.primary">{toolName}</Typography>
       </Breadcrumbs>
       {iconSrc && (
-        <Tooltip
-          TransitionComponent={Fade}
-          TransitionProps={{ timeout: 600 }}
-          title={tooltipTitle}
-        >
+        <Tooltip TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} title={tooltipTitle}>
           <IconButton onClick={toggleOpen}>
             <Image src={iconSrc} alt={iconAlt} />
           </IconButton>

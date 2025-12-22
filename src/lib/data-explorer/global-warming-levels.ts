@@ -20,4 +20,3 @@ export const globalWarmingLevelsList = [
     value: "3.0",
   },
 ];
-

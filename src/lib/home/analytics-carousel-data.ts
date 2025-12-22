@@ -25,8 +25,7 @@ export const analyticsCarouselData: CarouselData[] = [
     description:
       "Multiple methods for gaining access to the data for users with different needs and technical proficiency",
     image: "/img/homepage-carousels/fire-satellite.png",
-    imageAlt:
-      "A fire helicopter spraying an active wildfire, seen from satellite",
+    imageAlt: "A fire helicopter spraying an active wildfire, seen from satellite",
     link: "https://analytics.cal-adapt.org/data/access/",
   },
   {
@@ -39,4 +38,3 @@ export const analyticsCarouselData: CarouselData[] = [
     link: "https://analytics.cal-adapt.org/sign-in/",
   },
 ];
-

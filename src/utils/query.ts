@@ -1,7 +1,4 @@
-export function createOrStatement(
-  parameterName: string,
-  values: string[],
-): string {
+export function createOrStatement(parameterName: string, values: string[]): string {
   if (values.length === 0) {
     //throw new Error('Values array must not be empty');
     return "";

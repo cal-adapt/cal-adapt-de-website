@@ -1,4 +1,4 @@
-@import './../main/variables';
+@import "./../main/variables";
 
 // Drawer Toolbar
 .toolbar-main {
@@ -37,7 +37,6 @@
     border-radius: 16px;
     padding: 25px;
   }
-
 
   &--white {
     background-color: white;
@@ -103,7 +102,6 @@
 }
 
 .tool-container {
-
   &--padded {
     padding: 30px;
   }

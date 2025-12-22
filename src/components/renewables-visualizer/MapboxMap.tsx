@@ -1,24 +1,11 @@
 "use client";
 
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  forwardRef,
-  useImperativeHandle,
-} from "react";
+import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from "react";
 
 // --- Mapbox GL imports ---
 import "mapbox-gl/dist/mapbox-gl.css";
 import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import {
-  Marker,
-  Map,
-  MapMouseEvent,
-  NavigationControl,
-  ScaleControl,
-  MapRef,
-} from "react-map-gl";
+import { Marker, Map, MapMouseEvent, NavigationControl, ScaleControl, MapRef } from "react-map-gl";
 import GeocoderControl from "./GeocoderControl";
 import * as turf from "@turf/turf";
 
@@ -57,17 +44,7 @@ type MapboxMapProps = {
 
 // --- Component ---
 const MapboxMap = forwardRef<MapRef | null, MapboxMapProps>(
-  (
-    {
-      locationSelected,
-      setLocationSelected,
-      mapMarker,
-      setMapMarker,
-      height,
-      maskStr,
-    },
-    ref,
-  ) => {
+  ({ locationSelected, setLocationSelected, mapMarker, setMapMarker, height, maskStr }, ref) => {
     // --- Context state ---
     const { photoConfigSelected } = usePhotoConfig();
     const { installationSelected } = useInstallationPrms();
@@ -133,9 +110,7 @@ const MapboxMap = forwardRef<MapRef | null, MapboxMapProps>(
       handleLocationUpdate([e.lngLat.lng, e.lngLat.lat]);
     };
 
-    const handleMarkerDragEnd = (e: {
-      lngLat: { lng: number; lat: number };
-    }) => {
+    const handleMarkerDragEnd = (e: { lngLat: { lng: number; lat: number } }) => {
       handleLocationUpdate([e.lngLat.lng, e.lngLat.lat]);
     };
 
@@ -183,11 +158,7 @@ const MapboxMap = forwardRef<MapRef | null, MapboxMapProps>(
               />
             )}
             <NavigationControl position="bottom-left" />
-            <ScaleControl
-              position="bottom-right"
-              maxWidth={100}
-              unit="metric"
-            />
+            <ScaleControl position="bottom-right" maxWidth={100} unit="metric" />
             <GeocoderControl
               zoom={13}
               mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ""}
@@ -203,8 +174,8 @@ const MapboxMap = forwardRef<MapRef | null, MapboxMapProps>(
             textFragment={
               <React.Fragment>
                 <p>
-                  This location has land use or land cover restrictions. No data
-                  will be returned if selected.
+                  This location has land use or land cover restrictions. No data will be returned if
+                  selected.
                 </p>
               </React.Fragment>
             }
@@ -216,7 +187,7 @@ const MapboxMap = forwardRef<MapRef | null, MapboxMapProps>(
         </div>
       </div>
     );
-  },
+  }
 );
 
 MapboxMap.displayName = "MapboxMap";
