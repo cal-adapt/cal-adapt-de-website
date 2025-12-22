@@ -1,0 +1,23 @@
+// Media Queries
+// ==================================================================
+
+// Media Query (Max-Width)
+@mixin break-max($size) {
+  @media (max-width: $size - 1) {
+    @content;
+  }
+}
+
+// Media Query (Min-Width)
+@mixin break-min($size) {
+  @media (min-width: $size) {
+    @content;
+  }
+}
+
+// Media Query (Min-Width) and (Max-Width)
+@mixin break-min-max($min, $max) {
+  @media (min-width: $min) and (max-width: $max - 1) {
+    @content;
+  }
+}
