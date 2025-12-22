@@ -60,7 +60,7 @@ export const metricsList: Metric[] = [
             "min_path": 's3://cadcat/wrf/cae/mm4min/ssp370/gwl/R99p/d03',
             "max_path": 's3://cadcat/wrf/cae/mm4max/ssp370/gwl/R99p/d03',
             "description": 'Absolute 99th percentile 1-day accumulated precipitation',
-            "short_desc": 'How much more precipitation will fall on really heavy precipitation days',
+            "short_desc": 'How much precipitation will fall on really heavy precipitation days',
             "variable": 'R99p',
             "rescale": '0,265',
             "colormap": 'Blues',
