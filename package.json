@@ -1,13 +1,17 @@
 {
-  "name": "cal-adapt-data-download",
+  "name": "cal-adapt-3.0",
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prepare": "husky",
     "dev": "next dev",
     "build": "next build",
     "preview": "npx serve out",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write ."
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
@@ -37,18 +41,28 @@
     "url-loader": "^4.1.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
     "@types/aos": "^3.0.7",
     "@types/d3": "^7.4.3",
     "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
     "@types/node": "^20",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18",
-    "eslint": "^8",
+    "commitlint": "^20.2.0",
+    "eslint": "8.57.1",
     "eslint-config-next": "14.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
     "sass": "^1.69.5",
     "typescript": "^5"
   },
   "engines": {
     "node": "20.9.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "eslint --cache --fix",
+    "*.{js,jsx,ts,tsx,css,scss,md,html,json}": "prettier --write"
   }
 }
