@@ -6,10 +6,12 @@ frontend:
         - nvm install 20.9.0
         - nvm use 20.9.0
         - node -v
-        - npm ci
+        - corepack enable
+        - pnpm -v
+        - pnpm install --frozen-lockfile
     build:
       commands:
-        - npm run build
+        - pnpm build
   artifacts:
     baseDirectory: out
     files:
@@ -17,3 +19,5 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
+      - ~/.pnpm-store/**/*
+
