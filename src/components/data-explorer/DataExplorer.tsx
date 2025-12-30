@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect } from "react";
 
-import MapboxMap from "./Map";
+import MapboxMap from "./MapboxMap";
 import Grid from "@mui/material/Unstable_Grid2";
 import MapUI from "./MapUI";
 

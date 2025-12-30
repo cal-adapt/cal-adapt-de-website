@@ -8,7 +8,14 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+  useCallback,
+} from "react";
 
 import {
   Map,
@@ -71,7 +78,6 @@ type GeocoderResult = {
   };
 };
 
-// --- Throttled function to fetch value at point ---
 const throttledFetchPoint = throttle(
   async (
     lng: number,
@@ -137,15 +143,12 @@ const throttledFetchPoint = throttle(
   }
 );
 
-// --- Component function ---
 const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
   ({ metricSelected, gwlSelected, globalWarmingLevels, metrics, valueType }, ref) => {
-    // --- Refs ---
     const mapRef = useRef<MapRef | null>(null);
     useImperativeHandle(ref, () => mapRef.current || undefined);
     const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
 
-    // --- State ---
     const [mounted, setMounted] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [mapLoaded, setMapLoaded] = useState(false);
@@ -165,8 +168,13 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
     const [isPopupLoading, setIsPopupLoading] = useState(false);
     const [isDataValid, setIsDataValid] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
+    const prevSettingsRef = useRef<{
+      valueType: ValueType;
+      metricSelected: number;
+      gwlSelected: number;
+    } | null>(null);
 
-    // --- Derived state ---
+    // Derived state
     const currentVariableData: Metric = metrics[metricSelected];
     const paths = currentVariableData[`${valueType}`] as {
       colormap: string;
@@ -189,7 +197,6 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
 
     const isLoading = !mounted || !tileJson;
 
-    // --- Fetch tile JSON configuration from API ---
     const fetchTileJson = async () => {
       let colormap = paths.colormap.toLowerCase();
       const params = {
@@ -219,12 +226,10 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
       }
     };
 
-    // --- Effects ---
     useEffect(() => {
       setMounted(true);
     }, []);
 
-    // Cleanup throttledFetchPoint
     useEffect(() => {
       return () => {
         throttledFetchPoint.cancel();
@@ -309,49 +314,84 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
         referenceLayer
       );
 
-      map.on("click", handleClick);
+      map.on("click", handleMapClick);
       return () => {
-        map.off("click", handleClick);
+        map.off("click", handleMapClick);
       };
     }, [mapLoaded, tileJson]);
 
-    // --- Map click handler ---
-    const handleClick = (e: MapMouseEvent) => {
+    // Fetch popup data for a given location
+    const fetchPopupData = useCallback(
+      (lng: number, lat: number, updateKey: boolean = false) => {
+        setIsPopupLoading(true);
+
+        if (updateKey) {
+          const newClick = { lng, lat, key: Date.now() };
+          setClickCoords(newClick);
+        }
+
+        throttledFetchPoint(
+          lng,
+          lat,
+          paths.min_path || "",
+          paths.max_path || "",
+          paths.mean,
+          currentVariable,
+          currentGwl,
+          globalWarmingLevels,
+          (info) => {
+            const isValid = info.value !== null || info.min !== null || info.max !== null;
+
+            if (isValid) {
+              setIsDataValid(true);
+              setPopupInfo({ longitude: lng, latitude: lat, ...info });
+            } else {
+              setIsDataValid(false);
+            }
+
+            setIsPopupLoading(false);
+          }
+        );
+      },
+      [paths, currentVariable, currentGwl, globalWarmingLevels]
+    );
+
+    // Refetch popup data when settings change
+    useEffect(() => {
+      const currentSettings = { valueType, metricSelected, gwlSelected };
+
+      // Check if settings have changed
+      const settingsChanged =
+        !prevSettingsRef.current ||
+        prevSettingsRef.current.valueType !== currentSettings.valueType ||
+        prevSettingsRef.current.metricSelected !== currentSettings.metricSelected ||
+        prevSettingsRef.current.gwlSelected !== currentSettings.gwlSelected;
+
+      // Update ref with current settings
+      prevSettingsRef.current = currentSettings;
+
+      // Only refetch if settings have changed and there's an active popup
+      if (settingsChanged && clickCoords && showPopup) {
+        fetchPopupData(clickCoords.lng, clickCoords.lat, false);
+      }
+    }, [valueType, metricSelected, gwlSelected, clickCoords, showPopup, fetchPopupData]);
+
+    const handleMapClick = (e: MapMouseEvent) => {
       const { lng, lat } = e.lngLat;
       setShowPopup(false);
       setPopupInfo(null);
 
-      const newClick = { lng, lat, key: Date.now() };
-
-      setClickCoords(newClick);
-      setIsPopupLoading(true);
-
       setShowPopup(true);
-      throttledFetchPoint(
-        lng,
-        lat,
-        paths.min_path || "",
-        paths.max_path || "",
-        paths.mean,
-        currentVariable,
-        currentGwl,
-        globalWarmingLevels,
-        (info) => {
-          const isValid = info.value !== null || info.min !== null || info.max !== null;
-
-          if (isValid) {
-            setIsDataValid(true);
-            setPopupInfo({ longitude: lng, latitude: lat, ...info });
-          } else {
-            setIsDataValid(false);
-          }
-
-          setIsPopupLoading(false);
-        }
-      );
+      fetchPopupData(lng, lat, true);
     };
 
-    // --- Map load callback ---
+    // Initialize prevSettingsRef on mount
+    useEffect(() => {
+      if (prevSettingsRef.current === null) {
+        prevSettingsRef.current = { valueType, metricSelected, gwlSelected };
+      }
+    }, []);
+
     const handleMapLoad = (e: { target: import("mapbox-gl").Map }) => {
       if (!e.target) return;
       mapInstanceRef.current = e.target;
@@ -379,7 +419,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
       console.error("Map error:", error);
     };
 
-    // --- Conditional loading fallback ---
+    // Conditional loading fallback
     if (!mounted) {
       return (
         <Grid
