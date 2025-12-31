@@ -16,30 +16,22 @@
           "error",
           {
             "groups": [
-              // React & Next
+              // React and Next
               ["^react$", "^next"],
-
               // MUI
               ["^@mui"],
-
-              // Other scoped packages
+              // Scoped packages
               ["^@"],
-
-              // Other third-party packages
+              // Other packages
               ["^[a-z]"],
-
-              // Aliases (e.g. @/components)
+              // Aliases (e.g., @/components)
               ["^@/"],
-
-              // Parent imports
+              // Parent folder imports
               ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
-
               // Same-folder imports
               ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
-
               // Styles
               ["^.+\\.s?css$"],
-
               // Side effects
               ["^\\u0000"]
             ]
