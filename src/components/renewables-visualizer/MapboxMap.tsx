@@ -1,26 +1,26 @@
 "use client";
 
-import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
-// --- Mapbox GL imports ---
-import "mapbox-gl/dist/mapbox-gl.css";
-import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { Marker, Map, MapMouseEvent, NavigationControl, ScaleControl, MapRef } from "react-map-gl";
-import GeocoderControl from "./GeocoderControl";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import Fade from "@mui/material/Fade";
+
 import * as turf from "@turf/turf";
 
-// --- Material UI imports ---
-import Fade from "@mui/material/Fade";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { Map, MapMouseEvent, MapRef, Marker, NavigationControl, ScaleControl } from "react-map-gl";
 
-// --- Local component imports ---
-import HtmlTooltip from "../global/HtmlTooltip";
-import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useInstallationPrms } from "@/context/InstallationParamsContext";
+import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
+
+import HtmlTooltip from "../global/HtmlTooltip";
+
+import GeocoderControl from "./GeocoderControl";
+
+import "mapbox-gl/dist/mapbox-gl.css";
+import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import "@/styles/dashboard/mapbox-map.scss";
 
-// --- Constants ---
 const INITIAL_VIEW_STATE = {
   longitude: -120.4542,
   latitude: 37.4,
@@ -29,7 +29,6 @@ const INITIAL_VIEW_STATE = {
 
 const GRID_FILL_COLOR = "rgba(118, 150, 190, 0.8)";
 
-// --- Types and interfaces ---
 type Location = [number, number];
 
 type MapboxMapProps = {
@@ -42,31 +41,27 @@ type MapboxMapProps = {
   maskStr: string;
 };
 
-// --- Component ---
 const MapboxMap = forwardRef<MapRef | null, MapboxMapProps>(
   ({ locationSelected, setLocationSelected, mapMarker, setMapMarker, height, maskStr }, ref) => {
-    // --- Context state ---
     const { photoConfigSelected } = usePhotoConfig();
     const { installationSelected } = useInstallationPrms();
     const { resSelected } = useRes();
 
-    // --- Refs and state ---
     const mapRef = useRef<MapRef | null>(null);
     const [mapLoaded, setMapLoaded] = useState(false);
 
     const initialViewState = INITIAL_VIEW_STATE;
 
-    // --- Forward the internal ref to the parent using useImperativeHandle ---
+    // Forward the internal ref to the parent using useImperativeHandle
     useImperativeHandle(ref, () => mapRef.current as MapRef);
 
-    // --- Map load handler ---
     const handleMapLoad = (e: any) => {
       const map = e.target;
       mapRef.current = map;
       setMapLoaded(true);
     };
 
-    // --- Resize workaround to maintain map center ---
+    // Resize workaround to maintain map center
     const handleMapResize = () => {
       if (mapRef.current) {
         const currentCenter = mapRef.current.getCenter();
@@ -86,7 +81,7 @@ const MapboxMap = forwardRef<MapRef | null, MapboxMapProps>(
       };
     }, []);
 
-    // --- Location update logic from click or marker drag ---
+    // Location update logic from click or marker drag
     const handleLocationUpdate = (coordinates: [number, number]) => {
       if (mapRef.current) {
         const point = mapRef.current.project(coordinates);
@@ -105,7 +100,6 @@ const MapboxMap = forwardRef<MapRef | null, MapboxMapProps>(
       }
     };
 
-    // --- Click and marker handlers ---
     const handleMapClick = (e: MapMouseEvent) => {
       handleLocationUpdate([e.lngLat.lng, e.lngLat.lat]);
     };

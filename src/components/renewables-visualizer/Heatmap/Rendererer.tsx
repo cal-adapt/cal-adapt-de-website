@@ -1,10 +1,12 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo } from "react";
+
 import * as d3 from "d3";
+
+import { lookupValue, monthsLookupTable } from "@/lib/lookup-tables";
+
 import { InteractionData } from "./Heatmap";
 
 const MARGIN = { top: 0, right: 15, bottom: 65, left: 115 };
-
-import { lookupValue, monthsLookupTable } from "@/lib/lookup-tables";
 
 type RendererProps = {
   width: number;

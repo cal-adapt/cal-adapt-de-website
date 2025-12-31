@@ -1,3 +1,51 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": "next/core-web-vitals",
+  "plugins": ["simple-import-sort"],
+  "rules": {
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.js", "**/*.ts", "**/*.tsx"],
+      "rules": {
+        "simple-import-sort/imports": [
+          "error",
+          {
+            "groups": [
+              // React & Next
+              ["^react$", "^next"],
+
+              // MUI
+              ["^@mui"],
+
+              // Other scoped packages
+              ["^@"],
+
+              // Other third-party packages
+              ["^[a-z]"],
+
+              // Aliases (e.g. @/components)
+              ["^@/"],
+
+              // Parent imports
+              ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+
+              // Same-folder imports
+              ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+
+              // Styles
+              ["^.+\\.s?css$"],
+
+              // Side effects
+              ["^\\u0000"]
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

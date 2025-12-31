@@ -1,6 +1,8 @@
 import * as React from "react";
-import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
+
 import { styled, useTheme } from "@mui/material/styles";
+import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
+
 import PropTypes from "prop-types";
 
 const HtmlTooltipContent = styled(({ className, ...props }: TooltipProps) => (

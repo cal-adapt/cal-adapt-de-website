@@ -5,15 +5,15 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-import MapboxMap from "./MapboxMap";
 import Grid from "@mui/material/Unstable_Grid2";
-import MapUI from "./MapUI";
 
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
-
 import { metricsList } from "@/lib/data-explorer/metrics";
+
+import MapboxMap from "./MapboxMap";
+import MapUI from "./MapUI";
 
 export type ValueType = "abs" | "del";
 

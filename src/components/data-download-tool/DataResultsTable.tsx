@@ -2,20 +2,20 @@
 // Displays a filtered table of variables matching the user's selection.
 // Each row shows the human-readable variable name and a download button for that variable.
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
+import { Button } from "@mui/material";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Button } from "@mui/material";
 
-import { searchObject } from "@/utils/object";
+import { lookupValue, variablesLookupTable } from "@/lib/lookup-tables";
 import { handleDownload } from "@/utils/dom";
-import { variablesLookupTable, lookupValue } from "@/lib/lookup-tables";
+import { searchObject } from "@/utils/object";
 
 interface Variable {
   name: string;

@@ -1,7 +1,6 @@
 import RenewablesViz from "@/components/renewables-visualizer/RenewablesVisualizer";
-import { ApiResponse } from "@/components/renewables-visualizer/types";
-import { PhotoConfigProvider } from "@/context/PhotoConfigContext";
 import { InstallationPrmsProvider } from "@/context/InstallationParamsContext";
+import { PhotoConfigProvider } from "@/context/PhotoConfigContext";
 import { ResProvider } from "@/context/ResContext";
 
 export default async function RenewablesVizWrapper() {

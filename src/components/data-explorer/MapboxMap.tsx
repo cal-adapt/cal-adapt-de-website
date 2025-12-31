@@ -5,42 +5,44 @@
 
 "use client";
 
-import "mapbox-gl/dist/mapbox-gl.css";
-import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-
 import React, {
-  useState,
-  useEffect,
-  useRef,
   forwardRef,
-  useImperativeHandle,
   useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
 } from "react";
-
-import {
-  Map,
-  MapRef,
-  Layer,
-  Source,
-  MapMouseEvent,
-  NavigationControl,
-  ScaleControl,
-  LngLatBoundsLike,
-  ErrorEvent,
-} from "react-map-gl";
-import { throttle } from "lodash";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
 
-import "@/styles/dashboard/data-explorer.scss";
-import "@/styles/dashboard/mapbox-map.scss";
+import { throttle } from "lodash";
+import {
+  ErrorEvent,
+  Layer,
+  LngLatBoundsLike,
+  Map,
+  MapMouseEvent,
+  MapRef,
+  NavigationControl,
+  ScaleControl,
+  Source,
+} from "react-map-gl";
+
 import type { Metric } from "@/lib/data-explorer/metrics";
-import { MapLegend } from "./MapLegend";
-import { MapPopup } from "./MapPopup";
+
 import LoadingSpinner from "../global/LoadingSpinner";
 import GeocoderControl from "../renewables-visualizer/GeocoderControl";
+
 import type { ValueType } from "./DataExplorer";
+import { MapLegend } from "./MapLegend";
+import { MapPopup } from "./MapPopup";
+
+import "mapbox-gl/dist/mapbox-gl.css";
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import "@/styles/dashboard/data-explorer.scss";
+import "@/styles/dashboard/mapbox-map.scss";
 
 const INITIAL_VIEW_STATE = {
   longitude: -120,

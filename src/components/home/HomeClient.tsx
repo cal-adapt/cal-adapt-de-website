@@ -2,19 +2,22 @@
 
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
-import AOS from "aos";
-import "aos/dist/aos.css";
-import useEmblaCarousel from "embla-carousel-react";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Typography from "@mui/material/Typography";
-import Alert from "@mui/material/Alert";
 
-import styles from "@/app/page.module.scss";
-import HeroSecondary from "./HeroSecondary";
-import Card from "./Card";
-import ImageText from "./ImageText";
-import { genCarouselData } from "./../../lib/home/gen-carousel-data";
+import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+import AOS from "aos";
+import useEmblaCarousel from "embla-carousel-react";
+
 import { analyticsCarouselData } from "./../../lib/home/analytics-carousel-data";
+import { genCarouselData } from "./../../lib/home/gen-carousel-data";
+import Card from "./Card";
+import HeroSecondary from "./HeroSecondary";
+import ImageText from "./ImageText";
+
+import "aos/dist/aos.css";
+import styles from "@/app/page.module.scss";
 
 const ToolCarousel = dynamic(() => import("./ToolCarousel"), { ssr: false });
 const Footer = dynamic(() => import("./Footer"), { ssr: false });

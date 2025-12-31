@@ -1,10 +1,10 @@
 "use client";
+
 import * as React from "react";
 
-import useMediaQuery from "@mui/material/useMediaQuery";
-
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import "@/styles/home/hero-secondary.scss";
 

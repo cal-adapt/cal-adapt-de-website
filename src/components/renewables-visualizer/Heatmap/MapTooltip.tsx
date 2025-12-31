@@ -1,4 +1,5 @@
 import { InteractionData } from "./Heatmap";
+
 import "@/styles/dashboard/heatmap.scss";
 
 type TooltipProps = {

@@ -1,55 +1,50 @@
 "use client";
 
-import React, { ReactElement, ReactNode, useState } from "react";
-
+import React, { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import useMediaQuery from "@mui/material/useMediaQuery";
-
-import { SidePanelProvider } from "@/context/SidePanelContext";
-import { useLeftDrawer } from "@/context/LeftDrawerContext";
-declare module "@mui/material/Alert" {
-  interface AlertPropsVariantOverrides {
-    purple: true;
-    grey: true;
-  }
-}
-
-// Material elements
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
+import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
 import {
+  AppBar,
   Box,
   CssBaseline,
-  AppBar,
-  Toolbar,
-  Typography,
   IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Typography,
 } from "@mui/material";
-import { styled } from "@mui/system";
-import { useTheme } from "@mui/material/styles";
-
 import Button from "@mui/material/Button";
-import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
-import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-
-import "@/styles/dashboard/dashboard.scss";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { styled } from "@mui/system";
 
 import CalDashToolbar from "@/components/dashboard/DashboardToolbar";
+import { useLeftDrawer } from "@/context/LeftDrawerContext";
+import { SidePanelProvider } from "@/context/SidePanelContext";
 import { extractSegment } from "@/utils/url";
 
 import packageIcon from "../../../public/img/icons/package.svg";
 import settingsIcon from "../../../public/img/icons/settings.svg";
-import sidebarBg from "../../../public/img/photos/ocean-thumbnail.png";
 import logo from "../../../public/img/logos/cal-adapt-data-download.png";
+import sidebarBg from "../../../public/img/photos/ocean-thumbnail.png";
+
+import "@/styles/dashboard/dashboard.scss";
+
+declare module "@mui/material/Alert" {
+  interface AlertPropsVariantOverrides {
+    purple: true;
+    grey: true;
+  }
+}
 
 const drawerWidth = 212;
 interface LayoutProps {

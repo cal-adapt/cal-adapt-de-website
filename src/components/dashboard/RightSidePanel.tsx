@@ -3,6 +3,7 @@
 // Wraps Material UI's Drawer with consistent styling and layout for sidebar content.
 
 import React from "react";
+
 import Drawer, { DrawerProps } from "@mui/material/Drawer";
 
 import "@/styles/dashboard/sidepanel.scss";

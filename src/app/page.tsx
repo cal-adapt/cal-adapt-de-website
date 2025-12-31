@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 
-import { ParallaxContext } from "@/context/Parallax";
 import HeroMain from "@/components/home/HeroMain";
+import { ParallaxContext } from "@/context/Parallax";
 
 // Lazy-load the interactive homepage body
 const HomeClient = dynamic(() => import("@/components/home/HomeClient"), {
