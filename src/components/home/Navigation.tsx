@@ -1,24 +1,21 @@
 "use client";
-import * as React from "react";
-import { useState, useEffect, useRef } from "react";
 
+import * as React from "react";
+import { useState } from "react";
 import Image from "next/image";
 
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import MenuIcon from "@mui/icons-material/Menu";
+import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
+import Container from "@mui/material/Container";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
-import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 
 import logo from "../../../public/img/logos/cal-adapt-logo-white.svg";
 

@@ -4,27 +4,26 @@
 // or wind installation design parameters (for wind).
 // Uses contexts for shared state across the app.
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-import Typography from "@mui/material/Typography";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { Button, FormControl } from "@mui/material";
 import Fade from "@mui/material/Fade";
-import { FormControl, Button } from "@mui/material";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormLabel from "@mui/material/FormLabel";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormLabel from "@mui/material/FormLabel";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Typography from "@mui/material/Typography";
+
+import { useInstallationPrms } from "@/context/InstallationParamsContext";
+import { usePhotoConfig } from "@/context/PhotoConfigContext";
+import { useRes } from "@/context/ResContext";
+import { tooltipsList } from "@/lib/tooltips";
 
 import HtmlTooltip from "../global/HtmlTooltip";
-
-import { usePhotoConfig } from "@/context/PhotoConfigContext";
-import { useInstallationPrms } from "@/context/InstallationParamsContext";
-import { useRes } from "@/context/ResContext";
-
-import { tooltipsList } from "@/lib/tooltips";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

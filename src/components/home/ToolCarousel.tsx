@@ -1,17 +1,17 @@
 "use client";
+
 import * as React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+
+import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Fab from "@mui/material/Fab";
+import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import useEmblaCarousel from "embla-carousel-react";
-
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Typography from "@mui/material/Typography";
-import Fab from "@mui/material/Fab";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 
 import "@/styles/home/tool-carousel.scss";
 

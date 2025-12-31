@@ -1,13 +1,14 @@
 "use client";
 
-import * as d3 from "d3";
-import { ScaleSequential } from "d3-scale";
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState } from "react";
 
-import Renderer from "@/components/renewables-visualizer/Heatmap/Rendererer";
+import * as d3 from "d3";
+
 import MapTooltip from "@/components/renewables-visualizer/Heatmap/MapTooltip";
+import Renderer from "@/components/renewables-visualizer/Heatmap/Rendererer";
 
 import { ColorLegend } from "./ColorLegend";
+
 import "@/styles/dashboard/heatmap.scss";
 
 const colorSwitchLabel = {

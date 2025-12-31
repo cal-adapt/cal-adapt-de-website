@@ -1,17 +1,20 @@
 // MapPopup
 // A styled popup component displayed on the Mapbox map.
 // Shows mean/min/max climate data values at the clicked point, or a loading spinner / no-data alert based on state.
+
 "use client";
 
 import { useMemo } from "react";
+
+import CloseIcon from "@mui/icons-material/Close";
+import Alert from "@mui/material/Alert";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+
 import { Popup } from "react-map-gl";
 
-import Typography from "@mui/material/Typography";
-import CloseIcon from "@mui/icons-material/Close";
-import IconButton from "@mui/material/IconButton";
-import Alert from "@mui/material/Alert";
-
 import LoadingSpinner from "@/components/global/LoadingSpinner";
+
 import "@/styles/dashboard/mapbox-map.scss";
 
 type MapPopupProps = {

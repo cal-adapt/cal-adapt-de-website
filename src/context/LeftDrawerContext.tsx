@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import React, { createContext, ReactNode, useContext, useState } from "react";
 
 const DRAWER_WIDTH = 212;
 

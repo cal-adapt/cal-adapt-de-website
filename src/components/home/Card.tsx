@@ -3,9 +3,9 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 
-import Typography from "@mui/material/Typography";
-import Fab from "@mui/material/Fab";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
+import Fab from "@mui/material/Fab";
+import Typography from "@mui/material/Typography";
 
 import "@/styles/home/card.scss";
 

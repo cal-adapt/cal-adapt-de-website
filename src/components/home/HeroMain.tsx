@@ -1,17 +1,19 @@
 "use client";
+
 import * as React from "react";
+import { useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
-import { useEffect, useRef, useCallback } from "react";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Typography from "@mui/material/Typography";
-
-import "@/styles/home/hero-main.scss";
-import sky from "../../../public/img/homepage-hero/sky.webp";
-import rocks from "../../../public/img/homepage-hero/rocks.webp";
-import mouse from "../../../public/img/homepage-hero/mouse.webp";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { ParallaxBanner, ParallaxBannerLayer } from "react-scroll-parallax";
+
+import mouse from "../../../public/img/homepage-hero/mouse.webp";
+import rocks from "../../../public/img/homepage-hero/rocks.webp";
+import sky from "../../../public/img/homepage-hero/sky.webp";
+
+import "@/styles/home/hero-main.scss";
 
 function HeroMain() {
   const introTextRef = useRef<HTMLDivElement | null>(null);

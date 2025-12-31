@@ -1,9 +1,9 @@
 import dynamic from "next/dynamic";
-
-import "@/styles/globals.scss";
 import { Inter } from "next/font/google";
 
 import { LeftDrawerProvider } from "@/context/LeftDrawerContext";
+
+import "@/styles/globals.scss";
 
 const ThemeRegistry = dynamic(() => import("@/components/global/theme-registry/ThemeRegistry"), {
   ssr: false,

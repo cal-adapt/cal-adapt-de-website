@@ -10,8 +10,8 @@ import Fade from "@mui/material/Fade";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 
 import { useSidePanel } from "@/context/SidePanelContext";
 

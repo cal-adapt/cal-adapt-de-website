@@ -1,7 +1,8 @@
-import * as React from "react";
 import { useState } from "react";
-import { useControl, Marker, MarkerProps, ControlPosition } from "react-map-gl";
+
 import MapboxGeocoder, { GeocoderOptions } from "@mapbox/mapbox-gl-geocoder";
+
+import { ControlPosition, MarkerProps, useControl } from "react-map-gl";
 
 type GeocoderResult = {
   center?: [number, number];

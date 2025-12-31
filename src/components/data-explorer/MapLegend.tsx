@@ -4,15 +4,14 @@
 
 "use client";
 
-import * as d3 from "d3";
-import { scaleSequential, scaleQuantize, scaleLinear } from "d3-scale";
-import * as d3Chromatic from "d3-scale-chromatic";
-
 import React, { useEffect, useRef } from "react";
 
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+
+import * as d3 from "d3";
+import * as d3Chromatic from "d3-scale-chromatic";
 
 type MapLegendProps = {
   colormap: string;

@@ -3,19 +3,38 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import EditLocationOutlinedIcon from "@mui/icons-material/EditLocationOutlined";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import Accordion, { AccordionSlots } from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Fade from "@mui/material/Fade";
-import CloseIcon from "@mui/icons-material/Close";
-import EditLocationOutlinedIcon from "@mui/icons-material/EditLocationOutlined";
 import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Fade from "@mui/material/Fade";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Unstable_Grid2";
+
+import SidePanel from "@/components/dashboard/RightSidePanel";
+import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
+import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
+import { useInstallationPrms } from "@/context/InstallationParamsContext";
+import { usePhotoConfig } from "@/context/PhotoConfigContext";
+import { useRes } from "@/context/ResContext";
+import { useSidePanel } from "@/context/SidePanelContext";
+import { gwlYearEstimateData } from "@/lib/renewables-visualizer/gwl-year-estimates";
+
+import LoadingSpinner from "../global/LoadingSpinner";
+
+import VizPrmsForm from "./VisualizationParamsForm";
+
+import "@/styles/dashboard/renewables-visualizer.scss";
 
 declare module "@mui/material/Alert" {
   interface AlertPropsVariantOverrides {
@@ -23,25 +42,7 @@ declare module "@mui/material/Alert" {
     grey: true;
   }
 }
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Unstable_Grid2";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 
-import SidePanel from "@/components/dashboard/RightSidePanel";
-import { useSidePanel } from "@/context/SidePanelContext";
-import { usePhotoConfig } from "@/context/PhotoConfigContext";
-import { useInstallationPrms } from "@/context/InstallationParamsContext";
-import { useRes } from "@/context/ResContext";
-import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
-import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
-import VizPrmsForm from "./VisualizationParamsForm";
-import "@/styles/dashboard/renewables-visualizer.scss";
-import LoadingSpinner from "../global/LoadingSpinner";
-
-import { gwlYearEstimateData } from "@/lib/renewables-visualizer/gwl-year-estimates";
-
-// --- Constants ---
 const MAP_HEIGHT = 550;
 const HEATMAP_HEIGHT = 500;
 const ITEM_HEIGHT = 48;

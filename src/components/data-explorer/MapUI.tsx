@@ -4,29 +4,29 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import InputLabel from "@mui/material/InputLabel";
-import Typography from "@mui/material/Typography";
-import HtmlTooltip from "../global/HtmlTooltip";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { FormControl, Button } from "@mui/material";
-import Popover from "@mui/material/Popover";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import QuestionMarkOutlinedIcon from "@mui/icons-material/QuestionMarkOutlined";
+import { FormControl } from "@mui/material";
+import Box from "@mui/material/Box";
+import Fab from "@mui/material/Fab";
+import Fade from "@mui/material/Fade";
+import Grid from "@mui/material/Grid";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
-import Fade from "@mui/material/Fade";
-import Fab from "@mui/material/Fab";
-import QuestionMarkOutlinedIcon from "@mui/icons-material/QuestionMarkOutlined";
-import Tabs from "@mui/material/Tabs";
+import Popover from "@mui/material/Popover";
+import Select from "@mui/material/Select";
 import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import Typography from "@mui/material/Typography";
 
-import type { Metric } from "@/lib/data-explorer/metrics";
+import HtmlTooltip from "@/components/global/HtmlTooltip";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
+import type { Metric } from "@/lib/data-explorer/metrics";
 import { tooltipsList } from "@/lib/tooltips";
+
 import type { ValueType } from "./DataExplorer";
 
 const ITEM_HEIGHT = 48;

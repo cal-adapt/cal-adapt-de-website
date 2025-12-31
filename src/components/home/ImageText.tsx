@@ -3,8 +3,8 @@
 import * as React from "react";
 import Image from "next/image";
 
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 
 import "@/styles/home/image-text.scss";
 

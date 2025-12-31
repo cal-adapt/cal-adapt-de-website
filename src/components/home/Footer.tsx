@@ -1,23 +1,23 @@
 "use client";
+
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Accordion, { accordionClasses, AccordionSlots } from "@mui/material/Accordion";
+import AccordionDetails, { accordionDetailsClasses } from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import Fade from "@mui/material/Fade";
+import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import Typography from "@mui/material/Typography";
-import Accordion, { AccordionSlots, accordionClasses } from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails, { accordionDetailsClasses } from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Fade from "@mui/material/Fade";
-
-import "@/styles/home/footer.scss";
-
-import gifLogo from "../../../public/img/logos/gif.svg";
-import eagleRockLogo from "../../../public/img/logos/eagle-rock.svg";
 import BerkeleyLabLogo from "../../../public/img/logos/berkeley-lab.jpg";
 import cecLogo from "../../../public/img/logos/cec.svg";
+import eagleRockLogo from "../../../public/img/logos/eagle-rock.svg";
+import gifLogo from "../../../public/img/logos/gif.svg";
+
+import "@/styles/home/footer.scss";
 
 function Footer() {
   const [expanded, setExpanded] = React.useState(false);

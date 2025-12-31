@@ -1,6 +1,7 @@
 import React from "react";
 
 import DataDownload from "@/components/data-download-tool/DataDownloadTool";
+
 import "@/styles/dashboard/data-download-tool.scss";
 
 async function getData() {

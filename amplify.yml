@@ -20,4 +20,3 @@ frontend:
     paths:
       - node_modules/**/*
       - ~/.pnpm-store/**/*
-

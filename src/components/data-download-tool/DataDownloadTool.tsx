@@ -3,20 +3,15 @@
 // Allows users to select a data package, customize options, and download climate datasets in bulk.
 
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
 
-import { downloadZip } from "client-zip";
+import React, { useCallback, useEffect, useState } from "react";
 
-import Alert from "@mui/material/Alert";
-declare module "@mui/material/Alert" {
-  interface AlertPropsVariantOverrides {
-    purple: true;
-    grey: true;
-  }
-}
-import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import UndoOutlinedIcon from "@mui/icons-material/UndoOutlined";
+import WatchLaterOutlined from "@mui/icons-material/WatchLaterOutlined";
+import Alert from "@mui/material/Alert";
+import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -24,28 +19,35 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Fade from "@mui/material/Fade";
 import IconButton from "@mui/material/IconButton";
-import WatchLaterOutlined from "@mui/icons-material/WatchLaterOutlined";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import UndoOutlinedIcon from "@mui/icons-material/UndoOutlined";
+
+import { downloadZip } from "client-zip";
 
 import SidePanel from "@/components/dashboard/RightSidePanel";
-import { useSidePanel } from "@/context/SidePanelContext";
 import PackageForm from "@/components/data-download-tool/PackageForm";
-import { apiParamStrs, varUrl, modelVarUrls } from "@/lib/data-download/types";
-import { dataPackages } from "@/lib/data-download/data-packages";
-import { createOrStatement } from "@/utils/query";
-import { stringToArray, arrayToCommaSeparatedString, splitStringByPeriod } from "@/utils/string";
-import { extractFilenameFromURL } from "@/utils/url";
-import { getTodaysDateAsString } from "@/utils/date";
+import { useSidePanel } from "@/context/SidePanelContext";
 import { useDidMountEffect, useLocalStorageState } from "@/hooks";
+import { dataPackages } from "@/lib/data-download/data-packages";
+import { apiParamStrs, modelVarUrls, varUrl } from "@/lib/data-download/types";
 import {
-  variablesLookupTable,
-  scenariosLookupTable,
-  lookupValue,
   filterByFlag,
+  lookupValue,
   modelsGenUseLookupTable,
+  scenariosLookupTable,
+  variablesLookupTable,
 } from "@/lib/lookup-tables";
+import { getTodaysDateAsString } from "@/utils/date";
+import { createOrStatement } from "@/utils/query";
+import { arrayToCommaSeparatedString, splitStringByPeriod, stringToArray } from "@/utils/string";
+import { extractFilenameFromURL } from "@/utils/url";
+
+declare module "@mui/material/Alert" {
+  interface AlertPropsVariantOverrides {
+    purple: true;
+    grey: true;
+  }
+}
 
 type DataDownloadProps = {
   data: any; // TODO: Consider replacing with a more specific type for maintainability

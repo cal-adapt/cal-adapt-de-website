@@ -3,33 +3,34 @@
 // Allows users to review, configure, and validate data packages before downloading them,
 // including selecting variables, models, scenarios, counties, and frequency.
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import UndoOutlinedIcon from "@mui/icons-material/UndoOutlined";
+import { Button, FormControl } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Checkbox from "@mui/material/Checkbox";
 import Chip from "@mui/material/Chip";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import ListItemText from "@mui/material/ListItemText";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { FormControl, Button } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import UndoOutlinedIcon from "@mui/icons-material/UndoOutlined";
-import Tooltip from "@mui/material/Tooltip";
 import Fade from "@mui/material/Fade";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import IconButton from "@mui/material/IconButton";
+import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
-import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
+import MenuItem from "@mui/material/MenuItem";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import TextField from "@mui/material/TextField";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 
-import { searchObject } from "@/utils/object";
+import HtmlTooltip from "@/components/global/HtmlTooltip";
+import LoadingSpinner from "@/components/global/LoadingSpinner";
 import { useDidMountEffect } from "@/hooks";
-import DataResultsTable from "./DataResultsTable";
-import HtmlTooltip from "../global/HtmlTooltip";
-import { variablesLookupTable, scenariosLookupTable, lookupValue } from "@/lib/lookup-tables";
-import LoadingSpinner from "../global/LoadingSpinner";
+import { lookupValue, scenariosLookupTable, variablesLookupTable } from "@/lib/lookup-tables";
 import { tooltipsList } from "@/lib/tooltips";
+import { searchObject } from "@/utils/object";
+
+import DataResultsTable from "./DataResultsTable";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
