@@ -4,10 +4,10 @@
 // or wind installation design parameters (for wind).
 // Uses contexts for shared state across the app.
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { Button, FormControl } from "@mui/material";
+import { FormControl } from "@mui/material";
 import Fade from "@mui/material/Fade";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
@@ -15,15 +15,14 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 
+import HtmlTooltip from "@/components/global/HtmlTooltip";
 import { useInstallationPrms } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
 import { tooltipsList } from "@/lib/tooltips";
-
-import HtmlTooltip from "../global/HtmlTooltip";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -272,12 +271,6 @@ export default function VizPrmsForm({
             </div>
           </div>
         )}
-
-        {/**                <div className="cta">
-                    <Button onClick={() => {
-                        handleSubmit()
-                    }} variant="contained">Refresh your visualization</Button>
-                </div> */}
       </div>
     </div>
   );

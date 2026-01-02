@@ -23,9 +23,8 @@ import {
   Typography,
 } from "@mui/material";
 import Button from "@mui/material/Button";
-import { useTheme } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { styled } from "@mui/system";
 
 import CalDashToolbar from "@/components/dashboard/DashboardToolbar";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";

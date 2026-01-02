@@ -7,13 +7,19 @@ import Fade from "@mui/material/Fade";
 
 import * as turf from "@turf/turf";
 
-import { Map, MapMouseEvent, MapRef, Marker, NavigationControl, ScaleControl } from "react-map-gl";
+import {
+  Map,
+  MapMouseEvent,
+  MapRef,
+  Marker,
+  NavigationControl,
+  ScaleControl,
+} from "react-map-gl/mapbox";
 
+import HtmlTooltip from "@/components/global/HtmlTooltip";
 import { useInstallationPrms } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
-
-import HtmlTooltip from "../global/HtmlTooltip";
 
 import GeocoderControl from "./GeocoderControl";
 

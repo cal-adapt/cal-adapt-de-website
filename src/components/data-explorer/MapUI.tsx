@@ -84,8 +84,6 @@ export default function MapUI({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [renderKey, setRenderKey] = useState(0);
-
   const handleMetricChange = (event: any) => {
     console.log("handleMetricChange");
     const newMetricId = event.target.value as number;
@@ -110,11 +108,6 @@ export default function MapUI({
   const helpOpen = Boolean(helpAnchorEl);
   const id = "help-popover";
   const labelledBy = "help-popover-title";
-
-  // --- Drawer re-render ---
-  useEffect(() => {
-    setRenderKey((prev) => prev + 1);
-  }, [open]);
 
   useEffect(() => {
     // --- Auto-open help popover on load ---
@@ -174,7 +167,6 @@ export default function MapUI({
               <div className="map-ui__parameter-selection">
                 <div className="map-ui__value-type">
                   <Box
-                    key={renderKey}
                     sx={{
                       width: fullWidthUIItem,
                     }}

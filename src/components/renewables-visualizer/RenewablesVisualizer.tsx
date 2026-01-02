@@ -22,6 +22,7 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
 
 import SidePanel from "@/components/dashboard/RightSidePanel";
+import LoadingSpinner from "@/components/global/LoadingSpinner";
 import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
 import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
 import { useInstallationPrms } from "@/context/InstallationParamsContext";
@@ -29,8 +30,6 @@ import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
 import { useSidePanel } from "@/context/SidePanelContext";
 import { gwlYearEstimateData } from "@/lib/renewables-visualizer/gwl-year-estimates";
-
-import LoadingSpinner from "../global/LoadingSpinner";
 
 import VizPrmsForm from "./VisualizationParamsForm";
 

@@ -3,8 +3,6 @@ import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
 
-import PropTypes from "prop-types";
-
 const HtmlTooltipContent = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -38,11 +36,6 @@ const HtmlTooltip: React.FC<HtmlTooltipProps> = ({ textFragment, iconFragment, .
       </HtmlTooltipContent>
     </div>
   );
-};
-
-HtmlTooltip.propTypes = {
-  textFragment: PropTypes.node.isRequired,
-  iconFragment: PropTypes.element.isRequired,
 };
 
 export default HtmlTooltip;
