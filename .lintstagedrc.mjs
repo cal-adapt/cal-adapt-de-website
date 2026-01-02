@@ -1,9 +1,9 @@
 import path from "path";
 
 const buildEslintCommand = (filenames) =>
-  `next lint --file ${filenames.map((f) => path.relative(process.cwd(), f)).join(" --file ")}`;
+  `eslint --fix ${filenames.map((f) => `"${path.relative(process.cwd(), f)}"`).join(" ")}`;
 
 export default {
-  "**/*.ts?(x)": ["prettier --write", buildEslintCommand],
-  "**/*.{js,jsx}": ["prettier --write", buildEslintCommand],
+  "*.{js,jsx,ts,tsx}": [buildEslintCommand],
+  "*.{js,jsx,ts,tsx,css,scss,md,html,json}": "prettier --write",
 };

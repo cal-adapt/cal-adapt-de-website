@@ -11,7 +11,7 @@ import Alert from "@mui/material/Alert";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 
-import { Popup } from "react-map-gl";
+import { Popup } from "react-map-gl/mapbox";
 
 import LoadingSpinner from "@/components/global/LoadingSpinner";
 

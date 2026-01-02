@@ -1,4 +1,4 @@
-@import "./../main/variables";
+@use "../../styles/main/variables" as *;
 
 // Drawer Toolbar
 .toolbar-main {
@@ -9,6 +9,7 @@
 // logo
 .cal-adapt-logo {
   margin: 16px auto;
+
   &__mobile {
     margin: 0 auto;
   }
@@ -85,8 +86,8 @@
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
-  justify-content: center; /* Horizontal centering */
-  align-items: center; /* Vertical centering */
+  justify-content: center;
+  align-items: center;
 
   &__container {
     height: 90%;
@@ -96,7 +97,7 @@
     display: flex;
     gap: 50px;
     flex-direction: column;
-    justify-content: center; /* Horizontal centering */
+    justify-content: center;
     text-align: center;
   }
 }

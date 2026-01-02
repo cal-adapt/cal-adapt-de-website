@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import MapboxGeocoder, { GeocoderOptions } from "@mapbox/mapbox-gl-geocoder";
 
-import { ControlPosition, MarkerProps, useControl } from "react-map-gl";
+import { ControlPosition, MarkerProps, useControl } from "react-map-gl/mapbox";
 
 type GeocoderResult = {
   center?: [number, number];
@@ -26,7 +26,6 @@ type GeocoderControlProps = Omit<GeocoderOptions, "accessToken" | "mapboxgl" | "
   onError?: (e: object) => void;
 };
 
-/* eslint-disable complexity,max-statements */
 export default function GeocoderControl(props: GeocoderControlProps) {
   const [marker, setMarker] = useState(null);
 

@@ -1,4 +1,4 @@
-@import "./../main.scss";
+@use "../main" as *;
 
 .footer {
   color: #fff;
@@ -28,6 +28,7 @@
     padding-right: 100px;
     flex-basis: 50%;
     position: relative;
+
     @include break-max($break-lg) {
       flex-basis: none;
       border-right: 0;
@@ -43,6 +44,7 @@
       width: 1px;
       background-color: white;
       z-index: 1;
+
       @include break-max($break-lg) {
         display: none;
       }

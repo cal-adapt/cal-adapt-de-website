@@ -5,7 +5,7 @@
 
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Grid from "@mui/material/Unstable_Grid2";
 
@@ -21,16 +21,15 @@ const BASE_URL = "https://map.cal-adapt.org" as const;
 const DEF_GWL = 1.5;
 
 export default function DataExplorer() {
-  // --- Drawer: only run this when you're adding leftDrawer functionality ---
+  // Drawer: only run this when you're adding leftDrawer functionality
   const { toggleLeftDrawer } = useLeftDrawer();
 
-  // --- State management ---
   const [gwlSelected, setGwlSelected] = useState<number>(0);
   const [metricSelected, setMetricSelected] = useState<number>(0);
   const [valueType, setValueType] = useState<"abs" | "del">("abs");
   const [globalWarmingLevelsList, setGlobalWarmingLevelsList] = useState<string[]>([]);
 
-  // --- Fetch GWL data when metric or value type changes ---
+  // Fetch GWL data when metric or value type changes
   async function fetchGWL() {
     if (metricSelected >= 0) {
       const variableConfig = metricsList[metricSelected][valueType];

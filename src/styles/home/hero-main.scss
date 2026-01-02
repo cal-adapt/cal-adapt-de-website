@@ -1,4 +1,4 @@
-@import "./../main.scss";
+@use "../main" as *;
 
 .homepage-hero {
   width: 100%;
@@ -60,11 +60,13 @@
         display: flex;
         flex-direction: column;
         margin: 20px 0;
+
         span {
           display: inline-block; // ← make the span rotatable
           transform-origin: center; // ← rotate about its center
           transform: rotate(-90deg);
         }
+
         .mouse {
           margin: 20px auto;
         }

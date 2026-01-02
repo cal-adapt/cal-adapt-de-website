@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import dynamic from "next/dynamic";
 
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
@@ -10,17 +9,17 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import AOS from "aos";
 import useEmblaCarousel from "embla-carousel-react";
 
-import { analyticsCarouselData } from "./../../lib/home/analytics-carousel-data";
-import { genCarouselData } from "./../../lib/home/gen-carousel-data";
+import { analyticsCarouselData } from "@/lib/home/analytics-carousel-data";
+import { genCarouselData } from "@/lib/home/gen-carousel-data";
+
 import Card from "./Card";
+import Footer from "./Footer";
 import HeroSecondary from "./HeroSecondary";
 import ImageText from "./ImageText";
+import ToolCarousel from "./ToolCarousel";
 
 import "aos/dist/aos.css";
 import styles from "@/app/page.module.scss";
-
-const ToolCarousel = dynamic(() => import("./ToolCarousel"), { ssr: false });
-const Footer = dynamic(() => import("./Footer"), { ssr: false });
 
 export default function HomeClient() {
   useEffect(() => {

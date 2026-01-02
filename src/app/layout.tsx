@@ -1,23 +1,18 @@
-import dynamic from "next/dynamic";
+import { Metadata } from "next";
 import { Inter } from "next/font/google";
 
+import ThemeRegistry from "@/components/global/theme-registry/ThemeRegistry";
+import Navigation from "@/components/home/Navigation";
 import { LeftDrawerProvider } from "@/context/LeftDrawerContext";
 
 import "@/styles/globals.scss";
-
-const ThemeRegistry = dynamic(() => import("@/components/global/theme-registry/ThemeRegistry"), {
-  ssr: false,
-});
-const Navigation = dynamic(() => import("@/components/home/Navigation"), {
-  ssr: false,
-});
 
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Cal-Adapt",
   description: "Climate Tools and Data",
 };

@@ -5,14 +5,7 @@
 
 "use client";
 
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
@@ -20,20 +13,17 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { throttle } from "lodash";
 import {
   ErrorEvent,
-  Layer,
   LngLatBoundsLike,
   Map,
   MapMouseEvent,
   MapRef,
   NavigationControl,
   ScaleControl,
-  Source,
-} from "react-map-gl";
+} from "react-map-gl/mapbox";
 
+import LoadingSpinner from "@/components/global/LoadingSpinner";
+import GeocoderControl from "@/components/renewables-visualizer/GeocoderControl";
 import type { Metric } from "@/lib/data-explorer/metrics";
-
-import LoadingSpinner from "../global/LoadingSpinner";
-import GeocoderControl from "../renewables-visualizer/GeocoderControl";
 
 import type { ValueType } from "./DataExplorer";
 import { MapLegend } from "./MapLegend";
