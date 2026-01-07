@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
-import { metricsList } from "@/lib/data-explorer/metrics";
+import { metrics } from "@/data/data-explorer/metrics";
 
 import MapboxMap from "./MapboxMap";
 import MapUI from "./MapUI";
@@ -32,7 +32,7 @@ export default function DataExplorer() {
   // Fetch GWL data when metric or value type changes
   async function fetchGWL() {
     if (metricSelected >= 0) {
-      const variableConfig = metricsList[metricSelected][valueType];
+      const variableConfig = metrics[metricSelected][valueType];
       const params = {
         url: variableConfig.mean,
         variable: variableConfig.variable,
@@ -86,7 +86,7 @@ export default function DataExplorer() {
         setMetricSelected={setMetricSelected}
         setGwlSelected={setGwlSelected}
         globalWarmingLevels={globalWarmingLevelsList}
-        metrics={metricsList}
+        metrics={metrics}
         valueType={valueType}
         setValueType={setValueType}
       />
@@ -94,7 +94,7 @@ export default function DataExplorer() {
         gwlSelected={gwlSelected}
         metricSelected={metricSelected}
         globalWarmingLevels={globalWarmingLevelsList}
-        metrics={metricsList}
+        metrics={metrics}
         valueType={valueType}
       />
     </Grid>

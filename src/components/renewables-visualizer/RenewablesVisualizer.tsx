@@ -29,7 +29,7 @@ import { useInstallationPrms } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
 import { useSidePanel } from "@/context/SidePanelContext";
-import { gwlYearEstimateData } from "@/lib/renewables-visualizer/gwl-year-estimates";
+import { gwlYearEstimateData } from "@/data/renewables-visualizer/gwl-year-estimates";
 
 import VizPrmsForm from "./VisualizationParamsForm";
 

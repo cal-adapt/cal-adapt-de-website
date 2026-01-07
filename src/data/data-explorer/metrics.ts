@@ -24,7 +24,7 @@ export type Metric = {
   };
 };
 
-export const metricsList: Metric[] = [
+export const metrics: Metric[] = [
   {
     id: 0,
     title: "Extreme Heat",

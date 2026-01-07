@@ -25,9 +25,9 @@ import Typography from "@mui/material/Typography";
 
 import HtmlTooltip from "@/components/global/HtmlTooltip";
 import LoadingSpinner from "@/components/global/LoadingSpinner";
-import { useDidMountEffect } from "@/hooks";
-import { lookupValue, scenariosLookupTable, variablesLookupTable } from "@/lib/lookup-tables";
-import { tooltipsList } from "@/lib/tooltips";
+import { lookupValue, scenariosLookupTable, variablesLookupTable } from "@/data/lookup-tables";
+import { tooltips } from "@/data/tooltips";
+import useDidMountEffect from "@/hooks/use-did-mount-effect";
 import { searchObject } from "@/utils/object";
 
 import DataResultsTable from "./DataResultsTable";
@@ -85,7 +85,7 @@ interface ChildFormProps {
   handleLocalPackageClear: () => void;
   onFormDataSubmit: () => unknown;
   createZip: (links: string[], extraFilenameStr: string) => Promise<void>;
-  bytesToGBOrMB: (bytes: number) => string;
+  formatBytes: (bytes: number) => string;
   isLoading: boolean;
   setIsLoading: (state: boolean) => void;
   isBundling: boolean;
@@ -141,7 +141,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
   createZip,
   isDataDaily,
   totalDataSize,
-  bytesToGBOrMB,
+  formatBytes,
   isLoading,
   setIsLoading,
   isBundling,
@@ -296,7 +296,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
           </Typography>
           {dataResponse.length > 0 && !isLoading ? (
             <div>
-              <span>(estimated bundle size {bytesToGBOrMB(totalDataSize)})</span>
+              <span>(estimated bundle size {formatBytes(totalDataSize)})</span>
               <IconButton
                 className="inline float-right"
                 sx={{ mt: "-8px" }}
@@ -623,7 +623,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
                   <HtmlTooltip
                     textFragment={
                       <React.Fragment>
-                        <p>{tooltipsList[1].long_text}</p>
+                        <p>{tooltips[1].long_text}</p>
                       </React.Fragment>
                     }
                     iconFragment={<InfoOutlinedIcon />}

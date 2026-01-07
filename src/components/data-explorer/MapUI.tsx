@@ -24,8 +24,8 @@ import Typography from "@mui/material/Typography";
 
 import HtmlTooltip from "@/components/global/HtmlTooltip";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
-import type { Metric } from "@/lib/data-explorer/metrics";
-import { tooltipsList } from "@/lib/tooltips";
+import type { Metric } from "@/data/data-explorer/metrics";
+import { tooltips } from "@/data/tooltips";
 
 import type { ValueType } from "./DataExplorer";
 
@@ -191,7 +191,7 @@ export default function MapUI({
                       <HtmlTooltip
                         textFragment={
                           <React.Fragment>
-                            <p>{tooltipsList[0].long_text}</p>
+                            <p>{tooltips[0].long_text}</p>
                           </React.Fragment>
                         }
                         iconFragment={<InfoOutlinedIcon />}
@@ -233,7 +233,7 @@ export default function MapUI({
                       <HtmlTooltip
                         textFragment={
                           <React.Fragment>
-                            <p>{tooltipsList[1].long_text}</p>
+                            <p>{tooltips[1].long_text}</p>
                           </React.Fragment>
                         }
                         iconFragment={<InfoOutlinedIcon />}

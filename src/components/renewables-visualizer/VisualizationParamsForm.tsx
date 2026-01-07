@@ -18,11 +18,11 @@ import RadioGroup from "@mui/material/RadioGroup";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 
-import HtmlTooltip from "@/components/global/HtmlTooltip";
+import HtmlTooltip from "@/components/common/ui/HtmlTooltip";
 import { useInstallationPrms } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
-import { tooltipsList } from "@/lib/tooltips";
+import { tooltips } from "@/data/tooltips";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -102,7 +102,7 @@ export default function VizPrmsForm({
               <HtmlTooltip
                 textFragment={
                   <React.Fragment>
-                    <p>{tooltipsList[2].long_text}</p>
+                    <p>{tooltips[2].long_text}</p>
                   </React.Fragment>
                 }
                 iconFragment={<InfoOutlinedIcon />}
@@ -142,7 +142,7 @@ export default function VizPrmsForm({
               <HtmlTooltip
                 textFragment={
                   <React.Fragment>
-                    <p>{tooltipsList[0].long_text}</p>
+                    <p>{tooltips[0].long_text}</p>
                   </React.Fragment>
                 }
                 iconFragment={<InfoOutlinedIcon />}

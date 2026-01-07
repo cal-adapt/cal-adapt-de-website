@@ -1,6 +1,4 @@
-type LookupTable = {
-  [key: string]: string;
-};
+export type LookupTable = Record<string, string>;
 
 interface FlagTable {
   value: string;

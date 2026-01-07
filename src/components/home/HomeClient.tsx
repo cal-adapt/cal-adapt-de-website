@@ -9,8 +9,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import AOS from "aos";
 import useEmblaCarousel from "embla-carousel-react";
 
-import { analyticsCarouselData } from "@/lib/home/analytics-carousel-data";
-import { genCarouselData } from "@/lib/home/gen-carousel-data";
+import { analyticsCarouselData } from "@/data/home/analytics-carousel-data";
+import { genCarouselData } from "@/data/home/gen-carousel-data";
 
 import Card from "./Card";
 import Footer from "./Footer";

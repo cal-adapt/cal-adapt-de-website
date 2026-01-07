@@ -13,7 +13,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
-import { lookupValue, variablesLookupTable } from "@/lib/lookup-tables";
+import { lookupValue, variablesLookupTable } from "@/data/lookup-tables";
 import { handleDownload } from "@/utils/dom";
 import { searchObject } from "@/utils/object";
 

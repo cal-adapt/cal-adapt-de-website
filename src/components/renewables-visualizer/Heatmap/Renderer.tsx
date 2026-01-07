@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 
 import * as d3 from "d3";
 
-import { lookupValue, monthsLookupTable } from "@/lib/lookup-tables";
+import { lookupValue, monthsLookupTable } from "@/data/lookup-tables";
 
 import { InteractionData } from "./Heatmap";
 

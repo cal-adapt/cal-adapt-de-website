@@ -27,17 +27,19 @@ import { downloadZip } from "client-zip";
 import SidePanel from "@/components/dashboard/RightSidePanel";
 import PackageForm from "@/components/data-download-tool/PackageForm";
 import { useSidePanel } from "@/context/SidePanelContext";
-import { useDidMountEffect, useLocalStorageState } from "@/hooks";
-import { dataPackages } from "@/lib/data-download/data-packages";
-import { apiParamStrs, modelVarUrls, varUrl } from "@/lib/data-download/types";
+import { dataPackages } from "@/data/data-download/data-packages";
+import { apiParamStrs, modelVarUrls, varUrl } from "@/data/data-download/types";
 import {
   filterByFlag,
   lookupValue,
   modelsGenUseLookupTable,
   scenariosLookupTable,
   variablesLookupTable,
-} from "@/lib/lookup-tables";
+} from "@/data/lookup-tables";
+import useDidMountEffect from "@/hooks/use-did-mount-effect";
+import useLocalStorageState from "@/hooks/use-local-storage-state";
 import { getTodaysDateAsString } from "@/utils/date";
+import { formatBytes } from "@/utils/format";
 import { createOrStatement } from "@/utils/query";
 import { arrayToCommaSeparatedString, splitStringByPeriod, stringToArray } from "@/utils/string";
 import { extractFilenameFromURL } from "@/utils/url";
@@ -268,17 +270,6 @@ export default function DataDownload({ data }: DataDownloadProps) {
   }
 
   // --- Utility functions ---
-  function bytesToGBOrMB(bytes: number): string {
-    const fileSizeInGB = bytes / (1024 * 1024 * 1024);
-    const fileSizeInMB = bytes / (1024 * 1024);
-
-    if (fileSizeInGB >= 1) {
-      return fileSizeInGB.toFixed(2) + " GB";
-    } else {
-      return fileSizeInMB.toFixed(2) + " MB";
-    }
-  }
-
   const createZip = useCallback(
     async (links: string[], name: string) => {
       showLoadingIndicator();
@@ -680,7 +671,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
             setDownloadLinks={setDownloadLinks}
             isDataDaily={isDataDaily}
             totalDataSize={totalDataSize}
-            bytesToGBOrMB={bytesToGBOrMB}
+            formatBytes={formatBytes}
             isLoading={isLoading}
             setIsLoading={setIsLoading}
             isBundling={isBundling}

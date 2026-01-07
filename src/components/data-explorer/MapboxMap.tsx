@@ -23,7 +23,7 @@ import {
 
 import LoadingSpinner from "@/components/global/LoadingSpinner";
 import GeocoderControl from "@/components/renewables-visualizer/GeocoderControl";
-import type { Metric } from "@/lib/data-explorer/metrics";
+import type { Metric } from "@/data/data-explorer/metrics";
 
 import type { ValueType } from "./DataExplorer";
 import { MapLegend } from "./MapLegend";

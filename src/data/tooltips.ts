@@ -1,4 +1,11 @@
-export const tooltipsList = [
+export interface Tooltip {
+  id: number;
+  title: string;
+  long_text: string;
+  short_text: string;
+}
+
+export const tooltips: Tooltip[] = [
   {
     id: 0,
     title: "Global Warming Level",
