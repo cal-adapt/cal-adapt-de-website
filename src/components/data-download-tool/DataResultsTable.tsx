@@ -2,9 +2,8 @@
 // Displays a filtered table of variables matching the user's selection.
 // Each row shows the human-readable variable name and a download button for that variable.
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-import { Button } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -13,6 +12,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
+import Button from "@/components/common/ui/Button";
 import { lookupValue, variablesLookupTable } from "@/data/lookup-tables";
 import { handleDownload } from "@/utils/dom";
 import { searchObject } from "@/utils/object";
@@ -60,8 +60,6 @@ const DataResultsTable: React.FC<DataResultsProps> = ({ varsResData, selectedVar
               </TableCell>
               <TableCell align="right">
                 <Button
-                  variant="contained"
-                  color="primary"
                   onClick={() => {
                     handleDownload(variable.href);
                   }}

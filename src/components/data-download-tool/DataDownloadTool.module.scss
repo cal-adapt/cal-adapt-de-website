@@ -1,0 +1,56 @@
+@use "@/styles/abstracts" as *;
+
+.container {
+  padding: 30px;
+}
+
+.packagesGrid {
+  margin: 16px 0;
+  display: flex;
+  justify-content: flex-start;
+  gap: 30px;
+}
+
+.package {
+  width: 50%;
+}
+
+.packageName {
+  // Package title styling
+}
+
+.packageSettings {
+  list-style-type: none;
+  margin: 25px 0;
+
+  li {
+    p {
+      display: inline-block;
+    }
+  }
+}
+
+.packageContents {
+  padding-top: 20px;
+
+  .lds-spinner {
+    width: 80px;
+    height: 80px;
+    margin-top: -180px;
+  }
+}
+
+.loadingScreen {
+  display: grid;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.variablesGroup {
+  svg {
+    width: 25px;
+    height: 25px;
+    margin-left: 0;
+    margin-bottom: -1px;
+  }
+}

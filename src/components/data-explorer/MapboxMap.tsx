@@ -21,8 +21,8 @@ import {
   ScaleControl,
 } from "react-map-gl/mapbox";
 
-import LoadingSpinner from "@/components/global/LoadingSpinner";
-import GeocoderControl from "@/components/renewables-visualizer/GeocoderControl";
+import GeocoderControl from "@/components/common/map/GeocoderControl";
+import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import type { Metric } from "@/data/data-explorer/metrics";
 
 import type { ValueType } from "./DataExplorer";
@@ -31,8 +31,6 @@ import { MapPopup } from "./MapPopup";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import "@/styles/dashboard/data-explorer.scss";
-import "@/styles/dashboard/mapbox-map.scss";
 
 const INITIAL_VIEW_STATE = {
   longitude: -120,

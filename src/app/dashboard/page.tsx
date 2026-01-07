@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
 
 export default function Dashboard(): ReactNode {
-  return <div className="tool-container tool-container--padded">Getting Started</div>;
+  return <div style={{ padding: "32px" }}>Getting Started</div>;
 }

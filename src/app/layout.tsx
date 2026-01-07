@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import ThemeRegistry from "@/components/global/theme-registry/ThemeRegistry";
-import Navigation from "@/components/home/Navigation";
+import Navigation from "@/components/common/layout/Navigation";
+import ThemeRegistry from "@/components/common/theme/ThemeRegistry";
 import { LeftDrawerProvider } from "@/context/LeftDrawerContext";
 
-import "@/styles/globals.scss";
+import "@/styles/global.scss";
 
 const inter = Inter({
   subsets: ["latin"],

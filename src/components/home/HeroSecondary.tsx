@@ -1,39 +1,32 @@
 "use client";
 
-import * as React from "react";
-
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import "@/styles/home/hero-secondary.scss";
+import clsx from "clsx";
 
-function HeroSecondary() {
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const path = event.currentTarget.getAttribute("data-path");
-    if (path) {
-      window.open(path, "_blank", "noopener,noreferrer");
-    }
-  };
+import Button from "@/components/common/ui/Button";
 
+import styles from "./HeroSecondary.module.scss";
+
+export default function HeroSecondary() {
   const isMobile = useMediaQuery("(max-width:992px)");
 
   return (
-    <div className="secondary-hero">
-      <div className="secondary-hero__bg">
+    <div className={styles.heroSecondary}>
+      <div className={styles.background}>
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="bg-video"
           //poster="/fallback-image.jpg"
         >
           <source src="/img/homepage-misc/wildfire-footage.webm" type="video/webm" />
           Your browser does not support the video tag
         </video>
       </div>
-      <div className="secondary-hero__content">
+      <div className={styles.content}>
         <Typography variant="h2">Mapping Wildfire Weather</Typography>
         <Typography variant="body1">
           The Data Explorer Tool provides an interactive map to visualize key climate indicators,
@@ -41,11 +34,9 @@ function HeroSecondary() {
           across California.
         </Typography>
         <Button
-          className={isMobile ? "hidden" : ""}
-          data-path="/dashboard/data-explorer?metric=fire-weather"
-          variant="contained"
-          color="primary"
-          onClick={handleClick}
+          variant="secondary"
+          className={clsx({ hidden: isMobile })}
+          href="/dashboard/data-explorer?metric=fire-weather"
         >
           See it in the Data Explorer
         </Button>
@@ -53,5 +44,3 @@ function HeroSecondary() {
     </div>
   );
 }
-
-export default HeroSecondary;

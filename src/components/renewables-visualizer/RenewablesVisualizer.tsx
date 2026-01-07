@@ -12,17 +12,19 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import Accordion, { AccordionSlots } from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Fade from "@mui/material/Fade";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
 
-import SidePanel from "@/components/dashboard/RightSidePanel";
-import LoadingSpinner from "@/components/global/LoadingSpinner";
+import clsx from "clsx";
+
+import Alert from "@/components/common/ui/Alert";
+import Button from "@/components/common/ui/Button";
+import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
+import SidePanel from "@/components/dashboard/SidePanel";
 import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
 import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
 import { useInstallationPrms } from "@/context/InstallationParamsContext";
@@ -33,14 +35,7 @@ import { gwlYearEstimateData } from "@/data/renewables-visualizer/gwl-year-estim
 
 import VizPrmsForm from "./VisualizationParamsForm";
 
-import "@/styles/dashboard/renewables-visualizer.scss";
-
-declare module "@mui/material/Alert" {
-  interface AlertPropsVariantOverrides {
-    purple: true;
-    grey: true;
-  }
-}
+import styles from "./RenewablesVisualizer.module.scss";
 
 const MAP_HEIGHT = 550;
 const HEATMAP_HEIGHT = 500;
@@ -102,10 +97,9 @@ export default function RenewablesViz() {
     if (resSelected == 0) {
       // solar
       return photoConfigSelected === "Utility Configuration" ? "srdumask" : "srddmask";
-    } else if (resSelected == 1) {
-      // wind
-      return installationSelected == 0 ? "wrdnmask" : "wrdfmask";
     }
+    // wind (resSelected == 1)
+    return installationSelected == 0 ? "wrdnmask" : "wrdfmask";
   }, [resSelected, photoConfigSelected, installationSelected]);
 
   // Parameters state
@@ -371,13 +365,9 @@ export default function RenewablesViz() {
   }, []);
 
   return (
-    <Box
-      className="renewables-tool tool-container tool-container--padded"
-      aria-label="Renewables Visualizer"
-      role="region"
-    >
+    <Box className={styles.container} aria-label="Renewables Visualizer" role="region">
       {/* Intro section */}
-      <Box className="renewables-tool__intro" style={{ maxWidth: "860px" }}>
+      <Box className={styles.intro} style={{ maxWidth: "860px" }}>
         <Typography variant="h4" aria-label="Renewables Visualizer Title">
           Renewables Visualizer
         </Typography>
@@ -404,10 +394,10 @@ export default function RenewablesViz() {
         {/* Heatmap parameters section */}
         <Grid xs={12}>
           <Box>
-            <Box className="flex-params">
-              <Box className="flex-params__item">
+            <Box className={styles.flexParams}>
+              <Box className={styles.flexParamsItem}>
                 <Typography
-                  className="option-group__title"
+                  className={styles.optionGroupTitle}
                   variant="body2"
                   aria-label="Resource of interest"
                 >
@@ -420,9 +410,9 @@ export default function RenewablesViz() {
                   {resList[resSelected]}
                 </Typography>
               </Box>
-              <Box className="flex-params__item">
+              <Box className={styles.flexParamsItem}>
                 <Typography
-                  className="option-group__title"
+                  className={styles.optionGroupTitle}
                   variant="body2"
                   aria-label="Global Warming Level"
                 >
@@ -436,9 +426,9 @@ export default function RenewablesViz() {
                 </Typography>
               </Box>
               {resSelected == 0 && ( // Solar configuration
-                <Box className="flex-params__item">
+                <Box className={styles.flexParamsItem}>
                   <Typography
-                    className="option-group__title"
+                    className={styles.optionGroupTitle}
                     variant="body2"
                     aria-label="Photovoltaic Configuration"
                   >
@@ -453,9 +443,9 @@ export default function RenewablesViz() {
                 </Box>
               )}
               {resSelected == 1 && ( // Wind installation
-                <Box className="flex-params__item">
+                <Box className={styles.flexParamsItem}>
                   <Typography
-                    className="option-group__title"
+                    className={styles.optionGroupTitle}
                     variant="body2"
                     aria-label="Installation type"
                   >
@@ -470,38 +460,39 @@ export default function RenewablesViz() {
                 </Box>
               )}
 
-              <Box className="flex-params__item">
-                <Typography className="inline" variant="subtitle1" aria-label="Edit parameters">
+              <Box className={styles.flexParamsItem}>
+                <Typography
+                  className={styles.inline}
+                  variant="subtitle1"
+                  aria-label="Edit parameters"
+                >
                   Edit parameters
                 </Typography>
-                <IconButton className="inline" onClick={toggleOpen} aria-label="Open settings">
+                <IconButton
+                  className={styles.inline}
+                  onClick={toggleOpen}
+                  aria-label="Open settings"
+                >
                   <SettingsOutlinedIcon />
                 </IconButton>
               </Box>
             </Box>
             {/* Global warming level information */}
             {queriedData && !isLoading && isPointValid && (
-              <Box className="alerts" sx={{ maxWidth: "100%" }}>
-                <Alert
-                  variant="filled"
-                  severity="info"
-                  color="info"
-                  aria-label="Global models estimate information"
-                >
+              <Box className={styles.alerts} sx={{ maxWidth: "100%" }}>
+                <Alert variant="info" ariaLabel="Global models estimate information">
                   Global models estimate that {gwlYearEstimateData[gwlSelected].name}° global
                   warming levels (GWL) will be reached between{" "}
                   <strong>{gwlYearEstimateData[gwlSelected].estimatedStartYear}</strong> and{" "}
                   <strong>{gwlYearEstimateData[gwlSelected].estimatedEndYear}</strong>
-                  <Box className="cta">
+                  <div className={styles.cta}>
                     <Button
-                      variant="contained"
-                      target="_blank"
                       href="https://cmip5.cal-adapt.org/blog/understanding-warming-levels"
-                      aria-label="Learn more about GWL"
+                      ariaLabel="Learn more about GWL"
                     >
                       Learn more about GWL
                     </Button>
-                  </Box>
+                  </div>
                 </Alert>
               </Box>
             )}
@@ -549,7 +540,9 @@ export default function RenewablesViz() {
               <AccordionSummary
                 onClick={handleSummaryClick}
                 expandIcon={
-                  apiParams.point !== null ? <ExpandMoreIcon className="rotated-icon" /> : null
+                  apiParams.point !== null ? (
+                    <ExpandMoreIcon className={styles.rotatedIcon} />
+                  ) : null
                 }
                 aria-controls="panel1-content"
                 id="panel1-header"
@@ -564,7 +557,7 @@ export default function RenewablesViz() {
               >
                 <EditLocationOutlinedIcon aria-label="Edit location" />
                 <Typography
-                  className="inline"
+                  className={styles.inline}
                   variant="h5"
                   style={{
                     marginLeft: "10px",
@@ -594,7 +587,7 @@ export default function RenewablesViz() {
                 sx={{ marginBottom: "30px" }}
                 style={{ display: accordionExpanded ? "none" : "block" }}
               >
-                <Alert variant="grey" severity="info">
+                <Alert variant="grey">
                   You have selected a location with land use or land cover restrictions. No data
                   will be returned.&nbsp;
                   <span
@@ -610,18 +603,13 @@ export default function RenewablesViz() {
             {locationStatus === "data" && (
               <Box
                 ref={heatmapContainerRef}
-                className={"renewables-tool__heatmap" + (isLoading ? " loading-screen" : "")}
+                className={clsx(styles.heatmap, {
+                  [styles.loading]: isLoading,
+                })}
                 style={{ display: accordionExpanded ? "none" : "block" }}
               >
                 {isLoading && (
-                  <Box
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
-                  >
+                  <Box className={styles.loadingContainer}>
                     <LoadingSpinner aria-label="Loading heatmap data" />
                   </Box>
                 )}
@@ -642,8 +630,8 @@ export default function RenewablesViz() {
 
           {/* Locator map section */}
           <Grid xs={accordionExpanded ? 12 : 3.5} sx={{ alignItems: "flex-end" }}>
-            <AccordionDetails className="custom-accordion-details">
-              <Box className="renewables-tool__map">
+            <AccordionDetails className={styles.customAccordionDetails}>
+              <Box className={styles.map}>
                 <MapboxMap
                   mapMarker={mapMarker}
                   setMapMarker={setMapMarker}
@@ -661,7 +649,7 @@ export default function RenewablesViz() {
       </Accordion>
 
       {/** SidePanel */}
-      <Box className="renewables-tool__sidepanel">
+      <Box className={styles.sidepanel}>
         <SidePanel
           anchor="right"
           variant="temporary"

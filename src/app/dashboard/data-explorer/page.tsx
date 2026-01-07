@@ -1,9 +1,7 @@
 import { Suspense } from "react";
 
+import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import DataExplorer from "@/components/data-explorer/DataExplorer";
-import LoadingSpinner from "@/components/global/LoadingSpinner";
-
-import "@/styles/dashboard/data-explorer.scss";
 
 export default async function DataExplorerWrapper() {
   return (

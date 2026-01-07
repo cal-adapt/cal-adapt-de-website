@@ -16,16 +16,14 @@ import {
   ScaleControl,
 } from "react-map-gl/mapbox";
 
-import HtmlTooltip from "@/components/global/HtmlTooltip";
+import GeocoderControl from "@/components/common/map/GeocoderControl";
+import HtmlTooltip from "@/components/common/ui/HtmlTooltip";
 import { useInstallationPrms } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
 
-import GeocoderControl from "./GeocoderControl";
-
 import "mapbox-gl/dist/mapbox-gl.css";
 import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import "@/styles/dashboard/mapbox-map.scss";
 
 const INITIAL_VIEW_STATE = {
   longitude: -120.4542,

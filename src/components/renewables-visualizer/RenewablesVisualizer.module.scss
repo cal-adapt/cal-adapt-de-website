@@ -1,0 +1,117 @@
+@use "@/styles/abstracts" as *;
+
+.container {
+  max-width: 1200px;
+  padding: 30px;
+}
+
+.intro {
+  margin: 0 16px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.heatmap {
+  transition: width 1s ease;
+
+  &.loading {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    height: 300px;
+  }
+}
+
+.map {
+  width: 100%;
+}
+
+.sidepanel {
+  // Container for sidepanel positioning if needed
+}
+
+.invalidPointScreen {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 0;
+}
+
+.alerts {
+  margin-left: 103px;
+  margin-right: 14px;
+}
+
+.cta {
+  margin-top: 15px;
+}
+
+.mapTooltip {
+  position: absolute;
+  background-color: white;
+  border-radius: 16px;
+  color: black;
+  padding: 5px;
+  margin-left: 15px;
+  transform: translateY(-50%);
+  z-index: 1000;
+
+  &:after {
+    content: "";
+    position: absolute;
+    border-width: 5px;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-color: transparent black transparent transparent;
+  }
+}
+
+.customAccordionDetails {
+  display: block !important;
+  padding-top: 0px;
+  z-index: 1;
+}
+
+.rotatedIcon {
+  transform: rotate(90deg);
+}
+
+.flexParams {
+  display: flex;
+  gap: 40px;
+  margin: 0 0 35px 0;
+  justify-content: flex-end;
+}
+
+.flexParamsItem {
+  // Individual parameter display item
+}
+
+.optionGroupTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+
+  svg {
+    width: 15px;
+    margin-left: 5px;
+    height: 15px;
+    margin-bottom: -2px;
+  }
+}
+
+.inline {
+  display: inline-flex;
+  align-items: center;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

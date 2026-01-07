@@ -9,7 +9,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import UndoOutlinedIcon from "@mui/icons-material/UndoOutlined";
-import { Button, FormControl } from "@mui/material";
+import { FormControl } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Checkbox from "@mui/material/Checkbox";
 import Chip from "@mui/material/Chip";
@@ -23,14 +23,17 @@ import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
-import HtmlTooltip from "@/components/global/HtmlTooltip";
-import LoadingSpinner from "@/components/global/LoadingSpinner";
+import Button from "@/components/common/ui/Button";
+import HtmlTooltip from "@/components/common/ui/HtmlTooltip";
+import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import { lookupValue, scenariosLookupTable, variablesLookupTable } from "@/data/lookup-tables";
 import { tooltips } from "@/data/tooltips";
 import useDidMountEffect from "@/hooks/use-did-mount-effect";
 import { searchObject } from "@/utils/object";
 
 import DataResultsTable from "./DataResultsTable";
+
+import styles from "./PackageForm.module.scss";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -288,7 +291,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
   }
 
   return (
-    <div className="package-form">
+    <div className={styles.packageForm}>
       {sidebarState === "download" && (
         <div className={"package-contents" + (isLoading ? " loading-screen" : "")}>
           <Typography className="inline" variant="h5">
@@ -793,18 +796,14 @@ const PackageForm: React.FC<ChildFormProps> = ({
                 <p>{localPackageSettings.dataFormat}</p>
               </div>
             </div>
-
-            <div className="cta">
-              <Button
-                onClick={() => {
-                  handleSubmit();
-                }}
-                variant="contained"
-                color="secondary"
-              >
-                Download your data
-              </Button>
-            </div>
+            <Button
+              className={styles.downloadButton}
+              onClick={() => {
+                handleSubmit();
+              }}
+            >
+              Download your data
+            </Button>
           </div>
         </form>
       )}

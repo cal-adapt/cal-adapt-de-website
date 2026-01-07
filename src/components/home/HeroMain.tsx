@@ -1,95 +1,82 @@
 "use client";
 
-import * as React from "react";
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import clsx from "clsx";
 import { ParallaxBanner, ParallaxBannerLayer } from "react-scroll-parallax";
 
 import mouse from "../../../public/img/homepage-hero/mouse.webp";
 import rocks from "../../../public/img/homepage-hero/rocks.webp";
 import sky from "../../../public/img/homepage-hero/sky.webp";
 
-import "@/styles/home/hero-main.scss";
+import styles from "./HeroMain.module.scss";
 
-function HeroMain() {
-  const introTextRef = useRef<HTMLDivElement | null>(null);
-  const secTextRef = useRef<HTMLDivElement | null>(null);
+export default function HeroMain() {
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const [showSecondary, setShowSecondary] = useState(false);
 
   const isMobile = useMediaQuery("(max-width:992px)");
 
-  const handleScroll = useCallback((e: Event): void => {
-    const introNode = introTextRef.current;
-    if (!introNode) return;
+  useEffect(() => {
+    const sentinelNode = sentinelRef.current;
+    if (!sentinelNode) return;
 
-    const secNode = secTextRef.current;
-    if (!secNode) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowSecondary(!entry.isIntersecting);
+      },
+      { threshold: 1, rootMargin: "100px 0px 0px 0px" }
+    );
 
-    const scrollY = window.scrollY;
-
-    if (scrollY > 119.5) {
-      introNode.classList.add("hidden");
-      secNode.classList.add("visible");
-    } else {
-      introNode.classList.remove("hidden");
-      secNode.classList.remove("visible");
-    }
+    observer.observe(sentinelNode);
+    return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
   return (
-    <div className="homepage-hero">
+    <div className={styles.heroMain}>
+      <div ref={sentinelRef} className={styles.sentinel} />
       <ParallaxBanner style={{ height: "100vh" }}>
         <ParallaxBannerLayer speed={isMobile ? 10 : -8}>
-          <img
-            width={2560}
-            height={1440}
-            src={sky.src}
-            className="layer joshua-hero"
-            alt="sky hero"
-          />
+          <img className={styles.layer} width={2560} height={1440} src={sky.src} alt="sky hero" />
         </ParallaxBannerLayer>
-        <ParallaxBannerLayer expanded={false} speed={isMobile ? 6 : 12}>
-          <div className="rocks-container">
+        <ParallaxBannerLayer expanded={true} speed={isMobile ? 3 : 6}>
+          <div className={styles.rocksContainer}>
             <img
               width={2560}
               height={1440}
               src={rocks.src}
-              className="layer rocks"
+              className={clsx(styles.layer, styles.rocks)}
               alt="joshua tree hero"
             />
           </div>
         </ParallaxBannerLayer>
         <ParallaxBannerLayer>
-          <div className="layer text">
-            <div ref={introTextRef} className="intro">
-              <Typography className="intro__title" variant="h2">
-                Explore <nobr>Next-Gen</nobr> Climate Data
+          <div className={styles.layer}>
+            <div className={clsx(styles.intro, { hidden: showSecondary })}>
+              <Typography className={styles.headline} variant="h2">
+                Explore Next-Gen Climate Data
               </Typography>
-              <Typography className="intro__p">
+              <Typography className={styles.description}>
                 Cal-Adapt delivers critical climate data and cutting-edge tools to empower
                 communities, researchers, and decision-makers to take action now. As climate impacts
                 intensify, we provide the insights needed to adapt, build resilience, and drive
                 urgent solutions for a sustainable future.
               </Typography>
-              <div className="intro__scroll">
+              <div className={styles.scroll}>
                 <Typography variant="caption">Scroll</Typography>
                 <Image
                   src={mouse}
-                  className="mouse"
+                  className={styles.mouse}
                   alt="mouse symbol guiding the user to scroll down"
                 />
               </div>
             </div>
-            <div ref={secTextRef} className="secondary hidden">
-              <Typography className="secondary__title" variant="h2">
+            <div className={clsx(styles.secondary, "hidden", { visible: showSecondary })}>
+              <Typography className={styles.headline} variant="h2">
                 Data Driven Tools for a Resilient Future
               </Typography>
             </div>
@@ -99,5 +86,3 @@ function HeroMain() {
     </div>
   );
 }
-
-export default HeroMain;

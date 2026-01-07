@@ -1,0 +1,37 @@
+.mapUI {
+  z-index: 2;
+  position: absolute;
+  width: calc(100% - 212px); // account for left drawer
+  height: auto;
+  padding: 10px 35px;
+  pointer-events: none;
+  max-width: 100%;
+  overflow: hidden;
+  border: 10px sold red;
+
+  .parameterSelection {
+    display: flex;
+    gap: 15px;
+    pointer-events: auto;
+    flex-direction: column;
+    width: 280px;
+
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    @media (max-height: 680px) {
+      // Adjust this breakpoint for smaller laptops
+      flex-direction: row;
+      width: auto;
+    }
+  }
+
+  .helpButton {
+    pointer-events: auto;
+    margin-right: 0 !important;
+  }
+}

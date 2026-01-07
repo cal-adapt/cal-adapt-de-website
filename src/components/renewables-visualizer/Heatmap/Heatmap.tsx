@@ -5,11 +5,11 @@ import React, { useState } from "react";
 import * as d3 from "d3";
 
 import MapTooltip from "@/components/renewables-visualizer/Heatmap/MapTooltip";
-import Renderer from "@/components/renewables-visualizer/Heatmap/Rendererer";
+import Renderer from "@/components/renewables-visualizer/Heatmap/Renderer";
 
 import { ColorLegend } from "./ColorLegend";
 
-import "@/styles/dashboard/heatmap.scss";
+import styles from "./Heatmap.module.scss";
 
 const colorSwitchLabel = {
   inputProps: { "aria-label": "Color Palette switch" },
@@ -79,7 +79,7 @@ export default function Heatmap({
         colorScale={colorScale}
       />
       <MapTooltip interactionData={hoveredCell} width={width} height={height} />
-      <div className="color-legend" style={{ width: width }}>
+      <div className={styles.colorLegend} style={{ width: width }}>
         <ColorLegend width={405} height={100} colorScale={colorScale} min={min} max={max} />
       </div>
     </div>

@@ -1,0 +1,47 @@
+@use "sass:color";
+@use "@/styles/abstracts" as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:focus-visible {
+    outline: 2px solid $primary-blue;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.primary {
+  background-color: $secondary;
+  color: #fff;
+
+  &:hover {
+    background-color: color.scale($secondary, $lightness: 10%);
+  }
+}
+
+.secondary {
+  background-color: $primary;
+  color: $secondary;
+
+  &:hover {
+    background-color: color.scale($primary, $lightness: -10%);
+  }
+}

@@ -1,0 +1,19 @@
+.mapTooltip {
+  position: absolute;
+  background-color: white;
+  border-radius: 16px;
+  color: black;
+  padding: 5px;
+  margin-left: 15px;
+  transform: translateY(-50%);
+
+  &:after {
+    content: "";
+    position: absolute;
+    border-width: 5px;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-color: transparent black transparent transparent;
+  }
+}

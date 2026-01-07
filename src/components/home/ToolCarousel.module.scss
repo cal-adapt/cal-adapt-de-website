@@ -1,0 +1,131 @@
+@use "@/styles/abstracts" as *;
+
+.exploreContainer {
+  display: flex;
+  height: 100%;
+  margin: 25px 0;
+  align-items: flex-start;
+
+  &.mobile {
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+}
+
+.leftPanel {
+  width: 280px;
+  margin-right: 2rem;
+}
+
+.listContainer {
+  display: flex;
+  height: 200px;
+  position: relative;
+  margin-top: 2.5rem;
+
+  .scrollableList {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-right: 0.75rem;
+  }
+
+  .listItem {
+    font-size: 0.95rem;
+    color: #888;
+    cursor: pointer;
+    font-weight: 400;
+
+    &.active {
+      font-weight: 700;
+      color: #000;
+    }
+  }
+}
+
+.scrollWrapper {
+  width: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .scrollArrow {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0.6;
+    color: $secondary;
+  }
+
+  .scrollbarTrack {
+    flex: 1;
+    width: 4px;
+    background: $secondary-grey-dark;
+    position: relative;
+    border-radius: 2px;
+    margin: 4px 0;
+
+    .scrollbarThumb {
+      position: absolute;
+      width: 100%;
+      background: $secondary;
+      border-radius: 2px;
+      transition: top 0.2s ease;
+    }
+  }
+}
+
+.rightPanel {
+  flex: 1;
+  max-width: 465px;
+  height: 362px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  @include break-max($break-lg) {
+    width: 80%;
+    overflow-x: visible;
+    margin-left: 20px;
+    height: auto;
+    max-width: 300px;
+  }
+
+  img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  .rightPanelImage {
+    position: relative;
+    width: 100%;
+    height: 216px;
+  }
+
+  .rightPanelPreviewBox {
+    display: flex;
+    padding: 1.5rem;
+    height: 146px;
+
+    @include break-max($break-lg) {
+      height: 200px;
+    }
+
+    .content {
+      width: 350px;
+    }
+
+    .linkButton {
+      align-self: center;
+      margin-left: 16px;
+    }
+  }
+}
