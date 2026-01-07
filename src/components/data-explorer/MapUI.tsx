@@ -330,8 +330,8 @@ export default function MapUI({
                     and at the selected Global Warming Level (GWL).
                   </p>
                   <p>
-                    <strong>Delta</strong>: show the change between a 0.8° C world (roughly
-                    2015-2020) and the selected GWL
+                    <strong>Delta</strong>: show the change between a 0.8° C world (approximately
+                    1987-2016) and the selected GWL
                   </p>
                 </Typography>
 
