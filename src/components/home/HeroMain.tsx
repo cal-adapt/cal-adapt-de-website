@@ -9,6 +9,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import clsx from "clsx";
 import { ParallaxBanner, ParallaxBannerLayer } from "react-scroll-parallax";
 
+import { mediaQueries } from "@/utils/styles";
+
 import mouse from "../../../public/img/homepage-hero/mouse.webp";
 import rocks from "../../../public/img/homepage-hero/rocks.webp";
 import sky from "../../../public/img/homepage-hero/sky.webp";
@@ -19,7 +21,7 @@ export default function HeroMain() {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const [showSecondary, setShowSecondary] = useState(false);
 
-  const isMobile = useMediaQuery("(max-width:992px)");
+  const isMobile = useMediaQuery(mediaQueries.max.large);
 
   useEffect(() => {
     const sentinelNode = sentinelRef.current;

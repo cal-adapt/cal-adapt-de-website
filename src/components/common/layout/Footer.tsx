@@ -12,6 +12,8 @@ import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import { mediaQueries } from "@/utils/styles";
+
 import BerkeleyLabLogo from "../../../../public/img/logos/berkeley-lab.jpg";
 import cecLogo from "../../../../public/img/logos/cec.svg";
 import eagleRockLogo from "../../../../public/img/logos/eagle-rock.svg";
@@ -22,7 +24,7 @@ import styles from "./Footer.module.scss";
 export default function Footer() {
   const [expanded, setExpanded] = useState(false);
 
-  const isMobile = useMediaQuery("(max-width:992px)");
+  const isMobile = useMediaQuery(mediaQueries.max.large);
 
   const handleExpansion = () => {
     setExpanded((prevExpanded) => !prevExpanded);

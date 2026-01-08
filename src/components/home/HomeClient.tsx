@@ -14,6 +14,7 @@ import Alert from "@/components/common/ui/Alert";
 import Card from "@/components/common/ui/Card";
 import { analyticsCarouselData } from "@/data/home/analytics-carousel-data";
 import { genCarouselData } from "@/data/home/gen-carousel-data";
+import { mediaQueries } from "@/utils/styles";
 
 import HeroSecondary from "./HeroSecondary";
 import ImageText from "./ImageText";
@@ -32,7 +33,7 @@ export default function HomeClient() {
     });
   }, []);
 
-  const isMobile = useMediaQuery("(max-width:992px)");
+  const isMobile = useMediaQuery(mediaQueries.max.large);
 
   const carouselsStyle = isMobile
     ? {

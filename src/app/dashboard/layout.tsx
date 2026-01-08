@@ -29,6 +29,7 @@ import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
 import MobileView from "@/components/dashboard/MobileView";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
+import { mediaQueries } from "@/utils/styles";
 import { extractSegment } from "@/utils/url";
 
 import packageIcon from "../../../public/img/icons/package.svg";
@@ -109,7 +110,7 @@ export default function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
   const selectedPage: string | null = extractSegment(pathname, "dashboard/", "/");
   const theme = useTheme();
-  const isMobile = useMediaQuery("(max-width:992px)");
+  const isMobile = useMediaQuery(mediaQueries.max.large);
 
   const renderDashboardToolbar = (): React.ReactNode => {
     switch (selectedPage) {

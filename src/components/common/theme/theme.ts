@@ -1,5 +1,7 @@
 import { createTheme } from "@mui/material/styles";
 
+import { mediaQueries } from "@/utils/styles";
+
 const { palette } = createTheme();
 
 // Augment the palette to include a second palette color
@@ -95,12 +97,12 @@ let theme = createTheme({
     h1: {
       fontWeight: 600,
       fontSize: "2rem",
-      "@media (min-width: 992px)": { fontSize: "6rem" },
+      [`@media ${mediaQueries.min.large}`]: { fontSize: "6rem" },
     },
     h2: {
       fontWeight: 700,
       fontSize: "3rem",
-      "@media (min-width: 992px)": { fontSize: "3.75rem" },
+      [`@media ${mediaQueries.min.large}`]: { fontSize: "3.75rem" },
     },
     h3: {
       fontWeight: 700,

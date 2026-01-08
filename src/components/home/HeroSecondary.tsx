@@ -6,11 +6,12 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import clsx from "clsx";
 
 import Button from "@/components/common/ui/Button";
+import { mediaQueries } from "@/utils/styles";
 
 import styles from "./HeroSecondary.module.scss";
 
 export default function HeroSecondary() {
-  const isMobile = useMediaQuery("(max-width:992px)");
+  const isMobile = useMediaQuery(mediaQueries.max.large);
 
   return (
     <div className={styles.heroSecondary}>

@@ -14,6 +14,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import clsx from "clsx";
 import useEmblaCarousel from "embla-carousel-react";
 
+import { mediaQueries } from "@/utils/styles";
+
 import styles from "./ToolCarousel.module.scss";
 
 export type CarouselData = {
@@ -35,7 +37,7 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
   const [thumbHeight, setThumbHeight] = useState("0px");
   const [thumbTop, setThumbTop] = useState("0px");
   const trackRef = useRef<HTMLDivElement>(null);
-  const isMobile = useMediaQuery("(max-width:992px)");
+  const isMobile = useMediaQuery(mediaQueries.max.large);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const path = event.currentTarget.getAttribute("data-path");
