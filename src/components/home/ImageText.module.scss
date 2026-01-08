@@ -4,7 +4,7 @@
   display: flex;
   padding: 0 92px;
 
-  @include break-max($break-lg) {
+  @include breakpoint-max(large) {
     justify-content: center;
     flex-direction: column;
     padding: 0 20px;
@@ -18,7 +18,7 @@
     height: 296px;
     overflow: hidden;
 
-    @include break-max($break-lg) {
+    @include breakpoint-max(large) {
       flex: none;
       padding: 0;
       overflow: auto;
@@ -35,7 +35,7 @@
     padding-left: 30px;
     gap: 10px;
 
-    @include break-max($break-lg) {
+    @include breakpoint-max(large) {
       align-items: center;
       flex: none;
       text-align: center;

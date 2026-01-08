@@ -6,7 +6,7 @@
   overflow: hidden;
   color: #fff !important;
 
-  @include break-max($break-lg) {
+  @include breakpoint-max(large) {
     min-height: 600px;
   }
 
@@ -22,7 +22,7 @@
       z-index: 0;
       transform: scaleX(-1);
 
-      @include break-max($break-lg) {
+      @include breakpoint-max(large) {
         object-position: 50% 40%;
       }
     }
@@ -41,7 +41,7 @@
     text-align: left;
     padding: 0 90px;
 
-    @include break-max($break-lg) {
+    @include breakpoint-max(large) {
       align-items: center;
       text-align: center;
       width: 100%;

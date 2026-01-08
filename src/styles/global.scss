@@ -89,7 +89,7 @@ section {
   padding: 15vh 0;
   display: flow-root;
 
-  @include break-max($break-lg) {
+  @include breakpoint-max(large) {
     padding: 7vh 0;
   }
 

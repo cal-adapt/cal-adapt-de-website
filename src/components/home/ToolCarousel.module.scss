@@ -90,7 +90,7 @@
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
-  @include break-max($break-lg) {
+  @include breakpoint-max(large) {
     width: 80%;
     overflow-x: visible;
     margin-left: 20px;
@@ -115,7 +115,7 @@
     padding: 1.5rem;
     height: 146px;
 
-    @include break-max($break-lg) {
+    @include breakpoint-max(large) {
       height: 200px;
     }
 

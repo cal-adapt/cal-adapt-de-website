@@ -17,7 +17,7 @@
   padding: 0 30px;
   cursor: pointer;
 
-  @include break-max($break-lg) {
+  @include breakpoint-max(large) {
     width: auto;
   }
 
