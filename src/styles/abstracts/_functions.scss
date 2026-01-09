@@ -1,7 +1,11 @@
 /* Helpers for getting dynamic CSS variables */
 
 @function css-var($name, $fallback: null) {
-  @return if($fallback ==null, var(--#{$name}), var(--#{$name}, #{$fallback}));
+  @if $fallback ==null {
+    @return var(--#{$name});
+  }
+
+  @return var(--#{$name}, #{$fallback});
 }
 
 @function color($name, $fallback: null) {
