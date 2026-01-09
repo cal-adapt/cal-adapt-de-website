@@ -11,17 +11,12 @@
   overflow: hidden;
 
   .parameterSelection {
-    display: flex;
-    flex-direction: column;
-    gap: spacer(4);
+    @include flex(column, $gap: spacer(4));
     width: 280px;
     pointer-events: auto;
 
     .container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
+      @include flex(column, center, center);
     }
 
     @media (max-height: 680px) {

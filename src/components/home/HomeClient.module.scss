@@ -7,10 +7,8 @@
 }
 
 .cards {
-  display: flex;
-  gap: spacer(7);
+  @include flex(row, center, stretch, spacer(7));
   margin-top: spacer(10);
-  justify-content: center;
 }
 
 .cards-mobile {

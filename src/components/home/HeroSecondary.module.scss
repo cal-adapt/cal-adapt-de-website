@@ -29,25 +29,20 @@
   }
 
   .content {
+    @include flex(column, center, flex-start, spacer(4));
     position: relative;
-    z-index: z(1);
     height: 100%;
     width: 60%;
-    display: flex;
-    gap: spacer(4);
-    align-items: flex-start;
-    justify-content: center;
-    flex-direction: column;
     text-align: left;
     padding: 0 spacer(13);
+    z-index: z(1);
 
     @include breakpoint-max(large) {
-      align-items: center;
-      text-align: center;
+      @include flex(column, flex-start, center, spacer(4));
       width: 100%;
-      justify-content: flex-start;
       margin-top: 7vh;
       padding: 0 spacer(10);
+      text-align: center;
     }
   }
 }

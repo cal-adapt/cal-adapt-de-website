@@ -1,20 +1,18 @@
 @use "@/styles/abstracts" as *;
 
 .imageText {
-  display: flex;
+  @include flex(row);
   padding: 0 spacer(13);
 
   @include breakpoint-max(large) {
-    justify-content: center;
-    flex-direction: column;
+    @include flex(column, center, stretch, spacer(6));
     padding: 0 spacer(5);
-    gap: spacer(6);
   }
 
   .image {
     position: relative;
-    width: 100%;
     flex: 50%;
+    width: 100%;
     height: 296px;
     overflow: hidden;
 
@@ -26,14 +24,10 @@
   }
 
   .content {
-    text-align: right;
-    align-items: flex-end;
+    @include flex(column, center, flex-end, spacer(3));
     flex: 0 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     padding-left: spacer(7);
-    gap: spacer(3);
+    text-align: right;
 
     @include breakpoint-max(large) {
       align-items: center;

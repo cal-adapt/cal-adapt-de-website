@@ -1,14 +1,12 @@
 @use "@/styles/abstracts" as *;
 
 .exploreContainer {
-  display: flex;
+  @include flex(row, flex-start, flex-start);
   height: 100%;
   margin: spacer(6) 0;
-  align-items: flex-start;
 
   &.mobile {
-    flex-direction: column;
-    align-items: center;
+    @include flex(column, flex-start, center);
     overflow-x: hidden;
     max-width: 100%;
   }
@@ -20,18 +18,16 @@
 }
 
 .listContainer {
-  display: flex;
+  @include flex(row);
   height: 200px;
   position: relative;
   margin-top: 2.5rem;
 
   .scrollableList {
+    @include flex(column, $gap: 0.5rem);
     flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
     padding-right: 0.75rem;
+    overflow-y: auto;
   }
 
   .listItem {
@@ -48,10 +44,8 @@
 }
 
 .scrollWrapper {
+  @include flex(column, flex-start, center);
   width: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 
   .scrollArrow {
     background: none;
@@ -111,7 +105,7 @@
   }
 
   .rightPanelPreviewBox {
-    display: flex;
+    @include flex(row);
     padding: 1.5rem;
     height: 146px;
 

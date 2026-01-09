@@ -6,20 +6,14 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flex(row, center, center);
 
   .inner {
     height: 90%;
     width: 90%;
     background-color: $background-paper;
     padding: spacer(9);
-    display: flex;
-    gap: spacer(9);
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    @include flex(column, center, center, spacer(9));
     align-content: center;
     text-align: center;
   }

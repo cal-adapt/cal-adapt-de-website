@@ -42,16 +42,14 @@
   }
 
   .intro {
+    @include flex(column, $gap: spacer(5));
     margin-top: 10rem;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: spacer(5);
     transition: opacity 0.55s ease-in-out;
 
     @include breakpoint-max(large) {
       margin-top: 7rem;
-      padding: 0 sapacer(3);
+      padding: 0 spacer(3);
     }
   }
 
@@ -69,8 +67,7 @@
   }
 
   .scroll {
-    display: flex;
-    flex-direction: column;
+    @include flex(column);
     margin: spacer(5) 0;
 
     span {
