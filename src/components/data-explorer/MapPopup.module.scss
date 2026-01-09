@@ -1,3 +1,5 @@
+@use "@/styles/abstracts" as *;
+
 .mapPopup {
   max-width: 400px !important;
 
@@ -6,8 +8,8 @@
 
   .values {
     display: flex;
-    gap: 15px;
-    margin-bottom: 7px;
+    gap: spacer(4);
+    margin-bottom: spacer(2);
     justify-content: center;
     align-items: center;
   }
@@ -24,7 +26,7 @@
   }
 
   .description {
-    margin-bottom: 15px;
+    margin-bottom: spacer(4);
     width: 100%;
     text-align: center;
   }

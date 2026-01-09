@@ -50,12 +50,12 @@ a {
 }
 
 .alerts {
-  margin-bottom: 26px;
+  margin-bottom: spacer(6);
   max-width: 1200px;
 
   &-50 {
     display: flex;
-    gap: 28px;
+    gap: spacer(6);
   }
 
   &-100 {
@@ -109,8 +109,8 @@ section {
 
 .container {
   background-color: $background-paper;
-  border-radius: 16px;
-  padding: 30px;
+  border-radius: rounded(4);
+  padding: spacer(7);
 
   &--full {
     width: 100%;
@@ -119,13 +119,13 @@ section {
 
   &--package {
     background-color: white;
-    border-radius: 16px;
-    padding: 25px;
+    border-radius: rounded(4);
+    padding: spacer(5);
   }
 
   &--white {
     background-color: white;
-    margin-top: 16px;
+    margin-top: spacer(4);
   }
 
   &--transparent {
@@ -133,12 +133,12 @@ section {
   }
 
   & > div:nth-child(n + 2) {
-    padding-top: 20px;
+    padding-top: spacer(5);
   }
 
   & > p {
     & > p {
-      padding-bottom: 5px;
+      padding-bottom: spacer(1);
     }
   }
 }
@@ -152,7 +152,7 @@ section {
 
   svg {
     width: 15px;
-    margin-left: 5px;
+    margin-left: spacer(1);
     height: 15px;
     margin-bottom: -2px;
   }
@@ -171,7 +171,7 @@ section {
   &-container {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: spacer(4);
     width: 100%;
 
     #map {
@@ -187,8 +187,8 @@ section {
       align-items: center;
       height: 36px;
       background-color: white;
-      padding: 6px 10px 4px 10px;
-      border-radius: 4px;
+      padding: spacer(1) spacer(2);
+      border-radius: rounded(1);
       box-shadow: none;
       font-size: 0.875rem;
 
@@ -196,7 +196,7 @@ section {
         width: 16px;
         height: 16px;
         background-color: rgba(118, 150, 190, 0.8);
-        margin-right: 10px;
+        margin-right: spacer(2);
       }
     }
   }
@@ -211,15 +211,15 @@ section {
 .mapboxgl-ctrl-geocoder--input {
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.27);
-  border-radius: 8px;
+  border-radius: rounded(2);
 }
 
 .mapboxgl-popup-content {
   background-color: white;
   border: 0 !important;
-  border-radius: 16px !important;
-  padding: 16px 40px !important;
-  padding-right: 48px !important;
+  border-radius: rounded(4) !important;
+  padding: spacer(4) spacer(8) !important;
+  padding-right: spacer(9) !important;
   box-shadow: none !important;
 }
 
@@ -244,7 +244,7 @@ section {
 
 .embla__slide {
   flex: 0 0 80%;
-  margin-right: 20px;
+  margin-right: spacer(5);
   display: flex;
   justify-content: center;
 }

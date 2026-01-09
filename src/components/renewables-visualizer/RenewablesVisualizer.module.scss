@@ -2,14 +2,14 @@
 
 .container {
   max-width: 1200px;
-  padding: 30px;
+  padding: spacer(7);
 }
 
 .intro {
-  margin: 0 16px 16px 16px;
+  margin: 0 spacer(4) spacer(4) spacer(4);
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: spacer(3);
 }
 
 .heatmap {
@@ -41,23 +41,23 @@
 }
 
 .alerts {
-  margin-left: 103px;
-  margin-right: 14px;
+  margin-left: spacer(13);
+  margin-right: spacer(4);
 }
 
 .cta {
-  margin-top: 15px;
+  margin-top: spacer(4);
 }
 
 .mapTooltip {
   position: absolute;
   background-color: white;
-  border-radius: 16px;
+  border-radius: rounded(4);
   color: black;
-  padding: 5px;
-  margin-left: 15px;
+  padding: spacer(1);
+  margin-left: spacer(3);
   transform: translateY(-50%);
-  z-index: 1000;
+  z-index: z(max);
 
   &:after {
     content: "";
@@ -72,8 +72,8 @@
 
 .customAccordionDetails {
   display: block !important;
-  padding-top: 0px;
-  z-index: 1;
+  padding-top: 0;
+  z-index: z(1);
 }
 
 .rotatedIcon {
@@ -82,8 +82,8 @@
 
 .flexParams {
   display: flex;
-  gap: 40px;
-  margin: 0 0 35px 0;
+  gap: spacer(8);
+  margin: 0 0 spacer(7) 0;
   justify-content: flex-end;
 }
 
@@ -98,8 +98,8 @@
 
   svg {
     width: 15px;
-    margin-left: 5px;
     height: 15px;
+    margin-left: spacer(4);
     margin-bottom: -2px;
   }
 }

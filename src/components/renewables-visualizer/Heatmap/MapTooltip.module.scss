@@ -1,10 +1,12 @@
+@use "@/styles/abstracts" as *;
+
 .mapTooltip {
   position: absolute;
   background-color: white;
-  border-radius: 16px;
+  border-radius: rounded(4);
   color: black;
-  padding: 5px;
-  margin-left: 15px;
+  padding: spacer(1);
+  margin-left: spacer(3);
   transform: translateY(-50%);
 
   &:after {

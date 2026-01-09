@@ -1,4 +1,6 @@
+@use "@/styles/abstracts" as *;
+
 .tooltip {
-  margin-left: 6px;
-  margin-top: 4px;
+  margin-left: spacer(1);
+  margin-top: spacer(1);
 }

@@ -1,14 +1,14 @@
 @use "@/styles/abstracts" as *;
 
 .container {
-  padding: 30px;
+  padding: spacer(7);
 }
 
 .packagesGrid {
-  margin: 16px 0;
+  margin: spacer(4) 0;
   display: flex;
   justify-content: flex-start;
-  gap: 30px;
+  gap: spacer(7);
 }
 
 .package {
@@ -31,7 +31,7 @@
 }
 
 .packageContents {
-  padding-top: 20px;
+  padding-top: spacer(5);
 
   .lds-spinner {
     width: 80px;

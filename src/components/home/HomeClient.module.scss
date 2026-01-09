@@ -8,11 +8,11 @@
 
 .cards {
   display: flex;
-  gap: 30px;
-  margin-top: 65px;
+  gap: spacer(7);
+  margin-top: spacer(10);
   justify-content: center;
 }
 
 .cards-mobile {
-  margin-top: 65px;
+  margin-top: spacer(10);
 }

@@ -14,9 +14,9 @@
     height: 90%;
     width: 90%;
     background-color: $background-paper;
-    padding: 50px;
+    padding: spacer(9);
     display: flex;
-    gap: 50px;
+    gap: spacer(9);
     flex-direction: column;
     justify-content: center;
     align-items: center;

@@ -9,12 +9,12 @@
   text-align: center;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: spacer(5);
   color: #fff;
-  border-radius: 16px;
+  border-radius: rounded(4);
   background-color: rgba(0, 0, 0, 0.2);
   background-blend-mode: overlay;
-  padding: 0 30px;
+  padding: 0 spacer(7);
   cursor: pointer;
 
   @include breakpoint-max(large) {
@@ -30,10 +30,10 @@
 
   .title {
     text-transform: uppercase;
-    margin-top: 100px;
+    margin-top: spacer(13);
   }
 
   .description {
-    margin-bottom: 20px;
+    margin-bottom: spacer(5);
   }
 }

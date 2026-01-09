@@ -1,20 +1,21 @@
+@use "@/styles/abstracts" as *;
+
 .mapUI {
-  z-index: 2;
+  z-index: z(2);
   position: absolute;
   width: calc(100% - 212px); // account for left drawer
   height: auto;
-  padding: 10px 35px;
+  padding: spacer(3) spacer(7);
   pointer-events: none;
   max-width: 100%;
   overflow: hidden;
-  border: 10px sold red;
 
   .parameterSelection {
     display: flex;
-    gap: 15px;
-    pointer-events: auto;
     flex-direction: column;
+    gap: spacer(4);
     width: 280px;
+    pointer-events: auto;
 
     .container {
       display: flex;
