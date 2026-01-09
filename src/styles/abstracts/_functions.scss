@@ -1,0 +1,53 @@
+/* Helpers for getting dynamic CSS variables */
+
+@function css-var($name, $fallback: null) {
+  @return if($fallback ==null, var(--#{$name}), var(--#{$name}, #{$fallback}));
+}
+
+@function color($name, $fallback: null) {
+  @return css-var("color-#{$name}", $fallback);
+}
+
+@function max-width($name: global, $fallback: null) {
+  @return css-var("max-width-#{$name}", $fallback);
+}
+
+@function rounded($name: 1, $fallback: null) {
+  @return css-var("border-radius-#{$name}", $fallback);
+}
+
+@function spacer($name, $fallback: null) {
+  @return css-var("spacer-#{$name}", $fallback);
+}
+
+@function z($name, $fallback: null) {
+  @return css-var("z-index-#{$name}", $fallback);
+}
+
+@function easing($name: in-out-cubic, $fallback: null) {
+  @return css-var("ease-#{$name}", $fallback);
+}
+
+@function font-family($name) {
+  @return css-var("font-family-#{$name}");
+}
+
+@function font-size($name) {
+  @return css-var("font-size-#{$name}");
+}
+
+@function line-height($name) {
+  @return css-var("line-height-#{$name}");
+}
+
+@function letter-spacing($name) {
+  @return css-var("letter-spacing-#{$name}", normal);
+}
+
+@function font-weight($name) {
+  @return css-var("font-weight-#{$name}");
+}
+
+@function text-transform($name) {
+  @return css-var("text-transform-#{$name}", none);
+}
