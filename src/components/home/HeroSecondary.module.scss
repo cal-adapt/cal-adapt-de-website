@@ -1,0 +1,48 @@
+@use "@/styles/abstracts" as *;
+
+.heroSecondary {
+  position: relative;
+  height: 500px;
+  overflow: hidden;
+  color: #fff !important;
+
+  @include breakpoint-max(large) {
+    min-height: 600px;
+  }
+
+  .background {
+    video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 0 -200px;
+      z-index: z(0);
+      transform: scaleX(-1);
+
+      @include breakpoint-max(large) {
+        object-position: 50% 40%;
+      }
+    }
+  }
+
+  .content {
+    @include flex(column, center, flex-start, spacer(4));
+    position: relative;
+    height: 100%;
+    width: 60%;
+    text-align: left;
+    padding: 0 spacer(13);
+    z-index: z(1);
+
+    @include breakpoint-max(large) {
+      @include flex(column, flex-start, center, spacer(4));
+      width: 100%;
+      margin-top: 7vh;
+      padding: 0 spacer(10);
+      text-align: center;
+    }
+  }
+}

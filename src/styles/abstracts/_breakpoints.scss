@@ -1,0 +1,87 @@
+@use "sass:map";
+@use "sass:meta";
+
+// $break-xs: 384px;
+// $break-sm: 576px;
+// $break-md: 768px;
+// $break-lg: 992px;
+// $break-xl: 1200px;
+// $break-xxl: 1400px;
+
+$breakpoints: (
+  "xxsmall": 320px,
+  "xsmall": 576px,
+  "small": 640px,
+  "medium": 768px,
+  "large": 1024px,
+  "xlarge": 1280px,
+  "xxlarge": 1440px,
+);
+
+$breakpoints-min: (
+  "xxsmall": (
+    min-width: map.get($breakpoints, "xxsmall"),
+  ),
+  "xsmall": (
+    min-width: map.get($breakpoints, "xsmall"),
+  ),
+  "small": (
+    min-width: map.get($breakpoints, "small"),
+  ),
+  "medium": (
+    min-width: map.get($breakpoints, "medium"),
+  ),
+  "large": (
+    min-width: map.get($breakpoints, "large"),
+  ),
+  "xlarge": (
+    min-width: map.get($breakpoints, "xlarge"),
+  ),
+  "xxlarge": (
+    min-width: map.get($breakpoints, "xxlarge"),
+  ),
+) !default;
+
+$breakpoints-max: (
+  "xxsmall": (
+    max-width: map.get($breakpoints, "xxsmall"),
+  ),
+  "xsmall": (
+    max-width: map.get($breakpoints, "xsmall"),
+  ),
+  "small": (
+    max-width: map.get($breakpoints, "small"),
+  ),
+  "medium": (
+    max-width: map.get($breakpoints, "medium"),
+  ),
+  "large": (
+    max-width: map.get($breakpoints, "large"),
+  ),
+  "xlarge": (
+    max-width: map.get($breakpoints, "xlarge"),
+  ),
+  "xxlarge": (
+    max-width: map.get($breakpoints, "xxlarge"),
+  ),
+) !default;
+
+@mixin breakpoint($breakpoint) {
+  @if map.has-key($breakpoints-min, $breakpoint) {
+    @media #{meta.inspect(map.get($breakpoints-min, $breakpoint))} {
+      @content;
+    }
+  } @else {
+    @warn "Error: Breakpoint `#{$breakpoint}` not found.";
+  }
+}
+
+@mixin breakpoint-max($breakpoint) {
+  @if map.has-key($breakpoints-max, $breakpoint) {
+    @media #{meta.inspect(map.get($breakpoints-max, $breakpoint))} {
+      @content;
+    }
+  } @else {
+    @warn "Error: Breakpoint `#{$breakpoint}` not found.";
+  }
+}

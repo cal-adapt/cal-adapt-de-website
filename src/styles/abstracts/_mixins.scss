@@ -1,0 +1,38 @@
+@use "variables" as *;
+
+@mixin container($padding-block: 0) {
+  width: 100%;
+  height: 100%;
+  max-width: max-w(global);
+  margin: 0 auto;
+  padding: $padding-block spacer(4);
+
+  @include breakpoint(medium) {
+    padding: $padding-block spacer(6);
+  }
+}
+
+@mixin flex(
+  $direction: row,
+  $justify-content: null,
+  $align-items: null,
+  $gap: null,
+  $wrap: nowrap
+) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify-content;
+  align-items: $align-items;
+  flex-wrap: $wrap;
+  gap: $gap;
+}
+
+@mixin type-item($type-name, $style: normal) {
+  font-family: font-family($type-name);
+  font-size: font-size($type-name);
+  line-height: line-height($type-name);
+  letter-spacing: letter-spacing($type-name);
+  font-weight: font-weight($type-name);
+  text-transform: text-transform($type-name);
+  font-style: $style;
+}

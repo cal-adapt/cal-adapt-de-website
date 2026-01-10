@@ -1,0 +1,6 @@
+@use "@/styles/abstracts" as *;
+
+.colorLegend {
+  @include flex(column, flex-start, center);
+  margin-top: spacer(7);
+}

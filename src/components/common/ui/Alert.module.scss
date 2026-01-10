@@ -1,0 +1,7 @@
+@use "@/styles/abstracts" as *;
+
+.alert {
+  .children {
+    @include flex(column, flex-start, flex-start, spacer(4));
+  }
+}

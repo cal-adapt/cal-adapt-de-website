@@ -1,0 +1,33 @@
+@use "@/styles/abstracts" as *;
+
+.mapUI {
+  z-index: z(2);
+  position: absolute;
+  width: calc(100% - 212px); // account for left drawer
+  height: auto;
+  padding: spacer(3) spacer(7);
+  pointer-events: none;
+  max-width: 100%;
+  overflow: hidden;
+
+  .parameterSelection {
+    @include flex(column, $gap: spacer(4));
+    width: 280px;
+    pointer-events: auto;
+
+    .container {
+      @include flex(column, center, center);
+    }
+
+    @media (max-height: 680px) {
+      // Adjust this breakpoint for smaller laptops
+      flex-direction: row;
+      width: auto;
+    }
+  }
+
+  .helpButton {
+    pointer-events: auto;
+    margin-right: 0 !important;
+  }
+}

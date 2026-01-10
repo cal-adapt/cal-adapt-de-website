@@ -1,0 +1,125 @@
+@use "@/styles/abstracts" as *;
+
+.exploreContainer {
+  @include flex(row, flex-start, flex-start);
+  height: 100%;
+  margin: spacer(6) 0;
+
+  &.mobile {
+    @include flex(column, flex-start, center);
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+}
+
+.leftPanel {
+  width: 280px;
+  margin-right: 2rem;
+}
+
+.listContainer {
+  @include flex(row);
+  height: 200px;
+  position: relative;
+  margin-top: 2.5rem;
+
+  .scrollableList {
+    @include flex(column, $gap: 0.5rem);
+    flex: 1;
+    padding-right: 0.75rem;
+    overflow-y: auto;
+  }
+
+  .listItem {
+    font-size: 0.95rem;
+    color: #888;
+    cursor: pointer;
+    font-weight: 400;
+
+    &.active {
+      font-weight: 700;
+      color: #000;
+    }
+  }
+}
+
+.scrollWrapper {
+  @include flex(column, flex-start, center);
+  width: 20px;
+
+  .scrollArrow {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: spacer(1);
+    opacity: 0.6;
+    color: $secondary;
+  }
+
+  .scrollbarTrack {
+    flex: 1;
+    width: spacer(1);
+    background: $secondary-grey-dark;
+    position: relative;
+    border-radius: rounded(1);
+    margin: spacer(1) 0;
+
+    .scrollbarThumb {
+      position: absolute;
+      width: 100%;
+      background: $secondary;
+      border-radius: rounded(1);
+      transition: top 0.2s ease;
+    }
+  }
+}
+
+.rightPanel {
+  flex: 1;
+  max-width: 465px;
+  height: 362px;
+  background: #fff;
+  border-radius: rounded(2);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  @include breakpoint-max(large) {
+    width: 80%;
+    overflow-x: visible;
+    margin-left: spacer(5);
+    height: auto;
+    max-width: 300px;
+  }
+
+  img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  .rightPanelImage {
+    position: relative;
+    width: 100%;
+    height: 216px;
+  }
+
+  .rightPanelPreviewBox {
+    @include flex(row);
+    padding: 1.5rem;
+    height: 146px;
+
+    @include breakpoint-max(large) {
+      height: 200px;
+    }
+
+    .content {
+      width: 350px;
+    }
+
+    .linkButton {
+      align-self: center;
+      margin-left: spacer(4);
+    }
+  }
+}

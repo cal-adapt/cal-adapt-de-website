@@ -1,0 +1,103 @@
+@use "@/styles/abstracts" as *;
+
+.container {
+  max-width: 1200px;
+  padding: spacer(7);
+}
+
+.intro {
+  @include flex(column, $gap: spacer(3));
+  margin: 0 spacer(4) spacer(4) spacer(4);
+}
+
+.heatmap {
+  transition: width 1s ease;
+
+  &.loading {
+    @include flex(column, center, center);
+    height: 300px;
+  }
+}
+
+.map {
+  width: 100%;
+}
+
+.sidepanel {
+  // Container for sidepanel positioning if needed
+}
+
+.invalidPointScreen {
+  @include flex(column, center, center);
+  margin-top: 0;
+}
+
+.alerts {
+  margin-left: spacer(13);
+  margin-right: spacer(4);
+}
+
+.cta {
+  margin-top: spacer(4);
+}
+
+.mapTooltip {
+  position: absolute;
+  background-color: white;
+  border-radius: rounded(4);
+  color: black;
+  padding: spacer(1);
+  margin-left: spacer(3);
+  transform: translateY(-50%);
+  z-index: z(max);
+
+  &:after {
+    content: "";
+    position: absolute;
+    border-width: 5px;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-color: transparent black transparent transparent;
+  }
+}
+
+.customAccordionDetails {
+  display: block !important;
+  padding-top: 0;
+  z-index: z(1);
+}
+
+.rotatedIcon {
+  transform: rotate(90deg);
+}
+
+.flexParams {
+  @include flex(row, flex-end, stretch, spacer(8));
+  margin: 0 0 spacer(7) 0;
+}
+
+.flexParamsItem {
+  // Individual parameter display item
+}
+
+.optionGroupTitle {
+  @include flex(row, flex-start, baseline);
+
+  svg {
+    width: 15px;
+    height: 15px;
+    margin-left: spacer(4);
+    margin-bottom: -2px;
+  }
+}
+
+.inline {
+  display: inline-flex;
+  align-items: center;
+}
+
+.loadingContainer {
+  @include flex(row, center, center);
+  height: 100%;
+}

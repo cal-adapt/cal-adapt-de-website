@@ -10,8 +10,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import UndoOutlinedIcon from "@mui/icons-material/UndoOutlined";
 import WatchLaterOutlined from "@mui/icons-material/WatchLaterOutlined";
-import Alert from "@mui/material/Alert";
-import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -23,31 +21,31 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
 import { downloadZip } from "client-zip";
+import clsx from "clsx";
 
-import SidePanel from "@/components/dashboard/RightSidePanel";
+import Alert from "@/components/common/ui/Alert";
+import Button from "@/components/common/ui/Button";
+import SidePanel from "@/components/dashboard/SidePanel";
 import PackageForm from "@/components/data-download-tool/PackageForm";
 import { useSidePanel } from "@/context/SidePanelContext";
-import { useDidMountEffect, useLocalStorageState } from "@/hooks";
-import { dataPackages } from "@/lib/data-download/data-packages";
-import { apiParamStrs, modelVarUrls, varUrl } from "@/lib/data-download/types";
+import { dataPackages } from "@/data/data-download/data-packages";
+import { apiParamStrs, modelVarUrls, varUrl } from "@/data/data-download/types";
 import {
   filterByFlag,
   lookupValue,
   modelsGenUseLookupTable,
   scenariosLookupTable,
   variablesLookupTable,
-} from "@/lib/lookup-tables";
+} from "@/data/lookup-tables";
+import useDidMountEffect from "@/hooks/use-did-mount-effect";
+import useLocalStorageState from "@/hooks/use-local-storage-state";
 import { getTodaysDateAsString } from "@/utils/date";
+import { formatBytes } from "@/utils/format";
 import { createOrStatement } from "@/utils/query";
 import { arrayToCommaSeparatedString, splitStringByPeriod, stringToArray } from "@/utils/string";
 import { extractFilenameFromURL } from "@/utils/url";
 
-declare module "@mui/material/Alert" {
-  interface AlertPropsVariantOverrides {
-    purple: true;
-    grey: true;
-  }
-}
+import styles from "./DataDownloadTool.module.scss";
 
 type DataDownloadProps = {
   data: any; // TODO: Consider replacing with a more specific type for maintainability
@@ -268,17 +266,6 @@ export default function DataDownload({ data }: DataDownloadProps) {
   }
 
   // --- Utility functions ---
-  function bytesToGBOrMB(bytes: number): string {
-    const fileSizeInGB = bytes / (1024 * 1024 * 1024);
-    const fileSizeInMB = bytes / (1024 * 1024);
-
-    if (fileSizeInGB >= 1) {
-      return fileSizeInGB.toFixed(2) + " GB";
-    } else {
-      return fileSizeInMB.toFixed(2) + " MB";
-    }
-  }
-
   const createZip = useCallback(
     async (links: string[], name: string) => {
       showLoadingIndicator();
@@ -432,54 +419,34 @@ export default function DataDownload({ data }: DataDownloadProps) {
   }, []);
 
   return (
-    <div className="tool-container tool-container--padded">
+    <div className={styles.container}>
       {/** Alerts */}
       <div className="alerts alerts-50">
-        <Alert
-          variant="filled"
-          severity="info"
-          color="primaryBlue"
-          aria-label="Where to go for full LOCA2 scientific data"
-        >
+        <Alert variant="primaryBlue" ariaLabel="Where to go for full LOCA2 scientific data">
           Looking for the full LOCA2 scientific data at daily resolution for the entire state of
           California?
-          <div className="cta">
-            <Button
-              variant="contained"
-              color="primary"
-              target="_blank"
-              href="https://analytics.cal-adapt.org/data/access/"
-            >
-              Click Here for the How-To-Guide
-            </Button>
-          </div>
+          <Button variant="secondary" href="https://analytics.cal-adapt.org/data/access/">
+            Click here for the how-to-guide
+          </Button>
         </Alert>
-        <Alert variant="filled" severity="info" color="infoYellow">
+        <Alert variant="infoYellow">
           The Cal-Adapt data download tool is a beta tool. Feedback or questions are always welcome.
-          <div className="cta">
-            <Tooltip
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 600 }}
-              title="Email analytics@cal-adapt.org"
-              placement="right-end"
-            >
-              <Button variant="contained" color="primary" href="mailto:analytics@cal-adapt.org">
-                Contact Us
-              </Button>
-            </Tooltip>
-          </div>
+          <Tooltip
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 600 }}
+            title="Email analytics@cal-adapt.org"
+            placement="right-end"
+          >
+            <Button variant="secondary" href="mailto:analytics@cal-adapt.org">
+              Contact us
+            </Button>
+          </Tooltip>
         </Alert>
       </div>
 
-      <Alert
-        className="alerts alerts-100"
-        sx={{ mb: "26px" }}
-        variant="filled"
-        severity="info"
-        color="secondaryReversed"
-      >
+      <Alert className="alerts alerts-100" variant="secondaryReversed" style={{ marginBottom: 26 }}>
         The size of data packages might be very large. In that case, you may be asked for an email
-        address to notify you when your package is ready for download.{" "}
+        address to notify you when your package is ready for download.
       </Alert>
 
       {/** Packages container */}
@@ -488,13 +455,13 @@ export default function DataDownload({ data }: DataDownloadProps) {
         <Typography variant="body1">
           Select a data package preset from the options listed below
         </Typography>
-        <div className="packages-grid">
+        <div className={styles.packagesGrid}>
           {dataPackages.map((pkg: any) => (
-            <div className="package container container--package" key={pkg.id}>
-              <Typography className="package__name" variant="h6">
+            <div className={clsx(styles.package, "container container--package")} key={pkg.id}>
+              <Typography className={styles.packageName} variant="h6">
                 {pkg.name}
               </Typography>
-              <ul className="package__settings">
+              <ul className={styles.packageSettings}>
                 <li>
                   <Typography variant="body2">Dataset:</Typography> {pkg.dataset}
                 </li>
@@ -542,9 +509,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
                   title="This data package preset is not available"
                 >
                   <span>
-                    <Button disabled={pkg.disabled} variant="contained" color="secondary">
-                      Customize and download
-                    </Button>
+                    <Button disabled>Customize and download</Button>
                   </span>
                 </Tooltip>
               )}
@@ -555,11 +520,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
                   title="Continue with this data package preset"
                 >
                   <span>
-                    <Button
-                      onClick={() => selectPackageToSave(parseInt(pkg.id))}
-                      variant="contained"
-                      color="secondary"
-                    >
+                    <Button onClick={() => selectPackageToSave(parseInt(pkg.id))}>
                       Customize and download
                     </Button>
                   </span>
@@ -567,12 +528,12 @@ export default function DataDownload({ data }: DataDownloadProps) {
               )}
             </div>
           ))}
-          <div className="package container container--package flex-center-col">
+          <div className={clsx(styles.package, "container container--package flex-center-col")}>
             <WatchLaterOutlined style={{ width: "50px", height: "50px" }} />
-            <Typography className="package__name" variant="h6">
+            <Typography className={styles.packageName} variant="h6">
               Coming Soon
             </Typography>
-            <Typography className="package__name" variant="body2">
+            <Typography className={styles.packageName} variant="body2">
               We&#39;re working on building more data packages
             </Typography>
           </div>
@@ -594,21 +555,8 @@ export default function DataDownload({ data }: DataDownloadProps) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => handleOverwriteDialog(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => handleOverwriteDialog(true)}
-            autoFocus
-          >
-            Confirm
-          </Button>
+          <Button onClick={() => handleOverwriteDialog(false)}>Cancel</Button>
+          <Button onClick={() => handleOverwriteDialog(true)}>Confirm</Button>
         </DialogActions>
       </Dialog>
 
@@ -680,7 +628,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
             setDownloadLinks={setDownloadLinks}
             isDataDaily={isDataDaily}
             totalDataSize={totalDataSize}
-            bytesToGBOrMB={bytesToGBOrMB}
+            formatBytes={formatBytes}
             isLoading={isLoading}
             setIsLoading={setIsLoading}
             isBundling={isBundling}
@@ -689,7 +637,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
         )}
 
         {!isPackageStored && (
-          <div className="package-contents">
+          <div className={styles.packageContents}>
             <Typography variant="h6">
               No package has been selected. Head back to the dashboard and select a data package
               preset.

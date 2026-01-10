@@ -1,0 +1,10 @@
+@use "@/styles/abstracts" as *;
+
+.sidepanel {
+  padding: spacer(7);
+  width: 500px;
+
+  .package-contents {
+    padding-top: spacer(5);
+  }
+}

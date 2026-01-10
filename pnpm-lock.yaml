@@ -35,6 +35,9 @@ importers:
       client-zip:
         specifier: ^2.5.0
         version: 2.5.0
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       css-loader:
         specifier: ^7.1.2
         version: 7.1.2(webpack@5.104.1)

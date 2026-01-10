@@ -22,12 +22,14 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
 
-import HtmlTooltip from "@/components/global/HtmlTooltip";
+import HtmlTooltip from "@/components/common/ui/HtmlTooltip";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
-import type { Metric } from "@/lib/data-explorer/metrics";
-import { tooltipsList } from "@/lib/tooltips";
+import type { Metric } from "@/data/data-explorer/metrics";
+import { tooltips } from "@/data/tooltips";
 
 import type { ValueType } from "./DataExplorer";
+
+import styles from "./MapUI.module.scss";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -73,7 +75,7 @@ export default function MapUI({
   metrics,
 }: MapUIProps) {
   const { open, drawerWidth } = useLeftDrawer();
-  const [helpAnchorEl, setHelpAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [helpAnchorEl, setHelpAnchorEl] = useState<HTMLButtonElement | null>(null);
   const helpButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const fullWidthUIItem = open ? `100%` : `calc(100% - ${drawerWidth} - 72px)`;
@@ -154,7 +156,7 @@ export default function MapUI({
 
   return (
     <div
-      className="map-ui"
+      className={styles.mapUI}
       style={{
         width: open ? "calc(100% - 212px)" : "calc(100% - 72px)",
         transition: "width 225ms cubic-bezier(0.4, 0, 0.6, 1)",
@@ -164,8 +166,8 @@ export default function MapUI({
         <Grid container direction="column" sx={{ height: "100%" }}>
           <Grid container spacing={2}>
             <Grid item xs={3}>
-              <div className="map-ui__parameter-selection">
-                <div className="map-ui__value-type">
+              <div className={styles.parameterSelection}>
+                <div className={styles.valueType}>
                   <Box
                     sx={{
                       width: fullWidthUIItem,
@@ -191,7 +193,7 @@ export default function MapUI({
                       <HtmlTooltip
                         textFragment={
                           <React.Fragment>
-                            <p>{tooltipsList[0].long_text}</p>
+                            <p>{tooltips[0].long_text}</p>
                           </React.Fragment>
                         }
                         iconFragment={<InfoOutlinedIcon />}
@@ -233,7 +235,7 @@ export default function MapUI({
                       <HtmlTooltip
                         textFragment={
                           <React.Fragment>
-                            <p>{tooltipsList[1].long_text}</p>
+                            <p>{tooltips[1].long_text}</p>
                           </React.Fragment>
                         }
                         iconFragment={<InfoOutlinedIcon />}
@@ -273,7 +275,7 @@ export default function MapUI({
             <Grid item xs={10}></Grid>
             <Grid item xs={2}>
               <Fab
-                className="map-ui__help-button"
+                className={styles.helpButton}
                 color="secondary"
                 sx={{ float: "right", mr: "50px" }}
                 aria-label="Open help dialog"

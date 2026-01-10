@@ -1,0 +1,35 @@
+@use "@/styles/abstracts" as *;
+
+.card {
+  @include flex(column, center, center, spacer(5));
+  height: 450px;
+  width: 400px;
+  background-size: cover;
+  text-align: center;
+  color: #fff;
+  border-radius: rounded(4);
+  background-color: rgba(0, 0, 0, 0.2);
+  background-blend-mode: overlay;
+  padding: 0 spacer(7);
+  cursor: pointer;
+
+  @include breakpoint-max(large) {
+    width: auto;
+  }
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+    background-blend-mode: overlay;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .title {
+    margin-top: spacer(13);
+    text-transform: uppercase;
+  }
+
+  .description {
+    margin-bottom: spacer(5);
+  }
+}

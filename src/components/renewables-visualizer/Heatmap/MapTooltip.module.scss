@@ -1,0 +1,21 @@
+@use "@/styles/abstracts" as *;
+
+.mapTooltip {
+  position: absolute;
+  background-color: white;
+  border-radius: rounded(4);
+  color: black;
+  padding: spacer(1);
+  margin-left: spacer(3);
+  transform: translateY(-50%);
+
+  &:after {
+    content: "";
+    position: absolute;
+    border-width: 5px;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-color: transparent black transparent transparent;
+  }
+}

@@ -1,0 +1,25 @@
+@use "@/styles/abstracts" as *;
+
+.mapPopup {
+  max-width: 400px !important;
+
+  .values {
+    @include flex(row, center, center, spacer(4));
+    margin-bottom: spacer(2);
+  }
+
+  .value {
+    @include flex(column, flex-start, center);
+  }
+
+  .title {
+    width: 100%;
+    text-align: center;
+  }
+
+  .description {
+    margin-bottom: spacer(4);
+    width: 100%;
+    text-align: center;
+  }
+}

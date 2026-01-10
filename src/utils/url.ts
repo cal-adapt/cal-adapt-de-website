@@ -1,3 +1,5 @@
+export const isExternalUrl = (url: string) => /^https?:\/\//.test(url);
+
 export function extractFilenameFromURL(url: string): string {
   // Split the URL by '/' to get the parts
   const parts = url.split("/");

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,21 +22,20 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import Button from "@mui/material/Button";
 import { styled, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import CalDashToolbar from "@/components/dashboard/DashboardToolbar";
+import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
+import MobileView from "@/components/dashboard/MobileView";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
+import { mediaQueries } from "@/utils/styles";
 import { extractSegment } from "@/utils/url";
 
 import packageIcon from "../../../public/img/icons/package.svg";
 import settingsIcon from "../../../public/img/icons/settings.svg";
 import logo from "../../../public/img/logos/cal-adapt-data-download.png";
 import sidebarBg from "../../../public/img/photos/ocean-thumbnail.png";
-
-import "@/styles/dashboard/dashboard.scss";
 
 declare module "@mui/material/Alert" {
   interface AlertPropsVariantOverrides {
@@ -47,7 +46,7 @@ declare module "@mui/material/Alert" {
 
 const drawerWidth = 212;
 interface LayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 const DrawerHeader = styled("div")(() => ({
@@ -103,7 +102,7 @@ const menuItems = [
 ];
 
 interface LayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
@@ -111,13 +110,13 @@ export default function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
   const selectedPage: string | null = extractSegment(pathname, "dashboard/", "/");
   const theme = useTheme();
-  const isMobile = useMediaQuery("(max-width:992px)");
+  const isMobile = useMediaQuery(mediaQueries.max.large);
 
-  const renderCalDashToolBar = (): ReactNode => {
+  const renderDashboardToolbar = (): React.ReactNode => {
     switch (selectedPage) {
       case "data-download-tool":
         return (
-          <CalDashToolbar
+          <DashboardToolbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
             toolName="Data Download Tool"
@@ -128,7 +127,7 @@ export default function Layout({ children }: LayoutProps) {
         );
       case "renewables-visualizer":
         return (
-          <CalDashToolbar
+          <DashboardToolbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
             toolName="Renewables Visualizer"
@@ -139,11 +138,11 @@ export default function Layout({ children }: LayoutProps) {
         );
       case "data-explorer":
         return (
-          <CalDashToolbar drawerWidth={drawerWidth} sidebarOpen={open} toolName="Data Explorer" />
+          <DashboardToolbar drawerWidth={drawerWidth} sidebarOpen={open} toolName="Data Explorer" />
         );
       default:
         return (
-          <CalDashToolbar
+          <DashboardToolbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
             toolName="Getting Started"
@@ -230,24 +229,13 @@ export default function Layout({ children }: LayoutProps) {
                 zIndex: 1100,
               }}
             >
-              {renderCalDashToolBar()}
+              {renderDashboardToolbar()}
             </AppBar>
             {children}
           </Box>
         </Box>
       ) : (
-        <div className="mobile-view">
-          <div className="mobile-view__container">
-            <Image src={logo} alt="Cal Adapt logo" className="cal-adapt-logo__mobile" />
-            <Typography variant="body1">
-              Due to the nature of the tools, the Cal-Adapt Dashboard is best used on a desktop or
-              laptop computer
-            </Typography>
-            <Button variant="contained" href="https://cal-adapt.org">
-              Go to the homepage
-            </Button>
-          </div>
-        </div>
+        <MobileView />
       )}
     </SidePanelProvider>
   );

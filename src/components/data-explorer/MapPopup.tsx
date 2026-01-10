@@ -7,15 +7,15 @@
 import { useMemo } from "react";
 
 import CloseIcon from "@mui/icons-material/Close";
-import Alert from "@mui/material/Alert";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 
 import { Popup } from "react-map-gl/mapbox";
 
-import LoadingSpinner from "@/components/global/LoadingSpinner";
+import Alert from "@/components/common/ui/Alert";
+import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 
-import "@/styles/dashboard/mapbox-map.scss";
+import styles from "./MapPopup.module.scss";
 
 type MapPopupProps = {
   longitude: number;
@@ -46,19 +46,19 @@ export const MapPopup = ({
 
   return (
     <Popup
+      className={styles.mapPopup}
       longitude={longitude}
       latitude={latitude}
       closeButton={false}
       anchor="bottom"
-      className="map-popup"
       aria-label={`Popup with information for [${longitude},${latitude}`}
     >
-      <div className="map-popup_container">
+      <div className={styles.inner}>
         {isPopupLoading && <LoadingSpinner />}
 
         {!isPopupLoading && isDataValid && (
           <>
-            <div className="description">
+            <div className={styles.description}>
               <Typography variant="body2">{title}</Typography>
             </div>
             <div
@@ -74,41 +74,35 @@ export const MapPopup = ({
                 <CloseIcon fontSize="small" />
               </IconButton>
             </div>
-            <div className="values">
+            <div className={styles.values}>
               {min != null && (
-                <div className="value">
+                <div className={styles.value}>
                   <Typography variant="h5">{formattedMin}</Typography>
                   <Typography variant="body2">Min*</Typography>
                 </div>
               )}
               {min != null && (
-                <div className="value">
+                <div className={styles.value}>
                   <Typography variant="h4">{formattedValue}</Typography>
                   <Typography variant="body2">Mean*</Typography>
                 </div>
               )}
               {max != null && (
-                <div className="value">
+                <div className={styles.value}>
                   <Typography variant="h5">{formattedMax}</Typography>
                   <Typography variant="body2">Max*</Typography>
                 </div>
               )}
             </div>
 
-            <div className="title">
+            <div className={styles.title}>
               <Typography variant="caption">*Value across models</Typography>
             </div>
           </>
         )}
 
         {!isPopupLoading && !isDataValid && (
-          <Alert
-            className="alerts alerts-100"
-            style={{ marginBottom: "0" }}
-            variant="filled"
-            severity="info"
-            color="secondaryReversed"
-          >
+          <Alert variant="secondaryReversed" style={{ marginBottom: 0 }}>
             No data is available for this location
           </Alert>
         )}

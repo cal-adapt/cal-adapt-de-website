@@ -1,6 +1,6 @@
 import { InteractionData } from "./Heatmap";
 
-import "@/styles/dashboard/heatmap.scss";
+import styles from "./MapTooltip.module.scss";
 
 type TooltipProps = {
   interactionData: InteractionData | null;
@@ -35,7 +35,7 @@ export default function MapTooltip({ interactionData, width, height }: TooltipPr
       }}
     >
       <div
-        className="map-tooltip"
+        className={styles.mapTooltip}
         style={{
           position: "absolute",
           left: interactionData.xPos,

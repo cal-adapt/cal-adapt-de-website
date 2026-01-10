@@ -1,8 +1,7 @@
-// CalDashToolbar
+// DashboardToolbar
 // Toolbar component for Cal-Adapt dashboard pages.
 // Displays breadcrumbs, tool title, and an optional icon button with tooltip to toggle the side panel.
 
-import React from "react";
 import Image from "next/image";
 
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -15,16 +14,18 @@ import Typography from "@mui/material/Typography";
 
 import { useSidePanel } from "@/context/SidePanelContext";
 
+import styles from "./DashboardToolbar.module.scss";
+
 interface ToolbarProps {
   toolName: string; // Name of the current tool or section
-  tooltipTitle: string | null; // Tooltip text for the icon button
-  iconSrc: any | null; // Optional icon image source (Next.js Image)
-  iconAlt: string | null; // Alt text for the icon image
+  tooltipTitle?: string; // Tooltip text for the icon button
+  iconSrc?: any; // Optional icon image source (Next.js Image)
+  iconAlt?: string; // Alt text for the icon image
   sidebarOpen: boolean; // Whether the sidebar is open (affects layout)
   drawerWidth: number; // Width of the drawer (not currently used but included for flexibility)
 }
 
-export default function CalDashToolbar({
+export default function DashboardToolbar({
   toolName,
   tooltipTitle,
   iconSrc,
@@ -37,7 +38,7 @@ export default function CalDashToolbar({
   return (
     // Adjust left margin based on whether sidebar is open
     <Toolbar
-      className="toolbar-main"
+      className={styles.dashboardToolbar}
       sx={{ ml: sidebarOpen ? 0 : `72px`, justifyContent: `space-between` }}
     >
       <Breadcrumbs aria-label="breadcrumb">
@@ -49,7 +50,7 @@ export default function CalDashToolbar({
       {iconSrc && (
         <Tooltip TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} title={tooltipTitle}>
           <IconButton onClick={toggleOpen}>
-            <Image src={iconSrc} alt={iconAlt} />
+            <Image src={iconSrc} alt={iconAlt ?? ""} />
           </IconButton>
         </Tooltip>
       )}

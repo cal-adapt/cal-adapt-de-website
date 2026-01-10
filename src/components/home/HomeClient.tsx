@@ -2,24 +2,26 @@
 
 import { useEffect } from "react";
 
-import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import AOS from "aos";
+import clsx from "clsx";
 import useEmblaCarousel from "embla-carousel-react";
 
-import { analyticsCarouselData } from "@/lib/home/analytics-carousel-data";
-import { genCarouselData } from "@/lib/home/gen-carousel-data";
+import Footer from "@/components/common/layout/Footer";
+import Alert from "@/components/common/ui/Alert";
+import Card from "@/components/common/ui/Card";
+import { analyticsCarouselData } from "@/data/home/analytics-carousel-data";
+import { genCarouselData } from "@/data/home/gen-carousel-data";
+import { mediaQueries } from "@/utils/styles";
 
-import Card from "./Card";
-import Footer from "./Footer";
 import HeroSecondary from "./HeroSecondary";
 import ImageText from "./ImageText";
 import ToolCarousel from "./ToolCarousel";
 
 import "aos/dist/aos.css";
-import styles from "@/app/page.module.scss";
+import styles from "./HomeClient.module.scss";
 
 export default function HomeClient() {
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function HomeClient() {
     });
   }, []);
 
-  const isMobile = useMediaQuery("(max-width:992px)");
+  const isMobile = useMediaQuery(mediaQueries.max.large);
 
   const carouselsStyle = isMobile
     ? {
@@ -65,10 +67,10 @@ export default function HomeClient() {
           variant="body1"
         >
           The new Cal-Adapt has been revamped to offer a more modern and intuitive experience for
-          exploring <nobr>peer-reviewed</nobr> <strong>5th Assessment</strong> climate data. Our
-          platform provides interactive visualizations, downloadable datasets, the Analytics Engine
-          and the Cal-Adapt API, helping you analyze how climate change may impact California at
-          both state and local levels.
+          exploring peer-reviewed <strong>5th Assessment</strong> climate data. Our platform
+          provides interactive visualizations, downloadable datasets, the Analytics Engine and the
+          Cal-Adapt API, helping you analyze how climate change may impact California at both state
+          and local levels.
         </Typography>
         <div>
           <div className={cardsCarouselClass}>
@@ -148,11 +150,9 @@ export default function HomeClient() {
             Climate Insights for Everyone
           </Typography>
           <Alert
-            className={isMobile ? `alerts alerts-100` : "hidden no-height"}
-            sx={{ mb: "26px" }}
-            variant="filled"
-            severity="info"
-            color="infoYellow"
+            className={clsx({ "hidden no-height": !isMobile })}
+            variant="infoYellow"
+            style={{ marginBottom: 26 }}
           >
             Cal-Adapt&#39;s Tools are available on desktop devices only
           </Alert>
@@ -167,10 +167,10 @@ export default function HomeClient() {
           </div>
         </div>
       </section>
-      <section className="secondary-hero marginless">
+      <section>
         <HeroSecondary />
       </section>
-      <section className="grants">
+      <section>
         <ImageText />
       </section>
       <Footer />

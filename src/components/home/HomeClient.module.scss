@@ -1,0 +1,16 @@
+@use "@/styles/abstracts" as *;
+
+.container {
+  padding: 0;
+  min-height: 100vh;
+  background-color: white;
+}
+
+.cards {
+  @include flex(row, center, stretch, spacer(7));
+  margin-top: spacer(10);
+}
+
+.cards-mobile {
+  margin-top: spacer(10);
+}
