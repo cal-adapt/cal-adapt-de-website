@@ -437,7 +437,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
             title="Email analytics@cal-adapt.org"
             placement="right-end"
           >
-            <Button variant="secondary" href="mailto:support@cal-adapt.org">
+            <Button variant="secondary" href="mailto:analytics@cal-adapt.org">
               Contact us
             </Button>
           </Tooltip>
