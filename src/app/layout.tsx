@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 import Navigation from "@/components/common/layout/Navigation";
 import ThemeRegistry from "@/components/common/theme/ThemeRegistry";
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <ThemeRegistry options={{ key: "mui-theme" }}>{children}</ThemeRegistry>
         </LeftDrawerProvider>
       </body>
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID as string} />
     </html>
   );
 }
