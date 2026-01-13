@@ -29,6 +29,7 @@ import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import { lookupValue, scenariosLookupTable, variablesLookupTable } from "@/data/lookup-tables";
 import { tooltips } from "@/data/tooltips";
 import useDidMountEffect from "@/hooks/use-did-mount-effect";
+import { analytics } from "@/lib/analytics";
 import { searchObject } from "@/utils/object";
 
 import DataResultsTable from "./DataResultsTable";
@@ -255,12 +256,14 @@ const PackageForm: React.FC<ChildFormProps> = ({
     validateFormData();
 
     if (!isFormInvalid) {
+      analytics.trackFormSubmission("data_download_tool", true);
       onFormDataSubmit();
 
       isFormInvalid = false;
       setSidebarState("download");
       setIsError(false);
     } else {
+      analytics.trackFormSubmission("data_download_tool", false);
       setIsError(true);
     }
   };

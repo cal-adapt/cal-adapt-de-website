@@ -14,8 +14,10 @@ import TableRow from "@mui/material/TableRow";
 
 import Button from "@/components/common/ui/Button";
 import { lookupValue, variablesLookupTable } from "@/data/lookup-tables";
-import { handleDownload } from "@/utils/dom";
+import { analytics } from "@/lib/analytics";
+import { downloadFile } from "@/utils/file";
 import { searchObject } from "@/utils/object";
+import { extractFilenameFromURL } from "@/utils/url";
 
 interface Variable {
   name: string;
@@ -61,7 +63,9 @@ const DataResultsTable: React.FC<DataResultsProps> = ({ varsResData, selectedVar
               <TableCell align="right">
                 <Button
                   onClick={() => {
-                    handleDownload(variable.href);
+                    const filename = extractFilenameFromURL(variable.href);
+                    downloadFile(variable.href, filename);
+                    analytics.trackDownload(filename, "netcdf");
                   }}
                 >
                   Download

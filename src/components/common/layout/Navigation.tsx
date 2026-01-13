@@ -1,7 +1,6 @@
 "use client";
 
-import * as React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -17,9 +16,19 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
+import { analytics } from "@/lib/analytics";
+import { isExternalUrl } from "@/utils/url";
+
 import logo from "../../../../public/img/logos/cal-adapt-logo-white.svg";
 
-const leftMenuItems = [
+type MenuItem = {
+  label: string;
+  icon?: React.ReactElement;
+  href?: string;
+  submenu?: MenuItem[];
+};
+
+const leftMenuItems: MenuItem[] = [
   {
     label: "4th Assessment Cal-Adapt",
     icon: <ArrowBackIcon sx={{ mr: 1 }} />,
@@ -27,7 +36,7 @@ const leftMenuItems = [
   },
 ];
 
-const rightMenuItems = [
+const rightMenuItems: MenuItem[] = [
   {
     label: "Guidance",
     href: "https://analytics.cal-adapt.org/guidance/",
@@ -76,6 +85,12 @@ export default function Navigation() {
   };
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleLinkClick = (label: string, href: string) => {
+    if (isExternalUrl(href)) {
+      analytics.trackExternalLink(href, label);
+    }
   };
 
   return (
@@ -143,7 +158,12 @@ export default function Navigation() {
                   return (
                     <MenuItem
                       key={item.label}
-                      onClick={handleCloseNavMenu}
+                      onClick={() => {
+                        if (item.href) {
+                          handleLinkClick(item.label, item.href);
+                        }
+                        handleCloseNavMenu();
+                      }}
                       component={item.href ? "a" : "button"}
                       href={item.href}
                     >
@@ -186,6 +206,11 @@ export default function Navigation() {
                     component="a"
                     href={href}
                     target="_blank"
+                    onClick={() => {
+                      if (href) {
+                        handleLinkClick(label, href);
+                      }
+                    }}
                     sx={{ color: "white", display: "flex", alignItems: "center" }}
                   >
                     {icon}
@@ -262,6 +287,11 @@ export default function Navigation() {
                     component="a"
                     href={href}
                     target="_blank"
+                    onClick={() => {
+                      if (href) {
+                        handleLinkClick(label, href);
+                      }
+                    }}
                     sx={{ color: "white", display: "flex", alignItems: "center" }}
                   >
                     {icon}
