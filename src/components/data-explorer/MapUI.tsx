@@ -112,7 +112,7 @@ export default function MapUI({
   const labelledBy = "help-popover-title";
 
   useEffect(() => {
-    // --- Auto-open help popover on load ---
+    // Auto-open help popover on load
     const timeout = setTimeout(() => {
       if (helpButtonRef.current) {
         setHelpAnchorEl(helpButtonRef.current);
@@ -122,7 +122,7 @@ export default function MapUI({
     return () => clearTimeout(timeout); // cleanup on unmount
   }, []);
 
-  // --- Load query params into state ---
+  // Load query params into state
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 

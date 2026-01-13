@@ -96,7 +96,7 @@ interface ChildFormProps {
   setIsBundling: (state: boolean) => void;
 }
 
-// --- Custom dropdown style for Select components ---
+// Custom dropdown style for Select components
 const MenuProps: any = {
   PaperProps: {
     style: {
@@ -151,7 +151,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
   isBundling,
   setIsBundling,
 }) => {
-  // --- Form validation state ---
+  // Form validation state
   const [formErrorState, setFormErrorState] = useState<FormFieldErrorStates>({
     models: false,
     vars: false,
@@ -164,7 +164,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
 
   const isAllSelected = modelsSelected.length === modelsList.length;
 
-  // --- Model field handlers ---
+  // Model field handlers
   const handleModelsChange = (event: SelectChangeEvent<string[]>) => {
     const selected = event.target.value as string[];
 
@@ -185,7 +185,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
     }
   }, [modelsSelected]);
 
-  // --- Variables field handling ---
+  // Variables field handling
   useDidMountEffect(() => {
     if (selectedVars.length > 0) {
       let newFormState = formErrorState;
@@ -195,7 +195,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
     }
   }, [selectedVars]);
 
-  // --- Counties field handling ---
+  // Counties field handling
   useDidMountEffect(() => {
     if (selectedCounties.length > 0) {
       let newFormState = formErrorState;
@@ -205,7 +205,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
     }
   }, [selectedCounties]);
 
-  // --- Scenario field handling ---
+  // Scenario field handling
   useDidMountEffect(() => {
     if (selectedScenarios.length > 0) {
       let newFormState = formErrorState;
@@ -215,7 +215,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
     }
   }, [selectedScenarios]);
 
-  // --- Form validation logic ---
+  // Form validation logic
   function validateFormData() {
     let newFormState = formErrorState;
 
@@ -251,7 +251,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
     }
   }
 
-  // --- Form submission handler ---
+  // Form submission handler
   const handleSubmit = () => {
     validateFormData();
 
@@ -268,7 +268,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
     }
   };
 
-  // --- Set loading state on data response ---
+  // Set loading state on data response
   useEffect(() => {
     if (dataResponse.length > 0) {
       setIsLoading(false);
@@ -277,7 +277,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
 
   useEffect(() => {}, []);
 
-  // --- Utility functions ---
+  // Utility functions
   function genVarsLinks(variables: varUrl[]): string[] {
     let varsLinks: string[] = [];
 

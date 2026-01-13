@@ -49,7 +49,7 @@ export const MapLegend = ({
     .range([LABEL_MARGIN, boundsWidth + LABEL_MARGIN])
     .domain([min, max]);
 
-  // --- Colormap handling ---
+  // Colormap handling
   // Custom fallback for 'gist_heat' colormap
   const gistHeatInterpolator = d3
     .scaleSequential(
@@ -96,7 +96,7 @@ export const MapLegend = ({
     colorScale = d3.scaleSequential<string>().domain([min, max]).interpolator(interpolator);
   }
 
-  // --- Generate Tick Marks ---
+  // Generate tick marks
   const ticks = [min, ...xScale.ticks(4), max];
   const allTicks = ticks.map((tick, idx) => {
     const isMin = tick === min;
@@ -112,7 +112,7 @@ export const MapLegend = ({
     );
   });
 
-  // --- Effect: Draw color scale to canvas ---
+  // Effect: Draw color scale to canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
