@@ -25,7 +25,7 @@ import Alert from "@/components/common/ui/Alert";
 import Button from "@/components/common/ui/Button";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import SidePanel from "@/components/dashboard/SidePanel";
-import Heatmap from "@/components/renewables-visualizer/heatmap/Heatmap";
+import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
 import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
 import { useInstallationParams } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
