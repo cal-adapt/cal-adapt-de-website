@@ -18,7 +18,7 @@ import {
 
 import GeocoderControl from "@/components/common/map/GeocoderControl";
 import HtmlTooltip from "@/components/common/ui/HtmlTooltip";
-import { useInstallationPrms } from "@/context/InstallationParamsContext";
+import { useInstallationParams } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
 
@@ -48,7 +48,7 @@ type MapboxMapProps = {
 const MapboxMap = forwardRef<MapRef | null, MapboxMapProps>(
   ({ locationSelected, setLocationSelected, mapMarker, setMapMarker, height, maskStr }, ref) => {
     const { photoConfigSelected } = usePhotoConfig();
-    const { installationSelected } = useInstallationPrms();
+    const { installationSelected } = useInstallationParams();
     const { resSelected } = useRes();
 
     const mapRef = useRef<MapRef | null>(null);

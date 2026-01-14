@@ -1,8 +1,10 @@
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
 
+import GoogleAnalytics from "@/components/common/GoogleAnalytics";
 import Navigation from "@/components/common/layout/Navigation";
 import ThemeRegistry from "@/components/common/theme/ThemeRegistry";
+import WebVitals from "@/components/common/WebVitals";
 import { LeftDrawerProvider } from "@/context/LeftDrawerContext";
 
 import "@/styles/global.scss";
@@ -29,6 +31,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <ThemeRegistry options={{ key: "mui-theme" }}>{children}</ThemeRegistry>
         </LeftDrawerProvider>
       </body>
+      <GoogleAnalytics />
+      <WebVitals />
     </html>
   );
 }

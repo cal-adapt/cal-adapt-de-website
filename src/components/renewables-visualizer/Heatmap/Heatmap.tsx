@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import * as d3 from "d3";
 
-import MapTooltip from "@/components/renewables-visualizer/Heatmap/MapTooltip";
-import Renderer from "@/components/renewables-visualizer/Heatmap/Renderer";
-
 import { ColorLegend } from "./ColorLegend";
+import MapTooltip from "./MapTooltip";
+import Renderer from "./Renderer";
 
 import styles from "./Heatmap.module.scss";
 

@@ -39,7 +39,9 @@ import {
 } from "@/data/lookup-tables";
 import useDidMountEffect from "@/hooks/use-did-mount-effect";
 import useLocalStorageState from "@/hooks/use-local-storage-state";
+import { analytics } from "@/lib/analytics";
 import { getTodaysDateAsString } from "@/utils/date";
+import { downloadFile } from "@/utils/file";
 import { formatBytes } from "@/utils/format";
 import { createOrStatement } from "@/utils/query";
 import { arrayToCommaSeparatedString, splitStringByPeriod, stringToArray } from "@/utils/string";
@@ -54,13 +56,13 @@ type DataDownloadProps = {
 export default function DataDownload({ data }: DataDownloadProps) {
   const { open, toggleOpen } = useSidePanel();
 
-  // --- Data and API response states ---
+  // Data and API response states
   const [dataResponse, setDataResponse] = useState<modelVarUrls[]>([]);
   const [downloadLinks, setDownloadLinks] = useState<string[]>([]);
   const [totalDataSize, setTotalDataSize] = useState<number>(0);
   const [nextPageUrl, setNextPageUrl] = useState<string>("");
 
-  // --- API parameter states ---
+  // API parameter states
   const [apiParams, setApiParams] = useState<apiParamStrs>({
     countyQueryStr: "",
     scenariosQueryStr: "",
@@ -80,7 +82,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
     }));
   }
 
-  // --- UI and sidebar state ---
+  // UI and sidebar state
   const [sidebarState, setSidebarState] = useState<string>("");
   const [overwriteDialogOpen, openOverwriteDialog] = useState<boolean>(false);
   const [isDataDaily, setIsDataDaily] = useState<boolean>(false);
@@ -88,7 +90,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
   const [isBundling, setIsBundling] = useState(false);
   const [tentativePackage, setTentativePackage] = useState<number>(-1);
 
-  // --- Local storage and package selection ---
+  // Local storage and package selection
   const [isPackageStored, setIsPkgStored] = useLocalStorageState<boolean>("isPackageStored", false);
   const [selectedPackage, setSelectedPackage] = useState<number>(-1);
   // TODO: Memoize localpackagesettings
@@ -107,7 +109,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
     units: "",
   });
 
-  // --- Frequency selection ---
+  // Frequency selection
   const frequenciesList: string[] = ["Daily", "Monthly"];
 
   const [selectedFrequency, setSelectedFrequency] = useState<string>("");
@@ -129,7 +131,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
     }
   }, [selectedFrequency]);
 
-  // --- Variable selection ---
+  // Variable selection
   if (!Array.isArray(data?.summaries?.["cmip6:variable_id"])) {
     console.warn("Unexpected data structure");
   }
@@ -146,7 +148,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
     });
   }, [selectedVars]);
 
-  // --- Data download functions ---
+  // Data download functions
   const onFormDataSubmit = async () => {
     const apiUrl = "https://stac.cal-adapt.org/search";
 
@@ -265,7 +267,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
     }
   }
 
-  // --- Utility functions ---
+  // Utility functions
   const createZip = useCallback(
     async (links: string[], name: string) => {
       showLoadingIndicator();
@@ -293,11 +295,10 @@ export default function DataDownload({ data }: DataDownloadProps) {
 
       hideLoadingIndicator();
 
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = outputPath;
-      a.click();
-      a.remove();
+      const blobUrl = URL.createObjectURL(blob);
+      downloadFile(blobUrl, outputPath);
+
+      analytics.trackDownload(outputPath, "zip");
     },
     [selectedFrequency]
   ); // include deps here
@@ -316,7 +317,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
     setSidebarState("settings");
   }
 
-  // --- County selection ---
+  // County selection
 
   const countiesList: string[] = data.summaries["countyname"].map((obj: {}) => obj);
 
@@ -334,7 +335,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
     });
   }, [selectedCounties]);
 
-  // --- Model selection ---
+  // Model selection
 
   const modelsList: string[] = data.summaries["cmip6:source_id"].map((obj: {}) => obj);
   const genUseModelsList: string[] = filterByFlag(modelsGenUseLookupTable);
@@ -354,7 +355,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
     });
   }, [modelsSelected]);
 
-  // --- Scenario selection ---
+  // Scenario selection
   const scenariosList: string[] = data.summaries["cmip6:experiment_id"].map((obj: {}) => obj);
 
   const [selectedScenarios, setSelectedScenarios] = useState<string[]>([]);
@@ -382,7 +383,6 @@ export default function DataDownload({ data }: DataDownloadProps) {
     }
   }
 
-  // --- Effects ---
   useEffect(() => {
     // Update apiParams whenever selectedCounties, selectedScenarios, or modelsSelected change
 

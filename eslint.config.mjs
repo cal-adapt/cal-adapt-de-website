@@ -37,7 +37,7 @@ const eslintConfig = defineConfig([
         {
           groups: [
             // React and Next
-            ["^react$", "^next"],
+            ["^react$", "^next", "^@next"],
             // MUI
             ["^@mui"],
             // Scoped packages

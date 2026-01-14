@@ -29,6 +29,7 @@ import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import { lookupValue, scenariosLookupTable, variablesLookupTable } from "@/data/lookup-tables";
 import { tooltips } from "@/data/tooltips";
 import useDidMountEffect from "@/hooks/use-did-mount-effect";
+import { analytics } from "@/lib/analytics";
 import { searchObject } from "@/utils/object";
 
 import DataResultsTable from "./DataResultsTable";
@@ -95,7 +96,7 @@ interface ChildFormProps {
   setIsBundling: (state: boolean) => void;
 }
 
-// --- Custom dropdown style for Select components ---
+// Custom dropdown style for Select components
 const MenuProps: any = {
   PaperProps: {
     style: {
@@ -150,7 +151,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
   isBundling,
   setIsBundling,
 }) => {
-  // --- Form validation state ---
+  // Form validation state
   const [formErrorState, setFormErrorState] = useState<FormFieldErrorStates>({
     models: false,
     vars: false,
@@ -163,7 +164,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
 
   const isAllSelected = modelsSelected.length === modelsList.length;
 
-  // --- Model field handlers ---
+  // Model field handlers
   const handleModelsChange = (event: SelectChangeEvent<string[]>) => {
     const selected = event.target.value as string[];
 
@@ -184,7 +185,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
     }
   }, [modelsSelected]);
 
-  // --- Variables field handling ---
+  // Variables field handling
   useDidMountEffect(() => {
     if (selectedVars.length > 0) {
       let newFormState = formErrorState;
@@ -194,7 +195,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
     }
   }, [selectedVars]);
 
-  // --- Counties field handling ---
+  // Counties field handling
   useDidMountEffect(() => {
     if (selectedCounties.length > 0) {
       let newFormState = formErrorState;
@@ -204,7 +205,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
     }
   }, [selectedCounties]);
 
-  // --- Scenario field handling ---
+  // Scenario field handling
   useDidMountEffect(() => {
     if (selectedScenarios.length > 0) {
       let newFormState = formErrorState;
@@ -214,7 +215,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
     }
   }, [selectedScenarios]);
 
-  // --- Form validation logic ---
+  // Form validation logic
   function validateFormData() {
     let newFormState = formErrorState;
 
@@ -250,22 +251,24 @@ const PackageForm: React.FC<ChildFormProps> = ({
     }
   }
 
-  // --- Form submission handler ---
+  // Form submission handler
   const handleSubmit = () => {
     validateFormData();
 
     if (!isFormInvalid) {
+      analytics.trackFormSubmission("data_download_tool", true);
       onFormDataSubmit();
 
       isFormInvalid = false;
       setSidebarState("download");
       setIsError(false);
     } else {
+      analytics.trackFormSubmission("data_download_tool", false);
       setIsError(true);
     }
   };
 
-  // --- Set loading state on data response ---
+  // Set loading state on data response
   useEffect(() => {
     if (dataResponse.length > 0) {
       setIsLoading(false);
@@ -274,7 +277,7 @@ const PackageForm: React.FC<ChildFormProps> = ({
 
   useEffect(() => {}, []);
 
-  // --- Utility functions ---
+  // Utility functions
   function genVarsLinks(variables: varUrl[]): string[] {
     let varsLinks: string[] = [];
 

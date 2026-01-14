@@ -27,13 +27,13 @@ import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import SidePanel from "@/components/dashboard/SidePanel";
 import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
 import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
-import { useInstallationPrms } from "@/context/InstallationParamsContext";
+import { useInstallationParams } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
 import { useSidePanel } from "@/context/SidePanelContext";
 import { gwlYearEstimateData } from "@/data/renewables-visualizer/gwl-year-estimates";
 
-import VizPrmsForm from "./VisualizationParamsForm";
+import VizParamsForm from "./VisualizationParamsForm";
 
 import styles from "./RenewablesVisualizer.module.scss";
 
@@ -82,7 +82,7 @@ export default function RenewablesViz() {
   const { open, toggleOpen } = useSidePanel();
   const { resSelected, resList } = useRes();
   const { photoConfigSelected } = usePhotoConfig();
-  const { installationSelected, installationList } = useInstallationPrms();
+  const { installationSelected, installationList } = useInstallationParams();
 
   // Derived state
   const derivedConfigStr = useMemo(() => {
@@ -666,14 +666,14 @@ export default function RenewablesViz() {
               <CloseIcon />
             </IconButton>
           </Tooltip>
-          <VizPrmsForm
+          <VizParamsForm
             onFormDataSubmit={onFormDataSubmit}
             globalWarmingLevelsList={globalWarmingLevelsList}
             gwlSelected={gwlSelected}
             setGwlSelected={setGwlSelected}
             toggleOpen={toggleOpen}
             aria-label="Visualization parameters form"
-          ></VizPrmsForm>
+          ></VizParamsForm>
         </SidePanel>
       </Box>
     </Box>

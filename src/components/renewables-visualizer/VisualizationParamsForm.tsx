@@ -1,4 +1,4 @@
-// VizPrmsForm
+// VizParamsForm
 // Component for selecting parameters that define the visualization in the Renewables Visualizer.
 // Allows user to select the resource type (solar or wind), global warming level (GWL), and either photovoltaic configuration (for solar)
 // or wind installation design parameters (for wind).
@@ -19,7 +19,7 @@ import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 
 import HtmlTooltip from "@/components/common/ui/HtmlTooltip";
-import { useInstallationPrms } from "@/context/InstallationParamsContext";
+import { useInstallationParams } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
 import { tooltips } from "@/data/tooltips";
@@ -46,7 +46,7 @@ const MenuProps: any = {
   variant: "menu",
 };
 
-// --- Interface for managing validation errors on form fields ---
+// Interface for managing validation errors on form fields
 interface FormFieldErrorStates {
   globalWarming: boolean;
   photoConfig: boolean;
@@ -54,7 +54,7 @@ interface FormFieldErrorStates {
   resSelected: boolean;
 }
 
-// --- Props interface for parent-controlled state ---
+// Props interface for parent-controlled state
 interface VizFormProps {
   gwlSelected: number;
   setGwlSelected: (gwl: number) => void;
@@ -63,7 +63,7 @@ interface VizFormProps {
   toggleOpen: () => void;
 }
 
-export default function VizPrmsForm({
+export default function VizParamsForm({
   gwlSelected,
   setGwlSelected,
   globalWarmingLevelsList,
@@ -72,7 +72,8 @@ export default function VizPrmsForm({
 }: VizFormProps) {
   // Context hooks
   const { photoConfigSelected, setPhotoConfigSelected, photoConfigList } = usePhotoConfig();
-  const { installationSelected, setInstallationSelected, installationList } = useInstallationPrms();
+  const { installationSelected, setInstallationSelected, installationList } =
+    useInstallationParams();
   const { resSelected, setResSelected, resList } = useRes();
 
   // Track field validation state (not currently used but can support inline errors)
