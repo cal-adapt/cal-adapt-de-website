@@ -1,3 +1,13 @@
+const WORD_REGEX = /[\p{L}\p{N}]+/gu; // Any sequence of letters and numbers
+
+export const splitToWords = (input: string): string[] => {
+  return input.trim().match(WORD_REGEX) ?? [];
+};
+
+export const toKebabCase = (str: string) => {
+  return splitToWords(str.toLowerCase()).join("-");
+};
+
 export function stringToArray(inputString: string): string[] {
   // Split the input string by commas
   const arrayResult: string[] = inputString.split(",");
