@@ -5,6 +5,7 @@ import GoogleAnalytics from "@/components/common/GoogleAnalytics";
 import Navigation from "@/components/common/layout/Navigation";
 import ThemeRegistry from "@/components/common/theme/ThemeRegistry";
 import WebVitals from "@/components/common/WebVitals";
+import { SITE_DESCRIPTION,SITE_TITLE } from "@/config/constants";
 import { LeftDrawerProvider } from "@/context/LeftDrawerContext";
 
 import "@/styles/global.scss";
@@ -15,9 +16,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Cal-Adapt",
-  description: "Climate Tools and Data",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
 };
+
 interface RootLayoutProps {
   children: React.ReactNode;
 }
