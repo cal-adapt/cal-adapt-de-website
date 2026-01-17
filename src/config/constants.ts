@@ -1,4 +1,4 @@
-import { splitToWords, toKebabCase } from "@/utils/string";
+import { toKebabCase } from "@/utils/string";
 
 export const SITE_TITLE = "Cal-Adapt";
 export const SITE_DESCRIPTION =
