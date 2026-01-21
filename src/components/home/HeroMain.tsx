@@ -9,9 +9,9 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import clsx from "clsx";
 import { ParallaxBanner, ParallaxBannerLayer } from "react-scroll-parallax";
 
+import Icon from "@/components/common/ui/Icon";
 import { mediaQueries } from "@/utils/styles";
 
-import mouse from "../../../public/img/homepage-hero/mouse.webp";
 import rocks from "../../../public/img/homepage-hero/rocks.webp";
 import sky from "../../../public/img/homepage-hero/sky.webp";
 
@@ -70,11 +70,9 @@ export default function HeroMain() {
               </Typography>
               <div className={styles.scroll}>
                 <Typography variant="caption">Scroll</Typography>
-                <Image
-                  src={mouse}
-                  className={styles.mouse}
-                  alt="mouse symbol guiding the user to scroll down"
-                />
+                <Icon className={styles.mouse} variant="mouse">
+                  <title>mouse symbol guiding the user to scroll down</title>
+                </Icon>
               </div>
             </div>
             <div className={clsx(styles.secondary, "hidden", { visible: showSecondary })}>

@@ -16,10 +16,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
+import Icon from "@/components/common/ui/Icon";
 import { analytics } from "@/lib/analytics";
 import { isExternalUrl } from "@/utils/url";
 
-import logo from "../../../../public/img/logos/cal-adapt-logo-white.svg";
+import styles from "./Navigation.module.scss";
 
 type MenuItem = {
   label: string;
@@ -95,6 +96,7 @@ export default function Navigation() {
 
   return (
     <AppBar
+      className={styles.navigation}
       style={{ position: "absolute", zIndex: 3, top: 0 }}
       position="static"
       color="transparent"
@@ -259,7 +261,7 @@ export default function Navigation() {
               zIndex: 1,
             }}
           >
-            <Image src={logo} alt="Cal Adapt California state logo" style={{ height: "40px" }} />
+            <Icon className={styles.logo} variant="logoCalAdapt" />
           </Box>
 
           {/* Right menu items */}

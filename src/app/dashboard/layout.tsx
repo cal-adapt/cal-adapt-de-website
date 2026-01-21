@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -25,6 +24,7 @@ import {
 import { styled, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import Icon from "@/components/common/ui/Icon";
 import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
 import MobileView from "@/components/dashboard/MobileView";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
@@ -32,9 +32,6 @@ import { SidePanelProvider } from "@/context/SidePanelContext";
 import { mediaQueries } from "@/utils/styles";
 import { extractSegment } from "@/utils/url";
 
-import packageIcon from "../../../public/img/icons/package.svg";
-import settingsIcon from "../../../public/img/icons/settings.svg";
-import logo from "../../../public/img/logos/cal-adapt-data-download.png";
 import sidebarBg from "../../../public/img/photos/ocean-thumbnail.png";
 
 declare module "@mui/material/Alert" {
@@ -73,6 +70,7 @@ const ResponsiveSidebar = styled("div")(({ theme, open }: { theme: any; open: bo
   backgroundPosition: "center",
   position: "relative",
   paddingTop: "64px",
+  zIndex: open ? 3 : "auto",
   "& .MuiDrawer-paper": {
     width: open ? drawerWidth : theme.spacing(9),
     boxSizing: "border-box",
@@ -121,8 +119,7 @@ export default function Layout({ children }: LayoutProps) {
             sidebarOpen={open}
             toolName="Data Download Tool"
             tooltipTitle="Review your selected package"
-            iconSrc={packageIcon}
-            iconAlt="Package icon that you can click on to see your current data package"
+            icon="package"
           />
         );
       case "renewables-visualizer":
@@ -132,8 +129,7 @@ export default function Layout({ children }: LayoutProps) {
             sidebarOpen={open}
             toolName="Renewables Visualizer"
             tooltipTitle="Change your visualization parameters"
-            iconSrc={settingsIcon}
-            iconAlt="Settings icon that you can click on to change your visualization"
+            icon="settings"
           />
         );
       case "data-explorer":
@@ -147,8 +143,7 @@ export default function Layout({ children }: LayoutProps) {
             sidebarOpen={open}
             toolName="Getting Started"
             tooltipTitle="Change your visualization parameters"
-            iconSrc={packageIcon}
-            iconAlt="Settings icon that you can click on to change your visualization"
+            icon="package"
           />
         );
     }
@@ -168,13 +163,7 @@ export default function Layout({ children }: LayoutProps) {
           <CssBaseline />
           <ResponsiveSidebar theme={theme} open={open}>
             <DrawerHeader>
-              {open && (
-                <Image
-                  src={logo}
-                  alt="Cal Adapt California state logo"
-                  style={{ height: "40px" }}
-                />
-              )}
+              {open && <Icon variant="logoCalAdapt" style={{ height: "2em" }} />}
 
               <IconButton onClick={toggleLeftDrawer} aria-label="toggle drawer">
                 {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
