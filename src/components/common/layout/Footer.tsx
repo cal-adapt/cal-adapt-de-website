@@ -12,12 +12,8 @@ import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import Icon from "@/components/common/ui/Icon";
 import { mediaQueries } from "@/utils/styles";
-
-import BerkeleyLabLogo from "../../../../public/img/logos/berkeley-lab.jpg";
-import cecLogo from "../../../../public/img/logos/cec.svg";
-import eagleRockLogo from "../../../../public/img/logos/eagle-rock.svg";
-import gifLogo from "../../../../public/img/logos/gif.svg";
 
 import styles from "./Footer.module.scss";
 
@@ -29,6 +25,7 @@ export default function Footer() {
   const handleExpansion = () => {
     setExpanded((prevExpanded) => !prevExpanded);
   };
+
   return (
     <div className={styles.footer}>
       <div className={styles.left}>
@@ -38,10 +35,10 @@ export default function Footer() {
           Lab. The California Energy Commission provided funding and advisory oversight.
         </Typography>
         <div className={styles.logos}>
-          <Image width={165} src={gifLogo} alt="Geospatial Innovation Facility Logo" />
-          <Image width={165} src={eagleRockLogo} alt="Eagle Rock Analytics Logo" />
-          <Image width={100} src={BerkeleyLabLogo} alt="Berkeley Lab Logo" />
-          <Image width={100} src={cecLogo} alt="California Energy Commision Logo" />
+          <Icon variant="logoERA" />
+          <Icon variant="logoGIF" />
+          <Icon variant="logoLBNL" />
+          <Icon variant="logoCEC" />
         </div>
       </div>
       <div className={styles.right}>

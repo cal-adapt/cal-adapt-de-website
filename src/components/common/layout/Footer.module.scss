@@ -54,6 +54,11 @@
       @include flex(row, center, center, spacer(5));
       padding: spacer(5) 0;
 
+      & > * {
+        height: 3.75em;
+        max-width: 10em;
+      }
+
       @include breakpoint-max(large) {
         @include flex(row, center, center, spacer(5), wrap);
         padding: spacer(8) 0;
