@@ -1,0 +1,29 @@
+@use "@/styles/abstracts" as *;
+
+.errorView {
+  @include flex(row, center, center);
+  background-image: url("../../../../public/img/homepage-hero/sky.webp");
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  .inner {
+    @include flex;
+    height: 85%;
+    width: 90%;
+    background-color: $background-paper;
+    padding: spacer(10);
+  }
+
+  .content {
+    @include flex(column, center, center, spacer(6));
+    max-width: max-w(content);
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .logo {
+    height: 2.5em;
+  }
+}

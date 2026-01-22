@@ -1,9 +1,15 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import DataExplorer from "@/components/data-explorer/DataExplorer";
+import { SITE_TITLE } from "@/config/constants";
 
-export default async function DataExplorerWrapper() {
+export const metadata: Metadata = {
+  title: `Data Explorer - ${SITE_TITLE}`,
+};
+
+export default async function DataExplorerPage() {
   return (
     <Suspense
       fallback={
@@ -19,7 +25,7 @@ export default async function DataExplorerWrapper() {
         </div>
       }
     >
-      <DataExplorer></DataExplorer>
+      <DataExplorer />
     </Suspense>
   );
 }

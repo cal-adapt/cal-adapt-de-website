@@ -12,7 +12,7 @@
   @return css-var("color-#{$name}", $fallback);
 }
 
-@function max-width($name: global, $fallback: null) {
+@function max-w($name: global, $fallback: null) {
   @return css-var("max-width-#{$name}", $fallback);
 }
 

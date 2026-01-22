@@ -19,14 +19,14 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Typography,
 } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import ErrorView from "@/components/common/layout/ErrorView";
+import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
-import MobileView from "@/components/dashboard/MobileView";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
 import { mediaQueries } from "@/utils/styles";
@@ -224,7 +224,12 @@ export default function Layout({ children }: LayoutProps) {
           </Box>
         </Box>
       ) : (
-        <MobileView />
+        <ErrorView
+          logo
+          message="Due to the nature of the tools, the Cal-Adapt Dashboard is best used on a desktop or laptop computer"
+        >
+          <Button href="/">Go to the homepage</Button>
+        </ErrorView>
       )}
     </SidePanelProvider>
   );
