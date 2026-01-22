@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
+
 import RenewablesViz from "@/components/renewables-visualizer/RenewablesVisualizer";
+import { SITE_TITLE } from "@/config/constants";
 import { InstallationParamsProvider } from "@/context/InstallationParamsContext";
 import { PhotoConfigProvider } from "@/context/PhotoConfigContext";
 import { ResProvider } from "@/context/ResContext";
 
-export default async function RenewablesVizWrapper() {
+export const metadata: Metadata = {
+  title: `Renewables Visualizer - ${SITE_TITLE}`,
+};
+
+export default async function RenewablesVizPage() {
   return (
     <PhotoConfigProvider>
       <InstallationParamsProvider>

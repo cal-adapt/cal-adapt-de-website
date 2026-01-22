@@ -1,6 +1,11 @@
-import React from "react";
+import type { Metadata } from "next";
 
 import DataDownload from "@/components/data-download-tool/DataDownloadTool";
+import { SITE_TITLE } from "@/config/constants";
+
+export const metadata: Metadata = {
+  title: `Data Download Tool - ${SITE_TITLE}`,
+};
 
 async function getData() {
   const res = await fetch("https://stac.cal-adapt.org/collections/loca2-mon-county");
@@ -12,7 +17,7 @@ async function getData() {
   return res.json();
 }
 
-export default async function DataDownloadWrapper() {
+export default async function DataDownloadPage() {
   const data: any = await getData();
 
   return <DataDownload data={data}></DataDownload>;
