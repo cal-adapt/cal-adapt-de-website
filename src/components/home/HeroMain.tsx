@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -59,26 +58,22 @@ export default function HeroMain() {
         <ParallaxBannerLayer>
           <div className={styles.layer}>
             <div className={clsx(styles.intro, { hidden: showSecondary })}>
-              <Typography className={styles.headline} variant="h2">
-                Explore Next-Gen Climate Data
-              </Typography>
-              <Typography className={styles.description}>
+              <h2 className={styles.headline}>Explore Next-Gen Climate Data</h2>
+              <p className={styles.description}>
                 Cal-Adapt delivers critical climate data and cutting-edge tools to empower
                 communities, researchers, and decision-makers to take action now. As climate impacts
                 intensify, we provide the insights needed to adapt, build resilience, and drive
                 urgent solutions for a sustainable future.
-              </Typography>
+              </p>
               <div className={styles.scroll}>
-                <Typography variant="caption">Scroll</Typography>
+                <span className={styles.caption}>Scroll</span>
                 <Icon className={styles.mouse} variant="mouse">
                   <title>mouse symbol guiding the user to scroll down</title>
                 </Icon>
               </div>
             </div>
             <div className={clsx(styles.secondary, "hidden", { visible: showSecondary })}>
-              <Typography className={styles.headline} variant="h2">
-                Data Driven Tools for a Resilient Future
-              </Typography>
+              <h2 className={styles.headline}>Data Driven Tools for a Resilient Future</h2>
             </div>
           </div>
         </ParallaxBannerLayer>

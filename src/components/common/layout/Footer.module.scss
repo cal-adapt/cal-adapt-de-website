@@ -14,6 +14,17 @@
     text-align: left;
   }
 
+  .left,
+  .right {
+    max-width: max-w(content);
+    margin: 0 auto;
+
+    @include breakpoint(large) {
+      max-width: unset;
+      margin: unset;
+    }
+  }
+
   .left {
     position: relative;
 
@@ -73,7 +84,7 @@
     }
   }
 
-  .linkGroup {
+  .navGroup {
     @include flex(column, $gap: spacer(2));
   }
 

@@ -43,17 +43,19 @@
 
   .intro {
     @include flex(column, $gap: spacer(5));
-    margin-top: 10rem;
+    margin-top: spacer(14);
+    padding: spacer(7);
     text-align: center;
     transition: opacity 0.55s ease-in-out;
 
     @include breakpoint-max(large) {
-      margin-top: 7rem;
-      padding: 0 spacer(3);
+      margin-top: spacer(11);
+      padding: spacer(3);
     }
   }
 
   .headline {
+    @include type-item(heading-2);
     text-wrap: balance;
   }
 
@@ -70,7 +72,8 @@
     @include flex(column);
     margin: spacer(5) 0;
 
-    span {
+    .caption {
+      @include type-item(caption);
       display: inline-block;
       transform-origin: center;
       transform: rotate(-90deg);
