@@ -1,0 +1,75 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+a,
+li,
+code,
+div,
+input,
+textarea,
+label,
+select,
+button {
+  @include type-item(body);
+  text-wrap: pretty;
+}
+
+b,
+strong {
+  font-weight: font-weight(bold);
+}
+
+a,
+button {
+  cursor: pointer;
+}
+
+h1,
+.h1,
+.heading-1 {
+  @include type-item(heading-1);
+}
+
+h2,
+.h2,
+.heading-2 {
+  @include type-item(heading-2);
+}
+
+h3,
+.h3,
+.heading-3 {
+  @include type-item(heading-3);
+}
+
+h4,
+.h4,
+.heading-4 {
+  @include type-item(heading-4);
+}
+
+h5,
+.h5,
+.heading-5 {
+  @include type-item(heading-5);
+}
+
+h6,
+.h6,
+.heading-6 {
+  @include type-item(heading-6);
+}
+
+p,
+.p,
+.body {
+  @include type-item(body);
+}
+
+code,
+.code {
+  @include type-item(code);
+}

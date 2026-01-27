@@ -3,15 +3,14 @@
 @use "@/styles/abstracts" as *;
 
 .button {
+  @include transition("background-color, box-shadow");
+  @include flex(row, center, center);
+  @include type-item(button);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: spacer(2);
-  padding: spacer(2) spacer(5);
-  font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-decoration: none;
+  padding: spacer(3) spacer(5);
   border: none;
   border-radius: rounded(2);
   cursor: pointer;
