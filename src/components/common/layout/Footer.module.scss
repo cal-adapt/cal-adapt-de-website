@@ -1,80 +1,103 @@
 @use "@/styles/abstracts" as *;
 
 .footer {
+  @include flex(column);
   color: #fff;
   background-color: #000;
-  height: 419px;
-  padding: spacer(13) spacer(14);
-  @include flex(row);
+  height: auto;
+  padding: spacer(11) spacer(5);
+  text-align: center;
 
-  @include breakpoint-max(large) {
-    @include flex(column);
-    height: auto;
-    padding: spacer(11) spacer(5);
-    text-align: center;
+  @include breakpoint(large) {
+    @include flex(row);
+    padding: spacer(13) spacer(14);
+    text-align: left;
   }
 
-  ul {
-    list-style: none;
-    padding-left: spacer(4);
+  .left,
+  .right {
+    max-width: max-w(content);
+    margin: 0 auto;
 
-    @include breakpoint-max(large) {
-      padding: 0;
+    @include breakpoint(large) {
+      max-width: unset;
+      margin: unset;
     }
   }
 
   .left {
-    border-right: 1px solid white;
-    padding-right: spacer(13);
-    flex-basis: 50%;
     position: relative;
 
-    @include breakpoint-max(large) {
-      flex-basis: none;
-      border-right: 0;
-      padding: 0;
+    @include breakpoint(large) {
+      border-right: 1px solid white;
+      padding-right: spacer(13);
+      flex-basis: 50%;
     }
 
     &::after {
-      content: "";
-      position: absolute;
-      top: -90px; // stretch upward
-      bottom: -90px; // stretch downward
-      left: 100%;
-      width: 1px;
-      background-color: white;
-      z-index: z(1);
+      display: none;
 
-      @include breakpoint-max(large) {
-        display: none;
+      @include breakpoint(large) {
+        content: "";
+        display: block;
+        position: absolute;
+        top: -90px;
+        bottom: -90px;
+        left: 100%;
+        width: 1px;
+        background-color: white;
+        z-index: z(1);
       }
     }
 
     .logos {
-      @include flex(row, center, center, spacer(5));
-      padding: spacer(5) 0;
+      @include flex(row, center, center, spacer(5), wrap);
+      padding: spacer(8) 0;
 
       & > * {
         height: 3.75em;
         max-width: 10em;
       }
 
-      @include breakpoint-max(large) {
-        @include flex(row, center, center, spacer(5), wrap);
-        padding: spacer(8) 0;
+      @include breakpoint(large) {
+        flex-wrap: nowrap;
+        padding: spacer(5) 0;
       }
     }
   }
 
   .right {
     @include flex(column, $gap: spacer(4));
-    flex-basis: 50%;
-    padding-left: spacer(13);
-    font-size: 16px !important;
+    font-size: 16px;
 
-    @include breakpoint-max(large) {
-      flex-basis: none;
-      padding: 0;
+    @include breakpoint(large) {
+      flex-basis: 50%;
+      padding-left: spacer(13);
+    }
+  }
+
+  .navList {
+    @include flex(column, $align-items: center, $gap: spacer(3));
+
+    @include breakpoint(large) {
+      align-items: flex-start;
+    }
+  }
+
+  .navGroup {
+    @include flex(column, $gap: spacer(2));
+  }
+
+  .groupTitle {
+    font-weight: font-weight(bold);
+  }
+
+  .groupList {
+    @include flex(column, $gap: spacer(2));
+    font-size: 0.9em;
+
+    @include breakpoint(large) {
+      padding-left: spacer(4);
     }
   }
 }

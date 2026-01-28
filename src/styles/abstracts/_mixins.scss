@@ -1,3 +1,6 @@
+@use "sass:string";
+
+@use "functions" as *;
 @use "variables" as *;
 
 @mixin container($padding-block: 0) {
@@ -35,4 +38,75 @@
   font-weight: font-weight($type-name);
   text-transform: text-transform($type-name);
   font-style: $style;
+}
+
+@mixin transition($property: null, $duration: 0.2s, $easing: in-out-quad, $delay: 0s) {
+  transition-property: string.unquote($property);
+  transition-duration: $duration;
+  transition-timing-function: easing($easing);
+  transition-delay: $delay;
+  -webkit-transition-property: $property;
+  -webkit-transition-duration: $duration;
+  -webkit-transition-timing-function: easing($easing);
+}
+
+@mixin outer-border-radius($inner-radius, $distance) {
+  border-radius: calc($inner-radius + $distance);
+}
+
+@mixin inner-border-radius($outer-radius, $distance) {
+  border-radius: calc($outer-radius - $distance);
+}
+
+@mixin outer-rounded($inner-radius-name, $distance) {
+  $inner-radius: rounded($inner-radius-name);
+  @include outer-border-radius($inner-radius, $distance);
+}
+
+@mixin inner-rounded($outer-radius-name, $distance) {
+  $outer-radius: rounded($outer-radius-name);
+  @include inner-border-radius($outer-radius, $distance);
+}
+
+@mixin no-select() {
+  pointer-events: none;
+  user-select: none;
+}
+
+@mixin debug($text: null, $color: debug, $top: null, $left: null, $bottom: null, $right: null) {
+  position: relative;
+  outline: 1px solid color($color) !important;
+
+  &::after {
+    @include debug-label($color, $top, $left, $bottom, $right);
+
+    @if $text !=null {
+      content: string.quote($text);
+    }
+  }
+}
+
+@mixin debug-label($color: debug, $top: null, $left: null, $bottom: null, $right: null) {
+  @include type-item(code);
+  @include no-select;
+  background-color: color($color) !important;
+  color: color(black);
+  width: fit-content;
+  height: fit-content;
+  padding-inline: spacer(1);
+  position: absolute;
+  top: $top;
+  left: $left;
+  bottom: $bottom;
+  right: $right;
+  z-index: z(debug);
+  writing-mode: vertical-rl;
+  transform: rotate(-90deg);
+  transform-origin: center top;
+
+  @if $top ==null and $left ==null and $bottom ==null and $right ==null {
+    top: 0;
+    left: 0;
+    transform: rotate(-90deg) translate(0, -50%);
+  }
 }

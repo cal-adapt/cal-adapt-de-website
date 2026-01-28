@@ -89,6 +89,7 @@ let theme = createTheme({
     },
   },
   typography: {
+    htmlFontSize: 10,
     fontFamily: "inherit",
     fontWeightLight: 300,
     fontWeightRegular: 400,
@@ -102,24 +103,27 @@ let theme = createTheme({
     h2: {
       fontWeight: 700,
       fontSize: "3rem",
-      [`@media ${mediaQueries.min.large}`]: { fontSize: "3.75rem" },
+      [`@media ${mediaQueries.min.large}`]: { fontSize: "6rem" },
     },
     h3: {
       fontWeight: 700,
-      fontSize: "2.5rem",
+      fontSize: "3.5rem",
     },
     h4: {
       fontWeight: 700,
-      fontSize: "1.563rem",
+      fontSize: "2.5rem",
     },
     h5: {
       fontWeight: 800,
-      fontSize: "1.4rem",
+      fontSize: "2.4rem",
     },
     h6: {
       fontWeight: 700,
-      fontSize: "1rem",
+      fontSize: "1.6rem",
       color: "#373C47",
+    },
+    body1: {
+      fontSize: "1.6rem",
     },
     body2: {
       color: "#6F6F6F",
@@ -128,7 +132,11 @@ let theme = createTheme({
       fontWeight: 700,
     },
     caption: {
-      fontSize: "0.75rem",
+      fontSize: "1.2rem",
+      textTransform: "uppercase",
+    },
+    overline: {
+      fontSize: "1.2rem",
       textTransform: "uppercase",
     },
   },

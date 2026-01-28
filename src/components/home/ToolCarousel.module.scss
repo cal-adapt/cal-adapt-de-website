@@ -1,7 +1,7 @@
 @use "@/styles/abstracts" as *;
 
 .exploreContainer {
-  @include flex(row, flex-start, flex-start);
+  @include flex(row, flex-start, flex-start, $gap: spacer(12));
   height: 100%;
   margin: spacer(6) 0;
 
@@ -14,30 +14,27 @@
 
 .leftPanel {
   width: 280px;
-  margin-right: 2rem;
 }
 
 .listContainer {
   @include flex(row);
   height: 200px;
   position: relative;
-  margin-top: 2.5rem;
+  margin-top: spacer(8);
 
   .scrollableList {
     @include flex(column, $gap: 0.5rem);
     flex: 1;
-    padding-right: 0.75rem;
+    padding-right: spacer(6);
     overflow-y: auto;
   }
 
   .listItem {
-    font-size: 0.95rem;
     color: #888;
     cursor: pointer;
-    font-weight: 400;
 
     &.active {
-      font-weight: 700;
+      font-weight: font-weight(bold);
       color: #000;
     }
   }
@@ -48,13 +45,13 @@
   width: 20px;
 
   .scrollArrow {
+    font-size: 1em;
     background: none;
     border: none;
-    font-size: 1rem;
-    cursor: pointer;
     padding: spacer(1);
-    opacity: 0.6;
     color: $secondary;
+    opacity: 0.6;
+    cursor: pointer;
   }
 
   .scrollbarTrack {
@@ -106,7 +103,7 @@
 
   .rightPanelPreviewBox {
     @include flex(row);
-    padding: 1.5rem;
+    padding: spacer(5);
     height: 146px;
 
     @include breakpoint-max(large) {

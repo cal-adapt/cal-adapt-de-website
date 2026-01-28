@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import GoogleAnalytics from "@/components/common/GoogleAnalytics";
-import Navigation from "@/components/common/layout/Navigation";
+import Header from "@/components/common/layout/Header";
 import ThemeRegistry from "@/components/common/theme/ThemeRegistry";
 import WebVitals from "@/components/common/WebVitals";
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/config/constants";
@@ -29,7 +29,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navigation />
+        <Header />
         <LeftDrawerProvider>
           <ThemeRegistry options={{ key: "mui-theme" }}>{children}</ThemeRegistry>
         </LeftDrawerProvider>
