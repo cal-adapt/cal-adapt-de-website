@@ -12,7 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
-import { isNavGroup, navGroups, type NavItem, type NavLink,navLinks } from "@/data/navigation";
+import { isNavGroup, navGroups, type NavItem, type NavLink, navLinks } from "@/data/navigation";
 import { analytics } from "@/lib/analytics";
 import { isExternalUrl } from "@/utils/url";
 
@@ -174,7 +174,13 @@ export default function Header() {
           </div>
         </div>
         <div className={styles.logoWrapper}>
-          <Icon className={styles.logo} variant="logoCalAdapt" />
+          <Link
+            className={styles.navItem}
+            href={navLinks.home.href}
+            aria-label={navLinks.home.label}
+          >
+            <Icon className={styles.logo} variant="logoCalAdapt" />
+          </Link>
         </div>
       </nav>
     </header>

@@ -3,6 +3,7 @@
 @use "@/styles/abstracts" as *;
 
 .button {
+  @include focus-ring;
   @include transition("background-color, box-shadow");
   @include flex(row, center, center);
   @include type-item(button);
@@ -14,13 +15,6 @@
   border: none;
   border-radius: rounded(2);
   cursor: pointer;
-  transition:
-    background-color 0.3s ease,
-    box-shadow 0.3s ease;
-
-  &:focus-visible {
-    outline: 2px solid $primary-blue;
-  }
 
   &:disabled {
     opacity: 0.6;
@@ -43,5 +37,24 @@
 
   &:hover {
     background-color: color.scale($primary, $lightness: -10%);
+  }
+}
+
+.skip {
+  @include transition(transform);
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  background-color: $primary;
+  color: black;
+  z-index: z(max);
+
+  &:focus {
+    transform: translate(-50%, spacer(4));
+  }
+
+  &:hover:not(:disabled) {
+    background-color: color.scale($primary, $lightness: 10%);
   }
 }

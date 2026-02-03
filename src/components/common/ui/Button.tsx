@@ -8,7 +8,7 @@ import { isExternalUrl } from "@/utils/url";
 
 import styles from "./Button.module.scss";
 
-export type ButtonVariant = "primary" | "secondary";
+export type ButtonVariant = "primary" | "secondary" | "skip";
 
 export interface ButtonProps {
   variant?: ButtonVariant;
@@ -62,8 +62,8 @@ export default function Button({
       <Link
         className={buttonClasses}
         href={href}
-        aria-label={ariaLabel}
         onClick={handleClick}
+        aria-label={ariaLabel}
         {...props}
       >
         {children}

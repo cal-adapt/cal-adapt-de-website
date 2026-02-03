@@ -1,6 +1,7 @@
 @use "@/styles/abstracts" as *;
 
 .card {
+  @include focus-ring;
   @include flex(column, center, center, spacer(5));
   height: 450px;
   width: 400px;
@@ -12,12 +13,14 @@
   background-blend-mode: overlay;
   padding: 0 spacer(7);
   cursor: pointer;
+  text-decoration: none;
 
   @include breakpoint-max(large) {
     width: auto;
   }
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     background-color: rgba(0, 0, 0, 0.4);
     background-blend-mode: overlay;
     transition: all 0.2s ease-in-out;
