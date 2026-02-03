@@ -29,7 +29,7 @@
   }
 
   .content {
-    @include flex(column, center, flex-start, spacer(4));
+    @include flex(column, center, flex-start, spacer(6));
     position: relative;
     height: 100%;
     width: 60%;
@@ -38,7 +38,7 @@
     z-index: z(1);
 
     @include breakpoint-max(large) {
-      @include flex(column, flex-start, center, spacer(4));
+      @include flex(column, flex-start, center, spacer(6));
       width: 100%;
       margin-top: 7vh;
       padding: 0 spacer(10);

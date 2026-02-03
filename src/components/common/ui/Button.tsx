@@ -1,14 +1,12 @@
 "use client";
 
-import Link from "next/link";
-
 import clsx from "clsx";
 
-import { isExternalUrl } from "@/utils/url";
+import Link from "@/components/common/ui/Link";
 
 import styles from "./Button.module.scss";
 
-export type ButtonVariant = "primary" | "secondary" | "skip";
+export type ButtonVariant = "primary" | "secondary" | "skip" | "floating";
 
 export interface ButtonProps {
   variant?: ButtonVariant;
@@ -16,55 +14,44 @@ export interface ButtonProps {
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
-  ariaLabel?: string;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
-  onClick?: React.MouseEventHandler<HTMLAnchorElement | HTMLButtonElement>;
+  onClick?: () => void;
+  id?: string;
+  tabIndex?: number;
+  title?: string;
+  ariaLabel?: string;
+  ariaHidden?: boolean;
 }
 
 export default function Button({
   variant = "primary",
   href,
   className,
+  style,
   children,
-  ariaLabel,
   disabled,
   type = "button",
   onClick,
-  ...props
+  id,
+  tabIndex,
+  title,
+  ariaLabel,
+  ariaHidden,
 }: ButtonProps) {
-  const isExternal = href && isExternalUrl(href);
   const buttonClasses = clsx(styles.button, styles[variant], className);
-
-  const handleClick = (event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
-    event.stopPropagation();
-    if (onClick) onClick(event);
-  };
-
-  if (isExternal) {
-    return (
-      <a
-        className={buttonClasses}
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={handleClick}
-        aria-label={ariaLabel}
-        {...props}
-      >
-        {children}
-      </a>
-    );
-  }
 
   if (href) {
     return (
       <Link
-        className={buttonClasses}
         href={href}
-        onClick={handleClick}
+        className={buttonClasses}
+        style={style}
+        id={id}
+        tabIndex={tabIndex}
+        title={title}
         aria-label={ariaLabel}
-        {...props}
+        aria-hidden={ariaHidden}
       >
         {children}
       </Link>
@@ -74,11 +61,15 @@ export default function Button({
   return (
     <button
       className={buttonClasses}
-      onClick={handleClick}
-      aria-label={ariaLabel}
+      style={style}
       disabled={disabled}
       type={type}
-      {...props}
+      onClick={onClick}
+      id={id}
+      tabIndex={tabIndex}
+      title={title}
+      aria-label={ariaLabel}
+      aria-hidden={ariaHidden}
     >
       {children}
     </button>

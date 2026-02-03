@@ -86,6 +86,9 @@
 
   .navGroup {
     @include flex(column, $gap: spacer(2));
+    padding-bottom: spacer(5);
+    border-bottom: 1px solid color-mix(in srgb, currentColor 50%, transparent);
+    margin-bottom: spacer(2);
   }
 
   .groupTitle {

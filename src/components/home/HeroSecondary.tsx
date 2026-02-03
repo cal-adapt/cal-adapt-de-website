@@ -28,12 +28,12 @@ export default function HeroSecondary() {
         </video>
       </div>
       <div className={styles.content}>
-        <Typography variant="h2">Mapping Wildfire Weather</Typography>
-        <Typography variant="body1">
+        <h2>Mapping Wildfire Weather</h2>
+        <p>
           The Data Explorer Tool provides an interactive map to visualize key climate indicators,
           including the Fosberg Fire Weather Index (FFWI), helping users explore wildfire weather
           across California.
-        </Typography>
+        </p>
         <Button
           variant="secondary"
           className={clsx({ hidden: isMobile })}

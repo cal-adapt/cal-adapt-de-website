@@ -5,16 +5,17 @@
 .button {
   @include focus-ring;
   @include transition("background-color, box-shadow");
-  @include flex(row, center, center);
+  @include flex(row, center, center, spacer(2));
   @include type-item(button);
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: spacer(2);
   padding: spacer(3) spacer(5);
   border: none;
   border-radius: rounded(2);
   cursor: pointer;
+
+  &:hover {
+    text-decoration: none;
+  }
 
   &:disabled {
     opacity: 0.6;
@@ -37,6 +38,18 @@
 
   &:hover {
     background-color: color.scale($primary, $lightness: -10%);
+  }
+}
+
+.floating {
+  background-color: $primary-blue;
+  color: #fff;
+  padding: spacer(3);
+  border-radius: rounded(circle);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    background-color: color.scale($primary-blue, $lightness: -20%);
   }
 }
 

@@ -80,15 +80,13 @@
     z-index: z(1);
 
     .navItem {
-      padding: spacer(2) spacer(3);
-
       &:hover {
-        background-color: none;
+        background-color: transparent;
       }
     }
 
     .logo {
-      height: 2em;
+      height: 2.25em;
     }
   }
 }

@@ -9,13 +9,15 @@ import styles from "./Link.module.scss";
 
 export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   href: string;
+  openInNewTab?: boolean;
 }
 
-export default function Link({ href, children, className, ...props }: LinkProps) {
+export default function Link({ href, children, className, openInNewTab, ...props }: LinkProps) {
   const isExternal = href && isExternalUrl(href);
+  const shouldOpenInNewTab = openInNewTab || isExternal;
   const linkClasses = clsx(styles.link, className);
 
-  if (isExternal) {
+  if (shouldOpenInNewTab) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer" className={linkClasses} {...props}>
         {children}

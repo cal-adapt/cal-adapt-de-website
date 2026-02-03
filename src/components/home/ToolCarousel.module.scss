@@ -30,11 +30,24 @@
   }
 
   .listItem {
+    @include transition(color);
+    @include focus-ring;
     color: #888;
     cursor: pointer;
+    background: none;
+    border: none;
+    padding: spacer(1) spacer(2);
+    text-align: left;
+    font-size: inherit;
+    font-family: inherit;
+    border-radius: rounded(1);
 
     &.active {
       font-weight: font-weight(bold);
+      color: #000;
+    }
+
+    &:hover {
       color: #000;
     }
   }
@@ -45,18 +58,14 @@
   width: 20px;
 
   .scrollArrow {
-    font-size: 1em;
     background: none;
-    border: none;
     padding: spacer(1);
     color: $secondary;
-    opacity: 0.6;
-    cursor: pointer;
   }
 
   .scrollbarTrack {
     flex: 1;
-    width: spacer(1);
+    width: 4px;
     background: $secondary-grey-dark;
     position: relative;
     border-radius: rounded(1);

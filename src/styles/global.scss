@@ -26,13 +26,15 @@ body {
 }
 
 section {
-  padding: spacer(11) 0;
   display: flow-root;
-}
 
-a {
-  color: inherit;
-  text-decoration: none;
+  & > div {
+    padding: spacer(12) 0;
+  }
+
+  &.blue {
+    background-color: $primary;
+  }
 }
 
 /* --------------------------------------------
