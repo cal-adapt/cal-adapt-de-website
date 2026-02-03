@@ -32,7 +32,7 @@
   .listItem {
     @include transition(color);
     @include focus-ring;
-    color: #888;
+    color: #666;
     cursor: pointer;
     background: none;
     border: none;
@@ -120,6 +120,7 @@
     }
 
     .content {
+      @include flex(column, $gap: spacer(1));
       width: 350px;
     }
 
