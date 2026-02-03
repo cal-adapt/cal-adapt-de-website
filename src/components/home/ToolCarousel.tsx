@@ -139,7 +139,7 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
                     scrollToItem(newIndex);
                   }
                 }}
-                aria-label="Previous item"
+                ariaLabel="Previous item"
                 disabled={activeIndex === 0}
               >
                 <KeyboardArrowUpIcon aria-hidden="true" />
@@ -161,7 +161,7 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
                     scrollToItem(newIndex);
                   }
                 }}
-                aria-label="Next item"
+                ariaLabel="Next item"
                 disabled={activeIndex === data.length - 1}
               >
                 <KeyboardArrowDownIcon aria-hidden="true" />
@@ -185,7 +185,7 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
               data-path={data[activeIndex].link}
               variant="floating"
               onClick={handleClick}
-              aria-label={`Open ${data[activeIndex].title} in new tab`}
+              ariaLabel={`Open ${data[activeIndex].title} in new tab`}
             >
               <ArrowForwardOutlinedIcon aria-hidden="true" />
             </Button>

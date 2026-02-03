@@ -26,7 +26,7 @@ export default function Card({ title, description, href, img, isNewTab }: CardPr
     >
       <h3 className={styles.title}>{title}</h3>
       <p className={styles.description}>{description}</p>
-      <Button variant="floating" aria-hidden="true" tabIndex={-1}>
+      <Button variant="floating" ariaHidden tabIndex={-1}>
         <ArrowForwardOutlinedIcon />
       </Button>
     </Link>
