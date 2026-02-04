@@ -143,7 +143,7 @@ const MapboxMap = forwardRef<MapRef | null, MapboxMapProps>(
             mapStyle="mapbox://styles/cal-adapt/cmabls6jp00lz01qo7uax38cx"
             interactiveLayerIds={["grid"]}
             onClick={handleMapClick}
-            scrollZoom={false}
+            scrollZoom={true}
             attributionControl={false}
             minZoom={7}
           >
