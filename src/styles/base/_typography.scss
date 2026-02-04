@@ -1,3 +1,5 @@
+@use "../abstracts" as *;
+
 h1,
 h2,
 h3,
@@ -24,7 +26,9 @@ strong {
 
 a,
 button {
+  color: inherit;
   cursor: pointer;
+  text-decoration: none;
 }
 
 h1,

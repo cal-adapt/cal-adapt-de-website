@@ -2,11 +2,11 @@
 
 .imageText {
   @include flex(row);
-  padding: 0 spacer(13);
+  padding: spacer(13);
 
   @include breakpoint-max(large) {
     @include flex(column, center, stretch, spacer(6));
-    padding: 0 spacer(5);
+    padding: spacer(13) spacer(8);
   }
 
   .image {
@@ -24,7 +24,7 @@
   }
 
   .content {
-    @include flex(column, center, flex-end, spacer(3));
+    @include flex(column, center, flex-end, spacer(6));
     flex: 0 50%;
     padding-left: spacer(7);
     text-align: right;

@@ -51,7 +51,7 @@ export const MapPopup = ({
       latitude={latitude}
       closeButton={false}
       anchor="bottom"
-      aria-label={`Popup with information for [${longitude},${latitude}`}
+      aria-label={`Climate data popup for coordinates ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`}
     >
       <div className={styles.inner}>
         {isPopupLoading && <LoadingSpinner />}

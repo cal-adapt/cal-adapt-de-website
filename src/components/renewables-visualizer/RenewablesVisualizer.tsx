@@ -488,7 +488,7 @@ export default function RenewablesViz() {
                   <div className={styles.cta}>
                     <Button
                       href="https://cmip5.cal-adapt.org/blog/understanding-warming-levels"
-                      ariaLabel="Learn more about GWL"
+                      aria-label="Learn more about GWL"
                     >
                       Learn more about GWL
                     </Button>

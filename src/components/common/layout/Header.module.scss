@@ -54,20 +54,6 @@
     }
   }
 
-  .logoWrapper {
-    @include flex(row, center, center);
-    position: absolute;
-    height: 100%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: z(1);
-  }
-
-  .logo {
-    height: 2em;
-  }
-
   .navItem {
     @include type-item(overline);
     @include flex(row, center, center, spacer(2));
@@ -81,6 +67,26 @@
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .logoWrapper {
+    @include flex(row, center, center);
+    position: absolute;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: z(1);
+
+    .navItem {
+      &:hover {
+        background-color: transparent;
+      }
+    }
+
+    .logo {
+      height: 2.25em;
     }
   }
 }

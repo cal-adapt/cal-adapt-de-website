@@ -1,76 +1,34 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
-import Fab from "@mui/material/Fab";
-import Typography from "@mui/material/Typography";
+
+import Button from "@/components/common/ui/Button";
+import Link from "@/components/common/ui/Link";
 
 import styles from "./Card.module.scss";
 
 type CardProps = {
   title: string;
   description: string;
-  cta: string;
+  href: string;
   img: string;
-  isNewTab: boolean;
+  isNewTab?: boolean;
 };
 
-export default function Card({ title, description, cta, img, isNewTab }: CardProps) {
-  const router = useRouter();
-  const [hovered, setHovered] = useState(false);
-
-  const handleClick = () => {
-    if (isNewTab) {
-      window.open(cta, "_blank");
-    } else {
-      router.push(cta);
-    }
-  };
-
+export default function Card({ title, description, href, img, isNewTab }: CardProps) {
   return (
-    <div
+    <Link
       className={styles.card}
-      style={{
-        backgroundImage: `url(${img})`,
-      }}
-      onClick={(e) => {
-        e.stopPropagation();
-        handleClick();
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      href={href}
+      openInNewTab={isNewTab}
+      style={{ backgroundImage: `url(${img})` }}
+      aria-label={`${title}: ${description}`}
     >
-      <Typography
-        className={styles.title}
-        style={{
-          textTransform: "uppercase",
-          marginTop: "100px",
-        }}
-        variant="h3"
-      >
-        {title}
-      </Typography>
-      <Typography className={styles.description} variant="body3">
-        {description}
-      </Typography>
-      <Fab
-        color="primaryBlue"
-        aria-label="go"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleClick();
-        }}
-        sx={{
-          backgroundColor: hovered ? "primaryBlue.dark" : undefined,
-          boxShadow: hovered ? 6 : undefined,
-          transform: hovered ? "scale(1.1)" : "scale(1)",
-          transition: "all 0.2s ease-in-out",
-        }}
-      >
+      <h3 className={styles.title}>{title}</h3>
+      <p className={styles.description}>{description}</p>
+      <Button variant="floating" ariaHidden tabIndex={-1}>
         <ArrowForwardOutlinedIcon />
-      </Fab>
-    </div>
+      </Button>
+    </Link>
   );
 }

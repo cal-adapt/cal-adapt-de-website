@@ -3,23 +3,18 @@
 @use "@/styles/abstracts" as *;
 
 .button {
+  @include focus-ring;
   @include transition("background-color, box-shadow");
-  @include flex(row, center, center);
+  @include flex(row, center, center, spacer(2));
   @include type-item(button);
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: spacer(2);
   padding: spacer(3) spacer(5);
   border: none;
   border-radius: rounded(2);
   cursor: pointer;
-  transition:
-    background-color 0.3s ease,
-    box-shadow 0.3s ease;
 
-  &:focus-visible {
-    outline: 2px solid $primary-blue;
+  &:hover {
+    text-decoration: none;
   }
 
   &:disabled {
@@ -43,5 +38,36 @@
 
   &:hover {
     background-color: color.scale($primary, $lightness: -10%);
+  }
+}
+
+.floating {
+  background-color: $primary-blue;
+  color: #fff;
+  padding: spacer(3);
+  border-radius: rounded(circle);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    background-color: color.scale($primary-blue, $lightness: -20%);
+  }
+}
+
+.skip {
+  @include transition(transform);
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  background-color: $primary;
+  color: black;
+  z-index: z(max);
+
+  &:focus {
+    transform: translate(-50%, spacer(4));
+  }
+
+  &:hover:not(:disabled) {
+    background-color: color.scale($primary, $lightness: 10%);
   }
 }

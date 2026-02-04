@@ -2,6 +2,7 @@
 
 @use "functions" as *;
 @use "variables" as *;
+@use "breakpoints" as *;
 
 @mixin container($padding-block: 0) {
   width: 100%;
@@ -71,6 +72,13 @@
 @mixin no-select() {
   pointer-events: none;
   user-select: none;
+}
+
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid $primary-blue;
+    outline-offset: 2px;
+  }
 }
 
 @mixin debug($text: null, $color: debug, $top: null, $left: null, $bottom: null, $right: null) {

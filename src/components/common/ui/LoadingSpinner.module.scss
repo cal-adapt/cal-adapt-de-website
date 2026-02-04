@@ -1,16 +1,19 @@
 @use "@/styles/abstracts" as *;
 
+$spinner-size: 80px;
+$dot-size: 6px;
+
 .loadingSpinner {
   display: inline-block;
   position: relative;
   justify-self: center;
-  width: 80px;
-  height: 80px;
+  width: $spinner-size;
+  height: $spinner-size;
 
-  div {
+  .dot {
     position: absolute;
-    width: 6px;
-    height: 6px;
+    width: $dot-size;
+    height: $dot-size;
     background: #e5ecf6;
     border-radius: 50%;
     animation: loadingSpinner 1.2s linear infinite;

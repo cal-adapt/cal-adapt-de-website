@@ -7,13 +7,12 @@ import Image from "next/image";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import Fab from "@mui/material/Fab";
-import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import clsx from "clsx";
 import useEmblaCarousel from "embla-carousel-react";
 
+import Button from "@/components/common/ui/Button";
 import { mediaQueries } from "@/utils/styles";
 
 import styles from "./ToolCarousel.module.scss";
@@ -81,9 +80,7 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
   if (isMobile) {
     return (
       <div className={clsx(styles.exploreContainer, styles.mobile)} style={{ padding: "0 30px" }}>
-        <Typography className={styles.leftPanelTitle} variant="h5">
-          Explore
-        </Typography>
+        <h5 className={styles.leftPanelTitle}>Explore</h5>
         <div className="embla" ref={emblaRef} style={{ padding: "30px 0" }}>
           <div className="embla__container">
             {data.map((item) => (
@@ -95,8 +92,8 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
 
                   <div className={styles.rightPanelPreviewBox}>
                     <div className={styles.content}>
-                      <Typography variant="h6">{item.title}</Typography>
-                      <Typography variant="body1">{item.description}</Typography>
+                      <h6>{item.title}</h6>
+                      <p>{item.description}</p>
                     </div>
                   </div>
                 </div>
@@ -110,12 +107,13 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
     return (
       <div className={styles.exploreContainer}>
         <div className={styles.leftPanel}>
-          <Typography variant="h5">Explore</Typography>
+          <h5>Explore</h5>
           <div className={styles.listContainer}>
             <div className={styles.scrollableList} ref={listRef}>
               {data.map((item, index) => (
-                <div
+                <button
                   key={item.id}
+                  type="button"
                   className={clsx(styles.listItem, {
                     [styles.active]: index === activeIndex,
                   })}
@@ -123,14 +121,16 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
                     setActiveIndex(index);
                     scrollToItem(index);
                   }}
+                  aria-pressed={index === activeIndex}
+                  aria-label={`View ${item.title}`}
                 >
                   {item.title}
-                </div>
+                </button>
               ))}
             </div>
 
             <div className={styles.scrollWrapper}>
-              <button
+              <Button
                 className={styles.scrollArrow}
                 onClick={() => {
                   if (activeIndex > 0) {
@@ -139,9 +139,11 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
                     scrollToItem(newIndex);
                   }
                 }}
+                ariaLabel="Previous item"
+                disabled={activeIndex === 0}
               >
-                <KeyboardArrowUpIcon />
-              </button>
+                <KeyboardArrowUpIcon aria-hidden="true" />
+              </Button>
 
               <div className={styles.scrollbarTrack} ref={trackRef}>
                 <div
@@ -150,7 +152,7 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
                 />
               </div>
 
-              <button
+              <Button
                 className={styles.scrollArrow}
                 onClick={() => {
                   if (activeIndex < data.length - 1) {
@@ -159,9 +161,11 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
                     scrollToItem(newIndex);
                   }
                 }}
+                ariaLabel="Next item"
+                disabled={activeIndex === data.length - 1}
               >
-                <KeyboardArrowDownIcon />
-              </button>
+                <KeyboardArrowDownIcon aria-hidden="true" />
+              </Button>
             </div>
           </div>
         </div>
@@ -173,20 +177,18 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
 
           <div className={styles.rightPanelPreviewBox}>
             <div className={styles.content}>
-              <Typography variant="h6">{data[activeIndex].title}</Typography>
-              <Typography variant="body1">{data[activeIndex].description}</Typography>
+              <h6>{data[activeIndex].title}</h6>
+              <p>{data[activeIndex].description}</p>
             </div>
-            <Fab
+            <Button
               className={styles.linkButton}
               data-path={data[activeIndex].link}
-              color="primaryBlue"
+              variant="floating"
               onClick={handleClick}
-              sx={{ float: "right" }}
-              aria-label="Explore metric"
-              size="medium"
+              ariaLabel={`Open ${data[activeIndex].title} in new tab`}
             >
-              <ArrowForwardOutlinedIcon />
-            </Fab>
+              <ArrowForwardOutlinedIcon aria-hidden="true" />
+            </Button>
           </div>
         </div>
       </div>

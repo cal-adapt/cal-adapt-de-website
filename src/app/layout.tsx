@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import GoogleAnalytics from "@/components/common/GoogleAnalytics";
 import Header from "@/components/common/layout/Header";
 import ThemeRegistry from "@/components/common/theme/ThemeRegistry";
+import Button from "@/components/common/ui/Button";
 import WebVitals from "@/components/common/WebVitals";
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/config/constants";
 import { LeftDrawerProvider } from "@/context/LeftDrawerContext";
@@ -29,9 +30,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={inter.className}>
+        <Button variant="skip" href="#main-content">
+          Skip to main content
+        </Button>
         <Header />
         <LeftDrawerProvider>
-          <ThemeRegistry options={{ key: "mui-theme" }}>{children}</ThemeRegistry>
+          <ThemeRegistry options={{ key: "mui-theme" }}>
+            <main id="main-content">{children}</main>
+          </ThemeRegistry>
         </LeftDrawerProvider>
       </body>
       <GoogleAnalytics />

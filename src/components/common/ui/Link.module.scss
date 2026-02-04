@@ -1,8 +1,16 @@
+@use "@/styles/abstracts" as *;
+
 .link {
+  @include focus-ring;
   color: inherit;
   text-decoration: none;
+  border: none;
 
   &:hover {
     text-decoration: underline;
+  }
+
+  &:focus-visible {
+    border-radius: rounded(1);
   }
 }
