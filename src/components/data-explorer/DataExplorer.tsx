@@ -9,66 +9,47 @@ import { useEffect, useState } from "react";
 
 import Grid from "@mui/material/Unstable_Grid2";
 
-import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { metrics } from "@/data/data-explorer/metrics";
+import { calAdaptApi } from "@/lib/cal-adapt";
 
 import MapboxMap from "./MapboxMap";
 import MapUI from "./MapUI";
 
 export type ValueType = "abs" | "del";
 
-const BASE_URL = "https://map.cal-adapt.org" as const;
-const DEF_GWL = 1.5;
+const DEFAULT_GWL_LEVEL = 1.5;
 
 export default function DataExplorer() {
-  // Drawer: only run this when you're adding leftDrawer functionality
-  const { toggleLeftDrawer } = useLeftDrawer();
+  const [selectedGwlIndex, setSelectedGwlIndex] = useState<number>(0);
+  const [selectedMetricIndex, setSelectedMetricIndex] = useState<number>(0);
+  const [valueType, setValueType] = useState<ValueType>("abs");
+  const [gwlList, setGwlList] = useState<number[]>([]);
 
-  const [gwlSelected, setGwlSelected] = useState<number>(0);
-  const [metricSelected, setMetricSelected] = useState<number>(0);
-  const [valueType, setValueType] = useState<"abs" | "del">("abs");
-  const [globalWarmingLevelsList, setGlobalWarmingLevelsList] = useState<string[]>([]);
+  // Fetch GWL data when selected metric or value type changes
+  useEffect(() => {
+    async function fetchGwlData() {
+      if (selectedMetricIndex < 0) return;
 
-  // Fetch GWL data when metric or value type changes
-  async function fetchGWL() {
-    if (metricSelected >= 0) {
-      const variableConfig = metrics[metricSelected][valueType];
-      const params = {
-        url: variableConfig.mean,
-        variable: variableConfig.variable,
-      };
-
-      const queryString = Object.entries(params)
-        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-        .join("&");
-
-      const url = `${BASE_URL}/info?${queryString}`;
+      const variableConfig = metrics[selectedMetricIndex][valueType];
 
       try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        const gwlData = data.dimensions.gwl.data;
-        if (Array.isArray(gwlData) && gwlData.length > 0) {
-          setGlobalWarmingLevelsList(gwlData);
-          const defaultGwlIndex = gwlData.indexOf(DEF_GWL);
-          setGwlSelected(defaultGwlIndex);
+        const gwlData = await calAdaptApi.map.getGwlInfo(
+          variableConfig.mean,
+          variableConfig.variable
+        );
+
+        if (gwlData.length > 0) {
+          setGwlList(gwlData);
+          const defaultGwlIndex = gwlData.indexOf(DEFAULT_GWL_LEVEL);
+          setSelectedGwlIndex(defaultGwlIndex >= 0 ? defaultGwlIndex : 0);
         }
       } catch (error) {
         console.error("Failed to fetch GWL:", error);
       }
     }
-  }
 
-  useEffect(() => {
-    fetchGWL();
-  }, [metricSelected, valueType]);
-
-  useEffect(() => {
-    console.log("global warming list: ", globalWarmingLevelsList);
-  }, [globalWarmingLevelsList]);
+    fetchGwlData();
+  }, [selectedMetricIndex, valueType]);
 
   return (
     <Grid
@@ -81,19 +62,19 @@ export default function DataExplorer() {
       }}
     >
       <MapUI
-        metricSelected={metricSelected}
-        gwlSelected={gwlSelected}
-        setMetricSelected={setMetricSelected}
-        setGwlSelected={setGwlSelected}
-        globalWarmingLevels={globalWarmingLevelsList}
+        globalWarmingLevels={gwlList}
         metrics={metrics}
+        gwlSelected={selectedGwlIndex}
+        setGwlSelected={setSelectedGwlIndex}
+        metricSelected={selectedMetricIndex}
+        setMetricSelected={setSelectedMetricIndex}
         valueType={valueType}
         setValueType={setValueType}
       />
       <MapboxMap
-        gwlSelected={gwlSelected}
-        metricSelected={metricSelected}
-        globalWarmingLevels={globalWarmingLevelsList}
+        gwlSelected={selectedGwlIndex}
+        metricSelected={selectedMetricIndex}
+        globalWarmingLevels={gwlList}
         metrics={metrics}
         valueType={valueType}
       />

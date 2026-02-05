@@ -1,21 +1,14 @@
-export type apiParamStrs = {
-  countyQueryStr: string;
-  scenariosQueryStr: string;
-  modelQueryStr: string;
-  freqQueryStr: string;
-};
-
-export type varUrl = {
+export type DownloadableAsset = {
   name: string;
   href: string;
   size: number;
 };
 
-export type modelVarUrls = {
+export type DownloadItem = {
   model: string;
   countyname: string;
   scenario: string;
-  vars: varUrl[];
+  vars: DownloadableAsset[];
 };
 
 export interface DataPackage {
@@ -33,5 +26,3 @@ export interface DataPackage {
   units: string;
   disabled: boolean;
 }
-
-export type PackagesData = DataPackage[];
