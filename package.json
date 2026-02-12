@@ -13,7 +13,10 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "type-check": "tsc --noEmit --incremental --pretty",
-    "type-check:watch": "\"$npm_execpath\" run type-check --watch"
+    "type-check:watch": "\"$npm_execpath\" run type-check --watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -47,6 +50,9 @@
     "@commitlint/cli": "^20.3.0",
     "@commitlint/config-conventional": "^20.3.0",
     "@svgr/webpack": "^8.1.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/aos": "^3.0.7",
     "@types/d3": "^7.4.3",
     "@types/lodash": "^4.17.21",
@@ -55,16 +61,21 @@
     "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
     "commitlint": "^20.3.0",
     "eslint": "9.39.2",
     "eslint-config-next": "16.1.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "husky": "^9.1.7",
+    "jsdom": "^28.0.0",
     "lint-staged": "^16.2.7",
+    "msw": "^2.12.10",
     "prettier": "^3.7.4",
     "sass": "^1.97.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^6.1.0",
+    "vitest": "^4.0.18"
   },
   "engines": {
     "node": "20.9.0"
