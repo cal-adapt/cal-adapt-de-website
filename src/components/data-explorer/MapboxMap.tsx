@@ -39,13 +39,14 @@ const INITIAL_VIEW_STATE = {
 } as const;
 
 const MAP_BOUNDS: LngLatBoundsLike = [
-  [-140, 20], // Southwest coordinates [lng, lat]
-  [-100, 50], // Northeast coordinates [lng, lat]
+  [-130, 30], // Southwest coordinates [lng, lat]
+  [-110, 45], // Northeast coordinates [lng, lat]
 ];
 
 const THROTTLE_DELAY = 100 as const;
 const BASE_URL = "https://map.cal-adapt.org" as const;
 const RASTER_TILE_LAYER_OPACITY = 0.8 as const;
+const CALIFORNIA_GEOJSON = "/geojson/california.geojson" as const;
 
 type MapProps = {
   metricSelected: number;
@@ -259,21 +260,28 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
       }
     }, [mapRef]);
 
-    // --- Raster layer setup ---
+    // Raster layer setup with California mask
     useEffect(() => {
       if (!mapLoaded || !tileJson || !mapInstanceRef.current) return;
 
       const map = mapInstanceRef.current;
       const sourceId = "raster-source";
       const layerId = "tile-layer";
+      const maskSourceId = "california-mask-source";
+      const maskLayerId = "california-mask";
 
-      // Clean up existing layer and source if present
+      // Clean up existing layers and sources if present
       if (map.getLayer(layerId)) {
         map.removeLayer(layerId);
       }
-
+      if (map.getLayer(maskLayerId)) {
+        map.removeLayer(maskLayerId);
+      }
       if (map.getSource(sourceId)) {
         map.removeSource(sourceId);
+      }
+      if (map.getSource(maskSourceId)) {
+        map.removeSource(maskSourceId);
       }
 
       // Add new raster source
@@ -291,7 +299,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
         (layer) => layer.type === "symbol" || (layer.type === "line" && layer.id.includes("road"))
       )?.id;
 
-      // Insert raster layer directly below reference layer
+      // Insert raster layer below reference layer
       map.addLayer(
         {
           id: layerId,
@@ -303,6 +311,62 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
         },
         referenceLayer
       );
+
+      fetch(CALIFORNIA_GEOJSON)
+        .then((res) => res.json())
+        .then((californiaGeoJson) => {
+          // Create a polygon that spans the outer bounds of the world
+          // and create a hole around California’s boundary
+          const worldBounds: [number, number][] = [
+            [-180, -90],
+            [180, -90],
+            [180, 90],
+            [-180, 90],
+            [-180, -90],
+          ];
+
+          const californiaCoords = californiaGeoJson.geometry.coordinates;
+
+          // Create inverted mask; outer ring is world, inner rings are California polygons
+          const invertedMask: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> = {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              type: "Polygon",
+              // First ring is the outer boundary (world), subsequent rings are holes (California)
+              coordinates: [
+                worldBounds,
+                // Flatten MultiPolygon into holes - take the outer ring of each polygon
+                ...(californiaGeoJson.geometry.type === "MultiPolygon"
+                  ? californiaCoords.map((poly: number[][][]) => poly[0])
+                  : [californiaCoords[0]]),
+              ],
+            },
+          };
+
+          // Add mask source
+          map.addSource(maskSourceId, {
+            type: "geojson",
+            data: invertedMask,
+          });
+
+          // Add mask layer above the raster layer to hide everything outside California
+          map.addLayer(
+            {
+              id: maskLayerId,
+              type: "fill",
+              source: maskSourceId,
+              paint: {
+                "fill-color": "#f8f8f8",
+                "fill-opacity": 1,
+              },
+            },
+            referenceLayer
+          );
+        })
+        .catch((err) => {
+          console.error("Failed to load California mask:", err);
+        });
 
       map.on("click", handleMapClick);
       return () => {
