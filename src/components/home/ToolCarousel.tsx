@@ -38,13 +38,6 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery(mediaQueries.max.large);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const path = event.currentTarget.getAttribute("data-path");
-    if (path) {
-      window.open(path, "_blank", "noopener,noreferrer");
-    }
-  };
-
   const scrollToItem = (index: number) => {
     const el = listRef.current?.children[index] as HTMLElement;
     el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -182,9 +175,9 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
             </div>
             <Button
               className={styles.linkButton}
-              data-path={data[activeIndex].link}
+              href={data[activeIndex].link}
+              openInNewTab
               variant="floating"
-              onClick={handleClick}
               ariaLabel={`Open ${data[activeIndex].title} in new tab`}
             >
               <ArrowForwardOutlinedIcon aria-hidden="true" />
