@@ -27,5 +27,5 @@ jobs:
 
       - name: Run tests
         run: |
-          npm run test:unit
-          npm run test-storybook
+          pnpm test:unit
+          pnpm test:storybook
