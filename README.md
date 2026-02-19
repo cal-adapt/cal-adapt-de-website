@@ -40,6 +40,45 @@ pnpm build
 pnpm start
 ```
 
+## Testing
+
+This project uses the [Vitest](https://vitest.dev) test runner with [React Testing Library](https://testing-library.com/docs/react-testing-library/intro) for unit testing and [Storybook](https://storybook.js.org) for UI development and documentation.
+
+In Storybook, each story is a small code snippet that configures a component into a key UI state.
+When configured with [Storybook's Vitest addon](https://storybook.js.org/docs/writing-tests/integrations/vitest-addon), stories are transformed into component tests to be run by Vitest.
+Stories are tested in two ways: a smoke test to ensure it renders and, if a play function is defined, that function is run and any assertions made within it are validated.
+See the [Storybook documentation](https://storybook.js.org/docs) for more information.
+
+Run Vitest in watch mode:
+
+```sh
+pnpm test
+```
+
+Run Vitest once:
+
+```sh
+pnpm test:run
+```
+
+Run Vitest with coverage report:
+
+```sh
+pnpm test:coverage
+```
+
+Start the Storybook development server (default: http://localhost:6006):
+
+```sh
+pnpm storybook
+```
+
+Compiles the Storybook instance so it can be deployed:
+
+```sh
+pnpm build-storybook
+```
+
 ## Architecture
 
 ### Tool management
