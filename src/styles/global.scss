@@ -194,14 +194,22 @@ section {
 
 .mapboxgl-ctrl-geocoder.mapboxgl-ctrl {
   // so geocoder component has same styling as no-data legend
-  width: 275px !important;
-  box-shadow: none !important;
+  width: 375px !important;
+  outline: 2px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+
+  svg {
+    fill: $secondary;
+  }
 }
 
 .mapboxgl-ctrl-geocoder--input {
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.27);
   border-radius: rounded(2);
+  font-weight: font-weight(medium) !important;
+
+  &::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+  }
 }
 
 .mapboxgl-popup-content {
