@@ -21,6 +21,12 @@ Install and switch to the Node.js version specified in `.nvmrc` using your versi
 >
 > For alternative methods to install pnpm, [see here](https://pnpm.io/installation).
 
+Copy `.env.example` to `.env.local` and add your Mapbox token (`NEXT_PUBLIC_MAPBOX_TOKEN`). You can get one from [mapbox.com](https://mapbox.com) or ask a team member for the shared token.
+
+```sh
+cp .env.example .env.local
+```
+
 Install the dependencies:
 
 ```sh
