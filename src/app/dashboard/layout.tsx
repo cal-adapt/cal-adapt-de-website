@@ -8,6 +8,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
 import {
   AppBar,
@@ -19,6 +20,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Tooltip,
 } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -63,6 +65,8 @@ const ResponsiveSidebar = styled("div")(({ theme, open }: { theme: any; open: bo
   flexShrink: 0,
   minHeight: "100vh",
   height: "auto",
+  display: "flex",
+  flexDirection: "column",
   transition: "width 225ms cubic-bezier(0.4, 0, 0.6, 1)",
   backgroundImage: `url(${sidebarBg.src})`,
   backgroundRepeat: "no-repeat",
@@ -193,6 +197,29 @@ export default function Layout({ children }: LayoutProps) {
                   </ListItemButton>
                 </ListItem>
               ))}
+            </List>
+
+            <List sx={{ mt: "auto", "& .MuiListItemIcon-root": { color: "#fff" }, color: "#fff" }}>
+              <Tooltip title="Opens in a new tab" placement="right">
+                <ListItem
+                  disablePadding
+                  component="a"
+                  href="https://eaglerockanalytics.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ListItemButton
+                    sx={{
+                      "&:hover": { bgcolor: "rgba(247, 249, 251, 0.6)", borderRadius: "12px" },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <RateReviewOutlinedIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Feedback" sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+              </Tooltip>
             </List>
           </ResponsiveSidebar>
           <Box
