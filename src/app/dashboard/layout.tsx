@@ -48,7 +48,7 @@ declare module "@mui/material/Alert" {
 }
 
 const drawerWidth = 212;
-const FEEDBACK_URL = "https://eaglerockanalytics.com/";
+const FEEDBACK_URL = "https://forms.gle/PS7i5MYzF6ixdiq28";
 interface LayoutProps {
   children: React.ReactNode;
 }
