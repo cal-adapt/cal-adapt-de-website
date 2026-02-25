@@ -48,6 +48,7 @@ declare module "@mui/material/Alert" {
 }
 
 const drawerWidth = 212;
+const FEEDBACK_URL = "https://eaglerockanalytics.com/";
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -239,7 +240,7 @@ export default function Layout({ children }: LayoutProps) {
                   <p style={{ textAlign: "center" }}>
                     Please fill out{" "}
                     <MuiLink
-                      href="https://eaglerockanalytics.com/"
+                      href={FEEDBACK_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                       sx={{ color: "#1565c0" }}
