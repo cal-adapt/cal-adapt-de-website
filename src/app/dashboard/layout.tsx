@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CloseIcon from "@mui/icons-material/Close";
 import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
@@ -14,13 +15,16 @@ import {
   AppBar,
   Box,
   CssBaseline,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   IconButton,
+  Link as MuiLink,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Tooltip,
 } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -108,6 +112,7 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const [feedbackOpen, setFeedbackOpen] = React.useState(false);
   const { open, toggleLeftDrawer } = useLeftDrawer();
   const pathname = usePathname();
   const selectedPage: string | null = extractSegment(pathname, "dashboard/", "/");
@@ -200,26 +205,52 @@ export default function Layout({ children }: LayoutProps) {
             </List>
 
             <List sx={{ mt: "auto", "& .MuiListItemIcon-root": { color: "#fff" }, color: "#fff" }}>
-              <Tooltip title="Opens in a new tab" placement="right">
-                <ListItem
-                  disablePadding
-                  component="a"
-                  href="https://eaglerockanalytics.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={() => setFeedbackOpen(true)}
+                  sx={{
+                    "&:hover": { bgcolor: "rgba(247, 249, 251, 0.6)", borderRadius: "12px" },
+                  }}
                 >
-                  <ListItemButton
-                    sx={{
-                      "&:hover": { bgcolor: "rgba(247, 249, 251, 0.6)", borderRadius: "12px" },
-                    }}
+                  <ListItemIcon>
+                    <RateReviewOutlinedIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Feedback" sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+
+              <Dialog
+                open={feedbackOpen}
+                onClose={() => setFeedbackOpen(false)}
+                maxWidth="sm"
+                fullWidth
+              >
+                <DialogTitle sx={{ textAlign: "center", fontSize: "1.75rem" }}>
+                  Feedback
+                  <IconButton
+                    onClick={() => setFeedbackOpen(false)}
+                    sx={{ position: "absolute", right: 12, top: 12 }}
+                    aria-label="close"
                   >
-                    <ListItemIcon>
-                      <RateReviewOutlinedIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Feedback" sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                </ListItem>
-              </Tooltip>
+                    <CloseIcon />
+                  </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                  <p style={{ textAlign: "center" }}>
+                    Please fill out{" "}
+                    <MuiLink
+                      href="https://eaglerockanalytics.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{ color: "#1565c0" }}
+                    >
+                      this survey
+                    </MuiLink>{" "}
+                    to share any feedback you have. Suggestions for improvements, issues with the
+                    tool, or general comments are all welcome.
+                  </p>
+                </DialogContent>
+              </Dialog>
             </List>
           </ResponsiveSidebar>
           <Box
