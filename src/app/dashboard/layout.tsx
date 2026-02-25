@@ -205,7 +205,7 @@ export default function Layout({ children }: LayoutProps) {
               ))}
             </List>
 
-            <List sx={{ mt: "auto", "& .MuiListItemIcon-root": { color: "#fff" }, color: "#fff" }}>
+            <List sx={{ mt: "auto", "& .MuiListItemIcon-root": { color: "#000" }, color: "#000" }}>
               <ListItem disablePadding>
                 <ListItemButton
                   onClick={() => setFeedbackOpen(true)}
