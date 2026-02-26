@@ -39,8 +39,8 @@ const INITIAL_VIEW_STATE = {
 } as const;
 
 const MAP_BOUNDS: LngLatBoundsLike = [
-  [-135, 25], // Southwest coordinates [lng, lat]
-  [-105, 45], // Northeast coordinates [lng, lat]
+  [-140, 20], // Southwest coordinates [lng, lat]
+  [-100, 50], // Northeast coordinates [lng, lat]
 ];
 
 const THROTTLE_DELAY = 100 as const;
