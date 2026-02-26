@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -19,7 +19,6 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  Link as MuiLink,
   List,
   ListItem,
   ListItemButton,
@@ -32,6 +31,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import ErrorView from "@/components/common/layout/ErrorView";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
+import Link from "@/components/common/ui/Link";
 import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
@@ -193,7 +193,7 @@ export default function Layout({ children }: LayoutProps) {
               }}
             >
               {menuItems.map((item) => (
-                <ListItem key={item.text} disablePadding component={Link} href={item.path}>
+                <ListItem key={item.text} disablePadding component={NextLink} href={item.path}>
                   <ListItemButton>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText
@@ -239,14 +239,9 @@ export default function Layout({ children }: LayoutProps) {
                 <DialogContent>
                   <p style={{ textAlign: "center" }}>
                     Please fill out{" "}
-                    <MuiLink
-                      href={FEEDBACK_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{ color: "#1565c0" }}
-                    >
+                    <Link href={FEEDBACK_URL} style={{ color: "#1565c0" }}>
                       this survey
-                    </MuiLink>{" "}
+                    </Link>{" "}
                     to share any feedback you have. Suggestions for improvements, issues with the
                     tool, or general comments are all welcome.
                   </p>
