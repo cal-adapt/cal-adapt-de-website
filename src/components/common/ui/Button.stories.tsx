@@ -43,6 +43,21 @@ export const Secondary: Story = {
   },
 };
 
+export const Skip: Story = {
+  args: {
+    variant: "skip",
+    children: "Skip to main content",
+  },
+};
+
+export const AsLink: Story = {
+  args: {
+    variant: "primary",
+    href: "https://github.com",
+    children: "Go to GitHub",
+  },
+};
+
 export const Floating: Story = {
   args: {
     variant: "floating",
