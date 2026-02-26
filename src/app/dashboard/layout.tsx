@@ -32,8 +32,6 @@ import { SidePanelProvider } from "@/context/SidePanelContext";
 import { mediaQueries } from "@/utils/styles";
 import { extractSegment } from "@/utils/url";
 
-import sidebarBg from "../../../public/img/photos/ocean-thumbnail.png";
-
 declare module "@mui/material/Alert" {
   interface AlertPropsVariantOverrides {
     purple: true;
@@ -64,12 +62,9 @@ const ResponsiveSidebar = styled("div")(({ theme, open }: { theme: any; open: bo
   minHeight: "100vh",
   height: "auto",
   transition: "width 225ms cubic-bezier(0.4, 0, 0.6, 1)",
-  backgroundImage: `url(${sidebarBg.src})`,
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
   position: "relative",
   paddingTop: "64px",
+  borderRight: "1px solid #e8e8e8",
   zIndex: open ? 3 : "auto",
   "& .MuiDrawer-paper": {
     width: open ? drawerWidth : theme.spacing(9),
