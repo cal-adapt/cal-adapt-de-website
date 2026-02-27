@@ -44,9 +44,12 @@
 .floating {
   background-color: $primary-blue;
   color: #fff;
-  padding: spacer(3);
+  padding: spacer(6);
+  height: 1em;
+  width: 1em;
   border-radius: rounded(circle);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-weight: font-weight(bold);
 
   &:hover {
     background-color: color.scale($primary-blue, $lightness: -20%);
