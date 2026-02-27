@@ -33,6 +33,7 @@ import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
 import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
+import { FEEDBACK_URL } from "@/config/constants";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
 import { mediaQueries } from "@/utils/styles";
@@ -46,7 +47,6 @@ declare module "@mui/material/Alert" {
 }
 
 const drawerWidth = 212;
-const FEEDBACK_URL = "https://forms.gle/PS7i5MYzF6ixdiq28";
 interface LayoutProps {
   children: React.ReactNode;
 }
