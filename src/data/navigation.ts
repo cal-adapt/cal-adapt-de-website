@@ -27,20 +27,20 @@ export const navLinks = {
     label: "Home",
     href: "/",
   },
-  dataExplorer: {
-    id: "data-explorer",
-    label: "Data Explorer",
-    href: "/dashboard/data-explorer",
-  },
-  renewablesVisualizer: {
-    id: "renewables-visualizer",
-    label: "Renewables Visualizer",
-    href: "/dashboard/renewables-visualizer",
+  climateMetricsMap: {
+    id: "climate-metrics-map",
+    label: "Climate Metrics Map",
+    href: "/dashboard/climate-metrics-map",
   },
   dataDownload: {
     id: "data-download-tool",
     label: "Data Download Tool",
     href: "/dashboard/data-download-tool",
+  },
+  renewablesVisualizer: {
+    id: "renewables-visualizer",
+    label: "Renewables Visualizer",
+    href: "/dashboard/renewables-visualizer",
   },
   fourthAssessment: {
     id: "fourth-assessment",
@@ -72,6 +72,6 @@ export const navGroups = {
   tools: {
     id: "tools",
     label: "Tools",
-    links: [navLinks.dataExplorer, navLinks.renewablesVisualizer, navLinks.dataDownload],
+    links: [navLinks.climateMetricsMap, navLinks.dataDownload, navLinks.renewablesVisualizer],
   },
 } as const satisfies Record<string, NavGroup>;

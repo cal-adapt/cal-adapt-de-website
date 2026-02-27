@@ -29,6 +29,7 @@ import Icon from "@/components/common/ui/Icon";
 import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
+import { navLinks } from "@/data/navigation";
 import { mediaQueries } from "@/utils/styles";
 import { extractSegment } from "@/utils/url";
 
@@ -82,21 +83,9 @@ const ResponsiveSidebar = styled("div")(({ theme, open }: { theme: any; open: bo
 }));
 
 const menuItems = [
-  {
-    text: "Data Download Tool",
-    icon: <DatasetOutlinedIcon />,
-    path: "/dashboard/data-download-tool",
-  },
-  {
-    text: "Renewables Visualizer",
-    icon: <WbSunnyOutlinedIcon />,
-    path: "/dashboard/renewables-visualizer",
-  },
-  {
-    text: "Data Explorer",
-    icon: <MapOutlinedIcon />,
-    path: "/dashboard/data-explorer",
-  },
+  { link: navLinks.climateMetricsMap, icon: <MapOutlinedIcon /> },
+  { link: navLinks.dataDownload, icon: <DatasetOutlinedIcon /> },
+  { link: navLinks.renewablesVisualizer, icon: <WbSunnyOutlinedIcon /> },
 ];
 
 interface LayoutProps {
@@ -112,29 +101,33 @@ export default function Layout({ children }: LayoutProps) {
 
   const renderDashboardToolbar = (): React.ReactNode => {
     switch (selectedPage) {
-      case "data-download-tool":
+      case navLinks.climateMetricsMap.id:
         return (
           <DashboardToolbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
-            toolName="Data Download Tool"
+            toolName={navLinks.climateMetricsMap.label}
+          />
+        );
+      case navLinks.dataDownload.id:
+        return (
+          <DashboardToolbar
+            drawerWidth={drawerWidth}
+            sidebarOpen={open}
+            toolName={navLinks.dataDownload.label}
             tooltipTitle="Review your selected package"
             icon="package"
           />
         );
-      case "renewables-visualizer":
+      case navLinks.renewablesVisualizer.id:
         return (
           <DashboardToolbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
-            toolName="Renewables Visualizer"
+            toolName={navLinks.renewablesVisualizer.label}
             tooltipTitle="Change your visualization parameters"
             icon="settings"
           />
-        );
-      case "data-explorer":
-        return (
-          <DashboardToolbar drawerWidth={drawerWidth} sidebarOpen={open} toolName="Data Explorer" />
         );
       default:
         return (
@@ -183,11 +176,11 @@ export default function Layout({ children }: LayoutProps) {
               }}
             >
               {menuItems.map((item) => (
-                <ListItem key={item.text} disablePadding component={Link} href={item.path}>
+                <ListItem key={item.link.id} disablePadding component={Link} href={item.link.href}>
                   <ListItemButton>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText
-                      primary={item.text || "Untitled"}
+                      primary={item.link.label || "Untitled"}
                       sx={{ opacity: open ? 1 : 0 }}
                     />
                   </ListItemButton>

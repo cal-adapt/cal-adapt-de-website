@@ -1,15 +1,16 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 
+import ClimateMetricsMap from "@/components/climate-metrics-map/ClimateMetricsMap";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
-import DataExplorer from "@/components/data-explorer/DataExplorer";
 import { SITE_TITLE } from "@/config/constants";
+import { navLinks } from "@/data/navigation";
 
 export const metadata: Metadata = {
-  title: `Data Explorer - ${SITE_TITLE}`,
+  title: `${navLinks.climateMetricsMap.label} - ${SITE_TITLE}`,
 };
 
-export default async function DataExplorerPage() {
+export default async function ClimateMetricsMapPage() {
   return (
     <Suspense
       fallback={
@@ -25,7 +26,7 @@ export default async function DataExplorerPage() {
         </div>
       }
     >
-      <DataExplorer />
+      <ClimateMetricsMap />
     </Suspense>
   );
 }
