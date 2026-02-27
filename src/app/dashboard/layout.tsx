@@ -1,18 +1,23 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CloseIcon from "@mui/icons-material/Close";
 import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
 import {
   AppBar,
   Box,
   CssBaseline,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   IconButton,
   List,
   ListItem,
@@ -26,6 +31,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import ErrorView from "@/components/common/layout/ErrorView";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
+import Link from "@/components/common/ui/Link";
 import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
@@ -40,6 +46,7 @@ declare module "@mui/material/Alert" {
 }
 
 const drawerWidth = 212;
+const FEEDBACK_URL = "https://forms.gle/PS7i5MYzF6ixdiq28";
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -61,6 +68,8 @@ const ResponsiveSidebar = styled("div")(({ theme, open }: { theme: any; open: bo
   flexShrink: 0,
   minHeight: "100vh",
   height: "auto",
+  display: "flex",
+  flexDirection: "column",
   transition: "width 225ms cubic-bezier(0.4, 0, 0.6, 1)",
   position: "relative",
   paddingTop: "64px",
@@ -99,6 +108,7 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const [feedbackOpen, setFeedbackOpen] = React.useState(false);
   const { open, toggleLeftDrawer } = useLeftDrawer();
   const pathname = usePathname();
   const selectedPage: string | null = extractSegment(pathname, "dashboard/", "/");
@@ -178,7 +188,7 @@ export default function Layout({ children }: LayoutProps) {
               }}
             >
               {menuItems.map((item) => (
-                <ListItem key={item.text} disablePadding component={Link} href={item.path}>
+                <ListItem key={item.text} disablePadding component={NextLink} href={item.path}>
                   <ListItemButton>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText
@@ -188,6 +198,50 @@ export default function Layout({ children }: LayoutProps) {
                   </ListItemButton>
                 </ListItem>
               ))}
+            </List>
+
+            <List sx={{ mt: "auto", "& .MuiListItemIcon-root": { color: "#000" }, color: "#000" }}>
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={() => setFeedbackOpen(true)}
+                  sx={{
+                    "&:hover": { bgcolor: "rgba(247, 249, 251, 0.6)", borderRadius: "12px" },
+                  }}
+                >
+                  <ListItemIcon>
+                    <RateReviewOutlinedIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Feedback" sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+
+              <Dialog
+                open={feedbackOpen}
+                onClose={() => setFeedbackOpen(false)}
+                maxWidth="sm"
+                fullWidth
+              >
+                <DialogTitle sx={{ textAlign: "center", fontSize: "1.75rem" }}>
+                  Feedback
+                  <IconButton
+                    onClick={() => setFeedbackOpen(false)}
+                    sx={{ position: "absolute", right: 12, top: 12 }}
+                    aria-label="close"
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                  <p style={{ textAlign: "center" }}>
+                    Please fill out{" "}
+                    <Link href={FEEDBACK_URL} style={{ color: "#1565c0" }}>
+                      this survey
+                    </Link>{" "}
+                    to share any feedback you have. Suggestions for improvements, issues with the
+                    tool, or general comments are all welcome.
+                  </p>
+                </DialogContent>
+              </Dialog>
             </List>
           </ResponsiveSidebar>
           <Box
