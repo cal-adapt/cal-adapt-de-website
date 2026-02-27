@@ -1,6 +1,5 @@
 "use client";
 
-import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import clsx from "clsx";
@@ -30,16 +29,16 @@ export default function HeroSecondary() {
       <div className={styles.content}>
         <h2>Mapping Wildfire Weather</h2>
         <p>
-          The Data Explorer Tool provides an interactive map to visualize key climate indicators,
-          including the Fosberg Fire Weather Index (FFWI), helping users explore wildfire weather
-          across California.
+          The Climate Metrics Map tool provides an interactive map to visualize key climate
+          indicators, including the Fosberg Fire Weather Index (FFWI), helping users explore
+          wildfire weather across California.
         </p>
         <Button
           variant="secondary"
           className={clsx({ hidden: isMobile })}
-          href="/dashboard/data-explorer?metric=fire-weather"
+          href="/dashboard/climate-metrics-map?metric=fire-weather"
         >
-          See it in the Data Explorer
+          See it in the Climate Metrics Map
         </Button>
       </div>
     </div>
