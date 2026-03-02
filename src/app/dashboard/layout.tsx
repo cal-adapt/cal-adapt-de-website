@@ -32,8 +32,10 @@ import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
 import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
+import { FEEDBACK_URL } from "@/config/constants";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
+import { analytics } from "@/lib/analytics";
 import { navLinks } from "@/data/navigation";
 import { mediaQueries } from "@/utils/styles";
 import { extractSegment } from "@/utils/url";
@@ -46,7 +48,6 @@ declare module "@mui/material/Alert" {
 }
 
 const drawerWidth = 212;
-const FEEDBACK_URL = "https://forms.gle/PS7i5MYzF6ixdiq28";
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -226,7 +227,11 @@ export default function Layout({ children }: LayoutProps) {
                 <DialogContent>
                   <p style={{ textAlign: "center" }}>
                     Please fill out{" "}
-                    <Link href={FEEDBACK_URL} style={{ color: "#1565c0" }}>
+                    <Link
+                      href={FEEDBACK_URL}
+                      style={{ color: "#1565c0" }}
+                      onClick={() => analytics.trackExternalLink(FEEDBACK_URL, "feedback survey")}
+                    >
                       this survey
                     </Link>{" "}
                     to share any feedback you have. Suggestions for improvements, issues with the
