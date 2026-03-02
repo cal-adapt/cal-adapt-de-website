@@ -1,5 +1,5 @@
 // MapboxMap
-// Interactive map component using Mapbox GL for the Cal-Adapt Data Explorer.
+// Interactive map component using Mapbox GL for the Climate Metrics Map tool.
 // Displays raster climate tiles, supports point click interaction with popup values (min, max, mean),
 // and includes responsive resizing, throttled point querying, and error suppression for tile issues.
 
@@ -23,9 +23,9 @@ import {
 
 import GeocoderControl from "@/components/common/map/GeocoderControl";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
-import type { Metric } from "@/data/data-explorer/metrics";
+import type { Metric } from "@/data/climate-metrics-map/metrics";
 
-import type { ValueType } from "./DataExplorer";
+import type { ValueType } from "./ClimateMetricsMap";
 import { MapLegend } from "./MapLegend";
 import { MapPopup } from "./MapPopup";
 
