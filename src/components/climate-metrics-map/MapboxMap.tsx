@@ -27,7 +27,7 @@ import type { Metric } from "@/data/climate-metrics-map/metrics";
 
 import type { ValueType } from "./ClimateMetricsMap";
 import MapLegend from "./MapLegend";
-import { MapPopup } from "./MapPopup";
+import MapPopup from "./MapPopup";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";

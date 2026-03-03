@@ -29,7 +29,7 @@ type MapPopupProps = {
   isDataValid: boolean;
 };
 
-export const MapPopup = ({
+export default function MapPopup({
   longitude,
   latitude,
   value,
@@ -39,7 +39,7 @@ export const MapPopup = ({
   isPopupLoading,
   onClose,
   isDataValid,
-}: MapPopupProps) => {
+}: MapPopupProps) {
   const formattedMin = useMemo(() => min?.toFixed(2), [min]);
   const formattedValue = useMemo(() => value.toFixed(2), [value]);
   const formattedMax = useMemo(() => max?.toFixed(2), [max]);
@@ -109,4 +109,4 @@ export const MapPopup = ({
       </div>
     </Popup>
   );
-};
+}
