@@ -26,7 +26,7 @@ import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import type { Metric } from "@/data/climate-metrics-map/metrics";
 
 import type { ValueType } from "./ClimateMetricsMap";
-import { MapLegend } from "./MapLegend";
+import MapLegend from "./MapLegend";
 import { MapPopup } from "./MapPopup";
 
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -610,7 +610,6 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
                 min={parseFloat(paths.rescale.split(",")[0])}
                 max={parseFloat(paths.rescale.split(",")[1])}
                 title={paths.description}
-                aria-label="Map legend"
               />
             </div>
           </div>

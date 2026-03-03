@@ -1,0 +1,19 @@
+@use "@/styles/abstracts" as *;
+
+.mapLegend {
+  @include flex(column, $gap: spacer(1));
+  background-color: white;
+  padding: spacer(4);
+  margin: 0 auto;
+  border-radius: rounded(1);
+  box-shadow: none;
+
+  .colorbar {
+    @include flex;
+  }
+
+  .title {
+    @include type-item(small);
+    text-align: center;
+  }
+}
