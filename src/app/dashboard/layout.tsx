@@ -35,8 +35,8 @@ import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
 import { FEEDBACK_URL } from "@/config/constants";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
-import { analytics } from "@/lib/analytics";
 import { navLinks } from "@/data/navigation";
+import { analytics } from "@/lib/analytics";
 import { mediaQueries } from "@/utils/styles";
 import { extractSegment } from "@/utils/url";
 
@@ -102,7 +102,7 @@ export default function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
   const selectedPage: string | null = extractSegment(pathname, "dashboard/", "/");
   const theme = useTheme();
-  const isMobile = useMediaQuery(mediaQueries.max.large);
+  const isMobile = useMediaQuery(mediaQueries.max.medium);
 
   const renderDashboardToolbar = (): React.ReactNode => {
     switch (selectedPage) {
