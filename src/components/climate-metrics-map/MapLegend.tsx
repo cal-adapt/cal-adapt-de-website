@@ -4,155 +4,152 @@
 
 "use client";
 
-import React, { useEffect, useRef } from "react";
-
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-
 import * as d3 from "d3";
 import * as d3Chromatic from "d3-scale-chromatic";
+
+import styles from "./MapLegend.module.scss";
 
 type MapLegendProps = {
   colormap: string;
   min: number;
   max: number;
-  width?: number;
-  height?: number;
   title?: string;
 };
 
-const LEGEND_MARGIN = { top: 20, right: 0, bottom: 20, left: 0 };
-const LABEL_MARGIN = 40; // adjust this value to make more space for the tick text
+const LABEL_MARGIN = 40;
+const BAR_HEIGHT = 24;
+const BAR_WIDTH = 520;
+const POINT_INSET = 10;
+const NUM_GRADIENT_STOPS = 32;
 
-export const MapLegend = ({
-  colormap,
-  min,
-  max,
-  width = 521, // adjust this value to make more space for the legend label
-  height = 124,
-  title,
-}: MapLegendProps) => {
-  // Normalize reversed colormap names
+function buildColorScale(colormap: string): (t: number) => string {
   const colormapName = colormap.endsWith("_r") ? colormap.slice(0, -2) : colormap;
 
-  // Reference to the canvas element
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  // Calculate actual drawing width and height
-  const boundsWidth = width - LEGEND_MARGIN.right - LEGEND_MARGIN.left - 2 * LABEL_MARGIN;
-  const boundsHeight = 24;
-
-  // Create the x-scale for tick positioning
-  const xScale = d3
-    .scaleLinear()
-    .range([LABEL_MARGIN, boundsWidth + LABEL_MARGIN])
-    .domain([min, max]);
-
-  // Colormap handling
-  // Custom fallback for 'gist_heat' colormap
   const gistHeatInterpolator = d3
     .scaleSequential(
-      d3.interpolateRgbBasis([
-        "#FFFFFF", // White
-        "#FFFF00", // Yellow
-        "#FF4000", // Orange-red
-        "#800000", // Dark red
-        "#000000", // Black
-      ])
+      d3.interpolateRgbBasis(["#FFFFFF", "#FFFF00", "#FF4000", "#800000", "#000000"])
     )
-    .domain([0, 1]); // Normalize the input domain from 0 to 1
+    .domain([0, 1]);
 
-  let colorScale;
-
-  // Handle fallback or reversed colormap
-  if (colormapName == "gist_heat") {
-    colorScale = d3.scaleSequential<string>().domain([min, max]).interpolator(gistHeatInterpolator);
-  } else {
-    const interpolatorKey = `interpolate${colormapName}` as keyof typeof d3Chromatic;
-    let interpolator = (d3Chromatic[interpolatorKey] as (t: number) => string) || undefined;
-
-    // Fallback to default colormap if invalid
-    if (!interpolator) {
-      console.error(`Interpolator for ${colormapName} not found in d3`);
-      interpolator = d3.interpolateInferno; // Fallback to a default interpolator
-    }
-
-    // Reverse the interpolator manually if colormap ends with "_r"
-    if (colormap.endsWith("_r")) {
-      const originalInterpolator = interpolator;
-
-      if (colormap == "PuOr_r") {
-        interpolator = (t: number) => {
-          return originalInterpolator(t);
-        };
-      } else {
-        interpolator = (t: number) => {
-          return originalInterpolator(1 - t);
-        };
-      }
-    }
-
-    colorScale = d3.scaleSequential<string>().domain([min, max]).interpolator(interpolator);
+  if (colormapName === "gist_heat") {
+    return (t: number) => gistHeatInterpolator(t) ?? "#888";
   }
 
-  // Generate tick marks
-  const ticks = [min, ...xScale.ticks(4), max];
-  const allTicks = ticks.map((tick, idx) => {
-    const isMin = tick === min;
-    const isMax = tick === max;
-    const tickLabel = isMin ? `Below ${tick}` : isMax ? `Above ${tick}` : `${tick}`;
-    return (
-      <React.Fragment key={`tick-${idx}`}>
-        <line x1={xScale(tick)} x2={xScale(tick)} y1={0} y2={boundsHeight + 10} stroke="black" />
-        <text x={xScale(tick)} y={boundsHeight + 20} fontSize={12} textAnchor="middle" dx={0}>
-          {tickLabel}
-        </text>
-      </React.Fragment>
-    );
+  const interpolatorKey =
+    `interpolate${colormapName.charAt(0).toUpperCase()}${colormapName.slice(1)}` as keyof typeof d3Chromatic;
+  let interpolator =
+    (d3Chromatic[interpolatorKey] as (t: number) => string) || d3.interpolateInferno;
+
+  if (colormap.endsWith("_r") && colormap !== "PuOr_r") {
+    const orig = interpolator;
+    interpolator = (t: number) => orig(1 - t);
+  }
+
+  return interpolator;
+}
+
+export default function MapLegend({ colormap, min, max, title }: MapLegendProps) {
+  const boundsWidth = BAR_WIDTH - 2 * LABEL_MARGIN;
+  const totalWidth = boundsWidth + 2 * LABEL_MARGIN + 2 * POINT_INSET;
+
+  const xScale = d3
+    .scaleLinear()
+    .range([LABEL_MARGIN, LABEL_MARGIN + boundsWidth])
+    .domain([min, max]);
+
+  // Tick intervals of 50
+  let tickValues: number[];
+  const valueRange = max - min;
+
+  if (min >= 0 && valueRange >= 100) {
+    const step = 50;
+    const start = Math.ceil(min / step) * step;
+    const values: number[] = [];
+    for (let v = start; v <= max; v += step) {
+      values.push(v);
+    }
+
+    // Ensure 0 is included if min is 0
+    if (min === 0 && (values.length === 0 || values[0] !== 0)) {
+      values.unshift(0);
+    }
+    tickValues = values;
+  } else {
+    const niceScale = d3.scaleLinear().domain([min, max]).nice(6);
+    tickValues = niceScale.ticks(6).filter((t) => t >= min && t <= max);
+  }
+
+  const colorScale = buildColorScale(colormap);
+
+  // Bar geometry: hexagon with left and right points outward
+  const xLeft = LABEL_MARGIN - POINT_INSET;
+  const xRight = LABEL_MARGIN + boundsWidth + POINT_INSET;
+  const xBarLeft = LABEL_MARGIN;
+  const xBarRight = LABEL_MARGIN + boundsWidth;
+  const midY = BAR_HEIGHT / 2;
+
+  const pathD = [
+    `M ${xLeft} ${midY}`,
+    `L ${xBarLeft} 0`,
+    `L ${xBarRight} 0`,
+    `L ${xRight} ${midY}`,
+    `L ${xBarRight} ${BAR_HEIGHT}`,
+    `L ${xBarLeft} ${BAR_HEIGHT}`,
+    "Z",
+  ].join(" ");
+
+  const gradientId = `legend-gradient-${colormap}-${min}-${max}`.replace(/[^a-z0-9-]/gi, "-");
+
+  const gradientStops = Array.from({ length: NUM_GRADIENT_STOPS + 1 }, (_, i) => {
+    const t = i / NUM_GRADIENT_STOPS;
+    return <stop key={i} offset={t} stopColor={colorScale(t)} />;
   });
 
-  // Effect: Draw color scale to canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
-
-    if (!context) return;
-
-    for (let i = 0; i < boundsWidth; i++) {
-      context.fillStyle = colorScale(min + (max - min) * (i / boundsWidth));
-      context.fillRect(i + LABEL_MARGIN, 0, 1, boundsHeight);
-    }
-  }, [width, height, colorScale, min, max, boundsWidth, boundsHeight]);
+  const range = max - min;
+  const formatTick = (value: number) => {
+    const precision = range >= 10 ? 0 : range >= 1 ? 1 : 2;
+    return precision === 0 ? Math.round(value) : Number(value.toFixed(precision));
+  };
+  const tickLabels = tickValues.map((value) => ({
+    value,
+    label: `${formatTick(value)}`,
+  }));
 
   return (
-    <Paper
-      sx={{
-        backgroundColor: "white",
-        padding: 2,
-        boxShadow: 0,
-        borderRadius: 1,
-        margin: "0 auto", // Center the Paper component
-      }}
-    >
-      <Box style={{ position: "relative", display: "flex", justifyContent: "center" }}>
-        <canvas
-          ref={canvasRef}
-          width={boundsWidth + 2 * LABEL_MARGIN}
-          height={boundsHeight}
-          aria-label={`Legend for ${title ?? "color scale"} from ${min} to ${max}`}
-        />
+    <div className={styles.mapLegend}>
+      <div className={styles.colorbar}>
         <svg
-          width={boundsWidth + 2 * LABEL_MARGIN}
-          height={boundsHeight + 30}
-          style={{ position: "absolute", top: 0, left: 0 }}
+          width={totalWidth}
+          height={BAR_HEIGHT + 30}
+          aria-label={`Legend for ${title ?? "color scale"} from ${min} to ${max}`}
         >
-          {allTicks}
+          <defs>
+            <linearGradient
+              id={gradientId}
+              x1={xLeft}
+              y1={0}
+              x2={xRight}
+              y2={0}
+              gradientUnits="userSpaceOnUse"
+            >
+              {gradientStops}
+            </linearGradient>
+          </defs>
+          <path d={pathD} fill={`url(#${gradientId})`} stroke="black" strokeWidth={1} />
+          {tickLabels.map(({ value, label }, idx) => {
+            const x = xScale(value);
+            return (
+              <g key={idx}>
+                <line x1={x} y1={0} x2={x} y2={BAR_HEIGHT + 10} stroke="black" />
+                <text x={x} y={BAR_HEIGHT + 20} fontSize={12} textAnchor="middle" fill="black">
+                  {label}
+                </text>
+              </g>
+            );
+          })}
         </svg>
-      </Box>
-      <Typography variant="subtitle2" sx={{ mt: 3, textAlign: "center" }}>
-        {title}
-      </Typography>
-    </Paper>
+      </div>
+      {title && <p className={styles.title}>{title}</p>}
+    </div>
   );
-};
+}
