@@ -102,7 +102,7 @@ export default function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
   const selectedPage: string | null = extractSegment(pathname, "dashboard/", "/");
   const theme = useTheme();
-  const isMobile = useMediaQuery(mediaQueries.max.medium);
+  const isMobile = useMediaQuery(mediaQueries.max.small);
 
   const renderDashboardToolbar = (): React.ReactNode => {
     switch (selectedPage) {
