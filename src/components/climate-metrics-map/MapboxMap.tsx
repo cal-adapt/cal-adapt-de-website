@@ -538,16 +538,20 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
             <Map
               ref={mapRef}
               onLoad={handleMapLoad}
+              onError={handleMapError}
               mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
               initialViewState={INITIAL_VIEW_STATE}
               mapStyle="mapbox://styles/mapbox/light-v11"
               scrollZoom={true}
+              dragRotate={false}
+              pitchWithRotate={false}
+              minPitch={0}
+              maxPitch={0}
+              touchZoomRotate={false}
               minZoom={3.5}
               maxBounds={MAP_BOUNDS}
+              dragPan={true}
               style={{ width: "100%", height: "100%" }}
-              onError={handleMapError}
-              aria-label="Map"
-              dragPan={true} // Keep drag enabled
             >
               <GeocoderControl
                 mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ""}
@@ -568,15 +572,9 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
                     });
                   }
                 }}
-                aria-label="Search location"
               />
-              <NavigationControl position="top-right" aria-label="Navigation controls" />
-              <ScaleControl
-                position="bottom-right"
-                maxWidth={100}
-                unit="metric"
-                aria-label="Scale control"
-              />
+              <NavigationControl position="top-right" showCompass={false} />
+              <ScaleControl position="bottom-right" maxWidth={100} unit="metric" />
               {clickCoords && showPopup && (
                 <MapPopup
                   key={clickCoords.key} // force rerender

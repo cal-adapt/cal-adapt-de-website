@@ -144,6 +144,11 @@ const MapboxMap = forwardRef<MapRef | null, MapboxMapProps>(
             interactiveLayerIds={["grid"]}
             onClick={handleMapClick}
             scrollZoom={true}
+            dragRotate={false}
+            pitchWithRotate={false}
+            minPitch={0}
+            maxPitch={0}
+            touchZoomRotate={false}
             attributionControl={false}
             minZoom={7}
           >
@@ -155,7 +160,7 @@ const MapboxMap = forwardRef<MapRef | null, MapboxMapProps>(
                 onDragEnd={handleMarkerDragEnd}
               />
             )}
-            <NavigationControl position="bottom-left" />
+            <NavigationControl position="bottom-left" showCompass={false} />
             <ScaleControl position="bottom-right" maxWidth={100} unit="metric" />
             <GeocoderControl
               zoom={13}
