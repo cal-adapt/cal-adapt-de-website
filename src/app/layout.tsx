@@ -28,11 +28,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
           Skip to main content
         </Button>
         <Header />
-        <LeftDrawerProvider>
-          <ThemeRegistry options={{ key: "mui-theme" }}>
+        <ThemeRegistry options={{ key: "mui-theme" }}>
+          <LeftDrawerProvider>
             <main id="main-content">{children}</main>
-          </ThemeRegistry>
-        </LeftDrawerProvider>
+          </LeftDrawerProvider>
+        </ThemeRegistry>
       </body>
       <GoogleAnalytics />
       <WebVitals />
