@@ -13,7 +13,14 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "type-check": "tsc --noEmit --incremental --pretty",
-    "type-check:watch": "\"$npm_execpath\" run type-check --watch"
+    "type-check:watch": "\"$npm_execpath\" run type-check --watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:unit": "vitest run --project=unit",
+    "test:storybook": "vitest run --project=storybook",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -47,6 +54,9 @@
     "@commitlint/cli": "^20.3.0",
     "@commitlint/config-conventional": "^20.3.0",
     "@svgr/webpack": "^8.1.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/aos": "^3.0.7",
     "@types/d3": "^7.4.3",
     "@types/lodash": "^4.17.21",
@@ -55,19 +65,35 @@
     "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
     "commitlint": "^20.3.0",
     "eslint": "9.39.2",
     "eslint-config-next": "16.1.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "husky": "^9.1.7",
+    "jsdom": "^28.0.0",
     "lint-staged": "^16.2.7",
+    "msw": "^2.12.10",
     "prettier": "^3.7.4",
     "sass": "^1.97.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^6.1.0",
+    "vitest": "^4.0.18",
+    "storybook": "^10.2.8",
+    "@storybook/nextjs-vite": "^10.2.8",
+    "@storybook/addon-vitest": "^10.2.8",
+    "@storybook/addon-a11y": "^10.2.8",
+    "@storybook/addon-docs": "^10.2.8",
+    "@storybook/addon-onboarding": "^10.2.8",
+    "vite": "^7.3.1",
+    "eslint-plugin-storybook": "^10.2.8",
+    "playwright": "^1.58.2",
+    "@vitest/browser-playwright": "4.0.18",
+    "@vitest/coverage-v8": "4.0.18"
   },
   "engines": {
-    "node": "20.9.0"
+    "node": "24.13.1"
   },
   "packageManager": "pnpm@10.26.1+sha512.664074abc367d2c9324fdc18037097ce0a8f126034160f709928e9e9f95d98714347044e5c3164d65bd5da6c59c6be362b107546292a8eecb7999196e5ce58fa"
 }

@@ -11,6 +11,7 @@ export type ButtonVariant = "primary" | "secondary" | "skip" | "floating";
 export interface ButtonProps {
   variant?: ButtonVariant;
   href?: string;
+  openInNewTab?: boolean;
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
@@ -27,6 +28,7 @@ export interface ButtonProps {
 export default function Button({
   variant = "primary",
   href,
+  openInNewTab,
   className,
   style,
   children,
@@ -45,6 +47,7 @@ export default function Button({
     return (
       <Link
         href={href}
+        openInNewTab={openInNewTab}
         className={buttonClasses}
         style={style}
         id={id}

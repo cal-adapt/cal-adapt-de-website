@@ -1,5 +1,5 @@
 // MapUI
-// UI controls for the Data Explorer map interface.
+// UI controls for the Climate Metrics Map interface.
 // Includes GWL and metric selectors, value type tabs, tooltip help, and info popover.
 
 "use client";
@@ -24,10 +24,10 @@ import Typography from "@mui/material/Typography";
 
 import HtmlTooltip from "@/components/common/ui/HtmlTooltip";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
-import type { Metric } from "@/data/data-explorer/metrics";
+import type { Metric } from "@/data/climate-metrics-map/metrics";
 import { tooltips } from "@/data/tooltips";
 
-import type { ValueType } from "./DataExplorer";
+import type { ValueType } from "./ClimateMetricsMap";
 
 import styles from "./MapUI.module.scss";
 
@@ -312,7 +312,7 @@ export default function MapUI({
                 }}
               >
                 <Typography variant="h5" id={labelledBy}>
-                  About the Data Explorer Tool
+                  About the Climate Metrics Map tool
                 </Typography>
                 <Typography variant="body1" id={labelledBy}>
                   <p>

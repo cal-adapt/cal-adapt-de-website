@@ -1,5 +1,5 @@
 // MapboxMap
-// Interactive map component using Mapbox GL for the Cal-Adapt Data Explorer.
+// Interactive map component using Mapbox GL for the Climate Metrics Map tool.
 // Displays raster climate tiles, supports point click interaction with popup values (min, max, mean),
 // and includes responsive resizing, throttled point querying, and error suppression for tile issues.
 
@@ -23,12 +23,12 @@ import {
 
 import GeocoderControl from "@/components/common/map/GeocoderControl";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
-import type { Metric } from "@/data/data-explorer/metrics";
+import type { Metric } from "@/data/climate-metrics-map/metrics";
 import { calAdaptApi, type TileJson } from "@/lib/cal-adapt";
 
-import type { ValueType } from "./DataExplorer";
-import { MapLegend } from "./MapLegend";
-import { MapPopup } from "./MapPopup";
+import type { ValueType } from "./ClimateMetricsMap";
+import MapLegend from "./MapLegend";
+import MapPopup from "./MapPopup";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
@@ -46,6 +46,7 @@ const MAP_BOUNDS: LngLatBoundsLike = [
 
 const THROTTLE_DELAY = 100 as const;
 const RASTER_TILE_LAYER_OPACITY = 0.8 as const;
+const CALIFORNIA_GEOJSON = "/geojson/california.geojson" as const;
 
 type MapProps = {
   metricSelected: number;
@@ -204,21 +205,28 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
       }
     }, [mapRef]);
 
-    // --- Raster layer setup ---
+    // Raster layer setup with California mask
     useEffect(() => {
       if (!mapLoaded || !tileJson || !mapInstanceRef.current) return;
 
       const map = mapInstanceRef.current;
       const sourceId = "raster-source";
       const layerId = "tile-layer";
+      const maskSourceId = "california-mask-source";
+      const maskLayerId = "california-mask";
 
-      // Clean up existing layer and source if present
+      // Clean up existing layers and sources if present
       if (map.getLayer(layerId)) {
         map.removeLayer(layerId);
       }
-
+      if (map.getLayer(maskLayerId)) {
+        map.removeLayer(maskLayerId);
+      }
       if (map.getSource(sourceId)) {
         map.removeSource(sourceId);
+      }
+      if (map.getSource(maskSourceId)) {
+        map.removeSource(maskSourceId);
       }
 
       // Add new raster source
@@ -236,7 +244,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
         (layer) => layer.type === "symbol" || (layer.type === "line" && layer.id.includes("road"))
       )?.id;
 
-      // Insert raster layer directly below reference layer
+      // Insert raster layer below reference layer
       map.addLayer(
         {
           id: layerId,
@@ -248,6 +256,62 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
         },
         referenceLayer
       );
+
+      fetch(CALIFORNIA_GEOJSON)
+        .then((res) => res.json())
+        .then((californiaGeoJson) => {
+          // Create a polygon that spans the outer bounds of the world
+          // and create a hole around California’s boundary
+          const worldBounds: [number, number][] = [
+            [-180, -90],
+            [180, -90],
+            [180, 90],
+            [-180, 90],
+            [-180, -90],
+          ];
+
+          const californiaCoords = californiaGeoJson.geometry.coordinates;
+
+          // Create inverted mask; outer ring is world, inner rings are California polygons
+          const invertedMask: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> = {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              type: "Polygon",
+              // First ring is the outer boundary (world), subsequent rings are holes (California)
+              coordinates: [
+                worldBounds,
+                // Flatten MultiPolygon into holes - take the outer ring of each polygon
+                ...(californiaGeoJson.geometry.type === "MultiPolygon"
+                  ? californiaCoords.map((poly: number[][][]) => poly[0])
+                  : [californiaCoords[0]]),
+              ],
+            },
+          };
+
+          // Add mask source
+          map.addSource(maskSourceId, {
+            type: "geojson",
+            data: invertedMask,
+          });
+
+          // Add mask layer above the raster layer to hide everything outside California
+          map.addLayer(
+            {
+              id: maskLayerId,
+              type: "fill",
+              source: maskSourceId,
+              paint: {
+                "fill-color": "#f8f8f8",
+                "fill-opacity": 1,
+              },
+            },
+            referenceLayer
+          );
+        })
+        .catch((err) => {
+          console.error("Failed to load California mask:", err);
+        });
 
       map.on("click", handleMapClick);
       return () => {
@@ -418,16 +482,20 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
             <Map
               ref={mapRef}
               onLoad={handleMapLoad}
+              onError={handleMapError}
               mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
               initialViewState={INITIAL_VIEW_STATE}
               mapStyle="mapbox://styles/mapbox/light-v11"
               scrollZoom={true}
+              dragRotate={false}
+              pitchWithRotate={false}
+              minPitch={0}
+              maxPitch={0}
+              touchZoomRotate={false}
               minZoom={3.5}
               maxBounds={MAP_BOUNDS}
+              dragPan={true}
               style={{ width: "100%", height: "100%" }}
-              onError={handleMapError}
-              aria-label="Map"
-              dragPan={true} // Keep drag enabled
             >
               <GeocoderControl
                 mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ""}
@@ -448,15 +516,9 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
                     });
                   }
                 }}
-                aria-label="Search location"
               />
-              <NavigationControl position="top-right" aria-label="Navigation controls" />
-              <ScaleControl
-                position="bottom-right"
-                maxWidth={100}
-                unit="metric"
-                aria-label="Scale control"
-              />
+              <NavigationControl position="top-right" showCompass={false} />
+              <ScaleControl position="bottom-right" maxWidth={100} unit="metric" />
               {clickCoords && showPopup && (
                 <MapPopup
                   key={clickCoords.key} // force rerender
@@ -490,7 +552,6 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
                 min={parseFloat(paths.rescale.split(",")[0])}
                 max={parseFloat(paths.rescale.split(",")[1])}
                 title={paths.description}
-                aria-label="Map legend"
               />
             </div>
           </div>

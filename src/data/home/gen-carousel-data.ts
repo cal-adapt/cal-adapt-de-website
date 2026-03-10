@@ -7,7 +7,7 @@ export const genCarouselData: CarouselData[] = [
     description: "Understand how many extreme heat days will occur in the future",
     image: "/img/homepage-carousels/extreme-heat.png",
     imageAlt: "California agricultural workers on a field",
-    link: "/dashboard/data-explorer?metric=extreme-heat",
+    link: "/dashboard/climate-metrics-map?metric=extreme-heat",
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ export const genCarouselData: CarouselData[] = [
       "See the Fosberg Fire Weather Risk Weather Index for the projected futures across California",
     image: "/img/homepage-carousels/wildfire.png",
     imageAlt: "A fire helicopter spraying an active wildfire",
-    link: "/dashboard/data-explorer?metric=fire-weather",
+    link: "/dashboard/climate-metrics-map?metric=fire-weather",
   },
   {
     id: 4,
@@ -34,7 +34,7 @@ export const genCarouselData: CarouselData[] = [
       "Show the top 1% of precipitation that will occur in the future and how much it will rain there",
     image: "/img/homepage-carousels/extreme-precip.png",
     imageAlt: "People with umbrellas in San Francisco on a rainy day",
-    link: "/dashboard/data-explorer?metric=extreme-precipitation",
+    link: "/dashboard/climate-metrics-map?metric=extreme-precipitation",
   },
   {
     id: 5,

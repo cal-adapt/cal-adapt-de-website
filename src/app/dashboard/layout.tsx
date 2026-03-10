@@ -1,18 +1,22 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CloseIcon from "@mui/icons-material/Close";
 import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
 import {
   AppBar,
   Box,
   CssBaseline,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   IconButton,
   List,
   ListItem,
@@ -26,13 +30,15 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import ErrorView from "@/components/common/layout/ErrorView";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
+import Link from "@/components/common/ui/Link";
 import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
+import { FEEDBACK_URL } from "@/config/constants";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
+import { navLinks } from "@/data/navigation";
+import { analytics } from "@/lib/analytics";
 import { mediaQueries } from "@/utils/styles";
 import { extractSegment } from "@/utils/url";
-
-import sidebarBg from "../../../public/img/photos/ocean-thumbnail.png";
 
 declare module "@mui/material/Alert" {
   interface AlertPropsVariantOverrides {
@@ -63,13 +69,12 @@ const ResponsiveSidebar = styled("div")(({ theme, open }: { theme: any; open: bo
   flexShrink: 0,
   minHeight: "100vh",
   height: "auto",
+  display: "flex",
+  flexDirection: "column",
   transition: "width 225ms cubic-bezier(0.4, 0, 0.6, 1)",
-  backgroundImage: `url(${sidebarBg.src})`,
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
   position: "relative",
   paddingTop: "64px",
+  borderRight: "1px solid #e8e8e8",
   zIndex: open ? 3 : "auto",
   "& .MuiDrawer-paper": {
     width: open ? drawerWidth : theme.spacing(9),
@@ -82,21 +87,9 @@ const ResponsiveSidebar = styled("div")(({ theme, open }: { theme: any; open: bo
 }));
 
 const menuItems = [
-  {
-    text: "Data Download Tool",
-    icon: <DatasetOutlinedIcon />,
-    path: "/dashboard/data-download-tool",
-  },
-  {
-    text: "Renewables Visualizer",
-    icon: <WbSunnyOutlinedIcon />,
-    path: "/dashboard/renewables-visualizer",
-  },
-  {
-    text: "Data Explorer",
-    icon: <MapOutlinedIcon />,
-    path: "/dashboard/data-explorer",
-  },
+  { link: navLinks.climateMetricsMap, icon: <MapOutlinedIcon /> },
+  { link: navLinks.dataDownload, icon: <DatasetOutlinedIcon /> },
+  { link: navLinks.renewablesVisualizer, icon: <WbSunnyOutlinedIcon /> },
 ];
 
 interface LayoutProps {
@@ -104,37 +97,42 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const [feedbackOpen, setFeedbackOpen] = React.useState(false);
   const { open, toggleLeftDrawer } = useLeftDrawer();
   const pathname = usePathname();
   const selectedPage: string | null = extractSegment(pathname, "dashboard/", "/");
   const theme = useTheme();
-  const isMobile = useMediaQuery(mediaQueries.max.large);
+  const isMobile = useMediaQuery(mediaQueries.max.small);
 
   const renderDashboardToolbar = (): React.ReactNode => {
     switch (selectedPage) {
-      case "data-download-tool":
+      case navLinks.climateMetricsMap.id:
         return (
           <DashboardToolbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
-            toolName="Data Download Tool"
+            toolName={navLinks.climateMetricsMap.label}
+          />
+        );
+      case navLinks.dataDownload.id:
+        return (
+          <DashboardToolbar
+            drawerWidth={drawerWidth}
+            sidebarOpen={open}
+            toolName={navLinks.dataDownload.label}
             tooltipTitle="Review your selected package"
             icon="package"
           />
         );
-      case "renewables-visualizer":
+      case navLinks.renewablesVisualizer.id:
         return (
           <DashboardToolbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
-            toolName="Renewables Visualizer"
+            toolName={navLinks.renewablesVisualizer.label}
             tooltipTitle="Change your visualization parameters"
             icon="settings"
           />
-        );
-      case "data-explorer":
-        return (
-          <DashboardToolbar drawerWidth={drawerWidth} sidebarOpen={open} toolName="Data Explorer" />
         );
       default:
         return (
@@ -183,16 +181,64 @@ export default function Layout({ children }: LayoutProps) {
               }}
             >
               {menuItems.map((item) => (
-                <ListItem key={item.text} disablePadding component={Link} href={item.path}>
+                <ListItem key={item.link.id} disablePadding component={Link} href={item.link.href}>
                   <ListItemButton>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText
-                      primary={item.text || "Untitled"}
+                      primary={item.link.label || "Untitled"}
                       sx={{ opacity: open ? 1 : 0 }}
                     />
                   </ListItemButton>
                 </ListItem>
               ))}
+            </List>
+
+            <List sx={{ mt: "auto", "& .MuiListItemIcon-root": { color: "#000" }, color: "#000" }}>
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={() => setFeedbackOpen(true)}
+                  sx={{
+                    "&:hover": { bgcolor: "rgba(247, 249, 251, 0.6)", borderRadius: "12px" },
+                  }}
+                >
+                  <ListItemIcon>
+                    <RateReviewOutlinedIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Feedback" sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+
+              <Dialog
+                open={feedbackOpen}
+                onClose={() => setFeedbackOpen(false)}
+                maxWidth="sm"
+                fullWidth
+              >
+                <DialogTitle sx={{ textAlign: "center", fontSize: "1.75rem" }}>
+                  Feedback
+                  <IconButton
+                    onClick={() => setFeedbackOpen(false)}
+                    sx={{ position: "absolute", right: 12, top: 12 }}
+                    aria-label="close"
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                  <p style={{ textAlign: "center" }}>
+                    Please fill out{" "}
+                    <Link
+                      href={FEEDBACK_URL}
+                      style={{ color: "#1565c0" }}
+                      onClick={() => analytics.trackExternalLink(FEEDBACK_URL, "feedback survey")}
+                    >
+                      this survey
+                    </Link>{" "}
+                    to share any feedback you have. Suggestions for improvements, issues with the
+                    tool, or general comments are all welcome.
+                  </p>
+                </DialogContent>
+              </Dialog>
             </List>
           </ResponsiveSidebar>
           <Box

@@ -1,5 +1,5 @@
-// DataExplorer
-// Main wrapper for the interactive data explorer map tool.
+// ClimateMetricsMap
+// Main wrapper for the interactive Climate Metrics Map tool.
 // Manages metric selection, GWL (Global Warming Level) selection, and value type (absolute or delta).
 // Loads appropriate data from the API and passes it to MapUI and MapboxMap components.
 
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 
 import Grid from "@mui/material/Unstable_Grid2";
 
-import { metrics } from "@/data/data-explorer/metrics";
+import { metrics } from "@/data/climate-metrics-map/metrics";
 import { calAdaptApi } from "@/lib/cal-adapt";
 
 import MapboxMap from "./MapboxMap";
@@ -19,7 +19,7 @@ export type ValueType = "abs" | "del";
 
 const DEFAULT_GWL_LEVEL = 1.5;
 
-export default function DataExplorer() {
+export default function ClimateMetricsMap() {
   const [selectedGwlIndex, setSelectedGwlIndex] = useState<number>(0);
   const [selectedMetricIndex, setSelectedMetricIndex] = useState<number>(0);
   const [valueType, setValueType] = useState<ValueType>("abs");

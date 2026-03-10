@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { Inter } from "next/font/google";
 
 import GoogleAnalytics from "@/components/common/GoogleAnalytics";
 import Header from "@/components/common/layout/Header";
@@ -10,11 +9,6 @@ import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/config/constants";
 import { LeftDrawerProvider } from "@/context/LeftDrawerContext";
 
 import "@/styles/global.scss";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: SITE_TITLE,
@@ -29,7 +23,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <Button variant="skip" href="#main-content">
           Skip to main content
         </Button>
