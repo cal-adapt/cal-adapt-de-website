@@ -27,6 +27,7 @@ import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import SidePanel from "@/components/dashboard/SidePanel";
 import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
 import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
+import { MAP_API_BASE_URL } from "@/config/constants";
 import { useInstallationParams } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
@@ -111,8 +112,6 @@ export default function RenewablesViz() {
   });
   const [isColorRev] = useState<boolean>(false);
 
-  const BASE_URL = "https://map.cal-adapt.org" as const;
-
   const [gwlSelected, setGwlSelected] = useState<number>(0);
   const [globalWarmingLevelsList, setGlobalWarmingLevelsList] = useState<string[]>([]);
 
@@ -170,7 +169,7 @@ export default function RenewablesViz() {
     }
 
     if (s3Url && queryVar) {
-      const apiUrl = `${BASE_URL}/point/${long},${lat}`;
+      const apiUrl = `${MAP_API_BASE_URL}/point/${long},${lat}`;
       const queryParams = new URLSearchParams({
         url: s3Url,
         variable: queryVar,

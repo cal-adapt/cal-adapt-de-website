@@ -40,7 +40,7 @@ import {
 import useDidMountEffect from "@/hooks/use-did-mount-effect";
 import useLocalStorageState from "@/hooks/use-local-storage-state";
 import { analytics } from "@/lib/analytics";
-import { calAdaptApi, type ItemSearchFilters,type StacCollection } from "@/lib/cal-adapt";
+import { calAdaptApi, type ItemSearchFilters, type StacCollection } from "@/lib/cal-adapt-api";
 import { getTodaysDateAsString } from "@/utils/date";
 import { downloadFile } from "@/utils/file";
 import { formatBytes } from "@/utils/format";

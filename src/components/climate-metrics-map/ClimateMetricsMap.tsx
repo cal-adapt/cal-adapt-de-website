@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 
 import { metrics } from "@/data/climate-metrics-map/metrics";
-import { calAdaptApi } from "@/lib/cal-adapt";
+import { calAdaptApi } from "@/lib/cal-adapt-api";
 
 import MapboxMap from "./MapboxMap";
 import MapUI from "./MapUI";

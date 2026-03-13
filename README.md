@@ -82,7 +82,7 @@ pnpm storybook
 Compiles the Storybook instance so it can be deployed:
 
 ```sh
-pnpm build-storybook
+pnpm storybook:build
 ```
 
 ## Architecture

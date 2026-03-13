@@ -1,10 +1,14 @@
 /**
  * Cal-Adapt STAC (SpatioTemporal Asset Catalog) API Client
+ *
+ * Centralizes STAC API calls using Orval-generated fetchers to
+ * expose a friendlier API: getCollection, searchItems.
+ *
+ * NOTE: The STAC OpenAPI spec does not define response body schemas for
+ * /collections/{id} or /search, so the generated API client uses `data: unknown`.
  */
 
-import { buildUrlWithParams } from "@/utils/url";
-
-const BASE_URL = "https://stac.cal-adapt.org";
+import { getCollectionCollectionsCollectionIdGet, searchSearchGet } from "./generated/stac";
 
 type StacVersion = "1.0.0";
 
@@ -25,7 +29,6 @@ type StacAsset = {
   [key: string]: unknown;
 };
 
-/** GeoJSON Feature */
 type StacItem = {
   type: "Feature";
   id: string;
@@ -39,7 +42,6 @@ type StacItem = {
   stac_extensions?: string[];
 };
 
-/** GeoJSON FeatureCollection */
 type StacItemCollection = {
   type: "FeatureCollection";
   features: StacItem[];
@@ -61,12 +63,11 @@ export type StacCollection = {
   [key: string]: unknown;
 };
 
-/** A STAC item from a county collection */
 type CountyItem = Omit<StacItem, "properties" | "assets"> & {
   properties: {
     countyname: string;
-    "cmip6:source_id"?: string; // Model
-    "cmip6:experiment_id"?: string; // Scenario
+    "cmip6:source_id"?: string;
+    "cmip6:experiment_id"?: string;
     "cmip6:member_id"?: string;
     start_datetime?: string;
     end_datetime?: string;
@@ -74,13 +75,9 @@ type CountyItem = Omit<StacItem, "properties" | "assets"> & {
   };
   assets: Record<string, StacAsset & { "file:size": number }>;
 };
+type CountyItemCollection = StacItemCollection & { features: CountyItem[] };
 
-/** Response from searching county collections */
-type CountyItemCollection = StacItemCollection & {
-  features: CountyItem[];
-};
-
-/** Filters for STAC item search (CQL2 query parts) */
+/** App-level filters */
 export type ItemSearchFilters = {
   collectionFilter?: string;
   scenarioFilter?: string;
@@ -88,51 +85,41 @@ export type ItemSearchFilters = {
   modelFilter?: string;
 };
 
-async function request<T>(url: string): Promise<T> {
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(`Cal-Adapt STAC API error: ${response.status} ${response.statusText}`);
+/**
+ * Accepts generated response union (success | error)
+ */
+function assertOk<T>(res: { data: unknown; status: number }): T {
+  if (res.status < 200 || res.status >= 300) {
+    throw new Error(`Cal-Adapt STAC API error: ${res.status}`);
   }
-
-  return response.json();
+  return res.data as T;
 }
 
 /**
  * Get a STAC collection by ID
  */
 export async function getCollection(collectionId: string): Promise<StacCollection> {
-  const url = `${BASE_URL}/collections/${collectionId}`;
-  return request<StacCollection>(url);
+  const res = await getCollectionCollectionsCollectionIdGet(collectionId);
+  const data = assertOk(res);
+  return data as StacCollection;
 }
 
 /**
  * Search for items in county collections using CQL2 filters.
  */
 export async function searchItems(filters: ItemSearchFilters): Promise<CountyItemCollection> {
-  // Build the CQL2 filter string
   const filterParts: string[] = [];
-
-  if (filters.collectionFilter) {
-    filterParts.push(filters.collectionFilter);
-  }
-  if (filters.scenarioFilter) {
-    filterParts.push(filters.scenarioFilter);
-  }
-  if (filters.countyFilter) {
-    filterParts.push(filters.countyFilter);
-  }
-  if (filters.modelFilter) {
-    filterParts.push(filters.modelFilter);
-  }
-
+  if (filters.collectionFilter) filterParts.push(filters.collectionFilter);
+  if (filters.scenarioFilter) filterParts.push(filters.scenarioFilter);
+  if (filters.countyFilter) filterParts.push(filters.countyFilter);
+  if (filters.modelFilter) filterParts.push(filters.modelFilter);
   const filterStr = filterParts.join(" AND ");
 
-  const url = buildUrlWithParams(`${BASE_URL}/search`, {
+  const res = await searchSearchGet({
     limit: 3480,
-    filter: filterStr,
+    filter: filterStr || undefined,
     filter_lang: "cql2-text",
   });
-
-  return request<CountyItemCollection>(url);
+  const data = assertOk(res);
+  return data as CountyItemCollection;
 }

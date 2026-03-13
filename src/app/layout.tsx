@@ -7,6 +7,7 @@ import Button from "@/components/common/ui/Button";
 import WebVitals from "@/components/common/WebVitals";
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/config/constants";
 import { LeftDrawerProvider } from "@/context/LeftDrawerContext";
+import { QueryProvider } from "@/context/QueryProvider";
 
 import "@/styles/global.scss";
 
@@ -28,11 +29,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
           Skip to main content
         </Button>
         <Header />
-        <ThemeRegistry options={{ key: "mui-theme" }}>
-          <LeftDrawerProvider>
-            <main id="main-content">{children}</main>
-          </LeftDrawerProvider>
-        </ThemeRegistry>
+        <QueryProvider>
+          <ThemeRegistry options={{ key: "mui-theme" }}>
+            <LeftDrawerProvider>
+              <main id="main-content">{children}</main>
+            </LeftDrawerProvider>
+          </ThemeRegistry>
+        </QueryProvider>
       </body>
       <GoogleAnalytics />
       <WebVitals />

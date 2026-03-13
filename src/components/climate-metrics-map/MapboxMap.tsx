@@ -24,7 +24,7 @@ import {
 import GeocoderControl from "@/components/common/map/GeocoderControl";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import type { Metric } from "@/data/climate-metrics-map/metrics";
-import { calAdaptApi, type TileJson } from "@/lib/cal-adapt";
+import { calAdaptApi, type TileJson } from "@/lib/cal-adapt-api";
 
 import type { ValueType } from "./ClimateMetricsMap";
 import MapLegend from "./MapLegend";
