@@ -16,7 +16,6 @@
     "format:fix": "prettier --write .",
     "type-check": "tsc --noEmit --incremental --pretty",
     "type-check:watch": "\"$npm_execpath\" run type-check --watch",
-    "pretest": "pnpm run generate-api",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
