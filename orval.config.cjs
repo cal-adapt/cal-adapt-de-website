@@ -8,17 +8,11 @@ module.exports = {
       workspace: "src/lib/cal-adapt-api/generated/stac",
       target: "./services",
       schemas: "./models",
-      client: "react-query",
+      client: "fetch",
       baseUrl: "https://stac.cal-adapt.org",
       httpClient: "fetch",
-      mock: true,
+      mock: { delay: 0 },
       mode: "split",
-      override: {
-        query: {
-          useQuery: true,
-          useMutation: true,
-        },
-      },
     },
   },
   map: {
@@ -29,17 +23,11 @@ module.exports = {
       workspace: "src/lib/cal-adapt-api/generated/map",
       target: "./services",
       schemas: "./models",
-      client: "react-query",
+      client: "fetch",
       baseUrl: "https://map.cal-adapt.org",
       httpClient: "fetch",
-      mock: true,
+      mock: { delay: 0 },
       mode: "split",
-      override: {
-        query: {
-          useQuery: true,
-          useMutation: true,
-        },
-      },
     },
   },
 };
