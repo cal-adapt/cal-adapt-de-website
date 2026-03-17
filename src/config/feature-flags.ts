@@ -6,7 +6,7 @@ export const Env = {
 
 type EnvValue = (typeof Env)[keyof typeof Env];
 
-const currentEnv: EnvValue = (process.env.NODE_ENV as EnvValue) ?? Env.Prod;
+const currentEnv: EnvValue = (process.env.NEXT_PUBLIC_APP_ENV as EnvValue) ?? Env.Prod;
 
 const flagDefinitions = {
   __FF_DEBUG__: [Env.Dev, Env.Stg],
