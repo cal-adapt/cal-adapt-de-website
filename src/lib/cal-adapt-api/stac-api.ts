@@ -9,6 +9,7 @@
  */
 
 import { getCollectionCollectionsCollectionIdGet, searchSearchGet } from "./generated/stac";
+import { assertOk } from "./utils";
 
 type StacVersion = "1.0.0";
 
@@ -85,23 +86,16 @@ export type ItemSearchFilters = {
   modelFilter?: string;
 };
 
-/**
- * Accepts generated response union (success | error)
- */
-function assertOk<T>(res: { data: unknown; status: number }): T {
-  if (res.status < 200 || res.status >= 300) {
-    throw new Error(`Cal-Adapt STAC API error: ${res.status}`);
-  }
-  return res.data as T;
-}
+const API_NAME = "Cal-Adapt STAC API";
+
+const COUNTY_SEARCH_LIMIT = 3480;
 
 /**
  * Get a STAC collection by ID
  */
 export async function getCollection(collectionId: string): Promise<StacCollection> {
   const res = await getCollectionCollectionsCollectionIdGet(collectionId);
-  const data = assertOk(res);
-  return data as StacCollection;
+  return assertOk<StacCollection>(res, API_NAME);
 }
 
 /**
@@ -109,17 +103,19 @@ export async function getCollection(collectionId: string): Promise<StacCollectio
  */
 export async function searchItems(filters: ItemSearchFilters): Promise<CountyItemCollection> {
   const filterParts: string[] = [];
+
   if (filters.collectionFilter) filterParts.push(filters.collectionFilter);
   if (filters.scenarioFilter) filterParts.push(filters.scenarioFilter);
   if (filters.countyFilter) filterParts.push(filters.countyFilter);
   if (filters.modelFilter) filterParts.push(filters.modelFilter);
+
   const filterStr = filterParts.join(" AND ");
 
   const res = await searchSearchGet({
-    limit: 3480,
+    limit: COUNTY_SEARCH_LIMIT,
     filter: filterStr || undefined,
     filter_lang: "cql2-text",
   });
-  const data = assertOk(res);
-  return data as CountyItemCollection;
+
+  return assertOk<CountyItemCollection>(res, API_NAME);
 }

@@ -36,12 +36,12 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 const INITIAL_VIEW_STATE = {
   longitude: -120,
   latitude: 37.4,
-  zoom: 1,
+  zoom: 5,
 } as const;
 
 const MAP_BOUNDS: LngLatBoundsLike = [
-  [-130, 30], // Southwest coordinates [lng, lat]
-  [-110, 45], // Northeast coordinates [lng, lat]
+  [-140, 20], // Southwest coordinates [lng, lat]
+  [-100, 50], // Northeast coordinates [lng, lat]
 ];
 
 const THROTTLE_DELAY = 100 as const;
@@ -147,32 +147,29 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
 
     const isLoading = !mounted || !tileJson;
 
-    const loadTileJson = async () => {
-      try {
-        const data = await calAdaptApi.map.getTileJson({
-          url: paths.mean,
-          variable: currentVariable,
-          datetime: String(currentGwl),
-          rescale: paths.rescale,
-          colormap: paths.colormap,
-        });
-        setTileJson(data);
-      } catch (error) {
-        console.error("Failed to get TileJSON:", error);
-      }
-    };
-
     useEffect(() => {
       setMounted(true);
-    }, []);
-
-    useEffect(() => {
       return () => {
         throttledGetPoint.cancel();
       };
     }, []);
 
     useEffect(() => {
+      async function loadTileJson() {
+        try {
+          const data = await calAdaptApi.map.getTileJson({
+            url: paths.mean,
+            variable: currentVariable,
+            datetime: String(currentGwl),
+            rescale: paths.rescale,
+            colormap: paths.colormap,
+          });
+          setTileJson(data);
+        } catch (error) {
+          console.error("Failed to get TileJSON:", error);
+        }
+      }
+
       loadTileJson();
     }, [metricSelected, gwlSelected, currentVariable, currentVariableData, currentGwl]);
 

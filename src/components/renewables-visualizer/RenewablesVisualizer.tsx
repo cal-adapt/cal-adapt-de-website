@@ -27,12 +27,12 @@ import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import SidePanel from "@/components/dashboard/SidePanel";
 import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
 import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
-import { MAP_API_BASE_URL } from "@/config/constants";
 import { useInstallationParams } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
 import { useSidePanel } from "@/context/SidePanelContext";
 import { gwlYearEstimateData } from "@/data/renewables-visualizer/gwl-year-estimates";
+import { calAdaptApi } from "@/lib/cal-adapt-api";
 
 import VizParamsForm from "./VisualizationParamsForm";
 
@@ -169,39 +169,22 @@ export default function RenewablesViz() {
     }
 
     if (s3Url && queryVar) {
-      const apiUrl = `${MAP_API_BASE_URL}/point/${long},${lat}`;
-      const queryParams = new URLSearchParams({
-        url: s3Url,
-        variable: queryVar,
-      });
-
-      const fullUrl = `${apiUrl}?${queryParams.toString()}`;
-
       try {
-        const res = await fetch(fullUrl);
-        if (!res.ok) {
-          console.error("Failed with status:", res.status);
-          setQueriedData(null);
-          setIsPointValid(false);
-          return;
-        }
-        const newData = await res.json();
-        if (newData) {
-          setQueriedData(newData);
-          setIsPointValid(true);
-        } else {
-          setQueriedData(null);
-          setIsPointValid(false);
-        }
+        const newData = await calAdaptApi.map.getPoint<QueriedData>(long, lat, {
+          url: s3Url,
+          variable: queryVar,
+        });
+        setQueriedData(newData);
+        setIsPointValid(true);
       } catch (err) {
-        console.error("Fetch error:", err);
+        console.error("Failed to fetch point data:", err);
         setQueriedData(null);
         setIsPointValid(false);
       } finally {
         setIsLoading(false);
       }
     } else {
-      console.error("No S3 Url or variable has been defined");
+      console.error("No S3 URL or variable has been defined");
     }
   }, [apiParams, locationStatus]);
 
