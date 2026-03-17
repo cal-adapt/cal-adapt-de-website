@@ -6,7 +6,7 @@ type OrvalResponse = { data: unknown; status: number };
  */
 export function assertOk<T>(res: OrvalResponse, apiName: string): T {
   if (res.status < 200 || res.status >= 300) {
-    throw new Error(`$ {apiName} error: ${res.status}`);
+    throw new Error(`${apiName} Error: ${res.status}`);
   }
   return res.data as T;
 }
