@@ -5,7 +5,7 @@
  * expose a friendlier API: getCollection, searchItems.
  *
  * NOTE: The STAC OpenAPI spec does not define response body schemas for
- * /collections/{id} or /search, so the generated API client uses `data: unknown`.
+ * `/collections/{id}` or `/search`, so the generated API client uses `data: unknown`.
  */
 
 import { getCollectionCollectionsCollectionIdGet, searchSearchGet } from "./generated/stac";
