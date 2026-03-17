@@ -2,7 +2,7 @@
  * Cal-Adapt Map API Client
  *
  * Centralizes Map API calls using Orval-generated fetchers to
- * expose a friendlier API: getGwlInfo, getTileJson, getPoint, getPointData.
+ * expose a friendlier API: getGwlInfo, getTileJson, getPoint, getPointGwlStats.
  */
 
 import {
@@ -88,7 +88,7 @@ export async function getPoint<T = unknown>(
  * Get point data (min, max, mean) at a specific coordinate,
  * extracting the value at the given GWL index.
  */
-export async function getPointData(params: PointDataParams): Promise<PointData> {
+export async function getPointGwlStats(params: PointDataParams): Promise<PointData> {
   const { lng, lat, meanPath, minPath, maxPath, variable, gwlIndex } = params;
   const results: PointData = { min: null, max: null, value: null };
 

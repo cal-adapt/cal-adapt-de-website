@@ -75,7 +75,7 @@ const throttledGetPoint = throttle(
     gwlIndex: number,
     callback: (values: { min: number | null; max: number | null; value: number | null }) => void
   ) => {
-    const results = await calAdaptApi.map.getPointData({
+    const results = await calAdaptApi.map.getPointGwlStats({
       lng,
       lat,
       meanPath,
