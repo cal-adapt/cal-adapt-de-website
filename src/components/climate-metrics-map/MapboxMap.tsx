@@ -64,7 +64,7 @@ type GeocoderResult = {
   };
 };
 
-const throttledGetPoint = throttle(
+const throttledGetPointGWLStats = throttle(
   async (
     lng: number,
     lat: number,
@@ -150,7 +150,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
     useEffect(() => {
       setMounted(true);
       return () => {
-        throttledGetPoint.cancel();
+        throttledGetPointGWLStats.cancel();
       };
     }, []);
 
@@ -326,7 +326,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
           setClickCoords(newClick);
         }
 
-        throttledGetPoint(
+        throttledGetPointGWLStats(
           lng,
           lat,
           paths.mean,

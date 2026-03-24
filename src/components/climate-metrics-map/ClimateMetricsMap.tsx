@@ -17,7 +17,7 @@ import MapUI from "./MapUI";
 
 export type ValueType = "abs" | "del";
 
-const DEFAULT_GWL_LEVEL = 1.5;
+const DEFAULT_GWL = 1.5;
 
 export default function ClimateMetricsMap() {
   const [selectedGwlIndex, setSelectedGwlIndex] = useState<number>(0);
@@ -40,7 +40,7 @@ export default function ClimateMetricsMap() {
 
         if (gwlData.length > 0) {
           setGwlList(gwlData);
-          const defaultGwlIndex = gwlData.indexOf(DEFAULT_GWL_LEVEL);
+          const defaultGwlIndex = gwlData.indexOf(DEFAULT_GWL);
           setSelectedGwlIndex(defaultGwlIndex >= 0 ? defaultGwlIndex : 0);
         }
       } catch (error) {
