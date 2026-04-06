@@ -1,12 +1,12 @@
 import HeroMain from "@/components/home/HeroMain";
 import HomeClient from "@/components/home/HomeClient";
-import { ParallaxContext } from "@/context/ParallaxContext";
+import { ParallaxProvider } from "@/context/ParallaxProvider";
 
 export default function Home() {
   return (
-    <ParallaxContext>
+    <ParallaxProvider>
       <HeroMain />
       <HomeClient />
-    </ParallaxContext>
+    </ParallaxProvider>
   );
 }

@@ -1,4 +1,6 @@
-export const dataPackages = [
+import type { DataPackage } from "./types";
+
+export const dataPackages: DataPackage[] = [
   {
     id: 0,
     name: "County Gridded Data",

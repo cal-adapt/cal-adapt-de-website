@@ -24,6 +24,7 @@ import {
 import GeocoderControl from "@/components/common/map/GeocoderControl";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import type { Metric } from "@/data/climate-metrics-map/metrics";
+import { calAdaptApi, type TileJson } from "@/lib/cal-adapt-api";
 
 import type { ValueType } from "./ClimateMetricsMap";
 import MapLegend from "./MapLegend";
@@ -44,21 +45,15 @@ const MAP_BOUNDS: LngLatBoundsLike = [
 ];
 
 const THROTTLE_DELAY = 100 as const;
-const BASE_URL = "https://map.cal-adapt.org" as const;
 const RASTER_TILE_LAYER_OPACITY = 0.8 as const;
 const CALIFORNIA_GEOJSON = "/geojson/california.geojson" as const;
 
 type MapProps = {
   metricSelected: number;
   gwlSelected: number;
-  globalWarmingLevels: string[];
+  globalWarmingLevels: number[];
   metrics: Metric[];
   valueType: ValueType;
-};
-
-type TileJson = {
-  tiles: string[];
-  tileSize?: number;
 };
 
 type GeocoderResult = {
@@ -69,62 +64,26 @@ type GeocoderResult = {
   };
 };
 
-const throttledFetchPoint = throttle(
+const throttledGetPointGWLStats = throttle(
   async (
     lng: number,
     lat: number,
-    min_path: string,
-    max_path: string,
-    path: string,
+    meanPath: string,
+    minPath: string | undefined,
+    maxPath: string | undefined,
     variable: string,
-    gwl: string,
-    globalWarmingLevels: string[],
+    gwlIndex: number,
     callback: (values: { min: number | null; max: number | null; value: number | null }) => void
   ) => {
-    const results: {
-      min: number | null;
-      max: number | null;
-      value: number | null;
-    } = {
-      min: null,
-      max: null,
-      value: null,
-    };
-
-    const gwlIndex = globalWarmingLevels.findIndex((level) => level === gwl);
-
-    const fetchData = async (url: string) => {
-      const res = await fetch(url);
-      if (!res.ok) {
-        throw new Error(res.statusText);
-      } else {
-        return res.json();
-      }
-    };
-
-    // Retrieve value at point
-    try {
-      const valueRes = await fetchData(
-        `${BASE_URL}/point/${lng},${lat}?url=${encodeURIComponent(path)}&variable=${variable}`
-      );
-      results.value = valueRes.data[gwlIndex];
-
-      if (min_path) {
-        const minRes = await fetchData(
-          `${BASE_URL}/point/${lng},${lat}?url=${encodeURIComponent(min_path)}&variable=${variable}`
-        );
-        results.min = minRes.data[gwlIndex];
-      }
-      if (max_path) {
-        const maxRes = await fetchData(
-          `${BASE_URL}/point/${lng},${lat}?url=${encodeURIComponent(max_path)}&variable=${variable}`
-        );
-        results.max = maxRes.data[gwlIndex];
-      }
-    } catch (err) {
-      console.error("Error fetching point data:", err);
-    }
-
+    const results = await calAdaptApi.map.getPointGwlStats({
+      lng,
+      lat,
+      meanPath,
+      minPath,
+      maxPath,
+      variable,
+      gwlIndex,
+    });
     callback(results);
   },
   THROTTLE_DELAY,
@@ -141,7 +100,6 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
     const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
 
     const [mounted, setMounted] = useState(false);
-    const [isDragging, setIsDragging] = useState(false);
     const [mapLoaded, setMapLoaded] = useState(false);
     const [tileJson, setTileJson] = useState<TileJson | null>(null);
     const [clickCoords, setClickCoords] = useState<{
@@ -184,51 +142,35 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
 
     const currentVariable = paths.variable;
 
-    const currentGwl = globalWarmingLevels[gwlSelected] || globalWarmingLevels[0];
+    const currentGwl = globalWarmingLevels[gwlSelected] ?? globalWarmingLevels[0];
+    const gwlIndex = gwlSelected;
 
     const isLoading = !mounted || !tileJson;
 
-    const fetchTileJson = async () => {
-      let colormap = paths.colormap.toLowerCase();
-      const params = {
-        url: paths.mean,
-        variable: currentVariable,
-        datetime: currentGwl,
-        rescale: paths.rescale,
-        colormap_name: colormap,
-      };
-
-      const queryString = Object.entries(params)
-        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-        .join("&");
-
-      const url = `${BASE_URL}/WebMercatorQuad/tilejson.json?${queryString}`;
-
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        setTileJson(data);
-      } catch (error) {
-        console.error("Failed to fetch TileJSON:", error);
-        console.error("Full URL:", url);
-      }
-    };
-
     useEffect(() => {
       setMounted(true);
-    }, []);
-
-    useEffect(() => {
       return () => {
-        throttledFetchPoint.cancel();
+        throttledGetPointGWLStats.cancel();
       };
     }, []);
 
     useEffect(() => {
-      fetchTileJson();
+      async function loadTileJson() {
+        try {
+          const data = await calAdaptApi.map.getTileJson({
+            url: paths.mean,
+            variable: currentVariable,
+            datetime: String(currentGwl),
+            rescale: paths.rescale,
+            colormap: paths.colormap,
+          });
+          setTileJson(data);
+        } catch (error) {
+          console.error("Failed to get TileJSON:", error);
+        }
+      }
+
+      loadTileJson();
     }, [metricSelected, gwlSelected, currentVariable, currentVariableData, currentGwl]);
 
     useEffect(() => {
@@ -384,15 +326,14 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
           setClickCoords(newClick);
         }
 
-        throttledFetchPoint(
+        throttledGetPointGWLStats(
           lng,
           lat,
-          paths.min_path || "",
-          paths.max_path || "",
           paths.mean,
+          paths.min_path,
+          paths.max_path,
           currentVariable,
-          currentGwl,
-          globalWarmingLevels,
+          gwlIndex,
           (info) => {
             const isValid = info.value !== null || info.min !== null || info.max !== null;
 
@@ -407,7 +348,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
           }
         );
       },
-      [paths, currentVariable, currentGwl, globalWarmingLevels]
+      [paths, currentVariable, gwlIndex]
     );
 
     // Refetch popup data when settings change

@@ -4,7 +4,7 @@
 
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -29,7 +29,7 @@ import SidePanel from "@/components/dashboard/SidePanel";
 import PackageForm from "@/components/data-download-tool/PackageForm";
 import { useSidePanel } from "@/context/SidePanelContext";
 import { dataPackages } from "@/data/data-download/data-packages";
-import { apiParamStrs, modelVarUrls, varUrl } from "@/data/data-download/types";
+import { DownloadableAsset, DownloadItem } from "@/data/data-download/types";
 import {
   filterByFlag,
   lookupValue,
@@ -40,6 +40,7 @@ import {
 import useDidMountEffect from "@/hooks/use-did-mount-effect";
 import useLocalStorageState from "@/hooks/use-local-storage-state";
 import { analytics } from "@/lib/analytics";
+import { calAdaptApi, type ItemSearchFilters, type StacCollection } from "@/lib/cal-adapt-api";
 import { getTodaysDateAsString } from "@/utils/date";
 import { downloadFile } from "@/utils/file";
 import { formatBytes } from "@/utils/format";
@@ -50,24 +51,24 @@ import { extractFilenameFromURL } from "@/utils/url";
 import styles from "./DataDownloadTool.module.scss";
 
 type DataDownloadProps = {
-  data: any; // TODO: Consider replacing with a more specific type for maintainability
+  data: StacCollection;
 };
 
 export default function DataDownload({ data }: DataDownloadProps) {
   const { open, toggleOpen } = useSidePanel();
 
   // Data and API response states
-  const [dataResponse, setDataResponse] = useState<modelVarUrls[]>([]);
+  const [dataResponse, setDataResponse] = useState<DownloadItem[]>([]);
   const [downloadLinks, setDownloadLinks] = useState<string[]>([]);
   const [totalDataSize, setTotalDataSize] = useState<number>(0);
   const [nextPageUrl, setNextPageUrl] = useState<string>("");
 
   // API parameter states
-  const [apiParams, setApiParams] = useState<apiParamStrs>({
-    countyQueryStr: "",
-    scenariosQueryStr: "",
-    modelQueryStr: "",
-    freqQueryStr: "",
+  const [apiParams, setApiParams] = useState<ItemSearchFilters>({
+    collectionFilter: "",
+    scenarioFilter: "",
+    countyFilter: "",
+    modelFilter: "",
   });
   const [apiParamsChanged, setApiParamsChanged] = useState<boolean>(false);
   useEffect(() => {
@@ -75,7 +76,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
     setDataResponse([]); // Clear previous data
   }, [apiParams]);
 
-  function updateApiParams(newParams: Partial<apiParamStrs>) {
+  function updateApiParams(newParams: Partial<ItemSearchFilters>) {
     setApiParams((prevParams) => ({
       ...prevParams,
       ...newParams,
@@ -150,33 +151,23 @@ export default function DataDownload({ data }: DataDownloadProps) {
 
   // Data download functions
   const onFormDataSubmit = async () => {
-    const apiUrl = "https://stac.cal-adapt.org/search";
-
-    const queryParams = new URLSearchParams({
-      limit: "3480",
-      filter:
-        (apiParams?.freqQueryStr ? apiParams?.freqQueryStr : "") +
-        (apiParams?.scenariosQueryStr ? " AND " + apiParams?.scenariosQueryStr : "") +
-        (apiParams?.countyQueryStr ? " AND " + apiParams?.countyQueryStr : "") +
-        (apiParams?.modelQueryStr ? " AND " + apiParams?.modelQueryStr : ""),
-      filter_lang: "cql2-text",
-    });
-
-    const fullUrl = `${apiUrl}?${queryParams.toString()}`;
-
     if (apiParamsChanged) {
       // TODO: Remove state management from loop
       try {
-        const res = await fetch(fullUrl);
-        const data = await res.json();
+        const data = await calAdaptApi.stac.searchItems({
+          collectionFilter: apiParams?.collectionFilter,
+          scenarioFilter: apiParams?.scenarioFilter,
+          countyFilter: apiParams?.countyFilter,
+          modelFilter: apiParams?.modelFilter,
+        });
 
-        const apiResponseData: modelVarUrls[] = [];
+        const apiResponseData: DownloadItem[] = [];
 
         for (const modelIdx in data.features) {
           // For each model in data response
           const assets = data.features[modelIdx].assets;
 
-          const varsInModel: modelVarUrls = {
+          const varsInModel: DownloadItem = {
             model: "",
             countyname: "",
             scenario: "",
@@ -185,7 +176,7 @@ export default function DataDownload({ data }: DataDownloadProps) {
 
           // For each variable in models
           for (const asset in assets) {
-            const varInVars: varUrl = {
+            const varInVars: DownloadableAsset = {
               name: "",
               href: "",
               size: 0,
@@ -213,8 +204,8 @@ export default function DataDownload({ data }: DataDownloadProps) {
         }
 
         setDataResponse(apiResponseData);
-      } catch (err) {
-        console.log(err);
+      } catch (error) {
+        console.error(error);
       }
       setApiParamsChanged(false);
     }
@@ -387,10 +378,10 @@ export default function DataDownload({ data }: DataDownloadProps) {
     // Update apiParams whenever selectedCounties, selectedScenarios, or modelsSelected change
 
     updateApiParams({
-      countyQueryStr: createOrStatement("countyname", selectedCounties),
-      scenariosQueryStr: createOrStatement("cmip6:experiment_id", selectedScenarios),
-      modelQueryStr: createOrStatement("cmip6:source_id", modelsSelected),
-      freqQueryStr: "collection='" + collectionStr + "'",
+      countyFilter: createOrStatement("countyname", selectedCounties),
+      scenarioFilter: createOrStatement("cmip6:experiment_id", selectedScenarios),
+      modelFilter: createOrStatement("cmip6:source_id", modelsSelected),
+      collectionFilter: "collection='" + collectionStr + "'",
     });
   }, [selectedCounties, selectedScenarios, modelsSelected, collectionStr]);
 
