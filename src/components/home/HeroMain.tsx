@@ -9,7 +9,7 @@ import clsx from "clsx";
 import { ParallaxBanner, ParallaxBannerLayer } from "react-scroll-parallax";
 
 import Icon from "@/components/common/ui/Icon";
-import { mediaQueries } from "@/utils/styles";
+import { mediaQueries } from "@/config/breakpoints";
 
 import rocks from "../../../public/img/homepage-hero/rocks.webp";
 import sky from "../../../public/img/homepage-hero/sky.webp";

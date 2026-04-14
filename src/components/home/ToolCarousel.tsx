@@ -13,7 +13,7 @@ import clsx from "clsx";
 import useEmblaCarousel from "embla-carousel-react";
 
 import Button from "@/components/common/ui/Button";
-import { mediaQueries } from "@/utils/styles";
+import { mediaQueries } from "@/config/breakpoints";
 
 import styles from "./ToolCarousel.module.scss";
 

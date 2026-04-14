@@ -102,9 +102,7 @@ export default function MapPopup({
         )}
 
         {!isPopupLoading && !isDataValid && (
-          <Alert variant="secondaryReversed" style={{ marginBottom: 0 }}>
-            No data is available for this location
-          </Alert>
+          <Alert style={{ marginBottom: 0 }}>No data is available for this location</Alert>
         )}
       </div>
     </Popup>

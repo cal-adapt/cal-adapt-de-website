@@ -4,7 +4,7 @@
   position: relative;
   height: 500px;
   overflow: hidden;
-  color: #fff !important;
+  color: color(white) !important;
 
   @include breakpoint-max(large) {
     min-height: 600px;

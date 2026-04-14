@@ -462,7 +462,7 @@ export default function RenewablesViz() {
             {/* Global warming level information */}
             {queriedData && !isLoading && isPointValid && (
               <Box className={styles.alerts} sx={{ maxWidth: "100%" }}>
-                <Alert variant="info" ariaLabel="Global models estimate information">
+                <Alert ariaLabel="Global models estimate information">
                   Global models estimate that {gwlYearEstimateData[gwlSelected].name}° global
                   warming levels (GWL) will be reached between{" "}
                   <strong>{gwlYearEstimateData[gwlSelected].estimatedStartYear}</strong> and{" "}
@@ -569,7 +569,7 @@ export default function RenewablesViz() {
                 sx={{ marginBottom: "30px" }}
                 style={{ display: accordionExpanded ? "none" : "block" }}
               >
-                <Alert variant="grey">
+                <Alert>
                   You have selected a location with land use or land cover restrictions. No data
                   will be returned.&nbsp;
                   <span
