@@ -1,20 +1,26 @@
 "use client";
 
 import clsx from "clsx";
+import type { CSSProperties, ReactNode } from "react";
 
 import Link from "@/components/common/ui/Link";
 
 import styles from "./Button.module.scss";
 
-export type ButtonVariant = "primary" | "secondary" | "skip" | "floating";
+export type ButtonVariant = "primary" | "secondary" | "tertiary" | "accent" | "skip" | "floating";
+
+export type ButtonSize = "small" | "large";
 
 export interface ButtonProps {
   variant?: ButtonVariant;
+  size?: ButtonSize;
+  prefix?: ReactNode; // Icon
+  suffix?: ReactNode; // Icon
   href?: string;
   openInNewTab?: boolean;
   className?: string;
-  style?: React.CSSProperties;
-  children?: React.ReactNode;
+  style?: CSSProperties;
+  children?: ReactNode;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -25,8 +31,25 @@ export interface ButtonProps {
   ariaHidden?: boolean;
 }
 
+function ButtonContent({
+  prefix,
+  suffix,
+  children,
+}: Pick<ButtonProps, "prefix" | "suffix" | "children">) {
+  return (
+    <>
+      {prefix ? <span className={styles.iconSlot}>{prefix}</span> : null}
+      {children}
+      {suffix ? <span className={styles.iconSlot}>{suffix}</span> : null}
+    </>
+  );
+}
+
 export default function Button({
   variant = "primary",
+  size = "large",
+  prefix,
+  suffix,
   href,
   openInNewTab,
   className,
@@ -41,9 +64,28 @@ export default function Button({
   ariaLabel,
   ariaHidden,
 }: ButtonProps) {
-  const buttonClasses = clsx(styles.button, styles[variant], className);
+  const buttonClasses = clsx(styles.button, styles[variant], styles[size], className);
 
   if (href) {
+    if (disabled) {
+      return (
+        <span
+          className={clsx(buttonClasses, styles.isDisabledLink)}
+          style={style}
+          id={id}
+          tabIndex={-1}
+          title={title}
+          aria-label={ariaLabel}
+          aria-hidden={ariaHidden}
+          aria-disabled
+        >
+          <ButtonContent prefix={prefix} suffix={suffix}>
+            {children}
+          </ButtonContent>
+        </span>
+      );
+    }
+
     return (
       <Link
         href={href}
@@ -56,7 +98,9 @@ export default function Button({
         aria-label={ariaLabel}
         aria-hidden={ariaHidden}
       >
-        {children}
+        <ButtonContent prefix={prefix} suffix={suffix}>
+          {children}
+        </ButtonContent>
       </Link>
     );
   }
@@ -74,7 +118,9 @@ export default function Button({
       aria-label={ariaLabel}
       aria-hidden={ariaHidden}
     >
-      {children}
+      <ButtonContent prefix={prefix} suffix={suffix}>
+        {children}
+      </ButtonContent>
     </button>
   );
 }

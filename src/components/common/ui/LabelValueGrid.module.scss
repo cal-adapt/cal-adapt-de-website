@@ -1,0 +1,24 @@
+@use "@/styles/abstracts" as *;
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: spacer(5) spacer(7);
+  width: 100%;
+}
+
+.cell {
+  min-width: 0;
+}
+
+@include breakpoint(small) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@include breakpoint(medium) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

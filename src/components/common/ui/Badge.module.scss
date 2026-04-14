@@ -1,0 +1,11 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  @include type-item(label);
+  display: inline-block;
+  padding: 1px spacer(1);
+  border-radius: rounded(1);
+  background-color: color(blue-1);
+  color: color(blue-5);
+  font-size: calc(font-size(label) * 0.9);
+}

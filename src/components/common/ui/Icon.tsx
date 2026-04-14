@@ -1,4 +1,16 @@
 import clsx from "clsx";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  CircleAlert,
+  CircleHelp,
+  Download,
+  Info,
+  type LucideProps,
+  Trash2,
+  Undo2,
+  X,
+} from "lucide-react";
 import type { SVGProps } from "react";
 
 import LogoCalAdapt from "@/assets/svg/logo-caladapt.svg";
@@ -23,20 +35,45 @@ const ICON_COMPONENTS = {
   settings: Settings,
 };
 
-export type IconVariant = keyof typeof ICON_COMPONENTS;
+const LUCIDE_ICON_COMPONENTS = {
+  close: X,
+  delete: Trash2,
+  undo: Undo2,
+  info: CircleHelp,
+  download: Download,
+  alertInfo: Info,
+  alertWarning: AlertTriangle,
+  alertError: CircleAlert,
+  alertSuccess: CheckCircle2,
+};
+
+export type IconVariant = keyof typeof ICON_COMPONENTS | keyof typeof LUCIDE_ICON_COMPONENTS;
 
 interface IconProps extends SVGProps<SVGSVGElement> {
   variant: IconVariant;
 }
 
 export default function Icon({ variant, className, style, children, ...props }: IconProps) {
-  if (!(variant in ICON_COMPONENTS)) return null;
+  if (variant in ICON_COMPONENTS) {
+    const Component = ICON_COMPONENTS[variant as keyof typeof ICON_COMPONENTS];
 
-  const Component = ICON_COMPONENTS[variant];
+    return (
+      <Component className={clsx(styles.icon, className)} style={style} {...props}>
+        {children}
+      </Component>
+    );
+  }
 
-  return (
-    <Component className={clsx(styles.icon, className)} style={style} {...props}>
-      {children}
-    </Component>
-  );
+  if (variant in LUCIDE_ICON_COMPONENTS) {
+    const LucideIcon = LUCIDE_ICON_COMPONENTS[variant as keyof typeof LUCIDE_ICON_COMPONENTS];
+    const iconProps = props as LucideProps;
+
+    return (
+      <LucideIcon className={clsx(styles.icon, className)} style={style} {...iconProps}>
+        {children}
+      </LucideIcon>
+    );
+  }
+
+  return null;
 }
