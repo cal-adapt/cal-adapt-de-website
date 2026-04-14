@@ -1,0 +1,165 @@
+@use "@/styles/abstracts" as *;
+
+/* Trigger row: placeholder only when empty; selected values use `.chips` inside. */
+.chipsRow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: spacer(2);
+  flex: 1 1 auto;
+  min-width: 0;
+
+  /* Empty state: placeholder paragraph fills the trigger */
+  & > p {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+  }
+}
+
+.chips {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: flex-start;
+  gap: spacer(2);
+  flex: 1 1 auto;
+  min-width: 0;
+  /* ~3 rows; must match layout logic in MultiSelect (scrollHeight vs clientHeight). */
+  --multi-select-max-rows: 3;
+  max-height: calc(3 * 2.5rem + 2 * #{spacer(2)});
+  overflow: hidden;
+}
+
+/* Grey label in the same flex wrap as chips (reads like another chip, no pill). */
+.moreText {
+  @include type-item(body);
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  flex-shrink: 0;
+  margin: 0;
+  padding-inline: spacer(2);
+  color: color(grey-3);
+  line-height: 1.25;
+}
+
+.chip {
+  @include flex(row, center, center, spacer(2));
+  @include type-item(body);
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 0;
+  padding-inline: spacer(2);
+  border: none;
+  border-radius: rounded(1);
+  background-color: color(grey-1);
+  cursor: pointer;
+  color: color(black);
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &:focus-visible {
+    outline: 2px solid color(blue-4);
+    outline-offset: 2px;
+  }
+}
+
+.chipLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 20rem;
+}
+
+.chipRemove {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+  color: color(black);
+
+  &:focus-visible {
+    outline: 2px solid color(blue-4);
+    outline-offset: 2px;
+  }
+}
+
+.selectAllRow {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-color: color(white);
+  border-bottom: 1px solid color(grey-2);
+}
+
+.selectAllLabel {
+  font-weight: 600;
+
+  &:focus-within .checkboxBox {
+    outline: 2px solid color(blue-4);
+    outline-offset: 2px;
+  }
+}
+
+.selectAllText {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.optionLabelWithCheckbox {
+  &:focus-within .checkboxBox {
+    outline: 2px solid color(blue-4);
+    outline-offset: 2px;
+  }
+}
+
+.checkboxBox {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: color(white);
+  border: 1px solid color(grey-2);
+  border-radius: rounded(1);
+  line-height: 0;
+}
+
+/* Pencil “Checkbox (filled)”: black field, white stroked check / minus */
+.checkboxBoxFilled {
+  background-color: color(black);
+  border-color: color(black);
+}
+
+.checkboxMarkOnDark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: color(white);
+
+  :global(svg) {
+    flex-shrink: 0;
+    stroke: currentColor;
+    fill: none;
+  }
+}
+
+.checkboxInput {
+  &:focus {
+    outline: none;
+  }
+}

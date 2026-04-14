@@ -1,0 +1,63 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  @include flex(column, flex-start, stretch, 0);
+  width: 100%;
+}
+
+.labelRow {
+  @include flex(row, space-between, center, spacer(3));
+  width: 100%;
+  margin-bottom: spacer(2);
+  min-width: 0;
+  gap: spacer(3);
+}
+
+.labelInRow {
+  margin-bottom: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.labelAccessory {
+  flex-shrink: 0;
+}
+
+/* Invisible Badge-sized slot when tooltip label row has no real accessory (see FormField.tsx). */
+.labelAccessoryPlaceholder {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.labelGroup {
+  @include flex(row, flex-start, center, 0);
+  column-gap: spacer(2);
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Same as Label so the info icon inherits matching text color (icon is outside <label>). */
+  color: color(grey-4);
+}
+
+.labelGroup .labelInRow {
+  flex: 0 0 auto;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.hintTooltipIcon {
+  margin-top: 0;
+  margin-left: 0;
+}
+
+.hintInfoIcon {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+.hint {
+  margin: 0 0 spacer(3);
+  color: color(grey-4);
+  @include type-item(small);
+}

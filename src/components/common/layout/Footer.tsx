@@ -21,7 +21,7 @@ const footerNavConfig: NavItem[] = [
 function FooterNavLink({ link }: { link: NavLink }) {
   return (
     <li key={link.id}>
-      <Link href={link.href} aria-label={link.label}>
+      <Link className={styles.navLink} href={link.href} aria-label={link.label}>
         {link.label}
       </Link>
     </li>

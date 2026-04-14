@@ -122,7 +122,7 @@ function MobileNav() {
         aria-controls="mobile-menu"
         aria-haspopup="true"
         onClick={handleOpen}
-        sx={{ color: "#fff" }}
+        sx={{ color: "var(--color-white)" }}
       >
         <MenuIcon />
       </IconButton>

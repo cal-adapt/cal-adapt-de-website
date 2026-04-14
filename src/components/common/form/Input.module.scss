@@ -1,0 +1,9 @@
+@use "@/styles/abstracts" as *;
+
+.input {
+  @include form-control;
+
+  &.invalid {
+    @include form-control-error;
+  }
+}

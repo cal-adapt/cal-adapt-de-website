@@ -2,8 +2,8 @@
 
 .footer {
   @include flex(column);
-  color: #fff;
-  background-color: #000;
+  color: color(white);
+  background-color: color(black);
   height: auto;
   padding: spacer(11) spacer(5);
   text-align: center;
@@ -73,6 +73,14 @@
     @include breakpoint(large) {
       flex-basis: 50%;
       padding-left: spacer(13);
+    }
+  }
+
+  .navLink {
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 

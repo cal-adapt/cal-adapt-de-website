@@ -1,0 +1,17 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  @include type-item(label);
+  display: block;
+  color: color(grey-4);
+  margin-bottom: spacer(2);
+}
+
+.required {
+  color: color(grey-3);
+  display: inline-block;
+  margin-inline-end: spacer(1);
+  font-size: 0.8em;
+  line-height: 1;
+  vertical-align: super;
+}

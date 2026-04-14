@@ -1,0 +1,11 @@
+@use "@/styles/abstracts" as *;
+
+.textarea {
+  @include form-control;
+  min-height: 6.4rem;
+  resize: vertical;
+
+  &.invalid {
+    @include form-control-error;
+  }
+}

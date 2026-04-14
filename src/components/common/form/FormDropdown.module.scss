@@ -1,0 +1,155 @@
+@use "@/styles/abstracts" as *;
+
+$label-padding: spacer(3) spacer(4);
+
+.root {
+  width: 100%;
+  position: relative;
+}
+
+.control {
+  position: relative;
+  width: 100%;
+}
+
+.trigger {
+  // Symmetric horizontal padding comes from `form-control` (spacer(3))
+  // nowrap keeps the chevron on the same row as the value (upper-right); wrap sent it to a second row.
+  @include flex(row, flex-start, flex-start, spacer(2), nowrap);
+  @include form-control;
+  cursor: pointer;
+  text-align: start;
+  min-height: calc(1lh + #{spacer(2)} + #{spacer(2)});
+}
+
+.triggerInvalid {
+  @include form-control-error;
+}
+
+.trigger:focus-visible {
+  outline: 2px solid color(blue-4);
+  outline-offset: 2px;
+}
+
+.placeholder {
+  @include type-item(body);
+  margin: 0;
+  padding: 0;
+  color: color(grey-3);
+  line-height: inherit;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.value {
+  @include type-item(body);
+  margin: 0;
+  padding: 0;
+  color: color(black);
+  line-height: inherit;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-left: auto;
+  margin-top: 0.2em;
+  color: color(grey-4);
+  transition: transform 0.15s ease;
+  line-height: 0;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + #{spacer(1)});
+  z-index: z(10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: var(--form-dropdown-max-height, 33rem);
+  overflow-y: auto;
+  border: 1px solid color(grey-2);
+  border-radius: rounded(1);
+  background-color: color(white);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.option {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid color(grey-2);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+// Row target for both <label> (multi + checkbox) and <button> (single select)
+.optionLabel {
+  @include type-item(body);
+  @include flex(row, flex-start, center, spacer(3));
+  @include transition("background-color");
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: $label-padding;
+  color: color(black);
+  cursor: pointer;
+
+  &:where(button) {
+    border: none;
+    background: none;
+    font: inherit;
+    text-align: start;
+  }
+
+  &:hover:not(:has(input:disabled)):not(:disabled) {
+    background-color: color(grey-1);
+  }
+
+  &:disabled,
+  &:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  &:where(button):focus-visible {
+    outline: 2px solid color(blue-4);
+    outline-offset: 2px;
+  }
+}
+
+.optionText {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+// Single-select only: plain checkmark (no box) for the current value
+.optionCheck {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: color(black);
+  line-height: 0;
+
+  :global(svg) {
+    stroke: currentColor;
+    fill: none;
+  }
+}
