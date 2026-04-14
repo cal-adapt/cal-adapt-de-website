@@ -1,5 +1,29 @@
 export const isExternalUrl = (url: string) => /^https?:\/\//.test(url);
 
+/**
+ * Browser downloads/fetch require web schemes. Convert STAC S3 URLs to HTTPS.
+ * Example: s3://bucket/path/file.csv -> https://bucket.s3.amazonaws.com/path/file.csv
+ */
+export function normalizeDownloadUrl(url: string): string {
+  if (!url.startsWith("s3://")) {
+    return url;
+  }
+
+  const withoutScheme = url.slice("s3://".length);
+  const firstSlash = withoutScheme.indexOf("/");
+  if (firstSlash <= 0) {
+    return url;
+  }
+
+  const bucket = withoutScheme.slice(0, firstSlash);
+  const objectKey = withoutScheme.slice(firstSlash + 1);
+  if (!bucket || !objectKey) {
+    return url;
+  }
+
+  return `https://${bucket}.s3.amazonaws.com/${objectKey}`;
+}
+
 export function extractFilenameFromURL(url: string): string {
   // Split the URL by '/' to get the parts
   const parts = url.split("/");
