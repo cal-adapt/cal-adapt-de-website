@@ -13,22 +13,50 @@
 
 // TODO: Map primitive colors to semantic aliases
 
-$background-paper: #fbfbfb;
-$secondary: #333538;
-$primary: #e8f4fb;
-$secondary-grey-dark: #a0a5ac;
-$primary-blue: #4c8eb4;
+$black: #000000;
+$white: #ffffff;
+
+$greys: (
+  1: #f8f9fa,
+  2: #e1eaef,
+  3: #acb5bd,
+  4: #51575e,
+  5: #3a3f44,
+);
+
+$blues: (
+  1: #e1f1ff,
+  2: #b9deff,
+  3: #53aeff,
+  4: #007dec,
+  5: #004786,
+);
+
+$reds: (
+  1: #ffebee,
+  2: #ef9a9a,
+  3: #f03d3e,
+  4: #b71c1c,
+);
+
+$greens: (
+  1: #e8f5e9,
+  2: #81c784,
+  3: #1b5e20,
+);
+
+$yellows: (
+  1: #fff8e1,
+  2: #ffcc33,
+  3: #5d4a00,
+);
 
 $colors: (
-  grey: (
-    100: #fbfbfb,
-    300: #a0a5ac,
-    600: #333538,
-  ),
-  blue: (
-    100: #e8f4fb,
-    500: #4c8eb4,
-  ),
+  grey: $greys,
+  red: $reds,
+  green: $greens,
+  blue: $blues,
+  yellow: $yellows,
 );
 
 :root {
@@ -39,13 +67,8 @@ $colors: (
     }
   }
 
-  --color-background-primary: red;
-  --color-background-secondary: red;
-  --color-background-tertiary: red;
-
-  --color-text-primary: red;
-  --color-text-secondary: red;
-  --color-text-tertiary: red;
+  --color-black: #{$black};
+  --color-white: #{$white};
 
   --color-debug: magenta;
 
@@ -252,6 +275,13 @@ $z-index: (
   --line-height-code: 1.2;
   --letter-spacing-code: -0.02em;
   --font-weight-code: var(--font-weight-regular);
+
+  --font-family-label: "IBM Plex Mono", var(--font-family-monospace);
+  --font-size-label: 1.2rem;
+  --line-height-label: 1.2;
+  --letter-spacing-label: 0.03em;
+  --font-weight-label: var(--font-weight-medium);
+  --text-transform-label: uppercase;
 
   @include breakpoint(medium) {
     --font-size-heading-1: 6rem;

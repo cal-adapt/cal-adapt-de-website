@@ -1,6 +1,7 @@
 import { createTheme } from "@mui/material/styles";
 
-import { mediaQueries } from "@/utils/styles";
+import { mediaQueries } from "@/config/breakpoints";
+import { BLUE, GREY } from "@/config/colors";
 
 const { palette } = createTheme();
 
@@ -54,9 +55,10 @@ declare module "@mui/material/Alert" {
 }
 
 const BODY_TEXT_COLOR = "#1C1C1C";
-const BODY_TEXT_COLOR_LIGHT = "#FFF";
-const BG_DEFAULT = "#FFF";
-const BG_PAPER = "#FFF";
+const COLOR_WHITE = "var(--color-white)";
+const COLOR_BLACK = "var(--color-black)";
+/** Solid white for MUI `augmentColor` (requires a parseable color value). */
+const WHITE_SOLID = "#ffffff";
 
 let theme = createTheme({
   palette: {
@@ -68,10 +70,10 @@ let theme = createTheme({
       contrastText: BODY_TEXT_COLOR,
     },
     secondary: {
-      main: "#333538",
-      dark: "#232527",
-      light: "#5B5D5F",
-      contrastText: BODY_TEXT_COLOR_LIGHT,
+      main: GREY[4],
+      dark: GREY[5],
+      light: GREY[3],
+      contrastText: COLOR_WHITE,
     },
     success: {
       main: "#7EC09F",
@@ -81,11 +83,11 @@ let theme = createTheme({
     },
     info: {
       main: "#59A1C1",
-      contrastText: BODY_TEXT_COLOR_LIGHT,
+      contrastText: COLOR_WHITE,
     },
     background: {
-      default: BG_DEFAULT,
-      paper: BG_PAPER,
+      default: COLOR_WHITE,
+      paper: COLOR_WHITE,
     },
   },
   typography: {
@@ -167,7 +169,7 @@ let theme = createTheme({
         root: ({ ownerState }) => ({
           ...(ownerState.variant === "contained" &&
             ownerState.color === "primary" && {
-              color: "#333538",
+              color: GREY[4],
               boxShadow: "none",
               textTransform: "capitalize",
               borderRadius: "8px",
@@ -192,9 +194,9 @@ let theme = createTheme({
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          backgroundColor: "#FFF",
+          backgroundColor: COLOR_WHITE,
           boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-          color: "#000000",
+          color: COLOR_BLACK,
           borderRadius: "6px",
           maxWidth: 220,
           padding: "15px",
@@ -209,18 +211,18 @@ theme = createTheme(theme, {
   palette: {
     secondaryReversed: theme.palette.augmentColor({
       color: {
-        main: BODY_TEXT_COLOR_LIGHT,
-        light: BODY_TEXT_COLOR_LIGHT,
-        dark: BODY_TEXT_COLOR_LIGHT,
+        main: WHITE_SOLID,
+        light: WHITE_SOLID,
+        dark: WHITE_SOLID,
         contrastText: BODY_TEXT_COLOR,
       },
       name: "secondaryReversed",
     }),
     primaryBlue: theme.palette.augmentColor({
       color: {
-        main: "#4C8EB4",
-        light: "#6FA4C3",
-        dark: "#35637D",
+        main: BLUE[4],
+        light: BLUE[3],
+        dark: BLUE[5],
       },
       name: "primaryBlue",
     }),
@@ -238,15 +240,15 @@ theme = createTheme(theme, {
         main: "#20333D",
         light: "#4C5B63",
         dark: "#16232A",
-        contrastText: BODY_TEXT_COLOR_LIGHT,
+        contrastText: COLOR_WHITE,
       },
       name: "infoDark",
     }),
     grey: theme.palette.augmentColor({
       color: {
-        main: "#e8e8e8",
-        light: "#f5f5f5",
-        dark: "#d0d0d0",
+        main: GREY[2],
+        light: GREY[1],
+        dark: GREY[3],
         contrastText: BODY_TEXT_COLOR,
       },
       name: "grey",
