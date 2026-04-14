@@ -1,0 +1,36 @@
+@use "@/styles/abstracts" as *;
+
+.bundleCard {
+  @include flex(column, flex-start, stretch, spacer(7));
+  padding: spacer(8);
+  border-radius: rounded(1);
+  background-color: color(grey-1);
+}
+
+.bundleTop {
+  @include flex(row, space-between, flex-start, spacer(7));
+  flex-wrap: wrap;
+  width: 100%;
+  gap: spacer(7);
+}
+
+.bundleMeta {
+  @include flex(row, flex-start, flex-start, spacer(9));
+  flex-wrap: wrap;
+}
+
+.metaBlock {
+  @include flex(column, flex-start, flex-start, spacer(5));
+  min-width: 8rem;
+}
+
+.fieldLabel {
+  @include type-item(label);
+  color: color(grey-4);
+}
+
+.fieldValue {
+  @include type-item(body);
+  margin: 0;
+  color: color(black);
+}

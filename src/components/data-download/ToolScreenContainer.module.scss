@@ -1,0 +1,47 @@
+@use "@/styles/abstracts" as *;
+
+.screen {
+  @include flex(column, flex-start, stretch);
+  width: 100%;
+  min-width: 0;
+  text-align: start;
+}
+
+.stepIntro {
+  @include flex(column, flex-start, stretch, spacer(6));
+  width: 100%;
+  min-width: 0;
+}
+
+.headingRow {
+  @include flex(row, space-between, center, spacer(5), wrap);
+  width: 100%;
+}
+
+.heading {
+  @include type-item(heading-5);
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  color: color(black);
+  text-transform: capitalize;
+}
+
+.headingPlaceholder {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.headingActions {
+  flex-shrink: 0;
+}
+
+.belowHeading {
+  @include flex(column, flex-start, stretch, spacer(5));
+  width: 100%;
+  min-width: 0;
+}
+
+.formStack {
+  width: 100%;
+}

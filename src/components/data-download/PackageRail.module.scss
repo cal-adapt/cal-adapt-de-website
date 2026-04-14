@@ -1,0 +1,88 @@
+@use "@/styles/abstracts" as *;
+
+$rail-bg: color(grey-1);
+$rail-border: color(grey-3);
+$rail-selected-bg: color(grey-5);
+$rail-selected-fg: color(white);
+$rail-padding: spacer(5);
+
+.root {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  background-color: $rail-bg;
+  overflow: hidden;
+}
+
+.header {
+  @include flex(column, flex-start, stretch, spacer(5));
+  padding: $rail-padding;
+}
+
+.headerTitle {
+  @include type-item(body);
+  margin: 0;
+  color: color(black);
+  font-weight: 600;
+  white-space: pre-line;
+}
+
+.divider {
+  margin: 0;
+  border: none;
+  border-top: 1px solid $rail-border;
+}
+
+.row {
+  @include type-item(body);
+  margin: 0;
+  padding: $rail-padding;
+  color: color(black);
+  font-weight: font-weight(medium);
+}
+
+.rowLink {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacer(4);
+  box-sizing: border-box;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: color-mix(in srgb, $rail-border 35%, $rail-bg);
+  }
+}
+
+.rowSelected {
+  @include type-item(body);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacer(4);
+  margin: 0;
+  padding: $rail-padding;
+  background-color: $rail-selected-bg;
+  color: $rail-selected-fg;
+  font-weight: font-weight(medium);
+
+  &.rowLink:hover {
+    background-color: $rail-selected-bg;
+  }
+}
+
+.rowTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.chevron {
+  flex-shrink: 0;
+  opacity: 0.9;
+}

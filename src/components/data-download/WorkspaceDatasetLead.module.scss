@@ -1,0 +1,12 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  width: 100%;
+  max-width: max-w(global);
+}
+
+.copy {
+  margin: 0;
+  color: color(black);
+  @include type-item(body);
+}
