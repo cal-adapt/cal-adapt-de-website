@@ -37,7 +37,7 @@ export interface DownloadPackage {
 export const DOWNLOAD_PACKAGES: DownloadPackage[] = [
   {
     id: "loca2-county",
-    title: "County Gridded Data",
+    title: "LOCA2 county",
     listDescription: "Gridded climate projections by county.",
     viewLead:
       "Default export uses the LOCA downscaled ensemble with daily timesteps. Review the preset boundaries and variables before customizing or downloading.",
@@ -56,7 +56,7 @@ export const DOWNLOAD_PACKAGES: DownloadPackage[] = [
   },
   {
     id: "typical-met-year",
-    title: "Climate Profiles: Typical Meteorological Year (TMY)",
+    title: "Typical meteorological year",
     listDescription: "Representative year climate profiles for analysis.",
     viewLead:
       "These defaults define a Typical Meteorological Year bundle suitable for building energy and compliance workflows. Adjust selections on the next step if you need a different scope.",
@@ -75,7 +75,7 @@ export const DOWNLOAD_PACKAGES: DownloadPackage[] = [
   },
   {
     id: "standard-year",
-    title: "Climate Profiles: Standard Meteorological Year",
+    title: "Standard year",
     listDescription: "Standard Met Year profiles at stations (8760 hourly, CSV).",
     viewLead:
       "Standard-year summaries aggregate multiple models for a consistent planning window. Use customize to narrow models or scenarios.",

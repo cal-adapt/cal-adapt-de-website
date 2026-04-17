@@ -80,6 +80,7 @@ $rail-padding: spacer(5);
 .rowTitle {
   flex: 1 1 auto;
   min-width: 0;
+  text-transform: capitalize;
 }
 
 .chevron {
