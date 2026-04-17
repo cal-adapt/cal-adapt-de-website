@@ -1,7 +1,6 @@
 import type { StacCollection, StacCollectionQueryables } from "@/lib/cal-adapt-api";
 
-import { catalogPackageIdForStacCollection } from "../catalog/ids";
-import { buildCustomizeFormConfigFromStacCollection } from "../customize/loca2";
+import { getPackageAdapterByStacCollectionId } from "../packages/registry";
 import type { DataDownloadWorkspaceData } from "../types";
 
 export type MapStacCollectionToWorkspaceOptions = {
@@ -11,13 +10,14 @@ export type MapStacCollectionToWorkspaceOptions = {
 
 /**
  * Maps a STAC `Collection` response into the workspace view-model used by `DataDownload`.
+ * The package adapter (chosen by `collectionId`) drives customize-form construction.
  */
 export function mapStacCollectionToWorkspace(
   collection: StacCollection,
   collectionId: string,
   options?: MapStacCollectionToWorkspaceOptions
 ): DataDownloadWorkspaceData {
-  const catalogPackageId = catalogPackageIdForStacCollection(collectionId);
+  const adapter = getPackageAdapterByStacCollectionId(collectionId);
 
   return {
     collectionId,
@@ -25,11 +25,7 @@ export function mapStacCollectionToWorkspace(
     datasetDescription: collection.description?.trim() || "",
     summaries: collection.summaries ?? {},
     license: collection.license,
-    catalogPackageId,
-    customizeForm: buildCustomizeFormConfigFromStacCollection(
-      collection,
-      catalogPackageId,
-      options?.queryables != null ? { queryables: options.queryables } : undefined
-    ),
+    catalogPackageId: adapter.id,
+    customizeForm: adapter.buildCustomizeForm(collection, options?.queryables),
   };
 }

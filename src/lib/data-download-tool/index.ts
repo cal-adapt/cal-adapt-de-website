@@ -6,7 +6,6 @@ export {
   STAC_COLLECTION_TO_CATALOG_PACKAGE,
   stacCollectionIdForPackage,
 } from "./catalog/ids";
-export { buildCustomizeFormConfigFromStacCollection } from "./customize/loca2";
 export {
   boundaryTypeSummaryValue,
   CALADAPT_SPATIAL_TYPE_KEY,
@@ -14,6 +13,13 @@ export {
 } from "./customize/spatialType";
 export { CMIP6_SCENARIO_LABELS, labelCmip6Scenario } from "./labels/cmip6";
 export { labelVariable, VARIABLE_LABELS } from "./labels/variables";
+export {
+  getPackageAdapter,
+  getPackageAdapterByKind,
+  getPackageAdapterByStacCollectionId,
+  PACKAGE_ADAPTERS,
+} from "./packages/registry";
+export type { PackageAdapter } from "./packages/types";
 export { mapStacItemsToDownloadBundles } from "./search/bundles";
 export { buildItemSearchFilters } from "./search/filters";
 export { hasCompleteStacSearchSelections } from "./search/validateSelections";

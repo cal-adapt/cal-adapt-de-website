@@ -11,10 +11,11 @@ import {
   type DataDownloadWorkspaceData,
   type DownloadAssetRow,
   type DownloadBundle,
+  getPackageAdapterByKind,
 } from "@/lib/data-download-tool";
 
+import { getPackageView } from "./package-views/registry";
 import DownloadBundleCard from "./DownloadBundleCard";
-import { downloadEmptyMessage, downloadSkippedMessage, tooltipMapForKind } from "./kindDisplay";
 
 import styles from "./DownloadScreen.module.scss";
 
@@ -39,15 +40,16 @@ export default function DownloadScreen({
   downloadsDisabled = false,
 }: DownloadScreenProps) {
   const kind = workspace.customizeForm.kind;
-  const tooltips = tooltipMapForKind(kind);
+  const adapter = getPackageAdapterByKind(kind);
+  const view = getPackageView(kind);
 
   const summaryRows = useMemo(() => {
     const rows = buildDownloadSummaryRows(workspace, selections);
     return rows.map((row) => ({
       ...row,
-      hint: tooltips[row.label],
+      hint: view.tooltipByLabel[row.label],
     }));
-  }, [workspace, selections, tooltips]);
+  }, [workspace, selections, view]);
 
   return (
     <div className={styles.root}>
@@ -69,11 +71,11 @@ export default function DownloadScreen({
       ) : null}
 
       {search.status === "skipped" ? (
-        <Alert severity="warning">{downloadSkippedMessage(kind)}</Alert>
+        <Alert severity="warning">{adapter.messages.skipped}</Alert>
       ) : null}
 
       {search.status === "success" && search.bundles.length === 0 ? (
-        <Alert severity="info">{downloadEmptyMessage(kind)}</Alert>
+        <Alert severity="info">{adapter.messages.empty}</Alert>
       ) : null}
 
       {search.status === "success" && search.bundles.length > 0 ? (

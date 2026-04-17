@@ -1,53 +1,43 @@
-import type { PackageId } from "../types";
+import {
+  getPackageAdapter,
+  getPackageAdapterByKind,
+  getPackageAdapterByStacCollectionId,
+  PACKAGE_ADAPTERS,
+  STAC_API_V2_HOST_COLLECTION_IDS,
+} from "../packages/registry";
+import type { CustomizeFormKind, PackageId } from "../types";
+
+export { STAC_API_V2_HOST_COLLECTION_IDS };
 
 /** Current STAC id for LOCA2 county-gridded downloads (v2 API). */
 export const LOCA2_COUNTY_STAC_COLLECTION_ID = "loca2-county" as const;
 
-/**
- * Maps STAC collection IDs to our catalog `PackageId` for shared UI (rail, defaults copy).
- * Add new rows here when additional collections (TMY, Standard Year, …) are wired to the API.
- */
-export const STAC_COLLECTION_TO_CATALOG_PACKAGE: Partial<Record<string, PackageId>> = {
-  [LOCA2_COUNTY_STAC_COLLECTION_ID]: "loca2-county",
-  "standard-year": "standard-year",
-  "typical-met-year": "typical-met-year",
-};
-
-/** Maps catalog package → STAC collection id (API). */
-export const CATALOG_PACKAGE_TO_STAC_COLLECTION: Record<PackageId, string> = {
-  "loca2-county": LOCA2_COUNTY_STAC_COLLECTION_ID,
-  "standard-year": "standard-year",
-  "typical-met-year": "typical-met-year",
-};
-
-/**
- * Collections whose `getCollection` / `search` traffic goes to STAC API v2 (`STAC_API_V2_BASE_URL`).
- * All Data Download packages use this host; v1 (`STAC_API_BASE_URL`) remains for ad-hoc / legacy IDs.
- */
-export const STAC_API_V2_HOST_COLLECTION_IDS = new Set<string>([
-  LOCA2_COUNTY_STAC_COLLECTION_ID,
-  "standard-year",
-  "typical-met-year",
-]);
-
-const V2_STATION_PROFILE_COLLECTION_IDS = new Set<string>(["standard-year", "typical-met-year"]);
-
-/** Collections that use `/queryables` + the Standard Met Year customize layout (station CSV profile). */
-export function isV2StationProfileCollection(collectionId: string): boolean {
-  return V2_STATION_PROFILE_COLLECTION_IDS.has(collectionId);
-}
-
 export function stacCollectionIdForPackage(packageId: PackageId): string {
-  return CATALOG_PACKAGE_TO_STAC_COLLECTION[packageId];
+  return getPackageAdapter(packageId).stacCollectionId;
 }
 
 export function catalogPackageIdForStacCollection(collectionId: string): PackageId {
-  const id = STAC_COLLECTION_TO_CATALOG_PACKAGE[collectionId];
-  if (id == null) {
-    throw new Error(
-      `[data-download] No catalog mapping for STAC collection "${collectionId}". ` +
-        `Extend STAC_COLLECTION_TO_CATALOG_PACKAGE in catalog/ids.ts.`
-    );
-  }
-  return id;
+  return getPackageAdapterByStacCollectionId(collectionId).id;
 }
+
+/**
+ * Whether a collection uses the station-profile customize layout (climate profiles).
+ * Drives `filters.ts` fallbacks and legacy helpers — prefer reading `kind` off the adapter.
+ */
+export function isV2StationProfileCollection(collectionId: string): boolean {
+  const adapter = PACKAGE_ADAPTERS.find((a) => a.stacCollectionId === collectionId);
+  if (adapter == null) {
+    return false;
+  }
+  const kind: CustomizeFormKind = adapter.kind;
+  return kind === "standard-met-year" || kind === "typical-met-year";
+}
+
+/** @deprecated Use `getPackageAdapter(...).stacCollectionId`. */
+export const CATALOG_PACKAGE_TO_STAC_COLLECTION = Object.fromEntries(
+  PACKAGE_ADAPTERS.map((a) => [a.id, a.stacCollectionId])
+) as Record<PackageId, string>;
+
+/** @deprecated Use `getPackageAdapterByStacCollectionId(...).id`. */
+export const STAC_COLLECTION_TO_CATALOG_PACKAGE: Partial<Record<string, PackageId>> =
+  Object.fromEntries(PACKAGE_ADAPTERS.map((a) => [a.stacCollectionId, a.id]));

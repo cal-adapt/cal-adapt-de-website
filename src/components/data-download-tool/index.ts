@@ -7,7 +7,6 @@ export {
   type FlowStep,
   getPackage,
   type PackageId,
-  type ViewMetric,
 } from "./packages";
 export { default as ToolScreenContainer } from "./ToolScreenContainer";
 export { default as WorkspaceLayout } from "./WorkspaceLayout";

@@ -15,6 +15,7 @@ import {
   type DataDownloadWorkspaceData,
   type DownloadAssetRow,
   type DownloadBundle,
+  getPackageAdapterByKind,
   hasCompleteStacSearchSelections,
 } from "@/lib/data-download-tool";
 import { getTodaysDateAsString } from "@/utils/date";
@@ -64,24 +65,9 @@ function DownloadEstimatedBundleLine({ search }: { search: UseStacDownloadSearch
   );
 }
 
-function frequencySlug(
-  workspace: DataDownloadWorkspaceData,
-  selections: CustomizeSelections
-): string {
-  if (workspace.customizeForm.kind === "standard-met-year") {
-    const slug =
-      selections.timePeriods.join("-").replace(/\s+/g, "-") ||
-      selections.percentiles.join("-") ||
-      "standard-met-year";
-    return slug.toLowerCase().replace(/[^a-z0-9-]+/gi, "-");
-  }
-  const opt = workspace.customizeForm.frequencyOptions.find(
-    (o) => o.value === selections.frequency
-  );
-  if (opt?.label) {
-    return opt.label.toLowerCase().replace(/\s+/g, "-");
-  }
-  return selections.frequency;
+function zipSlug(workspace: DataDownloadWorkspaceData, selections: CustomizeSelections): string {
+  const adapter = getPackageAdapterByKind(workspace.customizeForm.kind);
+  return adapter.zipFilenameSlug(selections, workspace.customizeForm);
 }
 
 export default function DataDownload({ workspace }: DataDownloadProps) {
@@ -102,7 +88,7 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
     }
   }, [step]);
 
-  const freqSlug = useMemo(() => frequencySlug(workspace, selections), [workspace, selections]);
+  const freqSlug = useMemo(() => zipSlug(workspace, selections), [workspace, selections]);
 
   const handleDownloadAll = useCallback(async () => {
     if (search.allHrefs.length === 0) {
@@ -131,7 +117,7 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
       setZipBusy(true);
       setZipFallbackNotice(null);
       try {
-        const suffix = `${bundle.model}-${bundle.countyName}`
+        const suffix = bundle.filenameSuffix
           .replace(/[^a-z0-9-]+/gi, "-")
           .toLowerCase()
           .slice(0, 48);
@@ -169,13 +155,15 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
             exercitation ullamco laboris.
           </p>
         </div>
-        <Alert severity="info">
-          Looking for the full LOCA2 scientific data at daily resolution for the entire state of
-          California?{" "}
-          <Link href="https://analytics.cal-adapt.org/data/access/">
-            Click here for the how-to-guide
-          </Link>
-        </Alert>
+        {workspace.catalogPackageId === "loca2-county" ? (
+          <Alert severity="info">
+            Looking for the full LOCA2 scientific data at daily resolution for the entire state of
+            California?{" "}
+            <Link href="https://analytics.cal-adapt.org/data/access/">
+              Click here for the how-to-guide
+            </Link>
+          </Alert>
+        ) : null}
       </div>
 
       <WorkspaceLayout packageRail={<PackageRail activePackageId={workspace.catalogPackageId} />}>

@@ -7,7 +7,7 @@ export type CustomizeFormKind = "loca2-county" | "standard-met-year" | "typical-
 
 /**
  * Options + defaults for the Customize step, built from STAC (or future sources).
- * Hint/tooltip copy is applied at the component layer via per-package tooltip maps in `tooltips/`.
+ * Hint/tooltip copy is applied at the component layer via per-package tooltip maps.
  */
 export type CustomizeFormConfig = {
   kind: CustomizeFormKind;
@@ -57,13 +57,17 @@ export type DownloadAssetRow = {
   sizeBytes: number;
 };
 
-/** STAC search result grouped for the download UI (one row per model × scenario × county item). */
+/**
+ * STAC search result grouped for the download UI (one row per logical bundle — definition depends on the package).
+ * `metaBlocks` + `filenameSuffix` are filled by the package adapter's `mapItemsToBundles`.
+ */
 export type DownloadBundle = {
-  /** STAC feature id */
+  /** Stable id used for keys + zip filenames. */
   stacItemId: string;
-  model: string;
-  scenarioLabel: string;
-  countyName: string;
+  /** Display blocks shown at the top of the bundle card (label/value pairs, e.g. Model, Scenario, Boundary). */
+  metaBlocks: { label: string; value: string }[];
+  /** Short machine-safe slug used when naming a single-bundle zip download. */
+  filenameSuffix: string;
   assets: DownloadAssetRow[];
 };
 
@@ -82,10 +86,7 @@ export type DataDownloadWorkspaceData = {
   /** STAC `summaries` — use later to drive filters (variables, scenarios, etc.). */
   summaries: Record<string, string[]>;
   license?: string;
-  /**
-   * Which static catalog entry (`DOWNLOAD_PACKAGES`) this collection corresponds to for
-   * rail selection + marketing copy until each product has its own API module.
-   */
+  /** Which catalog package this collection corresponds to (rail selection + view wiring). */
   catalogPackageId: PackageId;
   /** Customize step: field options and defaults derived from the collection. */
   customizeForm: CustomizeFormConfig;

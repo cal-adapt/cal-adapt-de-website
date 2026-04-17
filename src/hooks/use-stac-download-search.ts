@@ -80,7 +80,7 @@ export function useStacDownloadSearch(
         if (cancelled) {
           return;
         }
-        const mapped = mapStacItemsToDownloadBundles(data.features, selections.variables, kind);
+        const mapped = mapStacItemsToDownloadBundles(data.features, selections, kind);
         setFetchResult({
           status: "success",
           bundles: mapped.bundles,
