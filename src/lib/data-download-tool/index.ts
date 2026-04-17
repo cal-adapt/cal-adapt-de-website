@@ -12,12 +12,8 @@ export {
   CALADAPT_SPATIAL_TYPE_KEY,
   readCaladaptSpatialType,
 } from "./customize/spatialType";
-export {
-  CMIP6_SCENARIO_LABELS,
-  CMIP6_VARIABLE_LABELS,
-  labelCmip6Scenario,
-  labelCmip6Variable,
-} from "./labels/cmip6";
+export { CMIP6_SCENARIO_LABELS, labelCmip6Scenario } from "./labels/cmip6";
+export { labelVariable, VARIABLE_LABELS } from "./labels/variables";
 export { mapStacItemsToDownloadBundles } from "./search/bundles";
 export { buildItemSearchFilters } from "./search/filters";
 export { hasCompleteStacSearchSelections } from "./search/validateSelections";

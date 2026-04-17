@@ -1,6 +1,6 @@
 import type { MultiSelectOption, SelectOption } from "@/components/common/form";
 
-export type PackageId = "county-gridded" | "tmy-profile" | "standard-year-profile";
+export type PackageId = "loca2-county" | "typical-met-year" | "standard-year";
 
 /** Which STAC-driven customize layout to render (LOCA2 county grid vs station-profile packages). */
 export type CustomizeFormKind = "loca2-county" | "standard-met-year" | "typical-met-year";

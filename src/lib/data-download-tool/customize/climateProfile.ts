@@ -1,7 +1,8 @@
 import type { MultiSelectOption, SelectOption } from "@/components/common/form";
 import type { StacCollection, StacCollectionQueryables } from "@/lib/cal-adapt-api";
+import { labelVariable } from "@/lib/data-download-tool/labels/variables";
 
-import type { CustomizeFormConfig,PackageId  } from "../types";
+import type { CustomizeFormConfig, PackageId } from "../types";
 
 import { boundaryTypeSummaryValue } from "./spatialType";
 
@@ -27,6 +28,15 @@ function enumStrings(q: StacCollectionQueryables, key: string): string[] {
     return [];
   }
   return raw.map((v) => String(v));
+}
+
+function labelsByVariableId(q: StacCollectionQueryables): Map<string, string> {
+  const variableIds = enumStrings(q, "variable");
+  const variableLabels = enumStrings(q, "variable_label");
+  const entries = variableIds
+    .map((id, index) => [id, variableLabels[index] ?? ""] as const)
+    .filter(([, label]) => label.trim().length > 0);
+  return new Map(entries);
 }
 
 /** Title-case station / variable ids for select labels. */
@@ -68,6 +78,7 @@ export function buildStandardMetYearCustomizeForm(
   const percentileIds = enumStrings(queryables, "percentile");
   const modelIds = enumStrings(queryables, "model");
   const gwlIds = enumStrings(queryables, "time_period");
+  const variableLabelById = labelsByVariableId(queryables);
 
   const countyOptions: MultiSelectOption[] = stationIds.map((id) => ({
     value: id,
@@ -76,7 +87,7 @@ export function buildStandardMetYearCustomizeForm(
 
   const variableOptions: MultiSelectOption[] = variableIds.map((id) => ({
     value: id,
-    label: humanizeToken(id),
+    label: variableLabelById.get(id) ?? labelVariable(id),
   }));
 
   const percentileOptions: MultiSelectOption[] = percentileIds.map((id) => ({
@@ -96,7 +107,7 @@ export function buildStandardMetYearCustomizeForm(
 
   const emptySelect: SelectOption[] = [];
   const license = collection.license?.trim() || "—";
-  const isTmy = catalogPackageId === "tmy-profile";
+  const isTmy = catalogPackageId === "typical-met-year";
 
   const smyInitial = {
     frequency: "",

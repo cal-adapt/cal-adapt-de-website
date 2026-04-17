@@ -16,7 +16,7 @@ import {
   type DownloadAssetRow,
   type DownloadBundle,
   hasCompleteStacSearchSelections,
-} from "@/lib/data-download";
+} from "@/lib/data-download-tool";
 import { getTodaysDateAsString } from "@/utils/date";
 import { downloadFile, downloadUrlsAsZip } from "@/utils/file";
 import { formatBytes } from "@/utils/format";

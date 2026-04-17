@@ -11,7 +11,7 @@ import {
   type DataDownloadWorkspaceData,
   type DownloadAssetRow,
   type DownloadBundle,
-} from "@/lib/data-download";
+} from "@/lib/data-download-tool";
 
 import DownloadBundleCard from "./DownloadBundleCard";
 import { downloadEmptyMessage, downloadSkippedMessage, tooltipMapForKind } from "./kindDisplay";

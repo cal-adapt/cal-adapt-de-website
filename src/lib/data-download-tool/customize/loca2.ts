@@ -1,14 +1,15 @@
 import type { MultiSelectOption, SelectOption } from "@/components/common/form";
 import type { StacCollection, StacCollectionQueryables } from "@/lib/cal-adapt-api";
-import { CMIP6_SCENARIO_LABELS, CMIP6_VARIABLE_LABELS } from "@/lib/data-download/labels/cmip6";
+import { CMIP6_SCENARIO_LABELS } from "@/lib/data-download-tool/labels/cmip6";
+import { VARIABLE_LABELS } from "@/lib/data-download-tool/labels/variables";
 
 import { LOCA2_COUNTY_STAC_COLLECTION_ID } from "../catalog/ids";
-import type { CustomizeFormConfig,PackageId  } from "../types";
+import type { CustomizeFormConfig, PackageId } from "../types";
 
 import { buildStandardMetYearCustomizeForm } from "./climateProfile";
 import { LOCA2_COUNTY_V2_ASSET_VARIABLE_IDS } from "./loca2Constants";
 import { boundaryTypeSummaryValue } from "./spatialType";
-import { coalesceSummaryOrQueryableEnum } from "./utils";
+import { coalesceSummaryOrQueryableEnum, enumStringsFromStacQueryables } from "./utils";
 
 /** STAC `summaries` / queryables keys for LOCA2 county (v1 used `countyname`; v2 uses `county_name`). */
 const COUNTY_OPTION_KEYS = ["county_name", "countyname"] as const;
@@ -48,10 +49,10 @@ export function buildCustomizeFormConfigFromStacCollection(
   catalogPackageId: PackageId,
   options?: { queryables?: StacCollectionQueryables }
 ): CustomizeFormConfig {
-  if (catalogPackageId === "standard-year-profile" || catalogPackageId === "tmy-profile") {
+  if (catalogPackageId === "standard-year" || catalogPackageId === "typical-met-year") {
     if (options?.queryables == null) {
       throw new Error(
-        "[data-download] standard-year-profile and tmy-profile require STAC v2 queryables; pass options.queryables."
+        "[data-download] standard-year and typical-met-year require STAC v2 queryables; pass options.queryables."
       );
     }
     return buildStandardMetYearCustomizeForm(collection, options.queryables, catalogPackageId);
@@ -72,6 +73,14 @@ export function buildCustomizeFormConfigFromStacCollection(
   if (variableIds.length === 0 && collection.id === LOCA2_COUNTY_STAC_COLLECTION_ID) {
     variableIds = [...LOCA2_COUNTY_V2_ASSET_VARIABLE_IDS];
   }
+
+  const variableLabels = enumStringsFromStacQueryables(q, "variable_label");
+  const variableLabelById = new Map(
+    variableIds
+      .map((id, i) => [id, variableLabels[i] ?? ""] as const)
+      .filter(([, label]) => label.trim().length > 0)
+  );
+
   const sourceIds = coalesceSummaryOrQueryableEnum(summaries, q, SUMMARY_MODEL);
   const experimentIds = coalesceSummaryOrQueryableEnum(summaries, q, SUMMARY_SCENARIO);
 
@@ -83,7 +92,7 @@ export function buildCustomizeFormConfigFromStacCollection(
 
   const variableOptions: MultiSelectOption[] = variableIds.map((id) => ({
     value: id,
-    label: CMIP6_VARIABLE_LABELS[id] ?? id,
+    label: variableLabelById.get(id) ?? VARIABLE_LABELS[id] ?? id,
   }));
 
   /** Values must match STAC `cmip6:source_id` for CQL2 filters. */

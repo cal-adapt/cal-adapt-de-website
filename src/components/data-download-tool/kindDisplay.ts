@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { CustomizeFormKind, DownloadBundle } from "@/lib/data-download";
+import type { CustomizeFormKind, DownloadBundle } from "@/lib/data-download-tool";
 
 import { loca2CountyTooltipByLabel, smyTooltipByLabel, tmyTooltipByLabel } from "./tooltips";
 

@@ -91,7 +91,7 @@ describe("stac-api", () => {
       await expect(searchItems({})).rejects.toThrow("Cal-Adapt STAC API Error: 500");
     });
 
-    it("uses the v2 STAC host when collectionId is standard-met-year", async () => {
+    it("uses the v2 STAC host when collectionId is standard-year", async () => {
       let hitV2 = false;
       server.use(
         http.get(`${STAC_API_V2_BASE_URL}/search`, ({ request }) => {
@@ -102,8 +102,8 @@ describe("stac-api", () => {
       );
 
       await searchItems(
-        { collectionFilter: "collection='standard-met-year'" },
-        { collectionId: "standard-met-year" }
+        { collectionFilter: "collection='standard-year'" },
+        { collectionId: "standard-year" }
       );
       expect(hitV2).toBe(true);
     });
@@ -124,7 +124,7 @@ describe("stac-api", () => {
       expect(hitV2).toBe(true);
     });
 
-    it("uses the v2 STAC host when collectionId is loca2-county (county gridded)", async () => {
+    it("uses the v2 STAC host when collectionId is loca2-county", async () => {
       let hitV2 = false;
       server.use(
         http.get(`${STAC_API_V2_BASE_URL}/search`, ({ request }) => {

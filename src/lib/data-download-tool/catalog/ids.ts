@@ -8,18 +8,16 @@ export const LOCA2_COUNTY_STAC_COLLECTION_ID = "loca2-county" as const;
  * Add new rows here when additional collections (TMY, Standard Year, …) are wired to the API.
  */
 export const STAC_COLLECTION_TO_CATALOG_PACKAGE: Partial<Record<string, PackageId>> = {
-  [LOCA2_COUNTY_STAC_COLLECTION_ID]: "county-gridded",
-  /** V2 — Standard Meteorological Year (8760 profiles, station CSV). */
-  "standard-met-year": "standard-year-profile",
-  /** V2 — Typical Meteorological Year (same queryables-driven customize flow as SMY). */
-  "typical-met-year": "tmy-profile",
+  [LOCA2_COUNTY_STAC_COLLECTION_ID]: "loca2-county",
+  "standard-year": "standard-year",
+  "typical-met-year": "typical-met-year",
 };
 
 /** Maps catalog package → STAC collection id (API). */
 export const CATALOG_PACKAGE_TO_STAC_COLLECTION: Record<PackageId, string> = {
-  "county-gridded": LOCA2_COUNTY_STAC_COLLECTION_ID,
-  "standard-year-profile": "standard-met-year",
-  "tmy-profile": "typical-met-year",
+  "loca2-county": LOCA2_COUNTY_STAC_COLLECTION_ID,
+  "standard-year": "standard-year",
+  "typical-met-year": "typical-met-year",
 };
 
 /**
@@ -28,14 +26,11 @@ export const CATALOG_PACKAGE_TO_STAC_COLLECTION: Record<PackageId, string> = {
  */
 export const STAC_API_V2_HOST_COLLECTION_IDS = new Set<string>([
   LOCA2_COUNTY_STAC_COLLECTION_ID,
-  "standard-met-year",
+  "standard-year",
   "typical-met-year",
 ]);
 
-const V2_STATION_PROFILE_COLLECTION_IDS = new Set<string>([
-  "standard-met-year",
-  "typical-met-year",
-]);
+const V2_STATION_PROFILE_COLLECTION_IDS = new Set<string>(["standard-year", "typical-met-year"]);
 
 /** Collections that use `/queryables` + the Standard Met Year customize layout (station CSV profile). */
 export function isV2StationProfileCollection(collectionId: string): boolean {

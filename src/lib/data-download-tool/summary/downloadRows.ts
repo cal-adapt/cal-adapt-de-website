@@ -1,4 +1,7 @@
-import type { CustomizeSelections, DataDownloadWorkspaceData } from "@/lib/data-download/types";
+import type {
+  CustomizeSelections,
+  DataDownloadWorkspaceData,
+} from "@/lib/data-download-tool/types";
 
 /**
  * Read-only summary rows for the download step (package defaults + user selections).

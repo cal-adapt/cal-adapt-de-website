@@ -3,7 +3,7 @@
 import { Badge, FormField, MultiSelect, Select } from "@/components/common/form";
 import Divider from "@/components/common/ui/Divider";
 import LabelValueGrid from "@/components/common/ui/LabelValueGrid";
-import type { CustomizeFormConfig, CustomizeSelections } from "@/lib/data-download";
+import type { CustomizeFormConfig, CustomizeSelections } from "@/lib/data-download-tool";
 
 import { tooltipMapForKind } from "./kindDisplay";
 

@@ -1,7 +1,7 @@
 import { Download } from "lucide-react";
 
 import Button from "@/components/common/ui/Button";
-import type { CustomizeFormKind, DownloadAssetRow } from "@/lib/data-download";
+import type { CustomizeFormKind, DownloadAssetRow } from "@/lib/data-download-tool";
 
 import { variableTableHeaders } from "./kindDisplay";
 

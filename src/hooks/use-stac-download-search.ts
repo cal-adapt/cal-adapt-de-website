@@ -8,7 +8,7 @@ import {
   type DownloadBundle,
   hasCompleteStacSearchSelections,
   mapStacItemsToDownloadBundles,
-} from "@/lib/data-download";
+} from "@/lib/data-download-tool";
 
 export type StacDownloadSearchStatus = "idle" | "loading" | "success" | "error" | "skipped";
 

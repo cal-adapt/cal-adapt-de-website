@@ -1,10 +1,11 @@
 import type { CountyItem } from "@/lib/cal-adapt-api";
-import { labelCmip6Scenario, labelCmip6Variable } from "@/lib/data-download/labels/cmip6";
+import { labelCmip6Scenario } from "@/lib/data-download-tool/labels/cmip6";
+import { labelVariable } from "@/lib/data-download-tool/labels/variables";
 import type {
   CustomizeFormKind,
   DownloadAssetRow,
   DownloadBundle,
-} from "@/lib/data-download/types";
+} from "@/lib/data-download-tool/types";
 import { splitStringByPeriod } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
@@ -93,6 +94,11 @@ function mapStandardMetYearItems(
 
   for (const item of features) {
     const variableId = String(item.properties.variable ?? "");
+    const variableLabelRaw = item.properties.variable_label;
+    const variableLabel =
+      typeof variableLabelRaw === "string" && variableLabelRaw.trim().length > 0
+        ? variableLabelRaw
+        : labelVariable(variableId);
     if (!selected.has(variableId)) {
       continue;
     }
@@ -136,7 +142,7 @@ function mapStandardMetYearItems(
 
     bundle.assets.push({
       variableId,
-      label: humanizeToken(variableId),
+      label: variableLabel,
       href,
       sizeBytes,
     });
@@ -173,10 +179,14 @@ function mapLoca2CountyItems(
         continue;
       }
       const sizeBytes = parseStacAssetSizeBytes(raw as Record<string, unknown>);
+      const rawRecord = raw as Record<string, unknown>;
+      const variableLabel =
+        typeof rawRecord.variable_label === "string" ? rawRecord.variable_label.trim() : "";
+      const label = variableLabel || raw.title?.trim() || labelVariable(variableId);
 
       assets.push({
         variableId,
-        label: labelCmip6Variable(variableId),
+        label,
         href,
         sizeBytes,
       });

@@ -1,4 +1,4 @@
-import type { PackageId } from "@/lib/data-download";
+import type { PackageId } from "@/lib/data-download-tool";
 
 export type { PackageId };
 
@@ -9,9 +9,9 @@ export const PACKAGE_RAIL_SECTION_TITLE = "Select a package preset from the opti
  * Visual order in the package rail (design / UX order, independent of API wiring order).
  */
 export const PACKAGE_RAIL_DISPLAY_ORDER: readonly PackageId[] = [
-  "tmy-profile",
-  "standard-year-profile",
-  "county-gridded",
+  "typical-met-year",
+  "standard-year",
+  "loca2-county",
 ] as const;
 
 export type FlowStep = "customize" | "download";
@@ -36,7 +36,7 @@ export interface DownloadPackage {
 
 export const DOWNLOAD_PACKAGES: DownloadPackage[] = [
   {
-    id: "county-gridded",
+    id: "loca2-county",
     title: "County Gridded Data",
     listDescription: "Gridded climate projections by county.",
     viewLead:
@@ -55,7 +55,7 @@ export const DOWNLOAD_PACKAGES: DownloadPackage[] = [
     ],
   },
   {
-    id: "tmy-profile",
+    id: "typical-met-year",
     title: "Climate Profiles: Typical Meteorological Year (TMY)",
     listDescription: "Representative year climate profiles for analysis.",
     viewLead:
@@ -74,7 +74,7 @@ export const DOWNLOAD_PACKAGES: DownloadPackage[] = [
     ],
   },
   {
-    id: "standard-year-profile",
+    id: "standard-year",
     title: "Climate Profiles: Standard Meteorological Year",
     listDescription: "Standard Met Year profiles at stations (8760 hourly, CSV).",
     viewLead:

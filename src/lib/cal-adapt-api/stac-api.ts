@@ -11,7 +11,7 @@
  */
 
 import { STAC_API_V2_BASE_URL } from "@/config/constants";
-import { STAC_API_V2_HOST_COLLECTION_IDS } from "@/lib/data-download/catalog/ids";
+import { STAC_API_V2_HOST_COLLECTION_IDS } from "@/lib/data-download-tool/catalog/ids";
 
 import { getCollectionCollectionsCollectionIdGet, searchSearchGet } from "./generated/stac";
 import {
@@ -74,7 +74,7 @@ export type StacCollection = {
   summaries?: Record<string, string[]>;
   /**
    * Cal-Adapt extension: `county` (LOCA2 county grid) vs `point` (climate profiles — fixed site, e.g. weather station).
-   * See `boundaryTypeSummaryValue` in `@/lib/data-download/customize/spatialType`.
+   * See `boundaryTypeSummaryValue` in `@/lib/data-download-tool/customize/spatialType`.
    */
   "caladapt:spatial_type"?: string;
   [key: string]: unknown;
@@ -87,6 +87,7 @@ export type CountyItem = Omit<StacItem, "properties" | "assets"> & {
     county_name?: string;
     location?: string;
     variable?: string;
+    variable_label?: string;
     percentile?: string;
     time_period?: string;
     "cmip6:source_id"?: string;

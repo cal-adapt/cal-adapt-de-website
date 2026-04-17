@@ -1,6 +1,6 @@
 "use client";
 
-import type { DataDownloadWorkspaceData } from "@/lib/data-download";
+import type { DataDownloadWorkspaceData } from "@/lib/data-download-tool";
 
 import styles from "./WorkspaceDatasetLead.module.scss";
 

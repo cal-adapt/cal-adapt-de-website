@@ -1,5 +1,5 @@
 import type { ItemSearchFilters } from "@/lib/cal-adapt-api";
-import type { CustomizeSelections } from "@/lib/data-download/types";
+import type { CustomizeSelections } from "@/lib/data-download-tool/types";
 import { createOrStatement } from "@/utils/query";
 
 import { isV2StationProfileCollection, LOCA2_COUNTY_STAC_COLLECTION_ID } from "../catalog/ids";

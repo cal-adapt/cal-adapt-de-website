@@ -1,4 +1,4 @@
-import DataDownload from "@/components/data-download/DataDownload";
+import DataDownload from "@/components/data-download-tool/DataDownload";
 
 import { stacCollectionIdForPackage } from "./catalog/ids";
 import { loadDataDownloadWorkspace } from "./workspace/load";
