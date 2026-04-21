@@ -107,6 +107,19 @@ export async function getPointGwlStats(params: PointDataParams): Promise<PointDa
   const extractValue = (data: PointResponse | undefined): number | null =>
     data?.data?.[gwlIndex] ?? null;
 
+  const failures: unknown[] = [];
+  const handleResponse = (
+    res: { data?: unknown; error?: unknown; response?: Response } | null,
+    assign: (value: number | null) => void
+  ) => {
+    if (!res) return;
+    if (res.error != null || !res.response?.ok) {
+      failures.push(res.error ?? new Error(`HTTP ${res.response?.status ?? "?"}`));
+      return;
+    }
+    assign(extractValue(res.data as PointResponse));
+  };
+
   try {
     const [meanResponse, minResponse, maxResponse] = await Promise.all([
       pointPointLonLatGet(pointParams(meanPath)),
@@ -114,17 +127,15 @@ export async function getPointGwlStats(params: PointDataParams): Promise<PointDa
       maxPath ? pointPointLonLatGet(pointParams(maxPath)) : null,
     ]);
 
-    if (meanResponse.response?.ok) {
-      results.value = extractValue(meanResponse.data as PointResponse);
-    }
-    if (minResponse && minResponse.response?.ok) {
-      results.min = extractValue(minResponse.data as PointResponse);
-    }
-    if (maxResponse && maxResponse.response?.ok) {
-      results.max = extractValue(maxResponse.data as PointResponse);
-    }
+    handleResponse(meanResponse, (v) => (results.value = v));
+    handleResponse(minResponse, (v) => (results.min = v));
+    handleResponse(maxResponse, (v) => (results.max = v));
   } catch (error) {
-    console.error("Error getting point data:", error);
+    failures.push(error);
+  }
+
+  if (failures.length > 0) {
+    console.error("Error getting point data:", ...failures);
   }
 
   return results;
