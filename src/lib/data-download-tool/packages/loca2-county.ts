@@ -10,8 +10,8 @@ import { splitStringByPeriod } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
 import { boundaryTypeSummaryValue } from "../customize/spatialType";
-import { CMIP6_SCENARIO_LABELS, labelCmip6Scenario } from "../labels/cmip6";
-import { labelVariable, VARIABLE_LABELS } from "../labels/variables";
+import { labelCmip6Scenario } from "../labels/cmip6";
+import { labelVariable } from "../labels/variables";
 import type {
   CustomizeFormConfig,
   CustomizeSelections,
@@ -96,7 +96,7 @@ function buildCustomizeForm(
 
   const variableOptions: MultiSelectOption[] = variableIds.map((id) => ({
     value: id,
-    label: variableLabelById.get(id) ?? VARIABLE_LABELS[id] ?? id,
+    label: variableLabelById.get(id) ?? labelVariable(id),
   }));
 
   const modelOptions: MultiSelectOption[] = sourceIds.map((id) => ({
@@ -106,7 +106,7 @@ function buildCustomizeForm(
 
   const scenarioOptions: MultiSelectOption[] = experimentIds.map((id) => ({
     value: id,
-    label: CMIP6_SCENARIO_LABELS[id] ?? id,
+    label: labelCmip6Scenario(id),
   }));
 
   /** This collection is monthly averages; keep a single frequency until summaries expose cadence. */

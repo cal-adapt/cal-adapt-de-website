@@ -1,9 +1,4 @@
-export {
-  catalogPackageIdForStacCollection,
-  isV2StationProfileCollection,
-  LOCA2_COUNTY_STAC_COLLECTION_ID,
-  stacCollectionIdForPackage,
-} from "./catalog/ids";
+export { stacCollectionIdForPackage } from "./catalog/ids";
 export {
   boundaryTypeSummaryValue,
   CALADAPT_SPATIAL_TYPE_KEY,
