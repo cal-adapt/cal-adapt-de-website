@@ -32,12 +32,3 @@ export function isV2StationProfileCollection(collectionId: string): boolean {
   const kind: CustomizeFormKind = adapter.kind;
   return kind === "standard-year" || kind === "typical-met-year";
 }
-
-/** @deprecated Use `getPackageAdapter(...).stacCollectionId`. */
-export const CATALOG_PACKAGE_TO_STAC_COLLECTION = Object.fromEntries(
-  PACKAGE_ADAPTERS.map((a) => [a.id, a.stacCollectionId])
-) as Record<PackageId, string>;
-
-/** @deprecated Use `getPackageAdapterByStacCollectionId(...).id`. */
-export const STAC_COLLECTION_TO_CATALOG_PACKAGE: Partial<Record<string, PackageId>> =
-  Object.fromEntries(PACKAGE_ADAPTERS.map((a) => [a.stacCollectionId, a.id]));

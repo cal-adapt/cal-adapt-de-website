@@ -1,9 +1,7 @@
 export {
-  CATALOG_PACKAGE_TO_STAC_COLLECTION,
   catalogPackageIdForStacCollection,
   isV2StationProfileCollection,
   LOCA2_COUNTY_STAC_COLLECTION_ID,
-  STAC_COLLECTION_TO_CATALOG_PACKAGE,
   stacCollectionIdForPackage,
 } from "./catalog/ids";
 export {
