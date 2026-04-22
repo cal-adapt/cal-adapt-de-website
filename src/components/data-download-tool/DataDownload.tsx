@@ -16,7 +16,6 @@ import {
   type DownloadAssetRow,
   type DownloadBundle,
   getPackageAdapterByKind,
-  hasCompleteStacSearchSelections,
 } from "@/lib/data-download-tool";
 import { getTodaysDateAsString } from "@/utils/date";
 import { downloadFile, downloadUrlsAsZip } from "@/utils/file";
@@ -190,9 +189,8 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
                   variant="primary"
                   prefix={<CloudCheck size={16} strokeWidth={2} aria-hidden />}
                   onClick={() => {
-                    if (
-                      !hasCompleteStacSearchSelections(selections, workspace.customizeForm.kind)
-                    ) {
+                    const adapter = getPackageAdapterByKind(workspace.customizeForm.kind);
+                    if (!adapter.validateSelections(selections)) {
                       setCustomizeIncomplete(true);
                       return;
                     }
@@ -212,10 +210,8 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
               showFieldErrors={customizeIncomplete}
               onChange={(next) => {
                 setSelections(next);
-                if (
-                  customizeIncomplete &&
-                  hasCompleteStacSearchSelections(next, workspace.customizeForm.kind)
-                ) {
+                const adapter = getPackageAdapterByKind(workspace.customizeForm.kind);
+                if (customizeIncomplete && adapter.validateSelections(next)) {
                   setCustomizeIncomplete(false);
                 }
               }}

@@ -2,12 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 
 import { calAdaptApi } from "@/lib/cal-adapt-api";
 import {
-  buildItemSearchFilters,
   type CustomizeSelections,
   type DataDownloadWorkspaceData,
   type DownloadBundle,
-  hasCompleteStacSearchSelections,
-  mapStacItemsToDownloadBundles,
+  getPackageAdapterByKind,
+  getPackageAdapterByStacCollectionId,
 } from "@/lib/data-download-tool";
 
 export type StacDownloadSearchStatus = "idle" | "loading" | "success" | "error" | "skipped";
@@ -46,7 +45,7 @@ export function useStacDownloadSearch(
 ): UseStacDownloadSearchResult {
   const kind = workspace.customizeForm.kind;
   const complete = useMemo(
-    () => hasCompleteStacSearchSelections(selections, kind),
+    () => getPackageAdapterByKind(kind).validateSelections(selections),
     [selections, kind]
   );
 
@@ -73,14 +72,16 @@ export function useStacDownloadSearch(
 
     (async () => {
       try {
-        const filters = buildItemSearchFilters(workspace.collectionId, selections);
+        const filters = getPackageAdapterByStacCollectionId(
+          workspace.collectionId
+        ).buildSearchFilters(selections);
         const data = await calAdaptApi.stac.searchItems(filters, {
           collectionId: workspace.collectionId,
         });
         if (cancelled) {
           return;
         }
-        const mapped = mapStacItemsToDownloadBundles(data.features, selections, kind);
+        const mapped = getPackageAdapterByKind(kind).mapItemsToBundles(data.features, selections);
         setFetchResult({
           status: "success",
           bundles: mapped.bundles,

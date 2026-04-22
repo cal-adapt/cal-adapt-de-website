@@ -6,7 +6,6 @@ import Alert from "@/components/common/ui/Alert";
 import LabelValueGrid from "@/components/common/ui/LabelValueGrid";
 import type { UseStacDownloadSearchResult } from "@/hooks";
 import {
-  buildDownloadSummaryRows,
   type CustomizeSelections,
   type DataDownloadWorkspaceData,
   type DownloadAssetRow,
@@ -44,12 +43,12 @@ export default function DownloadScreen({
   const view = getPackageView(kind);
 
   const summaryRows = useMemo(() => {
-    const rows = buildDownloadSummaryRows(workspace, selections);
+    const rows = adapter.buildSummaryRows(workspace, selections);
     return rows.map((row) => ({
       ...row,
       hint: view.tooltipByLabel[row.label],
     }));
-  }, [workspace, selections, view]);
+  }, [adapter, workspace, selections, view]);
 
   return (
     <div className={styles.root}>

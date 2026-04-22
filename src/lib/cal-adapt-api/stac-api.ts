@@ -11,7 +11,7 @@
  */
 
 import { STAC_API_V2_BASE_URL } from "@/config/constants";
-import { STAC_API_V2_HOST_COLLECTION_IDS } from "@/lib/data-download-tool/catalog/ids";
+import { STAC_API_V2_HOST_COLLECTION_IDS } from "@/lib/data-download-tool/packages/registry";
 
 import { getCollectionCollectionsCollectionIdGet, searchSearchGet } from "./generated/stac";
 import {
