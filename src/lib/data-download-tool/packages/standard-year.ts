@@ -6,9 +6,9 @@ import type {
   StacCollectionQueryables,
 } from "@/lib/cal-adapt-api";
 import { createOrStatement } from "@/utils/query";
+import { toSentenceCase } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
-import { boundaryTypeSummaryValue } from "../customize/spatialType";
 import { labelVariable } from "../labels/variables";
 import type {
   CustomizeFormConfig,
@@ -81,7 +81,10 @@ function buildCustomizeForm(
   const readOnlyFields = [
     { label: "Dataset", value: collection.title?.trim() || "Standard Meteorological Year" },
     { label: "Data format", value: "CSV" },
-    { label: "Boundary type", value: boundaryTypeSummaryValue(collection, "climate-profile") },
+    {
+      label: "Boundary type",
+      value: toSentenceCase(collection["caladapt:spatial_type"] ?? "") || "—",
+    },
     { label: "Time span", value: formatTimeSpanLabel(collection) },
     { label: "License", value: collection.license?.trim() || "-" },
     { label: "DOI", value: formatDoiUrl(collection["sci:doi"]) || "-" },

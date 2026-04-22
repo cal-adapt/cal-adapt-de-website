@@ -6,10 +6,9 @@ import type {
   StacCollectionQueryables,
 } from "@/lib/cal-adapt-api";
 import { createOrStatement } from "@/utils/query";
-import { splitStringByPeriod } from "@/utils/string";
+import { splitStringByPeriod, toSentenceCase } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
-import { boundaryTypeSummaryValue } from "../customize/spatialType";
 import { labelCmip6Scenario } from "../labels/cmip6";
 import { labelVariable } from "../labels/variables";
 import type {
@@ -118,7 +117,10 @@ function buildCustomizeForm(
   const readOnlyFields = [
     { label: "Dataset", value: "LOCA2" },
     { label: "Data format", value: "NetCDF" },
-    { label: "Boundary type", value: boundaryTypeSummaryValue(collection, "loca2-county") },
+    {
+      label: "Boundary type",
+      value: toSentenceCase(collection["caladapt:spatial_type"] ?? "") || "—",
+    },
     { label: "Units", value: "Metric" },
     { label: "Time span", value: formatTimeSpanLabel(collection) },
     { label: "License", value: license },

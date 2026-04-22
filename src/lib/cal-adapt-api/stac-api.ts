@@ -73,9 +73,8 @@ export type StacCollection = {
   "sci:doi"?: string;
   /** V2 climate-profile collections may omit summaries; use queryables instead. */
   summaries?: Record<string, string[]>;
-  /**
-   * Cal-Adapt extension: `county` (LOCA2 county grid) vs `point` (climate profiles — fixed site, e.g. weather station).
-   * See `boundaryTypeSummaryValue` in `@/lib/data-download-tool/customize/spatialType`.
+  /** Cal-Adapt extension: e.g. `county` (LOCA2 county grid) or `point`
+   * (climate profiles — fixed site, e.g. weather station).
    */
   "caladapt:spatial_type"?: string;
   [key: string]: unknown;
