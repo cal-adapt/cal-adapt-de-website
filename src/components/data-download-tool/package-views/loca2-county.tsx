@@ -9,8 +9,6 @@ import type { CustomizeFieldsProps, PackageView } from "./types";
 
 import styles from "../CustomizeForm.module.scss";
 
-const REQUIRED_FIELD_MESSAGE = "This field is required.";
-
 function Loca2CountyCustomizeFields({
   config,
   value,
@@ -18,8 +16,6 @@ function Loca2CountyCustomizeFields({
   showFieldErrors = false,
 }: CustomizeFieldsProps) {
   const patch = (partial: Partial<typeof value>) => onChange({ ...value, ...partial });
-  const requiredError = (isEmpty: boolean) =>
-    showFieldErrors && isEmpty ? REQUIRED_FIELD_MESSAGE : undefined;
 
   return (
     <>
@@ -27,7 +23,7 @@ function Loca2CountyCustomizeFields({
         <MultiSelectField
           label="Variables"
           required
-          error={requiredError(value.variables.length === 0)}
+          showFieldErrors={showFieldErrors}
           hint={tooltipByLabel.Variables}
           options={config.variableOptions}
           value={value.variables}
@@ -39,7 +35,7 @@ function Loca2CountyCustomizeFields({
         <MultiSelectField
           label="Models"
           required
-          error={requiredError(value.models.length === 0)}
+          showFieldErrors={showFieldErrors}
           hint={tooltipByLabel.Models}
           options={config.modelOptions}
           value={value.models}
@@ -51,7 +47,7 @@ function Loca2CountyCustomizeFields({
         <MultiSelectField
           label="Scenarios"
           required
-          error={requiredError(value.scenarios.length === 0)}
+          showFieldErrors={showFieldErrors}
           hint={tooltipByLabel.Scenarios}
           options={config.scenarioOptions}
           value={value.scenarios}
@@ -63,7 +59,7 @@ function Loca2CountyCustomizeFields({
         <MultiSelectField
           label="Counties"
           required
-          error={requiredError(value.counties.length === 0)}
+          showFieldErrors={showFieldErrors}
           hint={tooltipByLabel.Counties}
           options={config.countyOptions}
           value={value.counties}

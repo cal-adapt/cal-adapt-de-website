@@ -7,8 +7,6 @@ import type { CustomizeFieldsProps, PackageView } from "./types";
 
 import styles from "../CustomizeForm.module.scss";
 
-const REQUIRED_FIELD_MESSAGE = "This field is required.";
-
 function StandardYearCustomizeFields({
   config,
   value,
@@ -16,8 +14,6 @@ function StandardYearCustomizeFields({
   showFieldErrors = false,
 }: CustomizeFieldsProps) {
   const patch = (partial: Partial<typeof value>) => onChange({ ...value, ...partial });
-  const requiredError = (isEmpty: boolean) =>
-    showFieldErrors && isEmpty ? REQUIRED_FIELD_MESSAGE : undefined;
 
   return (
     <>
@@ -25,7 +21,7 @@ function StandardYearCustomizeFields({
         <MultiSelectField
           label="GWLs"
           required
-          error={requiredError(value.timePeriods.length === 0)}
+          showFieldErrors={showFieldErrors}
           hint={tooltipByLabel.GWLs}
           options={config.timePeriodOptions ?? []}
           value={value.timePeriods}
@@ -37,7 +33,7 @@ function StandardYearCustomizeFields({
         <MultiSelectField
           label="Variables"
           required
-          error={requiredError(value.variables.length === 0)}
+          showFieldErrors={showFieldErrors}
           hint={tooltipByLabel.Variables}
           options={config.variableOptions}
           value={value.variables}
@@ -49,7 +45,7 @@ function StandardYearCustomizeFields({
         <MultiSelectField
           label="Percentiles"
           required
-          error={requiredError(value.percentiles.length === 0)}
+          showFieldErrors={showFieldErrors}
           hint={tooltipByLabel.Percentiles}
           options={config.percentileOptions ?? []}
           value={value.percentiles}
@@ -61,7 +57,7 @@ function StandardYearCustomizeFields({
         <MultiSelectField
           label="Location"
           required
-          error={requiredError(value.counties.length === 0)}
+          showFieldErrors={showFieldErrors}
           hint={tooltipByLabel.Location}
           options={config.countyOptions}
           value={value.counties}

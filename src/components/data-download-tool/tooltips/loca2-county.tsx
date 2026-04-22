@@ -22,8 +22,6 @@ const units = "Values are provided in metric units.";
 
 const timeSpan = "Data is available over the time period 1950-2100.";
 
-const license = "Usage terms from the source STAC collection.";
-
 const variables =
   "A specific, quantifiable measure used to assess and understand different aspects of climate change.";
 
@@ -61,7 +59,7 @@ export const tooltipByLabel: Partial<Record<string, ReactNode>> = {
   "Boundary type": boundaryType,
   Units: units,
   "Time span": timeSpan,
-  License: license,
+  License: undefined,
   Variables: variables,
   Models: models,
   Scenarios: scenarios,
