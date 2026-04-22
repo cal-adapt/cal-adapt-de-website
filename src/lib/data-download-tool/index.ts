@@ -1,4 +1,5 @@
 export {
+  getPackageAdapter,
   getPackageAdapterByKind,
   getPackageAdapterByStacCollectionId,
   PACKAGE_ADAPTERS,
@@ -12,3 +13,4 @@ export type {
   DownloadBundle,
   PackageId,
 } from "./types";
+export { loadDataDownloadWorkspace } from "./workspace/load";
