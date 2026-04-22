@@ -3,7 +3,7 @@ import type { MultiSelectOption, SelectOption } from "@/components/common/form";
 export type PackageId = "loca2-county" | "typical-met-year" | "standard-year";
 
 /** Which STAC-driven customize layout to render (LOCA2 county grid vs station-profile packages). */
-export type CustomizeFormKind = "loca2-county" | "standard-met-year" | "typical-met-year";
+export type CustomizeFormKind = "loca2-county" | "standard-year" | "typical-met-year";
 
 /**
  * Options + defaults for the Customize step, built from STAC (or future sources).
@@ -18,7 +18,7 @@ export type CustomizeFormConfig = {
   scenarioOptions: MultiSelectOption[];
   countyOptions: MultiSelectOption[];
   aggregationOptions: SelectOption[];
-  /** station-profile packages (currently standard-met-year) — `percentile` queryable */
+  /** station-profile packages (currently standard-year) — `percentile` queryable */
   percentileOptions?: MultiSelectOption[];
   /** station-profile packages — `time_period` queryable (shown as GWLs in the UI) */
   timePeriodOptions?: MultiSelectOption[];
@@ -86,6 +86,11 @@ export type DataDownloadWorkspaceData = {
   /** STAC `summaries` — use later to drive filters (variables, scenarios, etc.). */
   summaries: Record<string, string[]>;
   license?: string;
+  /**
+   * Canonical DOI URL (`https://doi.org/{id}`) derived from STAC `sci:doi`.
+   * Undefined for packages without a published DOI (e.g. LOCA2).
+   */
+  doi?: string;
   /** Which catalog package this collection corresponds to (rail selection + view wiring). */
   catalogPackageId: PackageId;
   /** Customize step: field options and defaults derived from the collection. */

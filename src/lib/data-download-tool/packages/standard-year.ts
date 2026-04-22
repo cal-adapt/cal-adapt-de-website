@@ -19,6 +19,7 @@ import type {
 
 import {
   enumStringsFromStacQueryables,
+  formatDoiUrl,
   formatTimeSpanLabel,
   humanizeToken,
   joinOptionLabels,
@@ -44,7 +45,7 @@ function buildCustomizeForm(
 ): CustomizeFormConfig {
   if (queryables == null) {
     throw new Error(
-      "[data-download] standard-met-year requires STAC v2 queryables; pass options.queryables."
+      "[data-download] standard-year requires STAC v2 queryables; pass options.queryables."
     );
   }
 
@@ -76,18 +77,18 @@ function buildCustomizeForm(
   }));
 
   const emptySelect: SelectOption[] = [];
-  const license = collection.license?.trim() || "—";
 
   const readOnlyFields = [
     { label: "Dataset", value: collection.title?.trim() || "Standard Meteorological Year" },
     { label: "Data format", value: "CSV" },
     { label: "Boundary type", value: boundaryTypeSummaryValue(collection, "climate-profile") },
     { label: "Time span", value: formatTimeSpanLabel(collection) },
-    { label: "License", value: license },
+    { label: "License", value: collection.license?.trim() || "-" },
+    { label: "DOI", value: formatDoiUrl(collection["sci:doi"]) || "-" },
   ];
 
   return {
-    kind: "standard-met-year",
+    kind: "standard-year",
     readOnlyFields,
     frequencyOptions: emptySelect,
     variableOptions,
@@ -180,7 +181,9 @@ function mapItemsToBundles(
       const gwlLabel = humanizeToken(timePeriodRaw.replace(/-/g, " "));
       const percentileLabel = humanizeToken(percentileRaw);
       bundle = {
-        stacItemId: slugifyFilenameSegment(`smy-${locationRaw}-${timePeriodRaw}-${percentileRaw}`),
+        stacItemId: slugifyFilenameSegment(
+          `standard-year-${locationRaw}-${timePeriodRaw}-${percentileRaw}`
+        ),
         metaBlocks: [
           { label: "Location", value: locationLabel },
           { label: "GWLs", value: gwlLabel },
@@ -244,13 +247,13 @@ function zipFilenameSlug(selections: CustomizeSelections): string {
   const slug =
     selections.timePeriods.join("-").replace(/\s+/g, "-") ||
     selections.percentiles.join("-") ||
-    "standard-met-year";
+    "standard-year";
   return slug.toLowerCase().replace(/[^a-z0-9-]+/gi, "-");
 }
 
-export const standardMetYearPackage: PackageAdapter = {
+export const standardYearPackage: PackageAdapter = {
   id: "standard-year",
-  kind: "standard-met-year",
+  kind: "standard-year",
   stacCollectionId: STAC_COLLECTION_ID,
   useStacV2: true,
   needsQueryables: true,

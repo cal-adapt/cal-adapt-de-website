@@ -1,6 +1,7 @@
 import type { StacCollection, StacCollectionQueryables } from "@/lib/cal-adapt-api";
 
 import { getPackageAdapterByStacCollectionId } from "../packages/registry";
+import { formatDoiUrl } from "../packages/shared";
 import type { DataDownloadWorkspaceData } from "../types";
 
 export type MapStacCollectionToWorkspaceOptions = {
@@ -25,6 +26,7 @@ export function mapStacCollectionToWorkspace(
     datasetDescription: collection.description?.trim() || "",
     summaries: collection.summaries ?? {},
     license: collection.license,
+    doi: formatDoiUrl(collection["sci:doi"]),
     catalogPackageId: adapter.id,
     customizeForm: adapter.buildCustomizeForm(collection, options?.queryables),
   };

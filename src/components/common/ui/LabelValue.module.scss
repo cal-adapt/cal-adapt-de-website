@@ -27,4 +27,5 @@
   @include type-item(body);
   margin: 0;
   color: color(black);
+  overflow-wrap: break-word;
 }

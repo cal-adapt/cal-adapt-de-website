@@ -70,6 +70,7 @@ export type StacCollection = {
   stac_version?: StacVersion;
   stac_extensions?: string[];
   license: string;
+  "sci:doi"?: string;
   /** V2 climate-profile collections may omit summaries; use queryables instead. */
   summaries?: Record<string, string[]>;
   /**
@@ -109,7 +110,7 @@ export type ItemSearchFilters = {
   scenarioFilter?: string;
   countyFilter?: string;
   modelFilter?: string;
-  /** standard-met-year — STAC `location` (station id) */
+  /** standard-year — STAC `location` (station id) */
   locationFilter?: string;
   variableFilter?: string;
   percentileFilter?: string;

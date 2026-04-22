@@ -55,7 +55,6 @@ const scenarios = (
 const frequency =
   "The timescale of the data. All LOCA2 data is downscaled at a native daily resolution. A pre-aggregated version at a monthly resolution is also available";
 
-/** Shared tooltip copy for LOCA2 county (used by both Customize and Download summaries). */
 export const tooltipByLabel: Partial<Record<string, ReactNode>> = {
   Dataset: dataset,
   "Data format": dataFormat,

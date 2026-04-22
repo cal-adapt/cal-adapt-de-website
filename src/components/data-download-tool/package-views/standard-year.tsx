@@ -1,6 +1,6 @@
 "use client";
 
-import { tooltipByLabel } from "../tooltips/standard-met-year";
+import { tooltipByLabel } from "../tooltips/standard-year";
 
 import MultiSelectField from "./MultiSelectField";
 import type { CustomizeFieldsProps, PackageView } from "./types";
@@ -9,7 +9,7 @@ import styles from "../CustomizeForm.module.scss";
 
 const REQUIRED_FIELD_MESSAGE = "This field is required.";
 
-function SmyCustomizeFields({
+function StandardYearCustomizeFields({
   config,
   value,
   onChange,
@@ -73,8 +73,8 @@ function SmyCustomizeFields({
   );
 }
 
-export const standardMetYearView: PackageView = {
-  kind: "standard-met-year",
-  CustomizeFields: SmyCustomizeFields,
+export const standardYearView: PackageView = {
+  kind: "standard-year",
+  CustomizeFields: StandardYearCustomizeFields,
   tooltipByLabel,
 };

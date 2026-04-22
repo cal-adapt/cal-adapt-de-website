@@ -18,6 +18,7 @@ import type {
 
 import {
   enumStringsFromStacQueryables,
+  formatDoiUrl,
   formatTimeSpanLabel,
   humanizeToken,
   joinOptionLabels,
@@ -56,14 +57,14 @@ function buildCustomizeForm(
   }));
 
   const emptySelect: SelectOption[] = [];
-  const license = collection.license?.trim() || "—";
 
   const readOnlyFields = [
     { label: "Dataset", value: collection.title?.trim() || "Typical Meteorological Year" },
     { label: "Data format", value: "EPW, CSV" },
     { label: "Boundary type", value: boundaryTypeSummaryValue(collection, "climate-profile") },
     { label: "Time span", value: formatTimeSpanLabel(collection) },
-    { label: "License", value: license },
+    { label: "License", value: collection.license?.trim() || "-" },
+    { label: "DOI", value: formatDoiUrl(collection["sci:doi"]) || "-" },
   ];
 
   return {

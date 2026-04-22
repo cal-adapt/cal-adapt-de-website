@@ -1,7 +1,7 @@
 import type { CustomizeFormKind, PackageId } from "../types";
 
 import { loca2CountyPackage } from "./loca2-county";
-import { standardMetYearPackage } from "./standard-met-year";
+import { standardYearPackage } from "./standard-year";
 import type { PackageAdapter } from "./types";
 import { typicalMetYearPackage } from "./typical-met-year";
 
@@ -13,7 +13,7 @@ import { typicalMetYearPackage } from "./typical-met-year";
 export const PACKAGE_ADAPTERS: readonly PackageAdapter[] = [
   loca2CountyPackage,
   typicalMetYearPackage,
-  standardMetYearPackage,
+  standardYearPackage,
 ];
 
 /**

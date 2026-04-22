@@ -82,6 +82,21 @@ export function parseStacAssetSizeBytes(raw: Record<string, unknown>): number {
   return 0;
 }
 
+/** Takes a DOI in any format and returns a normalized DOI URL, or `undefined` if absent. */
+export function formatDoiUrl(doi: string | undefined): string | undefined {
+  const formatted = doi
+    ?.trim()
+    .replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, "")
+    .replace(/^doi:/i, "")
+    .replace(/^\/+/, "");
+
+  if (!formatted) {
+    return undefined;
+  }
+
+  return `https://doi.org/${formatted}`;
+}
+
 /** Resolve labels for a list of option values (falling back to the raw value). */
 export function joinOptionLabels(
   values: string[],

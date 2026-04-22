@@ -30,7 +30,7 @@ export function isV2StationProfileCollection(collectionId: string): boolean {
     return false;
   }
   const kind: CustomizeFormKind = adapter.kind;
-  return kind === "standard-met-year" || kind === "typical-met-year";
+  return kind === "standard-year" || kind === "typical-met-year";
 }
 
 /** @deprecated Use `getPackageAdapter(...).stacCollectionId`. */

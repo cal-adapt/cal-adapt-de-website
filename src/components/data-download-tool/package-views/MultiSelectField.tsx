@@ -15,10 +15,6 @@ export interface MultiSelectFieldProps {
   error?: string;
 }
 
-/**
- * Shared wrapper around the FormField + Badge + MultiSelect triad used by every
- * Customize-form implementation. Keeps each per-kind view small and declarative.
- */
 export default function MultiSelectField({
   label,
   options,
