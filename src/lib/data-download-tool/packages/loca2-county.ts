@@ -9,7 +9,8 @@ import { createOrStatement } from "@/utils/query";
 import { splitStringByPeriod, toSentenceCase } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
-import { labelCmip6Scenario } from "../labels/cmip6";
+import { labelCmip6Model } from "../labels/models";
+import { labelCmip6Scenario } from "../labels/scenarios";
 import { labelVariable } from "../labels/variables";
 import type {
   CustomizeFormConfig,
@@ -100,7 +101,7 @@ function buildCustomizeForm(
 
   const modelOptions: MultiSelectOption[] = sourceIds.map((id) => ({
     value: id,
-    label: id,
+    label: labelCmip6Model(id),
   }));
 
   const scenarioOptions: MultiSelectOption[] = experimentIds.map((id) => ({

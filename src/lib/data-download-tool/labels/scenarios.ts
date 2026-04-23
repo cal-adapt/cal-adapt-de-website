@@ -1,5 +1,5 @@
 /** Human-readable labels for CMIP6 experiment ids (`cmip6:experiment_id`). */
-export const CMIP6_SCENARIO_LABELS: Record<string, string> = {
+const CMIP6_SCENARIO_LABELS: Readonly<Record<string, string>> = {
   historical: "Historical",
   ssp245: "SSP2-4.5",
   ssp370: "SSP3-7.0",

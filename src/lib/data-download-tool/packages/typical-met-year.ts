@@ -9,6 +9,8 @@ import { createOrStatement } from "@/utils/query";
 import { toSentenceCase } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
+import { labelGwl } from "../labels/gwls";
+import { labelCmip6Model } from "../labels/models";
 import type {
   CustomizeFormConfig,
   CustomizeSelections,
@@ -49,11 +51,11 @@ function buildCustomizeForm(
   }));
   const modelOptions: MultiSelectOption[] = modelIds.map((id) => ({
     value: id,
-    label: humanizeToken(id),
+    label: labelCmip6Model(id),
   }));
   const timePeriodOptions: MultiSelectOption[] = gwlIds.map((id) => ({
     value: id,
-    label: humanizeToken(id),
+    label: labelGwl(id),
   }));
 
   const emptySelect: SelectOption[] = [];
@@ -129,8 +131,8 @@ function mapItemsToBundles(features: CountyItem[]): PackageBundleMapResult {
     let bundle = bundleBySelection.get(bundleKey);
     if (bundle == null) {
       const locationLabel = humanizeToken(locationRaw);
-      const gwlLabel = humanizeToken(timePeriodRaw.replace(/-/g, " "));
-      const modelLabel = humanizeToken(modelRaw);
+      const gwlLabel = labelGwl(timePeriodRaw);
+      const modelLabel = labelCmip6Model(modelRaw);
       bundle = {
         stacItemId: slugifyFilenameSegment(`tmy-${locationRaw}-${modelRaw}-${timePeriodRaw}`),
         metaBlocks: [

@@ -1,8 +1,5 @@
-/**
- * Fallback lookup table for variables used in the app.
- * Prefer API-provided `variable_label` when available.
- */
-export const VARIABLE_LABELS: Readonly<Record<string, string>> = {
+/** Human-readable labels for variables; prefer API-provided `variable_label` when available. */
+const VARIABLE_LABELS: Readonly<Record<string, string>> = {
   // LOCA2 county
   tasmax: "Maximum air temperature at 2m",
   tasmin: "Minimum air temperature at 2m",

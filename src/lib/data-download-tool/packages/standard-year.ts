@@ -9,6 +9,8 @@ import { createOrStatement } from "@/utils/query";
 import { toSentenceCase } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
+import { labelGwl } from "../labels/gwls";
+import { labelPercentile } from "../labels/percentiles";
 import { labelVariable } from "../labels/variables";
 import type {
   CustomizeFormConfig,
@@ -68,12 +70,12 @@ function buildCustomizeForm(
 
   const percentileOptions: MultiSelectOption[] = percentileIds.map((id) => ({
     value: id,
-    label: humanizeToken(id),
+    label: labelPercentile(id),
   }));
 
   const timePeriodOptions: MultiSelectOption[] = gwlIds.map((id) => ({
     value: id,
-    label: humanizeToken(id),
+    label: labelGwl(id),
   }));
 
   const emptySelect: SelectOption[] = [];
@@ -181,8 +183,8 @@ function mapItemsToBundles(
     let bundle = bundleBySelection.get(bundleKey);
     if (bundle == null) {
       const locationLabel = humanizeToken(locationRaw);
-      const gwlLabel = humanizeToken(timePeriodRaw.replace(/-/g, " "));
-      const percentileLabel = humanizeToken(percentileRaw);
+      const gwlLabel = labelGwl(timePeriodRaw);
+      const percentileLabel = labelPercentile(percentileRaw);
       bundle = {
         stacItemId: slugifyFilenameSegment(
           `standard-year-${locationRaw}-${timePeriodRaw}-${percentileRaw}`
