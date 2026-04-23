@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { SITE_URL } from "@/config/constants";
-import { navGroups, navLinks } from "@/data/navigation";
+import { navGroups, navLinks } from "@/config/navigation";
 
 export const dynamic = "force-static";
 

@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import ClimateMetricsMap from "@/components/climate-metrics-map/ClimateMetricsMap";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import { SITE_TITLE } from "@/config/constants";
-import { navLinks } from "@/data/navigation";
+import { navLinks } from "@/config/navigation";
 
 export const metadata: Metadata = {
   title: `${navLinks.climateMetricsMap.label} - ${SITE_TITLE}`,

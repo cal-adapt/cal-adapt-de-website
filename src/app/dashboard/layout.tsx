@@ -34,9 +34,9 @@ import Link from "@/components/common/ui/Link";
 import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
 import { mediaQueries } from "@/config/breakpoints";
 import { FEEDBACK_URL } from "@/config/constants";
+import { navLinks } from "@/config/navigation";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
-import { navLinks } from "@/data/navigation";
 import { analytics } from "@/lib/analytics";
 import { extractSegment } from "@/utils/url";
 

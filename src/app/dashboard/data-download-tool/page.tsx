@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { PACKAGE_RAIL_DISPLAY_ORDER } from "@/components/data-download-tool/packages";
 import { SITE_TITLE } from "@/config/constants";
-import { navLinks } from "@/data/navigation";
+import { navLinks } from "@/config/navigation";
 
 import DataDownloadToolPage from "./DataDownloadToolPage";
 

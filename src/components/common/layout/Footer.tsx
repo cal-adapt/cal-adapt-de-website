@@ -7,7 +7,7 @@ import {
   type NavItem,
   type NavLink,
   navLinks,
-} from "@/data/navigation";
+} from "@/config/navigation";
 
 import styles from "./Footer.module.scss";
 
