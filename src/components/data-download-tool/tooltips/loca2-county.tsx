@@ -19,7 +19,7 @@ const dataFormat = (
 const boundaryType =
   "Data is natively represented in 3km grids. Selecting a boundary layer (e.g., county), provides data for grid cells that are intersected by the boundary file.";
 
-const units = "Values are provided in metric units.";
+const units = "Unit of measurement for dataset";
 
 const timeSpan = "Data is available over the time period 1950 - 2100.";
 

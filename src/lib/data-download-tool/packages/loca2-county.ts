@@ -51,6 +51,7 @@ const LOCA2_COUNTY_V2_ASSET_VARIABLE_IDS: readonly string[] = [
   "rsds",
   "hursmax",
   "hursmin",
+  "wind_speed_derived",
 ];
 
 const DEFAULT_AGGREGATION_OPTIONS: SelectOption[] = [
@@ -58,6 +59,12 @@ const DEFAULT_AGGREGATION_OPTIONS: SelectOption[] = [
   { value: "min", label: "Minimum" },
   { value: "max", label: "Maximum" },
 ];
+
+/** Maps UI frequency values to CMIP6 `table_id` query values. */
+const CMIP6_TABLE_ID_BY_FREQUENCY: Readonly<Record<string, string>> = {
+  monthly: "mon",
+  daily: "day",
+};
 
 function buildCustomizeForm(
   collection: StacCollection,
@@ -110,7 +117,10 @@ function buildCustomizeForm(
   }));
 
   /** This collection is monthly averages; keep a single frequency until summaries expose cadence. */
-  const frequencyOptions: SelectOption[] = [{ value: "monthly", label: "Monthly" }];
+  const frequencyOptions: SelectOption[] = [
+    { value: "monthly", label: "Monthly" },
+    { value: "daily", label: "Daily" },
+  ];
 
   const license = collection.license?.trim() || "—";
 
@@ -167,8 +177,8 @@ function buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters 
       ? createOrStatement("cmip6:source_id", selections.models)
       : undefined;
 
-  const cmip6TableIdFilter =
-    selections.frequency === "monthly" ? "cmip6:table_id = 'mon'" : undefined;
+  const tableId = CMIP6_TABLE_ID_BY_FREQUENCY[selections.frequency];
+  const cmip6TableIdFilter = tableId ? `cmip6:table_id = '${tableId}'` : undefined;
 
   return {
     collectionFilter,
