@@ -4,7 +4,8 @@ import type { ReactNode } from "react";
 
 import Link from "@/components/common/ui/Link";
 
-const dataset = "Dataset family for county-gridded climate projections.";
+const dataset =
+  "LOCA2 (Localized Constructed Analogs) hybrid-statistically downscaled CMIP6 climate projections.";
 
 const dataFormat = (
   <>
@@ -20,7 +21,7 @@ const boundaryType =
 
 const units = "Values are provided in metric units.";
 
-const timeSpan = "Data is available over the time period 1950-2100.";
+const timeSpan = "Data is available over the time period 1950 - 2100.";
 
 const variables =
   "A specific, quantifiable measure used to assess and understand different aspects of climate change.";
@@ -33,8 +34,11 @@ const models = (
       Coupled Model Intercomparison Project, Phase 6
     </Link>{" "}
     represent physical processes in the atmosphere, ocean, cryosphere, and land surface. For
-    guidance on how to select models, please refer to the upcoming guidance page on the Analytics
-    Engine.
+    guidance on how to select models, please refer to the{" "}
+    <Link href="https://analytics.cal-adapt.org/guidance/using_in_decision_making/guidelines">
+      the guidance page
+    </Link>{" "}
+    on the Analytics Engine website.
   </>
 );
 
@@ -44,9 +48,13 @@ const scenarios = (
     <Link href="https://www.carbonbrief.org/explainer-how-shared-socioeconomic-pathways-explore-future-climate-change/">
       SSPs
     </Link>
-    ) describe potential pathways the world could take. SSP2-4.5: a middle of the road global
-    emissions scenario. SSP3-7.0: high global emissions scenario. SSP5-8.5: very high global
-    emissions scenario.
+    ) describe potential pathways the world could take.
+    <br />
+    SSP2-4.5: a middle of the road global emissions scenario.
+    <br />
+    SSP3-7.0: high global emissions scenario.
+    <br />
+    SSP5-8.5: very high global emissions scenario.
   </>
 );
 
