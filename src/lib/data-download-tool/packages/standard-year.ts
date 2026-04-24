@@ -27,6 +27,7 @@ import {
   joinOptionLabels,
   parseStacAssetSizeBytes,
   slugifyFilenameSegment,
+  stableMultiKey,
 } from "./shared";
 import type { PackageAdapter, PackageBundleMapResult } from "./types";
 
@@ -141,6 +142,15 @@ function buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters 
     percentileFilter,
     timePeriodFilter,
   };
+}
+
+function searchFiltersKey(selections: CustomizeSelections): string {
+  return stableMultiKey([
+    selections.counties,
+    selections.variables,
+    selections.percentiles,
+    selections.timePeriods,
+  ]);
 }
 
 function mapItemsToBundles(
@@ -275,6 +285,7 @@ export const standardYearPackage: PackageAdapter = {
   },
   buildCustomizeForm,
   buildSearchFilters,
+  searchFiltersKey,
   mapItemsToBundles,
   validateSelections,
   buildSummaryRows,

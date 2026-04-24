@@ -64,6 +64,13 @@ export interface PackageAdapter {
   /** Build CQL2 filter fragments for STAC `/search`. */
   buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters;
 
+  /**
+   * Stable string key over only the selection fields that affect this package's
+   * search + mapping. Used as a React effect dep so keystroke-level changes to
+   * unrelated fields (e.g. aggregation) don't re-register the download effect.
+   */
+  searchFiltersKey(selections: CustomizeSelections): string;
+
   /** Map STAC item features into UI bundles. */
   mapItemsToBundles(
     features: CountyItem[],

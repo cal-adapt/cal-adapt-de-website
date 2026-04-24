@@ -97,6 +97,15 @@ export function formatDoiUrl(doi: string | undefined): string | undefined {
   return `https://doi.org/${formatted}`;
 }
 
+/**
+ * Build a stable, order-insensitive string key from a mix of scalars and string arrays.
+ * Arrays are sorted so selection order doesn't invalidate the key; scalars pass through.
+ * Used by adapter `searchFiltersKey` implementations.
+ */
+export function stableMultiKey(parts: readonly (string | readonly string[])[]): string {
+  return parts.map((p) => (typeof p === "string" ? p : [...p].sort().join("|"))).join("\0");
+}
+
 /** Resolve labels for a list of option values (falling back to the raw value). */
 export function joinOptionLabels(
   values: string[],

@@ -26,6 +26,7 @@ import {
   formatTimeSpanLabel,
   joinOptionLabels,
   parseStacAssetSizeBytes,
+  stableMultiKey,
 } from "./shared";
 import type { PackageAdapter, PackageBundleMapResult } from "./types";
 
@@ -189,6 +190,16 @@ function buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters 
   };
 }
 
+function searchFiltersKey(selections: CustomizeSelections): string {
+  return stableMultiKey([
+    selections.counties,
+    selections.scenarios,
+    selections.models,
+    selections.variables,
+    selections.frequency,
+  ]);
+}
+
 function parseModelScenarioFromItemId(itemId: string): { model: string; scenario: string } {
   const parts = splitStringByPeriod(itemId);
   if (parts.length >= 3) {
@@ -329,6 +340,7 @@ export const loca2CountyPackage: PackageAdapter = {
   },
   buildCustomizeForm,
   buildSearchFilters,
+  searchFiltersKey,
   mapItemsToBundles,
   validateSelections,
   buildSummaryRows,

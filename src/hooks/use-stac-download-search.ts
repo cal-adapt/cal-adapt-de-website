@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { calAdaptApi } from "@/lib/cal-adapt-api";
 import {
@@ -44,18 +44,20 @@ export function useStacDownloadSearch(
   enabled: boolean
 ): UseStacDownloadSearchResult {
   const kind = workspace.customizeForm.kind;
-  const complete = useMemo(
-    () => getPackageAdapterByKind(kind).validateSelections(selections),
-    [selections, kind]
-  );
+  const adapter = getPackageAdapterByKind(kind);
+  const complete = adapter.validateSelections(selections);
 
   const shouldFetch = enabled && complete;
+
+  // Effect key covers only the selection fields this package cares about, so unrelated
+  // keystrokes in the customize form don't force the effect to re-register.
+  const filtersKey = adapter.searchFiltersKey(selections);
 
   const [fetchResult, setFetchResult] = useState<UseStacDownloadSearchResult | null>(null);
 
   useEffect(() => {
     if (!shouldFetch) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- clearing stale async results when fetch is no longer needed
+       
       setFetchResult(null);
       return;
     }
@@ -106,7 +108,11 @@ export function useStacDownloadSearch(
     return () => {
       cancelled = true;
     };
-  }, [shouldFetch, workspace.collectionId, kind, selections]);
+    // `selections` is intentionally omitted: `filtersKey` derives from the subset of
+    // `selections` that affects this package's search + mapping. Including the full
+    // object would force the effect to re-register on every unrelated keystroke.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldFetch, workspace.collectionId, kind, filtersKey]);
 
   if (!enabled) {
     return empty;

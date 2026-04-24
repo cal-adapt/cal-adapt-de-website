@@ -26,6 +26,7 @@ import {
   joinOptionLabels,
   parseStacAssetSizeBytes,
   slugifyFilenameSegment,
+  stableMultiKey,
 } from "./shared";
 import type { PackageAdapter, PackageBundleMapResult } from "./types";
 
@@ -114,6 +115,10 @@ function buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters 
     modelFilter,
     timePeriodFilter,
   };
+}
+
+function searchFiltersKey(selections: CustomizeSelections): string {
+  return stableMultiKey([selections.counties, selections.models, selections.timePeriods]);
 }
 
 function mapItemsToBundles(features: CountyItem[]): PackageBundleMapResult {
@@ -224,6 +229,7 @@ export const typicalMetYearPackage: PackageAdapter = {
   },
   buildCustomizeForm,
   buildSearchFilters,
+  searchFiltersKey,
   mapItemsToBundles,
   validateSelections,
   buildSummaryRows,

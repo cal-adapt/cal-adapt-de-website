@@ -23,9 +23,9 @@ const models = (
     represent physical processes in the atmosphere, ocean, cryosphere, and land surface. For
     guidance on how to select models, please refer to the{" "}
     <Link href="https://analytics.cal-adapt.org/guidance/using_in_decision_making/guidelines">
-      the guidance page
-    </Link>{" "}
-    on the Analytics Engine website.
+      Analytics Engine website
+    </Link>
+    .
   </>
 );
 
