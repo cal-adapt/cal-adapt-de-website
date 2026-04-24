@@ -2,9 +2,15 @@
 
 import Divider from "@/components/common/ui/Divider";
 import LabelValueGrid from "@/components/common/ui/LabelValueGrid";
-import type { CustomizeFormConfig, CustomizeSelections } from "@/lib/data-download-tool";
+import {
+  type CustomizeFormConfig,
+  type CustomizeSelections,
+  getPackageAdapterByKind,
+} from "@/lib/data-download-tool";
 
-import { getPackageView } from "./package-views/registry";
+import { getTooltipsForKind } from "../tooltips/registry";
+
+import CustomizeFieldsRenderer from "./CustomizeFieldsRenderer";
 
 import styles from "./CustomizeForm.module.scss";
 
@@ -17,9 +23,8 @@ export interface CustomizeFormProps {
 }
 
 /**
- * Renders the Customize step for the current package kind. The fields layout and tooltip
- * copy live in a per-kind view module (see `package-views/`); this component just hosts
- * the shared Package-summary header and grid chrome.
+ * Renders the Customize step for the current package kind. Field layout comes from the
+ * adapter (`lib/`); tooltip copy comes from the component-layer tooltip registry.
  */
 export default function CustomizeForm({
   config,
@@ -27,8 +32,8 @@ export default function CustomizeForm({
   onChange,
   showFieldErrors = false,
 }: CustomizeFormProps) {
-  const view = getPackageView(config.kind);
-  const CustomizeFields = view.CustomizeFields;
+  const adapter = getPackageAdapterByKind(config.kind);
+  const tooltipByLabel = getTooltipsForKind(config.kind);
 
   return (
     <div className={styles.root}>
@@ -37,7 +42,7 @@ export default function CustomizeForm({
         <LabelValueGrid
           rows={config.readOnlyFields.map((row) => ({
             ...row,
-            hint: view.tooltipByLabel[row.label],
+            hint: tooltipByLabel[row.label],
           }))}
         />
       </section>
@@ -47,7 +52,9 @@ export default function CustomizeForm({
       <section className={styles.section}>
         <h3 className={styles.sectionTitle}>Customize selections</h3>
         <div className={styles.editableGrid}>
-          <CustomizeFields
+          <CustomizeFieldsRenderer
+            fields={adapter.fields}
+            tooltipByLabel={tooltipByLabel}
             config={config}
             value={value}
             onChange={onChange}

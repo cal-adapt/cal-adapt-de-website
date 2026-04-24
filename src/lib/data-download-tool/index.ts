@@ -4,6 +4,8 @@ export {
   getPackageAdapterByStacCollectionId,
   PACKAGE_ADAPTERS,
 } from "./packages/registry";
+export { buildSummaryRows } from "./packages/shared";
+export type { CustomizeFieldConfig, PackageAdapter } from "./packages/types";
 export type {
   CustomizeFormConfig,
   CustomizeFormKind,

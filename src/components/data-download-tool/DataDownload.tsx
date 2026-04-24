@@ -4,10 +4,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ArrowLeft, CloudCheck, Download, RotateCcw } from "lucide-react";
 
-import ToolPageLayout from "@/components/common/layout/ToolPageLayout";
 import Alert from "@/components/common/ui/Alert";
 import Button from "@/components/common/ui/Button";
 import Link from "@/components/common/ui/Link";
+import PageLayout from "@/components/dashboard/PageLayout";
 import { useStacDownloadSearch, type UseStacDownloadSearchResult } from "@/hooks";
 import { analytics } from "@/lib/analytics";
 import {
@@ -22,13 +22,13 @@ import { downloadFile, downloadUrlsAsZip } from "@/utils/file";
 import { formatBytes } from "@/utils/format";
 import { extractFilenameFromURL } from "@/utils/url";
 
-import CustomizeForm from "./CustomizeForm";
-import DownloadScreen from "./DownloadScreen";
-import PackageRail from "./PackageRail";
-import { type FlowStep } from "./packages";
-import ToolScreenContainer from "./ToolScreenContainer";
-import WorkspaceDatasetLead from "./WorkspaceDatasetLead";
-import WorkspaceLayout from "./WorkspaceLayout";
+import CustomizeForm from "./customize/CustomizeForm";
+import DownloadScreen from "./download/DownloadScreen";
+import StepLayout from "./layout/StepLayout";
+import WorkspaceDatasetIntro from "./layout/WorkspaceDatasetIntro";
+import WorkspaceLayout from "./layout/WorkspaceLayout";
+import PackageRail from "./rail/PackageRail";
+import { type FlowStep } from "./rail/packages";
 
 import styles from "./DataDownload.module.scss";
 
@@ -142,10 +142,10 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
   const downloadAllDisabled =
     zipBusy || search.status !== "success" || search.allHrefs.length === 0;
 
-  const toolScreenHeading = workspace.datasetTitle.trim() || "Data download";
+  const stepHeading = workspace.datasetTitle.trim() || "Data download";
 
   return (
-    <ToolPageLayout title="Data Download Tool">
+    <PageLayout title="Data Download Tool">
       <div className={styles.pageTop}>
         {/* TODO: Add tool intro copy here */}
         <Alert severity="info">
@@ -159,9 +159,9 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
 
       <WorkspaceLayout packageRail={<PackageRail activePackageId={workspace.catalogPackageId} />}>
         {step === "customize" ? (
-          <ToolScreenContainer
-            title={toolScreenHeading}
-            belowHeading={<WorkspaceDatasetLead workspace={workspace} />}
+          <StepLayout
+            title={stepHeading}
+            belowHeading={<WorkspaceDatasetIntro workspace={workspace} />}
             actions={
               <div className={styles.titleActions}>
                 <Button
@@ -208,14 +208,14 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
                 }
               }}
             />
-          </ToolScreenContainer>
+          </StepLayout>
         ) : null}
         {step === "download" ? (
-          <ToolScreenContainer
-            title={toolScreenHeading}
+          <StepLayout
+            title={stepHeading}
             belowHeading={
               <>
-                <WorkspaceDatasetLead workspace={workspace} />
+                <WorkspaceDatasetIntro workspace={workspace} />
                 {zipFallbackNotice ? (
                   <Alert severity="info" className={styles.downloadZipFallback}>
                     {zipFallbackNotice}
@@ -257,9 +257,9 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
               onDownloadAsset={handleDownloadAsset}
               downloadsDisabled={zipBusy}
             />
-          </ToolScreenContainer>
+          </StepLayout>
         ) : null}
       </WorkspaceLayout>
-    </ToolPageLayout>
+    </PageLayout>
   );
 }

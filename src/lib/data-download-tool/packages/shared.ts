@@ -1,5 +1,9 @@
 import type { StacCollection, StacCollectionQueryables } from "@/lib/cal-adapt-api";
 
+import type { CustomizeFormConfig, CustomizeSelections, DataDownloadWorkspaceData } from "../types";
+
+import type { CustomizeFieldConfig, PackageAdapter } from "./types";
+
 type CollectionWithExtent = StacCollection & {
   extent?: {
     temporal?: { interval?: [string, string][] };
@@ -115,4 +119,41 @@ export function joinOptionLabels(
     return "—";
   }
   return values.map((v) => options?.find((o) => o.value === v)?.label ?? v).join(", ");
+}
+
+/**
+ * Flatten one editable field into a `{label, value}` row for the review-step summary.
+ * Multi-selects join their option labels; single-selects resolve to their option
+ * label (falling back to the raw value if no match — e.g. stale or out-of-pool data).
+ */
+export function summaryRowForField(
+  field: CustomizeFieldConfig,
+  selections: CustomizeSelections,
+  config: CustomizeFormConfig
+): { label: string; value: string } {
+  const options = field.options(config);
+  if (field.kind === "multi") {
+    return { label: field.label, value: joinOptionLabels(field.value(selections), options) };
+  }
+  const picked = field.value(selections);
+  const match = options.find((o) => o.value === picked);
+  return { label: field.label, value: match?.label ?? picked };
+}
+
+/**
+ * Read-only summary rows for the Download step, derived from the adapter's declarative
+ * `fields` array + the collection's static `readOnlyFields`. Since every editable row
+ * is projected from the same `fields` that drive the Customize form, the edit view
+ * and review view can't drift.
+ */
+export function buildSummaryRows(
+  adapter: PackageAdapter,
+  workspace: DataDownloadWorkspaceData,
+  selections: CustomizeSelections
+): { label: string; value: string }[] {
+  const form = workspace.customizeForm;
+  return [
+    ...form.readOnlyFields,
+    ...adapter.fields.map((field) => summaryRowForField(field, selections, form)),
+  ];
 }

@@ -6,6 +6,7 @@ import Alert from "@/components/common/ui/Alert";
 import LabelValueGrid from "@/components/common/ui/LabelValueGrid";
 import type { UseStacDownloadSearchResult } from "@/hooks";
 import {
+  buildSummaryRows,
   type CustomizeSelections,
   type DataDownloadWorkspaceData,
   type DownloadAssetRow,
@@ -13,7 +14,8 @@ import {
   getPackageAdapterByKind,
 } from "@/lib/data-download-tool";
 
-import { getPackageView } from "./package-views/registry";
+import { getTooltipsForKind } from "../tooltips/registry";
+
 import DownloadBundleCard from "./DownloadBundleCard";
 
 import styles from "./DownloadScreen.module.scss";
@@ -40,15 +42,15 @@ export default function DownloadScreen({
 }: DownloadScreenProps) {
   const kind = workspace.customizeForm.kind;
   const adapter = getPackageAdapterByKind(kind);
-  const view = getPackageView(kind);
+  const tooltipByLabel = getTooltipsForKind(kind);
 
   const summaryRows = useMemo(() => {
-    const rows = adapter.buildSummaryRows(workspace, selections);
+    const rows = buildSummaryRows(adapter, workspace, selections);
     return rows.map((row) => ({
       ...row,
-      hint: view.tooltipByLabel[row.label],
+      hint: tooltipByLabel[row.label],
     }));
-  }, [adapter, workspace, selections, view]);
+  }, [adapter, workspace, selections, tooltipByLabel]);
 
   return (
     <div className={styles.root}>

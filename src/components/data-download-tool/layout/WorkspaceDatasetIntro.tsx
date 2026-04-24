@@ -2,16 +2,17 @@
 
 import type { DataDownloadWorkspaceData } from "@/lib/data-download-tool";
 
-import styles from "./WorkspaceDatasetLead.module.scss";
+import styles from "./WorkspaceDatasetIntro.module.scss";
 
-export interface WorkspaceDatasetLeadProps {
+export interface WorkspaceDatasetIntroProps {
   workspace: Pick<DataDownloadWorkspaceData, "datasetDescription">;
 }
 
 /**
- * Dataset description — shown below the step heading (Customize / Download).
+ * Dataset description — shown below the step heading (Customize / Download) in the
+ * `StepLayout.belowHeading` slot.
  */
-export default function WorkspaceDatasetLead({ workspace }: WorkspaceDatasetLeadProps) {
+export default function WorkspaceDatasetIntro({ workspace }: WorkspaceDatasetIntroProps) {
   const description = workspace.datasetDescription.trim();
   if (description.length === 0) {
     return null;

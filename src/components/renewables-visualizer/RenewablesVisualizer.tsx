@@ -24,6 +24,7 @@ import clsx from "clsx";
 import Alert from "@/components/common/ui/Alert";
 import Button from "@/components/common/ui/Button";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
+import PageLayout from "@/components/dashboard/PageLayout";
 import SidePanel from "@/components/dashboard/SidePanel";
 import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
 import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
@@ -347,12 +348,8 @@ export default function RenewablesViz() {
   }, []);
 
   return (
-    <Box className={styles.container} aria-label="Renewables Visualizer" role="region">
-      {/* Intro section */}
+    <PageLayout title="Renewables Visualizer">
       <Box className={styles.intro} style={{ maxWidth: "860px" }}>
-        <Typography variant="h4" aria-label="Renewables Visualizer Title">
-          Renewables Visualizer
-        </Typography>
         <Typography variant="body1" aria-label="Description of the tool">
           This tool shows when there are likely to be significant reductions in solar or wind energy
           availability in the future. To be more specific, it shows the number of wind or solar
@@ -371,7 +368,6 @@ export default function RenewablesViz() {
         </Typography>
       </Box>
 
-      {/* Main viz content */}
       <Grid container xs={12}>
         {/* Heatmap parameters section */}
         <Grid xs={12}>
@@ -630,7 +626,6 @@ export default function RenewablesViz() {
         </Grid>
       </Accordion>
 
-      {/** SidePanel */}
       <Box className={styles.sidepanel}>
         <SidePanel
           anchor="right"
@@ -658,6 +653,6 @@ export default function RenewablesViz() {
           ></VizParamsForm>
         </SidePanel>
       </Box>
-    </Box>
+    </PageLayout>
   );
 }

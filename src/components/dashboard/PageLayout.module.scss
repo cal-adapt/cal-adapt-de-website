@@ -1,6 +1,6 @@
 @use "@/styles/abstracts" as *;
 
-.toolPageLayout {
+.pageLayout {
   @include flex(column, flex-start, stretch, spacer(6));
 
   .title {

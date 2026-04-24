@@ -1,5 +1,5 @@
-// DashboardToolbar
-// Toolbar component for Cal-Adapt dashboard pages.
+// dashboard/Appbar
+// Top app bar for Cal-Adapt dashboard pages.
 // Displays breadcrumbs, tool title, and an optional icon button with tooltip to toggle the side panel.
 
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -13,9 +13,9 @@ import Typography from "@mui/material/Typography";
 import Icon, { IconVariant } from "@/components/common/ui/Icon";
 import { useSidePanel } from "@/context/SidePanelContext";
 
-import styles from "./DashboardToolbar.module.scss";
+import styles from "./Appbar.module.scss";
 
-interface ToolbarProps {
+interface AppbarProps {
   toolName: string; // Name of the current tool or section
   tooltipTitle?: string; // Tooltip text for the icon button
   icon?: IconVariant; // Optional icon variant
@@ -23,19 +23,19 @@ interface ToolbarProps {
   drawerWidth: number; // Width of the drawer (not currently used but included for flexibility)
 }
 
-export default function DashboardToolbar({
+export default function Appbar({
   toolName,
   tooltipTitle,
   icon,
   sidebarOpen,
   drawerWidth,
-}: ToolbarProps) {
+}: AppbarProps) {
   const { open, toggleOpen } = useSidePanel();
 
   return (
     // Adjust left margin based on whether sidebar is open
     <Toolbar
-      className={styles.dashboardToolbar}
+      className={styles.appbar}
       sx={{ ml: sidebarOpen ? 0 : `72px`, justifyContent: `space-between` }}
     >
       <Breadcrumbs aria-label="breadcrumb">

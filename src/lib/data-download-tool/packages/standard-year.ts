@@ -12,24 +12,18 @@ import { normalizeDownloadUrl } from "@/utils/url";
 import { labelGwl } from "../labels/gwls";
 import { labelPercentile } from "../labels/percentiles";
 import { labelVariable } from "../labels/variables";
-import type {
-  CustomizeFormConfig,
-  CustomizeSelections,
-  DataDownloadWorkspaceData,
-  DownloadBundle,
-} from "../types";
+import type { CustomizeFormConfig, CustomizeSelections, DownloadBundle } from "../types";
 
 import {
   enumStringsFromStacQueryables,
   formatDoiUrl,
   formatTimeSpanLabel,
   humanizeToken,
-  joinOptionLabels,
   parseStacAssetSizeBytes,
   slugifyFilenameSegment,
   stableMultiKey,
 } from "./shared";
-import type { PackageAdapter, PackageBundleMapResult } from "./types";
+import type { CustomizeFieldConfig, PackageAdapter, PackageBundleMapResult } from "./types";
 
 const STAC_COLLECTION_ID = "standard-year" as const;
 
@@ -241,22 +235,40 @@ function validateSelections(selections: CustomizeSelections): boolean {
   );
 }
 
-function buildSummaryRows(
-  workspace: DataDownloadWorkspaceData,
-  selections: CustomizeSelections
-): { label: string; value: string }[] {
-  const form = workspace.customizeForm;
-  return [
-    ...form.readOnlyFields,
-    { label: "Location", value: joinOptionLabels(selections.counties, form.countyOptions) },
-    { label: "GWLs", value: joinOptionLabels(selections.timePeriods, form.timePeriodOptions) },
-    { label: "Variables", value: joinOptionLabels(selections.variables, form.variableOptions) },
-    {
-      label: "Percentiles",
-      value: joinOptionLabels(selections.percentiles, form.percentileOptions),
-    },
-  ];
-}
+const fields: readonly CustomizeFieldConfig[] = [
+  {
+    kind: "multi",
+    label: "GWLs",
+    placeholder: "Choose GWLs…",
+    options: (config) => config.timePeriodOptions ?? [],
+    value: (selections) => selections.timePeriods,
+    patch: (next) => ({ timePeriods: next }),
+  },
+  {
+    kind: "multi",
+    label: "Variables",
+    placeholder: "Choose variables…",
+    options: (config) => config.variableOptions,
+    value: (selections) => selections.variables,
+    patch: (next) => ({ variables: next }),
+  },
+  {
+    kind: "multi",
+    label: "Percentiles",
+    placeholder: "Choose percentiles…",
+    options: (config) => config.percentileOptions ?? [],
+    value: (selections) => selections.percentiles,
+    patch: (next) => ({ percentiles: next }),
+  },
+  {
+    kind: "multi",
+    label: "Location",
+    placeholder: "Choose stations…",
+    options: (config) => config.countyOptions,
+    value: (selections) => selections.counties,
+    patch: (next) => ({ counties: next }),
+  },
+];
 
 function zipFilenameSlug(selections: CustomizeSelections): string {
   const slug =
@@ -288,6 +300,6 @@ export const standardYearPackage: PackageAdapter = {
   searchFiltersKey,
   mapItemsToBundles,
   validateSelections,
-  buildSummaryRows,
+  fields,
   zipFilenameSlug,
 };

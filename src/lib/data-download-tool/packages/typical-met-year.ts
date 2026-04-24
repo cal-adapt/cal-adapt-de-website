@@ -11,24 +11,18 @@ import { normalizeDownloadUrl } from "@/utils/url";
 
 import { labelGwl } from "../labels/gwls";
 import { labelCmip6Model } from "../labels/models";
-import type {
-  CustomizeFormConfig,
-  CustomizeSelections,
-  DataDownloadWorkspaceData,
-  DownloadBundle,
-} from "../types";
+import type { CustomizeFormConfig, CustomizeSelections, DownloadBundle } from "../types";
 
 import {
   enumStringsFromStacQueryables,
   formatDoiUrl,
   formatTimeSpanLabel,
   humanizeToken,
-  joinOptionLabels,
   parseStacAssetSizeBytes,
   slugifyFilenameSegment,
   stableMultiKey,
 } from "./shared";
-import type { PackageAdapter, PackageBundleMapResult } from "./types";
+import type { CustomizeFieldConfig, PackageAdapter, PackageBundleMapResult } from "./types";
 
 const STAC_COLLECTION_ID = "typical-met-year" as const;
 
@@ -191,18 +185,32 @@ function validateSelections(selections: CustomizeSelections): boolean {
   );
 }
 
-function buildSummaryRows(
-  workspace: DataDownloadWorkspaceData,
-  selections: CustomizeSelections
-): { label: string; value: string }[] {
-  const form = workspace.customizeForm;
-  return [
-    ...form.readOnlyFields,
-    { label: "Location", value: joinOptionLabels(selections.counties, form.countyOptions) },
-    { label: "GWLs", value: joinOptionLabels(selections.timePeriods, form.timePeriodOptions) },
-    { label: "Models", value: joinOptionLabels(selections.models, form.modelOptions) },
-  ];
-}
+const fields: readonly CustomizeFieldConfig[] = [
+  {
+    kind: "multi",
+    label: "GWLs",
+    placeholder: "Choose GWLs…",
+    options: (config) => config.timePeriodOptions ?? [],
+    value: (selections) => selections.timePeriods,
+    patch: (next) => ({ timePeriods: next }),
+  },
+  {
+    kind: "multi",
+    label: "Models",
+    placeholder: "Choose models…",
+    options: (config) => config.modelOptions,
+    value: (selections) => selections.models,
+    patch: (next) => ({ models: next }),
+  },
+  {
+    kind: "multi",
+    label: "Location",
+    placeholder: "Choose stations…",
+    options: (config) => config.countyOptions,
+    value: (selections) => selections.counties,
+    patch: (next) => ({ counties: next }),
+  },
+];
 
 function zipFilenameSlug(selections: CustomizeSelections): string {
   const slug =
@@ -232,6 +240,6 @@ export const typicalMetYearPackage: PackageAdapter = {
   searchFiltersKey,
   mapItemsToBundles,
   validateSelections,
-  buildSummaryRows,
+  fields,
   zipFilenameSlug,
 };

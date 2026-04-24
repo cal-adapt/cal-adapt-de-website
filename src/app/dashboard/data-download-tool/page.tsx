@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { PACKAGE_RAIL_DISPLAY_ORDER } from "@/components/data-download-tool/packages";
+import { PACKAGE_RAIL_DISPLAY_ORDER } from "@/components/data-download-tool/rail/packages";
 import { SITE_TITLE } from "@/config/constants";
 import { navLinks } from "@/config/navigation";
 

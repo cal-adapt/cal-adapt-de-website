@@ -15,7 +15,6 @@ import { labelVariable } from "../labels/variables";
 import type {
   CustomizeFormConfig,
   CustomizeSelections,
-  DataDownloadWorkspaceData,
   DownloadAssetRow,
   DownloadBundle,
 } from "../types";
@@ -24,11 +23,10 @@ import {
   coalesceSummaryOrQueryableEnum,
   enumStringsFromStacQueryables,
   formatTimeSpanLabel,
-  joinOptionLabels,
   parseStacAssetSizeBytes,
   stableMultiKey,
 } from "./shared";
-import type { PackageAdapter, PackageBundleMapResult } from "./types";
+import type { CustomizeFieldConfig, PackageAdapter, PackageBundleMapResult } from "./types";
 
 /** Current STAC id for LOCA2 county-gridded downloads (v2 API). */
 export const LOCA2_COUNTY_STAC_COLLECTION_ID = "loca2-county" as const;
@@ -292,24 +290,54 @@ function validateSelections(selections: CustomizeSelections): boolean {
   );
 }
 
-function buildSummaryRows(
-  workspace: DataDownloadWorkspaceData,
-  selections: CustomizeSelections
-): { label: string; value: string }[] {
-  const form = workspace.customizeForm;
-  const freq = form.frequencyOptions.find((o) => o.value === selections.frequency);
-  const agg = form.aggregationOptions.find((o) => o.value === selections.aggregation);
-
-  return [
-    ...form.readOnlyFields,
-    { label: "Variables", value: joinOptionLabels(selections.variables, form.variableOptions) },
-    { label: "Models", value: joinOptionLabels(selections.models, form.modelOptions) },
-    { label: "Scenarios", value: joinOptionLabels(selections.scenarios, form.scenarioOptions) },
-    { label: "Counties", value: joinOptionLabels(selections.counties, form.countyOptions) },
-    { label: "Frequency", value: freq?.label ?? selections.frequency },
-    { label: "Aggregation", value: agg?.label ?? selections.aggregation },
-  ];
-}
+const fields: readonly CustomizeFieldConfig[] = [
+  {
+    kind: "multi",
+    label: "Variables",
+    placeholder: "Choose variables…",
+    options: (config) => config.variableOptions,
+    value: (selections) => selections.variables,
+    patch: (next) => ({ variables: next }),
+  },
+  {
+    kind: "multi",
+    label: "Models",
+    placeholder: "Choose models…",
+    options: (config) => config.modelOptions,
+    value: (selections) => selections.models,
+    patch: (next) => ({ models: next }),
+  },
+  {
+    kind: "multi",
+    label: "Scenarios",
+    placeholder: "Choose scenarios…",
+    options: (config) => config.scenarioOptions,
+    value: (selections) => selections.scenarios,
+    patch: (next) => ({ scenarios: next }),
+  },
+  {
+    kind: "multi",
+    label: "Counties",
+    placeholder: "Choose counties…",
+    options: (config) => config.countyOptions,
+    value: (selections) => selections.counties,
+    patch: (next) => ({ counties: next }),
+  },
+  {
+    kind: "single",
+    label: "Frequency",
+    options: (config) => config.frequencyOptions,
+    value: (selections) => selections.frequency,
+    patch: (next) => ({ frequency: next }),
+  },
+  {
+    kind: "single",
+    label: "Aggregation",
+    options: (config) => config.aggregationOptions,
+    value: (selections) => selections.aggregation,
+    patch: (next) => ({ aggregation: next }),
+  },
+];
 
 function zipFilenameSlug(
   selections: CustomizeSelections,
@@ -343,6 +371,6 @@ export const loca2CountyPackage: PackageAdapter = {
   searchFiltersKey,
   mapItemsToBundles,
   validateSelections,
-  buildSummaryRows,
+  fields,
   zipFilenameSlug,
 };

@@ -1,3 +1,4 @@
+import type { MultiSelectOption, SelectOption } from "@/components/common/form";
 import type {
   CountyItem,
   ItemSearchFilters,
@@ -9,7 +10,6 @@ import type {
   CustomizeFormConfig,
   CustomizeFormKind,
   CustomizeSelections,
-  DataDownloadWorkspaceData,
   DownloadBundle,
   PackageId,
 } from "../types";
@@ -36,9 +36,43 @@ export interface PackageRailInfo {
 }
 
 /**
+ * Declarative config for one editable row in the Customize step. Each adapter
+ * exposes an array of these in `PackageAdapter.fields`; the shared renderer turns
+ * them into form controls, and `buildSummaryRows` derives review-step text rows
+ * from the same array — so edit view and review view cannot drift.
+ *
+ * Callbacks are lenses over `CustomizeFormConfig` (for option pools) and
+ * `CustomizeSelections` (for the user's current picks).
+ */
+interface BaseFieldConfig {
+  /** Display label; also used as the key into per-kind `tooltipByLabel` maps. */
+  label: string;
+  placeholder?: string;
+}
+
+export interface MultiSelectFieldConfig extends BaseFieldConfig {
+  kind: "multi";
+  /** Defaults to `true`; set to `false` for optional multi-selects. */
+  required?: boolean;
+  options: (config: CustomizeFormConfig) => MultiSelectOption[];
+  value: (selections: CustomizeSelections) => string[];
+  patch: (next: string[]) => Partial<CustomizeSelections>;
+}
+
+export interface SingleSelectFieldConfig extends BaseFieldConfig {
+  kind: "single";
+  options: (config: CustomizeFormConfig) => SelectOption[];
+  value: (selections: CustomizeSelections) => string;
+  patch: (next: string) => Partial<CustomizeSelections>;
+}
+
+export type CustomizeFieldConfig = MultiSelectFieldConfig | SingleSelectFieldConfig;
+
+/**
  * Single source of truth for a Data Download package. Each package owns its STAC plumbing,
- * customize form, search filters, item → bundle mapping, validation, summary rows, and
- * display copy. Adding a new package means creating one adapter and registering it.
+ * customize form, search filters, item → bundle mapping, validation, editable-field
+ * layout, and display copy. Adding a new package means creating one adapter and
+ * registering it.
  */
 export interface PackageAdapter {
   /** App-level id used in routes and the rail. */
@@ -80,11 +114,12 @@ export interface PackageAdapter {
   /** Whether selections are complete enough to run `/search`. */
   validateSelections(selections: CustomizeSelections): boolean;
 
-  /** Read-only summary rows for the Download step (defaults + user selections). */
-  buildSummaryRows(
-    workspace: DataDownloadWorkspaceData,
-    selections: CustomizeSelections
-  ): { label: string; value: string }[];
+  /**
+   * Declarative editable-field layout for the Customize step, in render order. Also
+   * drives review-step summary rows via `buildSummaryRows` so the two views can't
+   * drift.
+   */
+  fields: readonly CustomizeFieldConfig[];
 
   /** Slug used as the "all files" zip filename fragment (frequency / time-period flavored). */
   zipFilenameSlug(selections: CustomizeSelections, customizeForm: CustomizeFormConfig): string;

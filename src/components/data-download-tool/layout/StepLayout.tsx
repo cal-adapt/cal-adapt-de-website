@@ -7,9 +7,9 @@ import type { ReactNode } from "react";
 
 import Divider from "@/components/common/ui/Divider";
 
-import styles from "./ToolScreenContainer.module.scss";
+import styles from "./StepLayout.module.scss";
 
-export interface ToolScreenContainerProps {
+export interface StepLayoutProps {
   title?: ReactNode;
   actions?: ReactNode;
   belowHeading?: ReactNode;
@@ -18,16 +18,17 @@ export interface ToolScreenContainerProps {
 }
 
 /**
- * Layout shell for a single data-download tool step (view defaults, customize, download, etc.).
- * Children are typically `FormField` + `Input` / `Select` / `Textarea` / `Checkbox` groups.
+ * Layout shell for a single step of the data-download flow (Customize / Download), shown inside
+ * `WorkspaceLayout`'s main slot. Children are typically `FormField` + `Input` / `Select` /
+ * `Textarea` / `Checkbox` groups, or review cards.
  */
-export default function ToolScreenContainer({
+export default function StepLayout({
   title,
   actions,
   belowHeading,
   children,
   className,
-}: ToolScreenContainerProps) {
+}: StepLayoutProps) {
   const headingId = useId();
   const showHeadingRow = title != null || actions != null;
   const showStepIntro = showHeadingRow || belowHeading != null;

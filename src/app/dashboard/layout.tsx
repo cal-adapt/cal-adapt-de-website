@@ -31,7 +31,7 @@ import ErrorView from "@/components/common/layout/ErrorView";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
-import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
+import Appbar from "@/components/dashboard/Appbar";
 import { mediaQueries } from "@/config/breakpoints";
 import { FEEDBACK_URL } from "@/config/constants";
 import { navLinks } from "@/config/navigation";
@@ -104,11 +104,11 @@ export default function Layout({ children }: LayoutProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(mediaQueries.max.small);
 
-  const renderDashboardToolbar = (): React.ReactNode => {
+  const renderAppbar = (): React.ReactNode => {
     switch (selectedPage) {
       case navLinks.climateMetricsMap.id:
         return (
-          <DashboardToolbar
+          <Appbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
             toolName={navLinks.climateMetricsMap.label}
@@ -116,7 +116,7 @@ export default function Layout({ children }: LayoutProps) {
         );
       case navLinks.dataDownload.id:
         return (
-          <DashboardToolbar
+          <Appbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
             toolName={navLinks.dataDownload.label}
@@ -126,7 +126,7 @@ export default function Layout({ children }: LayoutProps) {
         );
       case navLinks.renewablesVisualizer.id:
         return (
-          <DashboardToolbar
+          <Appbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
             toolName={navLinks.renewablesVisualizer.label}
@@ -136,7 +136,7 @@ export default function Layout({ children }: LayoutProps) {
         );
       default:
         return (
-          <DashboardToolbar
+          <Appbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
             toolName="Getting Started"
@@ -270,7 +270,7 @@ export default function Layout({ children }: LayoutProps) {
                 zIndex: 1100,
               }}
             >
-              {renderDashboardToolbar()}
+              {renderAppbar()}
             </AppBar>
             {children}
           </Box>
