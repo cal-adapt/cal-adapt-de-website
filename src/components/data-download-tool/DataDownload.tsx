@@ -147,22 +147,14 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
   return (
     <ToolPageLayout title="Data Download Tool">
       <div className={styles.pageTop}>
-        <div className={styles.introTexts}>
-          <p className={styles.toolIntro}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris.
-          </p>
-        </div>
-        {workspace.catalogPackageId === "loca2-county" ? (
-          <Alert severity="info">
-            Looking for the full LOCA2 scientific data at daily resolution for the entire state of
-            California?{" "}
-            <Link href="https://analytics.cal-adapt.org/data/access/">
-              Click here for the how-to-guide
-            </Link>
-          </Alert>
-        ) : null}
+        {/* TODO: Add tool intro copy here */}
+        <Alert severity="info">
+          Looking for the full LOCA2 scientific data at daily resolution for the entire state of
+          California?{" "}
+          <Link href="https://analytics.cal-adapt.org/data/access/">
+            Click here for the how-to-guide
+          </Link>
+        </Alert>
       </div>
 
       <WorkspaceLayout packageRail={<PackageRail activePackageId={workspace.catalogPackageId} />}>
