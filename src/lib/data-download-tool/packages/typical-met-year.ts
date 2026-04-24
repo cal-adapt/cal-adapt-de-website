@@ -1,9 +1,9 @@
 import type { MultiSelectOption, SelectOption } from "@/components/common/form";
 import type {
-  CountyItem,
   ItemSearchFilters,
   StacCollection,
   StacCollectionQueryables,
+  StacItem,
 } from "@/lib/cal-adapt-api";
 import { createOrStatement } from "@/utils/query";
 import { toSentenceCase } from "@/utils/string";
@@ -115,7 +115,7 @@ function searchFiltersKey(selections: CustomizeSelections): string {
   return stableMultiKey([selections.counties, selections.models, selections.timePeriods]);
 }
 
-function mapItemsToBundles(features: CountyItem[]): PackageBundleMapResult {
+function mapItemsToBundles(features: StacItem[]): PackageBundleMapResult {
   const bundleBySelection = new Map<string, DownloadBundle>();
   const seenAssetKeys = new Set<string>();
   let totalBytes = 0;

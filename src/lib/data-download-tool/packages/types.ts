@@ -1,9 +1,9 @@
 import type { MultiSelectOption, SelectOption } from "@/components/common/form";
 import type {
-  CountyItem,
   ItemSearchFilters,
   StacCollection,
   StacCollectionQueryables,
+  StacItem,
 } from "@/lib/cal-adapt-api";
 
 import type {
@@ -105,11 +105,11 @@ export interface PackageAdapter {
    */
   searchFiltersKey(selections: CustomizeSelections): string;
 
-  /** Map STAC item features into UI bundles. */
-  mapItemsToBundles(
-    features: CountyItem[],
-    selections: CustomizeSelections
-  ): PackageBundleMapResult;
+  /**
+   * Map STAC item features into UI bundles. Adapters narrow `properties` /
+   * `assets` access to the shape their collection actually returns.
+   */
+  mapItemsToBundles(features: StacItem[], selections: CustomizeSelections): PackageBundleMapResult;
 
   /** Whether selections are complete enough to run `/search`. */
   validateSelections(selections: CustomizeSelections): boolean;

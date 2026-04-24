@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { CountyItem, StacCollection } from "@/lib/cal-adapt-api";
+import type { StacCollection, StacItem } from "@/lib/cal-adapt-api";
 
 import type { CustomizeFormConfig, CustomizeSelections, DataDownloadWorkspaceData } from "../types";
 
@@ -21,7 +21,7 @@ function makeSelections(overrides: Partial<CustomizeSelections> = {}): Customize
   };
 }
 
-function makeItem(overrides: Partial<CountyItem> = {}): CountyItem {
+function makeItem(overrides: Partial<StacItem> = {}): StacItem {
   return {
     type: "Feature",
     id: "tmy-item",

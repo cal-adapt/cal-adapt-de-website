@@ -31,7 +31,7 @@ type StacLink = {
   [key: string]: unknown;
 };
 
-type StacAsset = {
+export type StacAsset = {
   href: string;
   title?: string;
   description?: string;
@@ -40,7 +40,13 @@ type StacAsset = {
   [key: string]: unknown;
 };
 
-type StacItem = {
+/**
+ * STAC item shape from `/search`; generic across collections.
+ * Adapters narrow `properties` and `assets` access at use-sites
+ * (the v2 STAC OpenAPI spec doesn't define response body schemas,
+ * so per-collection types still need runtime guarding).
+ */
+export type StacItem = {
   type: "Feature";
   id: string;
   bbox?: [number, number, number, number];
@@ -53,7 +59,7 @@ type StacItem = {
   stac_extensions?: string[];
 };
 
-type StacItemCollection = {
+export type StacItemCollection = {
   type: "FeatureCollection";
   features: StacItem[];
   links: StacLink[];
@@ -79,29 +85,6 @@ export type StacCollection = {
   "caladapt:spatial_type"?: string;
   [key: string]: unknown;
 };
-
-export type CountyItem = Omit<StacItem, "properties" | "assets"> & {
-  properties: {
-    countyname?: string;
-    /** LOCA2 county v2 STAC items */
-    county_name?: string;
-    location?: string;
-    variable?: string;
-    variable_label?: string;
-    percentile?: string;
-    time_period?: string;
-    "cmip6:source_id"?: string;
-    "cmip6:experiment_id"?: string;
-    /** `day` \| `mon` — LOCA2 county v2 */
-    "cmip6:table_id"?: string;
-    "cmip6:member_id"?: string;
-    start_datetime?: string;
-    end_datetime?: string;
-    [key: string]: unknown;
-  };
-  assets: Record<string, StacAsset & { "file:size"?: number }>;
-};
-type CountyItemCollection = StacItemCollection & { features: CountyItem[] };
 
 /** App-level filters */
 export type ItemSearchFilters = {
@@ -175,7 +158,7 @@ export async function getCollection(collectionId: string): Promise<StacCollectio
 export async function searchItems(
   filters: ItemSearchFilters,
   options?: { collectionId?: string }
-): Promise<CountyItemCollection> {
+): Promise<StacItemCollection> {
   const filterParts: string[] = [];
 
   if (filters.collectionFilter) filterParts.push(filters.collectionFilter);
@@ -201,7 +184,7 @@ export async function searchItems(
       },
       headers: { Accept: "application/geo+json" },
     });
-    return assertOk<CountyItemCollection>(res, API_NAME);
+    return assertOk<StacItemCollection>(res, API_NAME);
   }
 
   const res = await searchSearchGet({
@@ -212,5 +195,5 @@ export async function searchItems(
     },
   });
 
-  return assertOk<CountyItemCollection>(res, API_NAME);
+  return assertOk<StacItemCollection>(res, API_NAME);
 }

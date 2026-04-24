@@ -9,9 +9,11 @@ export const calAdaptApi = { map, stac };
 
 export type { TileJson } from "./map-api";
 export type {
-  CountyItem,
   ItemSearchFilters,
+  StacAsset,
   StacCollection,
   StacCollectionQueryables,
+  StacItem,
+  StacItemCollection,
 } from "./stac-api";
 export { getCollectionQueryables, isStacV2CollectionId } from "./stac-api";

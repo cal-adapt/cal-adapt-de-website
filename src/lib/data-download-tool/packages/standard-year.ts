@@ -1,9 +1,9 @@
 import type { MultiSelectOption, SelectOption } from "@/components/common/form";
 import type {
-  CountyItem,
   ItemSearchFilters,
   StacCollection,
   StacCollectionQueryables,
+  StacItem,
 } from "@/lib/cal-adapt-api";
 import { createOrStatement } from "@/utils/query";
 import { toSentenceCase } from "@/utils/string";
@@ -148,7 +148,7 @@ function searchFiltersKey(selections: CustomizeSelections): string {
 }
 
 function mapItemsToBundles(
-  features: CountyItem[],
+  features: StacItem[],
   selections: CustomizeSelections
 ): PackageBundleMapResult {
   const selected = new Set(selections.variables);

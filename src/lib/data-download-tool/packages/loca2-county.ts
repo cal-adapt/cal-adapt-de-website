@@ -1,9 +1,9 @@
 import type { MultiSelectOption, SelectOption } from "@/components/common/form";
 import type {
-  CountyItem,
   ItemSearchFilters,
   StacCollection,
   StacCollectionQueryables,
+  StacItem,
 } from "@/lib/cal-adapt-api";
 import { createOrStatement } from "@/utils/query";
 import { splitStringByPeriod, toSentenceCase } from "@/utils/string";
@@ -206,7 +206,7 @@ function parseModelScenarioFromItemId(itemId: string): { model: string; scenario
   return { model: "", scenario: "" };
 }
 
-function pickModel(item: CountyItem): string {
+function pickModel(item: StacItem): string {
   const fromProps = item.properties["cmip6:source_id"];
   if (typeof fromProps === "string" && fromProps.length > 0) {
     return fromProps;
@@ -214,7 +214,7 @@ function pickModel(item: CountyItem): string {
   return parseModelScenarioFromItemId(item.id).model;
 }
 
-function pickScenarioId(item: CountyItem): string {
+function pickScenarioId(item: StacItem): string {
   const fromProps = item.properties["cmip6:experiment_id"];
   if (typeof fromProps === "string" && fromProps.length > 0) {
     return fromProps;
@@ -223,7 +223,7 @@ function pickScenarioId(item: CountyItem): string {
 }
 
 function mapItemsToBundles(
-  features: CountyItem[],
+  features: StacItem[],
   selections: CustomizeSelections
 ): PackageBundleMapResult {
   const selected = new Set(selections.variables);
