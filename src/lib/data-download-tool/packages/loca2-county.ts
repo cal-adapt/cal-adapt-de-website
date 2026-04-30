@@ -53,12 +53,6 @@ const LOCA2_COUNTY_V2_ASSET_VARIABLE_IDS: readonly string[] = [
   "wind_speed_derived",
 ];
 
-const DEFAULT_AGGREGATION_OPTIONS: SelectOption[] = [
-  { value: "mean", label: "Ensemble mean" },
-  { value: "min", label: "Minimum" },
-  { value: "max", label: "Maximum" },
-];
-
 /** Maps UI frequency values to CMIP6 `table_id` query values. */
 const CMIP6_TABLE_ID_BY_FREQUENCY: Readonly<Record<string, string>> = {
   monthly: "mon",
@@ -144,14 +138,12 @@ function buildCustomizeForm(
     modelOptions,
     scenarioOptions,
     countyOptions,
-    aggregationOptions: DEFAULT_AGGREGATION_OPTIONS,
     initial: {
       frequency: "monthly",
       variables: ["tasmax", "tasmin", "pr"],
       models: ["ACCESS-CM2", "MPI-ESM1-2-HR", "EC-Earth3", "FGOALS-g3", "CNRM-ESM2-1"],
       scenarios: ["historical", "ssp370"],
       counties: [],
-      aggregation: "mean",
       percentiles: [],
       timePeriods: [],
     },
@@ -316,14 +308,6 @@ const fields: readonly CustomizeFieldConfig[] = [
     patch: (next) => ({ scenarios: next }),
   },
   {
-    kind: "multi",
-    label: "Counties",
-    placeholder: "Choose counties…",
-    options: (config) => config.countyOptions,
-    value: (selections) => selections.counties,
-    patch: (next) => ({ counties: next }),
-  },
-  {
     kind: "single",
     label: "Frequency",
     options: (config) => config.frequencyOptions,
@@ -331,11 +315,12 @@ const fields: readonly CustomizeFieldConfig[] = [
     patch: (next) => ({ frequency: next }),
   },
   {
-    kind: "single",
-    label: "Aggregation",
-    options: (config) => config.aggregationOptions,
-    value: (selections) => selections.aggregation,
-    patch: (next) => ({ aggregation: next }),
+    kind: "multi",
+    label: "Counties",
+    placeholder: "Choose counties…",
+    options: (config) => config.countyOptions,
+    value: (selections) => selections.counties,
+    patch: (next) => ({ counties: next }),
   },
 ];
 

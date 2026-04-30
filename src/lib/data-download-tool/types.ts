@@ -17,7 +17,6 @@ export type CustomizeFormConfig = {
   modelOptions: MultiSelectOption[];
   scenarioOptions: MultiSelectOption[];
   countyOptions: MultiSelectOption[];
-  aggregationOptions: SelectOption[];
   /** station-profile packages (currently standard-year) — `percentile` queryable */
   percentileOptions?: MultiSelectOption[];
   /** station-profile packages — `time_period` queryable (shown as GWLs in the UI) */
@@ -28,7 +27,6 @@ export type CustomizeFormConfig = {
     models: string[];
     scenarios: string[];
     counties: string[];
-    aggregation: string;
     percentiles: string[];
     timePeriods: string[];
   };
@@ -44,7 +42,6 @@ export type CustomizeSelections = {
   models: string[];
   scenarios: string[];
   counties: string[];
-  aggregation: string;
   percentiles: string[];
   timePeriods: string[];
 };

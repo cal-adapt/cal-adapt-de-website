@@ -61,6 +61,4 @@ export const tooltipByLabel: Partial<Record<string, ReactNode>> = {
   Counties: "California counties used as the spatial boundary for aggregating gridded data.",
   Frequency:
     "The timescale of the data. All LOCA2 data is downscaled at a native daily resolution. A pre-aggregated version at a monthly resolution is also available.",
-  Aggregation:
-    "Statistical method used to summarize grid-cell values within each county boundary (e.g. mean, min, max).",
 };

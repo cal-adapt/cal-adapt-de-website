@@ -14,7 +14,6 @@ function makeSelections(overrides: Partial<CustomizeSelections> = {}): Customize
     models: ["ACCESS-CM2"],
     scenarios: [],
     counties: ["san_francisco_intl"],
-    aggregation: "",
     percentiles: [],
     timePeriods: ["present-day"],
     ...overrides,
@@ -81,9 +80,6 @@ describe("typicalMetYearPackage", () => {
     expect(
       typicalMetYearPackage.searchFiltersKey(makeSelections({ percentiles: ["50ptile"] }))
     ).toBe(key);
-    expect(typicalMetYearPackage.searchFiltersKey(makeSelections({ aggregation: "max" }))).toBe(
-      key
-    );
 
     // Relevant fields must change the key.
     expect(
@@ -103,7 +99,6 @@ describe("typicalMetYearPackage", () => {
       modelOptions: [{ value: "ACCESS-CM2", label: "ACCESS-CM2" }],
       scenarioOptions: [],
       countyOptions: [{ value: "san_francisco_intl", label: "San Francisco Intl" }],
-      aggregationOptions: [],
       timePeriodOptions: [{ value: "present-day", label: "Present day" }],
       initial: {
         frequency: "",
@@ -111,7 +106,6 @@ describe("typicalMetYearPackage", () => {
         models: [],
         scenarios: [],
         counties: [],
-        aggregation: "",
         percentiles: [],
         timePeriods: [],
       },

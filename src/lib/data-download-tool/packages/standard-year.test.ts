@@ -14,7 +14,6 @@ function makeSelections(overrides: Partial<CustomizeSelections> = {}): Customize
     models: [],
     scenarios: [],
     counties: ["san_francisco_intl"],
-    aggregation: "",
     percentiles: ["50ptile"],
     timePeriods: ["present-day"],
     ...overrides,
@@ -74,7 +73,6 @@ describe("standardYearPackage", () => {
 
     // Fields this package doesn't use should not change the key.
     expect(standardYearPackage.searchFiltersKey(makeSelections({ models: ["X"] }))).toBe(key);
-    expect(standardYearPackage.searchFiltersKey(makeSelections({ aggregation: "max" }))).toBe(key);
 
     // Relevant fields must change the key.
     expect(standardYearPackage.searchFiltersKey(makeSelections({ variables: ["pr"] }))).not.toBe(
@@ -94,7 +92,6 @@ describe("standardYearPackage", () => {
       modelOptions: [],
       scenarioOptions: [],
       countyOptions: [{ value: "san_francisco_intl", label: "San Francisco Intl" }],
-      aggregationOptions: [],
       percentileOptions: [{ value: "50ptile", label: "50th percentile" }],
       timePeriodOptions: [{ value: "present-day", label: "Present day" }],
       initial: {
@@ -103,7 +100,6 @@ describe("standardYearPackage", () => {
         models: [],
         scenarios: [],
         counties: [],
-        aggregation: "",
         percentiles: [],
         timePeriods: [],
       },

@@ -95,7 +95,6 @@ function buildCustomizeForm(
     modelOptions: [],
     scenarioOptions: [],
     countyOptions,
-    aggregationOptions: emptySelect,
     percentileOptions,
     timePeriodOptions,
     initial: {
@@ -104,7 +103,6 @@ function buildCustomizeForm(
       models: [...modelIds],
       scenarios: [],
       counties: [],
-      aggregation: "",
       percentiles: ["50ptile"],
       timePeriods: [...gwlIds],
     },

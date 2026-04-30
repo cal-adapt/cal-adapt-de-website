@@ -14,7 +14,6 @@ function makeSelections(overrides: Partial<CustomizeSelections> = {}): Customize
     models: ["ACCESS-CM2"],
     scenarios: ["ssp370"],
     counties: ["Alameda County"],
-    aggregation: "mean",
     percentiles: [],
     timePeriods: [],
     ...overrides,
@@ -69,12 +68,9 @@ describe("loca2CountyPackage", () => {
     expect(allHrefs).toHaveLength(1);
   });
 
-  it("searchFiltersKey ignores aggregation but tracks variables (which affect client-side mapping)", () => {
+  it("searchFiltersKey tracks variables (which affect client-side mapping) and frequency", () => {
     const base = makeSelections();
     const key = loca2CountyPackage.searchFiltersKey(base);
-
-    // Irrelevant field: key should be unchanged.
-    expect(loca2CountyPackage.searchFiltersKey(makeSelections({ aggregation: "max" }))).toBe(key);
 
     // Relevant fields: key must change.
     expect(loca2CountyPackage.searchFiltersKey(makeSelections({ variables: ["pr"] }))).not.toBe(
@@ -105,14 +101,12 @@ describe("loca2CountyPackage", () => {
       modelOptions: [{ value: "ACCESS-CM2", label: "ACCESS-CM2" }],
       scenarioOptions: [{ value: "ssp370", label: "SSP3-7.0" }],
       countyOptions: [{ value: "Alameda County", label: "Alameda County" }],
-      aggregationOptions: [{ value: "mean", label: "Mean" }],
       initial: {
         frequency: "monthly",
         variables: [],
         models: [],
         scenarios: [],
         counties: [],
-        aggregation: "mean",
         percentiles: [],
         timePeriods: [],
       },
@@ -124,9 +118,8 @@ describe("loca2CountyPackage", () => {
       { label: "Variables", value: "Max Temp" },
       { label: "Models", value: "ACCESS-CM2" },
       { label: "Scenarios", value: "SSP3-7.0" },
-      { label: "Counties", value: "Alameda County" },
       { label: "Frequency", value: "Monthly" },
-      { label: "Aggregation", value: "Mean" },
+      { label: "Counties", value: "Alameda County" },
     ]);
   });
 

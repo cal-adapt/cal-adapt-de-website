@@ -101,7 +101,7 @@ export interface PackageAdapter {
   /**
    * Stable string key over only the selection fields that affect this package's
    * search + mapping. Used as a React effect dep so keystroke-level changes to
-   * unrelated fields (e.g. aggregation) don't re-register the download effect.
+   * unrelated fields don't re-register the download effect.
    */
   searchFiltersKey(selections: CustomizeSelections): string;
 
