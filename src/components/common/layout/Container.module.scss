@@ -1,0 +1,43 @@
+@use "@/styles/abstracts" as *;
+
+.container {
+  @include container;
+  box-sizing: border-box;
+  height: auto;
+
+  &.page {
+    padding-block: spacer(8);
+  }
+
+  &.section {
+    padding-block: spacer(12);
+  }
+
+  &.none {
+    padding: 0;
+  }
+
+  .inner {
+    @include flex(column, flex-start, stretch, $gap: spacer(5));
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    margin: 0 auto;
+
+    &.global {
+      max-width: max-w(global);
+    }
+
+    &.content {
+      max-width: max-w(content);
+    }
+
+    &.fullbleed {
+      max-width: none;
+    }
+  }
+
+  &.alignStart .inner {
+    margin-inline: 0;
+  }
+}

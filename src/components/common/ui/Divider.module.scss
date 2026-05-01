@@ -1,0 +1,9 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  display: block;
+  margin: spacer(7) 0;
+  border: none;
+  border-top: 1px solid color(grey-2);
+  width: 100%;
+}

@@ -1,0 +1,163 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: help;
+  color: inherit;
+  line-height: 0;
+  border-radius: rounded(1);
+
+  @include focus-ring;
+}
+
+.icon {
+  width: 1rem;
+  height: 1rem;
+  color: inherit;
+
+  svg {
+    color: inherit;
+  }
+}
+
+.popover {
+  position: absolute;
+  z-index: z(10);
+  width: max-content;
+  max-width: 42rem;
+  padding: spacer(3) spacer(4);
+  border-radius: rounded(2);
+  background-color: color(black);
+  color: color(white);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  font-family: font-family(body);
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.2;
+  pointer-events: auto;
+  text-align: start;
+
+  /* Invisible hit-area bridges gap so hover isn’t lost between trigger and tooltip. */
+  &::before {
+    content: "";
+    position: absolute;
+  }
+
+  /* Directional arrow that points back to the trigger icon. */
+  &::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+  }
+}
+
+.popoverInner {
+  position: relative;
+  z-index: 1;
+
+  :where(p) {
+    margin: 0;
+  }
+
+  :where(p + p) {
+    margin-top: spacer(2);
+  }
+}
+
+.placementTop {
+  left: 50%;
+  bottom: calc(100% + #{spacer(2)});
+  transform: translateX(-50%);
+
+  &::before {
+    left: 0;
+    right: 0;
+    bottom: -#{spacer(3)};
+    height: #{spacer(3)};
+  }
+
+  &::after {
+    left: 50%;
+    bottom: -6px;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
+    border-color: color(black) transparent transparent transparent;
+  }
+}
+
+.placementBottom {
+  left: 50%;
+  top: calc(100% + #{spacer(2)});
+  transform: translateX(-50%);
+
+  &::before {
+    left: 0;
+    right: 0;
+    top: -#{spacer(3)};
+    height: #{spacer(3)};
+  }
+
+  &::after {
+    left: 50%;
+    top: -6px;
+    transform: translateX(-50%);
+    border-width: 0 6px 6px 6px;
+    border-color: transparent transparent color(black) transparent;
+  }
+}
+
+.placementLeft {
+  right: calc(100% + #{spacer(2)});
+  top: 50%;
+  transform: translateY(-50%);
+
+  &::before {
+    top: 0;
+    bottom: 0;
+    right: -#{spacer(3)};
+    width: #{spacer(3)};
+  }
+
+  &::after {
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 6px 0 6px 6px;
+    border-color: transparent transparent transparent color(black);
+  }
+}
+
+.placementRight {
+  left: calc(100% + #{spacer(2)});
+  top: 50%;
+  transform: translateY(-50%);
+
+  &::before {
+    top: 0;
+    bottom: 0;
+    left: -#{spacer(3)};
+    width: #{spacer(3)};
+  }
+
+  &::after {
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 6px 6px 6px 0;
+    border-color: transparent color(black) transparent transparent;
+  }
+}

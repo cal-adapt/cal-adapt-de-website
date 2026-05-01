@@ -12,7 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
-import { isNavGroup, navGroups, type NavItem, type NavLink, navLinks } from "@/data/navigation";
+import { isNavGroup, navGroups, type NavItem, type NavLink, navLinks } from "@/config/navigation";
 import { analytics } from "@/lib/analytics";
 import { isExternalUrl } from "@/utils/url";
 
@@ -122,7 +122,7 @@ function MobileNav() {
         aria-controls="mobile-menu"
         aria-haspopup="true"
         onClick={handleOpen}
-        sx={{ color: "#fff" }}
+        sx={{ color: "var(--color-white)" }}
       >
         <MenuIcon />
       </IconButton>

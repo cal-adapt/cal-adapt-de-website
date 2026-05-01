@@ -1,6 +1,7 @@
 import { setupServer } from "msw/node";
 
-import { getCaladaptTilerMock } from "@/lib/cal-adapt-api/generated/map/services/caladaptTiler.msw";
-import { getCalAdaptSTACAPIMock } from "@/lib/cal-adapt-api/generated/stac/services/calAdaptSTACAPI.msw";
-
-export const server = setupServer(...getCalAdaptSTACAPIMock(), ...getCaladaptTilerMock());
+/**
+ * Default MSW server with no handlers. Tests call `server.use(...)` to register routes.
+ * (Previously used Orval-generated MSW helpers; `@hey-api/openapi-ts` does not emit MSW mocks.)
+ */
+export const server = setupServer();

@@ -1,8 +1,7 @@
 /**
  * Cal-Adapt Map API Client
  *
- * Centralizes Map API calls using Orval-generated fetchers to
- * expose a friendlier API: getGwlInfo, getTileJson, getPoint, getPointGwlStats.
+ * Centralizes Map API calls using `@hey-api/openapi-ts`-generated clients.
  */
 
 import {
@@ -10,7 +9,7 @@ import {
   pointPointLonLatGet,
   tilejsonTileMatrixSetIdTilejsonJsonGet,
 } from "./generated/map";
-import type { TilejsonTileMatrixSetIdTilejsonJsonGetParams } from "./generated/map/models";
+import type { TilejsonTileMatrixSetIdTilejsonJsonGetData } from "./generated/map/types.gen";
 import { assertOk } from "./utils";
 
 const API_NAME = "Cal-Adapt Map API";
@@ -51,7 +50,9 @@ type PointResponse = { data?: number[] };
  * Get Global Warming Levels (GWL) list for a dataset
  */
 export async function getGwlInfo(url: string, variable: string): Promise<number[]> {
-  const res = await infoEndpointInfoGet({ url, variable });
+  const res = await infoEndpointInfoGet({
+    query: { url, variable },
+  });
   const data = assertOk<InfoWithGwl>(res, API_NAME);
   return data.dimensions?.gwl?.data ?? [];
 }
@@ -60,13 +61,16 @@ export async function getGwlInfo(url: string, variable: string): Promise<number[
  * Get TileJSON configuration for raster layer
  */
 export async function getTileJson(params: TileJsonParams): Promise<TileJson> {
-  const res = await tilejsonTileMatrixSetIdTilejsonJsonGet("WebMercatorQuad", {
-    url: params.url,
-    variable: params.variable,
-    datetime: params.datetime,
-    rescale: [params.rescale],
-    colormap_name:
-      params.colormap.toLowerCase() as TilejsonTileMatrixSetIdTilejsonJsonGetParams["colormap_name"],
+  const res = await tilejsonTileMatrixSetIdTilejsonJsonGet({
+    path: { tileMatrixSetId: "WebMercatorQuad" },
+    query: {
+      url: params.url,
+      variable: params.variable,
+      datetime: params.datetime,
+      rescale: [params.rescale],
+      colormap_name:
+        params.colormap.toLowerCase() as TilejsonTileMatrixSetIdTilejsonJsonGetData["query"]["colormap_name"],
+    },
   });
   return assertOk<TileJson>(res, API_NAME);
 }
@@ -80,7 +84,10 @@ export async function getPoint<T = unknown>(
   lat: number,
   params: { url: string; variable: string }
 ): Promise<T> {
-  const res = await pointPointLonLatGet(lng, lat, params);
+  const res = await pointPointLonLatGet({
+    path: { lon: lng, lat },
+    query: { url: params.url, variable: params.variable },
+  });
   return assertOk<T>(res, API_NAME);
 }
 
@@ -92,29 +99,43 @@ export async function getPointGwlStats(params: PointDataParams): Promise<PointDa
   const { lng, lat, meanPath, minPath, maxPath, variable, gwlIndex } = params;
   const results: PointData = { min: null, max: null, value: null };
 
-  const pointParams = (path: string) => ({ url: path, variable });
+  const pointParams = (path: string) => ({
+    path: { lon: lng, lat } as const,
+    query: { url: path, variable },
+  });
 
   const extractValue = (data: PointResponse | undefined): number | null =>
     data?.data?.[gwlIndex] ?? null;
 
+  const failures: unknown[] = [];
+  const handleResponse = (
+    res: { data?: unknown; error?: unknown; response?: Response } | null,
+    assign: (value: number | null) => void
+  ) => {
+    if (!res) return;
+    if (res.error != null || !res.response?.ok) {
+      failures.push(res.error ?? new Error(`HTTP ${res.response?.status ?? "?"}`));
+      return;
+    }
+    assign(extractValue(res.data as PointResponse));
+  };
+
   try {
     const [meanResponse, minResponse, maxResponse] = await Promise.all([
-      pointPointLonLatGet(lng, lat, pointParams(meanPath)),
-      minPath ? pointPointLonLatGet(lng, lat, pointParams(minPath)) : null,
-      maxPath ? pointPointLonLatGet(lng, lat, pointParams(maxPath)) : null,
+      pointPointLonLatGet(pointParams(meanPath)),
+      minPath ? pointPointLonLatGet(pointParams(minPath)) : null,
+      maxPath ? pointPointLonLatGet(pointParams(maxPath)) : null,
     ]);
 
-    if (meanResponse.status >= 200 && meanResponse.status < 300) {
-      results.value = extractValue(meanResponse.data as PointResponse);
-    }
-    if (minResponse && minResponse.status >= 200 && minResponse.status < 300) {
-      results.min = extractValue(minResponse.data as PointResponse);
-    }
-    if (maxResponse && maxResponse.status >= 200 && maxResponse.status < 300) {
-      results.max = extractValue(maxResponse.data as PointResponse);
-    }
+    handleResponse(meanResponse, (v) => (results.value = v));
+    handleResponse(minResponse, (v) => (results.min = v));
+    handleResponse(maxResponse, (v) => (results.max = v));
   } catch (error) {
-    console.error("Error getting point data:", error);
+    failures.push(error);
+  }
+
+  if (failures.length > 0) {
+    console.error("Error getting point data:", ...failures);
   }
 
   return results;

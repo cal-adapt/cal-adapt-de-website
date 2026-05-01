@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
 
-import DataDownload from "@/components/data-download-tool/DataDownloadTool";
+import { PACKAGE_RAIL_DISPLAY_ORDER } from "@/components/data-download-tool/rail/packages";
 import { SITE_TITLE } from "@/config/constants";
-import { navLinks } from "@/data/navigation";
-import { calAdaptApi } from "@/lib/cal-adapt-api";
+import { navLinks } from "@/config/navigation";
+
+import DataDownloadToolPage from "./DataDownloadToolPage";
 
 export const metadata: Metadata = {
   title: `${navLinks.dataDownload.label} - ${SITE_TITLE}`,
 };
 
-export default async function DataDownloadPage() {
-  const data = await calAdaptApi.stac.getCollection("loca2-mon-county");
-
-  return <DataDownload data={data} />;
+export default function Page() {
+  return <DataDownloadToolPage packageId={PACKAGE_RAIL_DISPLAY_ORDER[0]} />;
 }

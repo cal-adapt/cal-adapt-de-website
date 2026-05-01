@@ -1,0 +1,29 @@
+@use "@/styles/abstracts" as *;
+
+.iconWrap {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.root {
+  @include flex(row, flex-start, center, spacer(2));
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+
+.rootDefault {
+  margin-top: spacer(4);
+}
+
+.rootField {
+  margin-top: spacer(3);
+}
+
+.text {
+  @include type-item(label);
+  color: color(red-3);
+}

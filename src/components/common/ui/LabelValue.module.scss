@@ -1,0 +1,31 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  @include flex(column, flex-start, stretch, spacer(4));
+  min-width: 0;
+  width: 100%;
+}
+
+.labelRow {
+  @include flex(row, flex-start, center, spacer(2));
+  min-width: 0;
+  color: color(grey-4);
+}
+
+.hintIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.label {
+  @include type-item(label);
+  margin: 0;
+  color: color(grey-4);
+}
+
+.value {
+  @include type-item(body);
+  margin: 0;
+  color: color(black);
+  overflow-wrap: break-word;
+}

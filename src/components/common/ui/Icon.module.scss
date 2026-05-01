@@ -1,7 +1,10 @@
 .icon {
   display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
 
   svg {
+    width: 1em;
     height: 1em;
   }
 }

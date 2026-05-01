@@ -1,0 +1,39 @@
+@use "@/styles/abstracts" as *;
+
+/**
+ * Filled octagon (Lucide `Octagon`) with a centered “!” so the mark stays above the fill
+ * (Lucide’s `OctagonAlert` draws the octagon last, which covers the exclamation paths).
+ */
+.root {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  vertical-align: middle;
+  color: color(red-3);
+}
+
+.oct {
+  display: block;
+}
+
+.mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+  font-size: calc(var(--oa-size, 14px) * 0.46);
+  font-weight: 800;
+  color: color(white);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}

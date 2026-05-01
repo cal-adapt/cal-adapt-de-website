@@ -31,13 +31,13 @@ import ErrorView from "@/components/common/layout/ErrorView";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
-import DashboardToolbar from "@/components/dashboard/DashboardToolbar";
+import Appbar from "@/components/dashboard/Appbar";
+import { mediaQueries } from "@/config/breakpoints";
 import { FEEDBACK_URL } from "@/config/constants";
+import { navLinks } from "@/config/navigation";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
-import { navLinks } from "@/data/navigation";
 import { analytics } from "@/lib/analytics";
-import { mediaQueries } from "@/utils/styles";
 import { extractSegment } from "@/utils/url";
 
 declare module "@mui/material/Alert" {
@@ -74,7 +74,7 @@ const ResponsiveSidebar = styled("div")(({ theme, open }: { theme: any; open: bo
   transition: "width 225ms cubic-bezier(0.4, 0, 0.6, 1)",
   position: "relative",
   paddingTop: "64px",
-  borderRight: "1px solid #e8e8e8",
+  borderRight: "1px solid var(--color-grey-2)",
   zIndex: open ? 3 : "auto",
   "& .MuiDrawer-paper": {
     width: open ? drawerWidth : theme.spacing(9),
@@ -104,11 +104,11 @@ export default function Layout({ children }: LayoutProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(mediaQueries.max.small);
 
-  const renderDashboardToolbar = (): React.ReactNode => {
+  const renderAppbar = (): React.ReactNode => {
     switch (selectedPage) {
       case navLinks.climateMetricsMap.id:
         return (
-          <DashboardToolbar
+          <Appbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
             toolName={navLinks.climateMetricsMap.label}
@@ -116,7 +116,7 @@ export default function Layout({ children }: LayoutProps) {
         );
       case navLinks.dataDownload.id:
         return (
-          <DashboardToolbar
+          <Appbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
             toolName={navLinks.dataDownload.label}
@@ -126,7 +126,7 @@ export default function Layout({ children }: LayoutProps) {
         );
       case navLinks.renewablesVisualizer.id:
         return (
-          <DashboardToolbar
+          <Appbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
             toolName={navLinks.renewablesVisualizer.label}
@@ -136,7 +136,7 @@ export default function Layout({ children }: LayoutProps) {
         );
       default:
         return (
-          <DashboardToolbar
+          <Appbar
             drawerWidth={drawerWidth}
             sidebarOpen={open}
             toolName="Getting Started"
@@ -170,7 +170,7 @@ export default function Layout({ children }: LayoutProps) {
 
             <List
               sx={{
-                "& .MuiListItemIcon-root": { color: "#000" },
+                "& .MuiListItemIcon-root": { color: "var(--color-black)" },
                 "&& .Mui-selected, && .Mui-selected:hover": {
                   bgcolor: "rgba(247, 249, 251, 0.9)",
                 },
@@ -193,7 +193,13 @@ export default function Layout({ children }: LayoutProps) {
               ))}
             </List>
 
-            <List sx={{ mt: "auto", "& .MuiListItemIcon-root": { color: "#000" }, color: "#000" }}>
+            <List
+              sx={{
+                mt: "auto",
+                "& .MuiListItemIcon-root": { color: "var(--color-black)" },
+                color: "var(--color-black)",
+              }}
+            >
               <ListItem disablePadding>
                 <ListItemButton
                   onClick={() => setFeedbackOpen(true)}
@@ -229,7 +235,7 @@ export default function Layout({ children }: LayoutProps) {
                     Please fill out{" "}
                     <Link
                       href={FEEDBACK_URL}
-                      style={{ color: "#1565c0" }}
+                      style={{ color: "var(--color-blue-4)" }}
                       onClick={() => analytics.trackExternalLink(FEEDBACK_URL, "feedback survey")}
                     >
                       this survey
@@ -258,13 +264,13 @@ export default function Layout({ children }: LayoutProps) {
               sx={{
                 width: `calc(100% - ${open ? drawerWidth : theme.spacing(9)}px)`,
                 ml: open ? `${drawerWidth}px` : theme.spacing(9),
-                backgroundColor: "#ffffff",
+                backgroundColor: "var(--color-white)",
                 boxShadow: "none",
-                borderBottom: "1px solid #e8e8e8",
+                borderBottom: "1px solid var(--color-grey-2)",
                 zIndex: 1100,
               }}
             >
-              {renderDashboardToolbar()}
+              {renderAppbar()}
             </AppBar>
             {children}
           </Box>

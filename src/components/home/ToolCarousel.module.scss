@@ -32,7 +32,7 @@
   .listItem {
     @include transition(color);
     @include focus-ring;
-    color: #666;
+    color: color(grey-4);
     cursor: pointer;
     background: none;
     border: none;
@@ -44,11 +44,11 @@
 
     &.active {
       font-weight: font-weight(bold);
-      color: #000;
+      color: color(black);
     }
 
     &:hover {
-      color: #000;
+      color: color(black);
     }
   }
 }
@@ -60,13 +60,13 @@
   .scrollArrow {
     background: none;
     padding: spacer(1);
-    color: $secondary;
+    color: color(grey-4);
   }
 
   .scrollbarTrack {
     flex: 1;
     width: 4px;
-    background: $secondary-grey-dark;
+    background: color(grey-3);
     position: relative;
     border-radius: rounded(1);
     margin: spacer(1) 0;
@@ -74,7 +74,7 @@
     .scrollbarThumb {
       position: absolute;
       width: 100%;
-      background: $secondary;
+      background: color(grey-4);
       border-radius: rounded(1);
       transition: top 0.2s ease;
     }
@@ -85,7 +85,7 @@
   flex: 1;
   max-width: 465px;
   height: 362px;
-  background: #fff;
+  background: color(white);
   border-radius: rounded(2);
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);

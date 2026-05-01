@@ -8,12 +8,13 @@ import AOS from "aos";
 import clsx from "clsx";
 import useEmblaCarousel from "embla-carousel-react";
 
+import Container from "@/components/common/layout/Container";
 import Footer from "@/components/common/layout/Footer";
 import Alert from "@/components/common/ui/Alert";
 import Card from "@/components/common/ui/Card";
+import { mediaQueries } from "@/config/breakpoints";
 import { analyticsCarouselData } from "@/data/home/analytics-carousel-data";
 import { genCarouselData } from "@/data/home/gen-carousel-data";
-import { mediaQueries } from "@/utils/styles";
 
 import HeroSecondary from "./HeroSecondary";
 import ImageText from "./ImageText";
@@ -51,8 +52,8 @@ export default function HomeClient() {
     loop: true, // or true if you want infinite
   });
   return (
-    <div className={styles.container}>
-      <section>
+    <div className={styles.homeClient}>
+      <Container spacing="section">
         <div>
           <p
             style={{
@@ -132,16 +133,9 @@ export default function HomeClient() {
             )}
           </div>
         </div>
-      </section>
-      <section
-        id="tools"
-        className="blue"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
+      </Container>
+
+      <Container id="tools" className="blue" spacing="section" width="content">
         <div className="content" style={carouselsStyle}>
           <h3 className="h2" style={{ marginBottom: "60px" }}>
             Cal-Adapt&#39;s Tool Array
@@ -149,7 +143,7 @@ export default function HomeClient() {
           <h4 style={{ marginBottom: "20px" }}>Climate Insights for Everyone</h4>
           <Alert
             className={clsx({ "hidden no-height": !isMobile })}
-            variant="infoYellow"
+            severity="warning"
             style={{ marginBottom: 26 }}
           >
             Cal-Adapt&#39;s Tools are available on desktop devices only
@@ -162,13 +156,15 @@ export default function HomeClient() {
             <ToolCarousel data={analyticsCarouselData} />
           </div>
         </div>
-      </section>
-      <section>
+      </Container>
+
+      <Container width="fullbleed" spacing="none">
         <HeroSecondary />
-      </section>
-      <section>
+      </Container>
+
+      <Container>
         <ImageText />
-      </section>
+      </Container>
       <Footer />
     </div>
   );

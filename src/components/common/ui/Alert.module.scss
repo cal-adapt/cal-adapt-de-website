@@ -1,7 +1,61 @@
 @use "@/styles/abstracts" as *;
 
 .alert {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: spacer(3);
+  row-gap: spacer(3);
+  align-items: start;
+  box-sizing: border-box;
+  width: 100%;
+  padding: spacer(3) spacer(3);
+  border-radius: rounded(1);
+  border: 1px solid transparent;
+
+  .icon {
+    grid-column: 1;
+    grid-row: 1;
+    display: inline-flex;
+    line-height: 0;
+    margin-top: 0.25rem;
+    color: inherit;
+  }
+
   .children {
-    @include flex(column, flex-start, flex-start, spacer(4));
+    @include type-item(body);
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+  }
+
+  .action {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start;
+    line-height: normal;
+  }
+
+  &.info {
+    background-color: color(grey-1);
+    color: color(grey-5);
+    border-color: color(grey-2);
+  }
+
+  &.warning {
+    background-color: color(yellow-1);
+    color: color(yellow-3);
+    border-color: color(yellow-2);
+  }
+
+  &.error {
+    background-color: color(red-1);
+    color: color(red-3);
+    border-color: color(red-2);
+  }
+
+  &.success {
+    background-color: color(green-1);
+    color: color(green-3);
+    border-color: color(green-2);
   }
 }

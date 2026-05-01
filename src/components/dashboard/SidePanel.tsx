@@ -17,7 +17,7 @@ export default function SidePanel(props: SidePanelProps) {
     <Drawer
       PaperProps={{
         sx: {
-          backgroundColor: "#F7F9FB",
+          backgroundColor: "var(--color-grey-1)",
         },
         className: styles.sidepanel,
       }}

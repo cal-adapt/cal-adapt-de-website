@@ -1,4 +1,5 @@
 @use "sass:color";
+@use "sass:map";
 
 @use "@/styles/abstracts" as *;
 
@@ -8,51 +9,78 @@
   @include flex(row, center, center, spacer(2));
   @include type-item(button);
   display: inline-flex;
-  padding: spacer(3) spacer(5);
-  border: none;
-  border-radius: rounded(2);
+  border: 1px solid transparent;
+  border-radius: rounded(1);
   cursor: pointer;
+  text-decoration: none;
 
   &:hover {
     text-decoration: none;
   }
 
-  &:disabled {
+  &:disabled,
+  &.isDisabledLink {
     opacity: 0.6;
     cursor: not-allowed;
   }
 }
 
-.primary {
-  background-color: $secondary;
-  color: #fff;
+.iconSlot {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  line-height: 0;
+}
 
-  &:hover {
-    background-color: color.scale($secondary, $lightness: 10%);
+.large {
+  padding: spacer(3) spacer(4);
+  font-size: 1.6rem;
+  font-weight: font-weight(medium);
+}
+
+.small {
+  padding: spacer(2) spacer(3);
+  font-size: 1.4rem;
+  font-weight: font-weight(medium);
+}
+
+.primary {
+  background-color: color(black);
+  color: color(white);
+
+  &:hover:not(:disabled) {
+    background-color: color.scale($black, $lightness: 15%);
   }
 }
 
 .secondary {
-  background-color: $primary;
-  color: $secondary;
+  background-color: color(white);
+  color: color(black);
+  border-color: color(grey-2);
 
-  &:hover {
-    background-color: color.scale($primary, $lightness: -10%);
+  &:hover:not(:disabled) {
+    background-color: color(grey-2);
+    border-color: color(grey-2);
   }
 }
 
-.floating {
-  background-color: $primary-blue;
-  color: #fff;
-  padding: spacer(6);
-  height: 1em;
-  width: 1em;
-  border-radius: rounded(circle);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  font-weight: font-weight(bold);
+.tertiary {
+  background-color: color(white);
+  color: color(black);
+  border-color: transparent;
 
-  &:hover {
-    background-color: color.scale($primary-blue, $lightness: -20%);
+  &:hover:not(:disabled) {
+    background-color: color(grey-1);
+  }
+}
+
+.accent {
+  background-color: color(blue-1);
+  color: color(black);
+  border-color: transparent;
+
+  &:hover:not(:disabled) {
+    background-color: color(blue-2);
   }
 }
 
@@ -62,8 +90,8 @@
   top: 0;
   left: 50%;
   transform: translate(-50%, -100%);
-  background-color: $primary;
-  color: black;
+  background-color: color(blue-1);
+  color: color(black);
   z-index: z(max);
 
   &:focus {
@@ -71,6 +99,21 @@
   }
 
   &:hover:not(:disabled) {
-    background-color: color.scale($primary, $lightness: 10%);
+    background-color: color.scale(map.get($blues, 1), $lightness: 10%);
+  }
+}
+
+.floating {
+  background-color: color(blue-3);
+  color: color(white);
+  padding: spacer(6);
+  height: 1em;
+  width: 1em;
+  border-radius: rounded(circle);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-weight: font-weight(bold);
+
+  &:hover:not(:disabled) {
+    background-color: color.scale(map.get($blues, 4), $lightness: -20%);
   }
 }

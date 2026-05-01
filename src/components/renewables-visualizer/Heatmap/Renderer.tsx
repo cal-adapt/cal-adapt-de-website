@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 
 import * as d3 from "d3";
 
-import { lookupValue, monthsLookupTable } from "@/data/lookup-tables";
+import { ALL_MONTHS } from "@/data/months";
 
 import { InteractionData } from "./Heatmap";
 
@@ -91,7 +91,7 @@ export default function Renderer({
         textAnchor="end"
         dominantBaseline="middle"
       >
-        {lookupValue(month, monthsLookupTable)}
+        {MONTH_NAMES[month]}
       </text>
     );
   });
@@ -112,7 +112,7 @@ export default function Renderer({
         onMouseEnter={() => {
           setHoveredCell({
             xLabel: `${d.x}`,
-            yLabel: lookupValue(String(d.y), monthsLookupTable) ?? "Unknown",
+            yLabel: ALL_MONTHS[String(d.y)] ?? "Unknown",
             xPos: x + xScale.bandwidth() / 2 + MARGIN.left,
             yPos: y + yScale.bandwidth() / 2 + MARGIN.top,
             value: Math.round(d.value * 100) / 100,

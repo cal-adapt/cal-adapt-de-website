@@ -1,0 +1,41 @@
+@use "@/styles/abstracts" as *;
+
+.table {
+  @include flex(column, flex-start, stretch, spacer(1));
+  width: 100%;
+  border-radius: rounded(1);
+  overflow: hidden;
+  background-color: color(white);
+  border: 1px solid color(grey-2);
+}
+
+.tableHead {
+  @include flex(row, space-between, center, spacer(7));
+  padding: spacer(5);
+  border-bottom: 1px solid color(grey-2);
+  background-color: color(white);
+}
+
+.tableHeadMetric,
+.tableHeadKind {
+  @include type-item(label);
+  color: color(black);
+}
+
+.tableRow {
+  @include flex(row, space-between, center, spacer(7));
+  padding: spacer(5);
+  border-bottom: 1px solid color(grey-2);
+  background-color: color(white);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.varName {
+  @include type-item(body);
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-inline-end: spacer(5);
+}

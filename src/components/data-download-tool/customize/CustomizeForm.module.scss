@@ -1,0 +1,36 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  @include flex(column, flex-start, stretch, 0);
+  width: 100%;
+  min-width: 0;
+}
+
+.section {
+  @include flex(column, flex-start, stretch, spacer(3));
+  padding: 0;
+}
+
+.sectionTitle {
+  @include type-item(heading-6);
+  margin: 0 0 spacer(5);
+  width: 100%;
+}
+
+.editableGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: spacer(6) spacer(7);
+  width: 100%;
+  align-items: start;
+}
+
+.editableCell {
+  min-width: 0;
+}
+
+@include breakpoint(medium) {
+  .editableGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

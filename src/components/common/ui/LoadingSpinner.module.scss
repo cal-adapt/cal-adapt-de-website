@@ -14,7 +14,7 @@ $dot-size: 6px;
     position: absolute;
     width: $dot-size;
     height: $dot-size;
-    background: #e5ecf6;
+    background: color(blue-1);
     border-radius: 50%;
     animation: loadingSpinner 1.2s linear infinite;
 

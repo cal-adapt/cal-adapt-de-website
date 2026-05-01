@@ -1,0 +1,32 @@
+@use "@/styles/abstracts" as *;
+
+.pageTop {
+  @include flex(column, flex-start, stretch, spacer(7));
+  width: 100%;
+  color: color(black);
+}
+
+.introTexts {
+  @include flex(column, flex-start, stretch, spacer(7));
+  width: 100%;
+}
+
+.toolIntro {
+  @include type-item(body);
+  margin: 0;
+}
+
+.downloadZipFallback {
+  margin-top: spacer(3);
+}
+
+.downloadEstimatedBundle {
+  @include type-item(label);
+  margin: 0;
+  color: color(grey-4);
+}
+
+.titleActions {
+  @include flex(row, flex-start, center, spacer(4));
+  flex-wrap: wrap;
+}
