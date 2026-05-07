@@ -4,6 +4,8 @@ export { default as Label, type LabelProps } from "./Label";
 export {
   default as MultiSelect,
   type MultiSelectOption,
+  type MultiSelectOptionGroup,
+  type MultiSelectOptions,
   type MultiSelectProps,
 } from "./MultiSelect";
 export { default as Select, type SelectOption, type SelectProps } from "./Select";

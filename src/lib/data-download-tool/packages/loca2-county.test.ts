@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { StacItem } from "@/lib/cal-adapt-api";
+import type { StacCollection, StacCollectionQueryables, StacItem } from "@/lib/cal-adapt-api";
 
 import type { CustomizeFormConfig, CustomizeSelections, DataDownloadWorkspaceData } from "../types";
 
@@ -120,6 +120,71 @@ describe("loca2CountyPackage", () => {
       { label: "Scenarios", value: "SSP3-7.0" },
       { label: "Frequency", value: "Monthly" },
       { label: "Counties", value: "Alameda County" },
+    ]);
+  });
+
+  it("partitions models into 'General use' and 'Not general use' groups in the Models field", () => {
+    const collection = {
+      id: "loca2-county",
+      summaries: {
+        "cmip6:source_id": [
+          "ACCESS-CM2",
+          "MIROC6",
+          "CNRM-ESM2-1",
+          "EC-Earth3",
+          "FGOALS-g3",
+          "TaiESM1",
+          "MPI-ESM1-2-HR",
+        ],
+      },
+    } as unknown as StacCollection;
+    const queryables = { properties: {} } as StacCollectionQueryables;
+    const config = loca2CountyPackage.buildCustomizeForm(collection, queryables);
+
+    const modelsField = loca2CountyPackage.fields.find((f) => f.label === "Models");
+    if (modelsField?.kind !== "multi") {
+      throw new Error("Models field must be a multi-select");
+    }
+    const options = modelsField.options(config);
+    expect(options).toEqual([
+      {
+        label: "General use",
+        options: [
+          { value: "ACCESS-CM2", label: "ACCESS-CM2" },
+          { value: "CNRM-ESM2-1", label: "CNRM-ESM2-1" },
+          { value: "EC-Earth3", label: "EC-Earth3" },
+          { value: "FGOALS-g3", label: "FGOALS-g3" },
+          { value: "MPI-ESM1-2-HR", label: "MPI-ESM1-2-HR" },
+        ],
+      },
+      {
+        label: "Not general use",
+        options: [
+          { value: "MIROC6", label: "MIROC6" },
+          { value: "TaiESM1", label: "TaiESM1" },
+        ],
+      },
+    ]);
+  });
+
+  it("falls back to the flat model list when every model is general-use (no second group)", () => {
+    const collection = {
+      id: "loca2-county",
+      summaries: {
+        "cmip6:source_id": ["ACCESS-CM2", "EC-Earth3"],
+      },
+    } as unknown as StacCollection;
+    const config = loca2CountyPackage.buildCustomizeForm(collection, {
+      properties: {},
+    } as StacCollectionQueryables);
+
+    const modelsField = loca2CountyPackage.fields.find((f) => f.label === "Models");
+    if (modelsField?.kind !== "multi") {
+      throw new Error("Models field must be a multi-select");
+    }
+    expect(modelsField.options(config)).toEqual([
+      { value: "ACCESS-CM2", label: "ACCESS-CM2" },
+      { value: "EC-Earth3", label: "EC-Earth3" },
     ]);
   });
 

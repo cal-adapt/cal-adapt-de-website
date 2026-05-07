@@ -2,13 +2,13 @@
 
 import type { ReactNode } from "react";
 
-import { Badge, FormField, MultiSelect, type MultiSelectOption } from "@/components/common/form";
+import { Badge, FormField, MultiSelect, type MultiSelectOptions } from "@/components/common/form";
 
 const REQUIRED_FIELD_MESSAGE = "This field is required.";
 
 export interface MultiSelectFieldProps {
   label: string;
-  options: MultiSelectOption[];
+  options: MultiSelectOptions;
   value: string[];
   onChange: (next: string[]) => void;
   placeholder: string;

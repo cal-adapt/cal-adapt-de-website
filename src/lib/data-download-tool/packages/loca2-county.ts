@@ -1,4 +1,9 @@
-import type { MultiSelectOption, SelectOption } from "@/components/common/form";
+import type {
+  MultiSelectOption,
+  MultiSelectOptionGroup,
+  MultiSelectOptions,
+  SelectOption,
+} from "@/components/common/form";
 import type {
   ItemSearchFilters,
   StacCollection,
@@ -58,6 +63,37 @@ const CMIP6_TABLE_ID_BY_FREQUENCY: Readonly<Record<string, string>> = {
   monthly: "mon",
   daily: "day",
 };
+
+const LOCA2_COUNTY_GENERAL_USE_MODELS: ReadonlySet<string> = new Set([
+  "ACCESS-CM2",
+  "CNRM-ESM2-1",
+  "EC-Earth3",
+  "FGOALS-g3",
+  "MPI-ESM1-2-HR",
+]);
+
+function buildGroupedModelOptions(modelOptions: MultiSelectOption[]): MultiSelectOptions {
+  const generalUse: MultiSelectOption[] = [];
+  const notGeneralUse: MultiSelectOption[] = [];
+
+  for (const opt of modelOptions) {
+    if (LOCA2_COUNTY_GENERAL_USE_MODELS.has(opt.value)) {
+      generalUse.push(opt);
+    } else {
+      notGeneralUse.push(opt);
+    }
+  }
+  if (generalUse.length === 0 || notGeneralUse.length === 0) {
+    return modelOptions;
+  }
+
+  const groups: MultiSelectOptionGroup[] = [
+    { label: "General use", options: generalUse },
+    { label: "Not general use", options: notGeneralUse },
+  ];
+
+  return groups;
+}
 
 function buildCustomizeForm(
   collection: StacCollection,
@@ -295,7 +331,7 @@ const fields: readonly CustomizeFieldConfig[] = [
     kind: "multi",
     label: "Models",
     placeholder: "Choose models…",
-    options: (config) => config.modelOptions,
+    options: (config) => buildGroupedModelOptions(config.modelOptions),
     value: (selections) => selections.models,
     patch: (next) => ({ models: next }),
   },
