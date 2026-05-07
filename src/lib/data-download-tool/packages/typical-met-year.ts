@@ -9,7 +9,7 @@ import { createOrStatement } from "@/utils/query";
 import { toSentenceCase } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
-import { labelGwl } from "../labels/gwls";
+import { labelGwl, sortGwlIds } from "../labels/gwls";
 import { labelCmip6Model } from "../labels/models";
 import type { CustomizeFormConfig, CustomizeSelections, DownloadBundle } from "../types";
 
@@ -38,7 +38,7 @@ function buildCustomizeForm(
 
   const stationIds = enumStringsFromStacQueryables(queryables, "location");
   const modelIds = enumStringsFromStacQueryables(queryables, "model");
-  const gwlIds = enumStringsFromStacQueryables(queryables, "time_period");
+  const gwlIds = sortGwlIds(enumStringsFromStacQueryables(queryables, "time_period"));
 
   const countyOptions: MultiSelectOption[] = stationIds.map((id) => ({
     value: id,

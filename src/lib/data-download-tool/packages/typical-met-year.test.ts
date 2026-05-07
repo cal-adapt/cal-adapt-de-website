@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { StacCollection, StacItem } from "@/lib/cal-adapt-api";
+import type { StacCollection, StacCollectionQueryables, StacItem } from "@/lib/cal-adapt-api";
 
 import type { CustomizeFormConfig, CustomizeSelections, DataDownloadWorkspaceData } from "../types";
 
@@ -117,6 +117,41 @@ describe("typicalMetYearPackage", () => {
       { label: "GWLs", value: "Present day" },
       { label: "Models", value: "ACCESS-CM2" },
       { label: "Location", value: "San Francisco Intl" },
+    ]);
+  });
+
+  it("orders GWL options chronologically regardless of queryables order", () => {
+    const collection = {
+      type: "Collection",
+      id: "typical-met-year",
+      description: "",
+      license: "",
+    } as StacCollection;
+    const queryables = {
+      properties: {
+        location: { enum: ["san_francisco_intl"] },
+        model: { enum: ["ACCESS-CM2"] },
+        // Intentionally shuffled and including an unknown id to verify sorting.
+        time_period: {
+          enum: ["mid-late-century", "future-extreme", "present-day", "mid-century", "near-future"],
+        },
+      },
+    } as unknown as StacCollectionQueryables;
+
+    const config = typicalMetYearPackage.buildCustomizeForm(collection, queryables);
+    expect(config.timePeriodOptions?.map((o) => o.value)).toEqual([
+      "present-day",
+      "near-future",
+      "mid-century",
+      "mid-late-century",
+      "future-extreme",
+    ]);
+    expect(config.initial.timePeriods).toEqual([
+      "present-day",
+      "near-future",
+      "mid-century",
+      "mid-late-century",
+      "future-extreme",
     ]);
   });
 
