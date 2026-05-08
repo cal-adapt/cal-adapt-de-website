@@ -60,7 +60,7 @@ describe("stac-api", () => {
 
       const params = new URL(capturedUrl).searchParams;
       expect(params.get("filter")).toBeNull();
-      expect(params.get("filter-lang")).toBeNull();
+      expect(params.get("filter_lang")).toBeNull();
       expect(params.get("limit")).toBe("3480");
     });
 
@@ -83,7 +83,7 @@ describe("stac-api", () => {
       expect(url.searchParams.get("filter")).toBe(
         "collection = 'loca2-county' AND scenario = 'ssp585'"
       );
-      expect(url.searchParams.get("filter-lang")).toBe("cql2-text");
+      expect(url.searchParams.get("filter_lang")).toBe("cql2-text");
     });
 
     it("throws on non-2xx response", async () => {

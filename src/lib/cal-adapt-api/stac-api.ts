@@ -111,7 +111,7 @@ export async function getCollectionQueryables(
   collectionId: string
 ): Promise<StacCollectionQueryables> {
   const res = await collectionQueryablesCollectionsCollectionIdQueryablesGet({
-    path: { collectionId },
+    path: { collection_id: collectionId },
     headers: { Accept: "application/json, application/schema+json" },
   });
   return assertOk<StacCollectionQueryables>(res, API_NAME);
@@ -122,7 +122,7 @@ export async function getCollectionQueryables(
  */
 export async function getCollection(collectionId: string): Promise<StacCollection> {
   const res = await getCollectionCollectionsCollectionIdGet({
-    path: { collectionId },
+    path: { collection_id: collectionId },
     headers: { Accept: "application/json, application/schema+json" },
   });
   return assertOk<StacCollection>(res, API_NAME);
@@ -149,7 +149,7 @@ export async function searchItems(filters: ItemSearchFilters): Promise<StacItemC
   const res = await searchSearchGet({
     query: {
       limit: COUNTY_SEARCH_LIMIT,
-      ...(filterStr ? { filter: filterStr, "filter-lang": "cql2-text" } : {}),
+      ...(filterStr ? { filter: filterStr, filter_lang: "cql2-text" } : {}),
     },
     headers: { Accept: "application/geo+json" },
   });
