@@ -280,7 +280,6 @@ export const standardYearPackage: PackageAdapter = {
   id: "standard-year",
   kind: "standard-year",
   stacCollectionId: STAC_COLLECTION_ID,
-  useStacV2: true,
   needsQueryables: true,
   rail: {
     title: "Standard year",

@@ -57,7 +57,6 @@ export function useStacDownloadSearch(
 
   useEffect(() => {
     if (!shouldFetch) {
-       
       setFetchResult(null);
       return;
     }
@@ -77,9 +76,7 @@ export function useStacDownloadSearch(
         const filters = getPackageAdapterByStacCollectionId(
           workspace.collectionId
         ).buildSearchFilters(selections);
-        const data = await calAdaptApi.stac.searchItems(filters, {
-          collectionId: workspace.collectionId,
-        });
+        const data = await calAdaptApi.stac.searchItems(filters);
         if (cancelled) {
           return;
         }

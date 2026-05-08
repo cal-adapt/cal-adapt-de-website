@@ -339,7 +339,6 @@ export const loca2CountyPackage: PackageAdapter = {
   id: "loca2-county",
   kind: "loca2-county",
   stacCollectionId: LOCA2_COUNTY_STAC_COLLECTION_ID,
-  useStacV2: true,
   needsQueryables: true,
   rail: {
     title: "LOCA2 county",

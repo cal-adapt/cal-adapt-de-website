@@ -1,24 +1,17 @@
 /**
  * Cal-Adapt STAC (SpatioTemporal Asset Catalog) API Client
  *
- * Centralizes STAC API calls using `@hey-api/openapi-ts`-generated clients.
+ * Centralizes STAC API calls using the `@hey-api/openapi-ts`-generated client.
  *
  * NOTE: The STAC OpenAPI spec does not define response body schemas for
  * `/collections/{id}` or `/search`, so types are often `unknown`.
- *
- * Collections in {@link STAC_API_V2_HOST_COLLECTION_IDS} use `generated/stacV2` with
- * {@link STAC_API_V2_BASE_URL} (all Data Download collections). Other collection IDs use v1.
  */
 
-import { STAC_API_V2_BASE_URL } from "@/config/constants";
-import { STAC_API_V2_HOST_COLLECTION_IDS } from "@/lib/data-download-tool/packages/registry";
-
-import { getCollectionCollectionsCollectionIdGet, searchSearchGet } from "./generated/stac";
 import {
-  collectionQueryablesCollectionsCollectionIdQueryablesGet as getStacV2CollectionQueryables,
-  getCollectionCollectionsCollectionIdGet as getStacV2Collection,
-  searchSearchGet as searchStacV2Items,
-} from "./generated/stacV2";
+  collectionQueryablesCollectionsCollectionIdQueryablesGet,
+  getCollectionCollectionsCollectionIdGet,
+  searchSearchGet,
+} from "./generated/stac";
 import { assertOk } from "./utils";
 
 type StacVersion = string;
@@ -43,7 +36,7 @@ export type StacAsset = {
 /**
  * STAC item shape from `/search`; generic across collections.
  * Adapters narrow `properties` and `assets` access at use-sites
- * (the v2 STAC OpenAPI spec doesn't define response body schemas,
+ * (the STAC OpenAPI spec doesn't define response body schemas,
  * so per-collection types still need runtime guarding).
  */
 export type StacItem = {
@@ -77,7 +70,7 @@ export type StacCollection = {
   stac_extensions?: string[];
   license: string;
   "sci:doi"?: string;
-  /** V2 climate-profile collections may omit summaries; use queryables instead. */
+  /** PgSTAC climate-profile collections may omit summaries; use queryables instead. */
   summaries?: Record<string, string[]>;
   /** Cal-Adapt extension: e.g. `county` (LOCA2 county grid) or `point`
    * (climate profiles — fixed site, e.g. weather station).
@@ -97,7 +90,7 @@ export type ItemSearchFilters = {
   variableFilter?: string;
   percentileFilter?: string;
   timePeriodFilter?: string;
-  /** LOCA2 county v2 — e.g. `cmip6:table_id = 'mon'` to avoid day + mon duplicate items */
+  /** LOCA2 county — e.g. `cmip6:table_id = 'mon'` to avoid day + mon duplicate items */
   cmip6TableIdFilter?: string;
 };
 
@@ -110,25 +103,15 @@ const API_NAME = "Cal-Adapt STAC API";
 
 const COUNTY_SEARCH_LIMIT = 3480;
 
-export function isStacV2CollectionId(collectionId: string): boolean {
-  return STAC_API_V2_HOST_COLLECTION_IDS.has(collectionId);
-}
-
 /**
  * STAC Filter Extension queryables (`/collections/{id}/queryables`).
- * v2 hosts use this for item property enums when `Collection.summaries` is empty (common on PgSTAC).
+ * Used for item property enums when `Collection.summaries` is empty (common on PgSTAC).
  */
 export async function getCollectionQueryables(
   collectionId: string
 ): Promise<StacCollectionQueryables> {
-  if (!isStacV2CollectionId(collectionId)) {
-    throw new Error(
-      `[stac-api] getCollectionQueryables is only supported for STAC API v2 collections (got "${collectionId}").`
-    );
-  }
-  const res = await getStacV2CollectionQueryables({
+  const res = await collectionQueryablesCollectionsCollectionIdQueryablesGet({
     path: { collectionId },
-    baseUrl: STAC_API_V2_BASE_URL,
     headers: { Accept: "application/json, application/schema+json" },
   });
   return assertOk<StacCollectionQueryables>(res, API_NAME);
@@ -138,27 +121,17 @@ export async function getCollectionQueryables(
  * Get a STAC collection by ID
  */
 export async function getCollection(collectionId: string): Promise<StacCollection> {
-  if (isStacV2CollectionId(collectionId)) {
-    const res = await getStacV2Collection({
-      path: { collectionId },
-      baseUrl: STAC_API_V2_BASE_URL,
-      headers: { Accept: "application/json, application/schema+json" },
-    });
-    return assertOk<StacCollection>(res, API_NAME);
-  }
   const res = await getCollectionCollectionsCollectionIdGet({
-    path: { collection_id: collectionId },
+    path: { collectionId },
+    headers: { Accept: "application/json, application/schema+json" },
   });
   return assertOk<StacCollection>(res, API_NAME);
 }
 
 /**
- * Search for items using CQL2 filters (v1 STAC host or v2 when `collectionId` is a v2 id).
+ * Search for items using CQL2 filters.
  */
-export async function searchItems(
-  filters: ItemSearchFilters,
-  options?: { collectionId?: string }
-): Promise<StacItemCollection> {
+export async function searchItems(filters: ItemSearchFilters): Promise<StacItemCollection> {
   const filterParts: string[] = [];
 
   if (filters.collectionFilter) filterParts.push(filters.collectionFilter);
@@ -173,27 +146,12 @@ export async function searchItems(
 
   const filterStr = filterParts.join(" AND ");
 
-  const useV2 = options?.collectionId != null && isStacV2CollectionId(options.collectionId);
-
-  if (useV2) {
-    const res = await searchStacV2Items({
-      baseUrl: STAC_API_V2_BASE_URL,
-      query: {
-        limit: COUNTY_SEARCH_LIMIT,
-        ...(filterStr ? { filter: filterStr, "filter-lang": "cql2-text" } : {}),
-      },
-      headers: { Accept: "application/geo+json" },
-    });
-    return assertOk<StacItemCollection>(res, API_NAME);
-  }
-
   const res = await searchSearchGet({
     query: {
       limit: COUNTY_SEARCH_LIMIT,
-      filter: filterStr || undefined,
-      filter_lang: "cql2-text",
+      ...(filterStr ? { filter: filterStr, "filter-lang": "cql2-text" } : {}),
     },
+    headers: { Accept: "application/geo+json" },
   });
-
   return assertOk<StacItemCollection>(res, API_NAME);
 }

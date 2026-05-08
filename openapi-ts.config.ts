@@ -11,9 +11,4 @@ export default defineConfig([
     output: "src/lib/cal-adapt-api/generated/stac",
     plugins: ["@hey-api/typescript", "@hey-api/sdk", "@hey-api/client-fetch"],
   },
-  {
-    input: "https://8dawjspn5g.execute-api.us-west-2.amazonaws.com/openapi.json",
-    output: "src/lib/cal-adapt-api/generated/stacV2",
-    plugins: ["@hey-api/typescript", "@hey-api/sdk", "@hey-api/client-fetch"],
-  },
 ]);

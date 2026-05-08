@@ -222,7 +222,6 @@ export const typicalMetYearPackage: PackageAdapter = {
   id: "typical-met-year",
   kind: "typical-met-year",
   stacCollectionId: STAC_COLLECTION_ID,
-  useStacV2: true,
   needsQueryables: true,
   rail: {
     title: "Typical meteorological year",
