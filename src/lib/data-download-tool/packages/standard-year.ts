@@ -9,7 +9,7 @@ import { createOrStatement } from "@/utils/query";
 import { toSentenceCase } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
-import { labelGwl } from "../labels/gwls";
+import { labelGwl, sortGwlIds } from "../labels/gwls";
 import { labelPercentile } from "../labels/percentiles";
 import { labelVariable } from "../labels/variables";
 import type { CustomizeFormConfig, CustomizeSelections, DownloadBundle } from "../types";
@@ -50,7 +50,7 @@ function buildCustomizeForm(
   const variableIds = enumStringsFromStacQueryables(queryables, "variable");
   const percentileIds = enumStringsFromStacQueryables(queryables, "percentile");
   const modelIds = enumStringsFromStacQueryables(queryables, "model");
-  const gwlIds = enumStringsFromStacQueryables(queryables, "time_period");
+  const gwlIds = sortGwlIds(enumStringsFromStacQueryables(queryables, "time_period"));
   const variableLabelById = labelsByVariableId(queryables);
 
   const countyOptions: MultiSelectOption[] = stationIds.map((id) => ({
