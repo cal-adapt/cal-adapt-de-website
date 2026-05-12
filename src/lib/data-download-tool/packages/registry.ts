@@ -56,8 +56,3 @@ export function getPackageAdapterByStacCollectionId(collectionId: string): Packa
   }
   return adapter;
 }
-
-/** Read-only view of which STAC collection ids are backed by v2 PgSTAC (used by the HTTP client). */
-export const STAC_API_V2_HOST_COLLECTION_IDS: ReadonlySet<string> = new Set(
-  PACKAGE_ADAPTERS.filter((a) => a.useStacV2).map((a) => a.stacCollectionId)
-);

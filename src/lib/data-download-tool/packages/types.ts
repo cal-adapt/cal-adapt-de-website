@@ -81,9 +81,7 @@ export interface PackageAdapter {
   kind: CustomizeFormKind;
   /** STAC collection id backing this package. */
   stacCollectionId: string;
-  /** Collection lives on the STAC API v2 host. */
-  useStacV2: boolean;
-  /** Customize form builder needs `/queryables` enums (typical on v2 PgSTAC). */
+  /** Customize form builder needs `/queryables` enums (typical on PgSTAC). */
   needsQueryables: boolean;
 
   rail: PackageRailInfo;

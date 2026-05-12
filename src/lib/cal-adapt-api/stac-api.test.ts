@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 
-import { STAC_API_BASE_URL, STAC_API_V2_BASE_URL } from "@/config/constants";
+import { STAC_API_BASE_URL } from "@/config/constants";
 import { server } from "@/testing/mocks/server";
 
 import { getCollection, searchItems } from "./stac-api";
@@ -22,7 +22,7 @@ describe("stac-api", () => {
       };
 
       server.use(
-        http.get(`${STAC_API_V2_BASE_URL}/collections/:collectionId`, ({ params }) =>
+        http.get(`${STAC_API_BASE_URL}/collections/:collectionId`, ({ params }) =>
           HttpResponse.json({ ...mockCollection, id: params.collectionId as string })
         )
       );
@@ -60,7 +60,7 @@ describe("stac-api", () => {
 
       const params = new URL(capturedUrl).searchParams;
       expect(params.get("filter")).toBeNull();
-      expect(params.get("filter_lang")).toBe("cql2-text");
+      expect(params.get("filter_lang")).toBeNull();
       expect(params.get("limit")).toBe("3480");
     });
 
@@ -79,8 +79,11 @@ describe("stac-api", () => {
         scenarioFilter: "scenario = 'ssp585'",
       });
 
-      const filter = new URL(capturedUrl).searchParams.get("filter");
-      expect(filter).toBe("collection = 'loca2-county' AND scenario = 'ssp585'");
+      const url = new URL(capturedUrl);
+      expect(url.searchParams.get("filter")).toBe(
+        "collection = 'loca2-county' AND scenario = 'ssp585'"
+      );
+      expect(url.searchParams.get("filter_lang")).toBe("cql2-text");
     });
 
     it("throws on non-2xx response", async () => {
@@ -89,56 +92,6 @@ describe("stac-api", () => {
       );
 
       await expect(searchItems({})).rejects.toThrow("Cal-Adapt STAC API Error: 500");
-    });
-
-    it("uses the v2 STAC host when collectionId is standard-year", async () => {
-      let hitV2 = false;
-      server.use(
-        http.get(`${STAC_API_V2_BASE_URL}/search`, ({ request }) => {
-          hitV2 = true;
-          expect(request.url).toContain("filter=");
-          return HttpResponse.json({ type: "FeatureCollection", features: [], links: [] });
-        })
-      );
-
-      await searchItems(
-        { collectionFilter: "collection='standard-year'" },
-        { collectionId: "standard-year" }
-      );
-      expect(hitV2).toBe(true);
-    });
-
-    it("uses the v2 STAC host when collectionId is typical-met-year", async () => {
-      let hitV2 = false;
-      server.use(
-        http.get(`${STAC_API_V2_BASE_URL}/search`, () => {
-          hitV2 = true;
-          return HttpResponse.json({ type: "FeatureCollection", features: [], links: [] });
-        })
-      );
-
-      await searchItems(
-        { collectionFilter: "collection='typical-met-year'" },
-        { collectionId: "typical-met-year" }
-      );
-      expect(hitV2).toBe(true);
-    });
-
-    it("uses the v2 STAC host when collectionId is loca2-county", async () => {
-      let hitV2 = false;
-      server.use(
-        http.get(`${STAC_API_V2_BASE_URL}/search`, ({ request }) => {
-          hitV2 = true;
-          expect(request.url).toContain("filter=");
-          return HttpResponse.json({ type: "FeatureCollection", features: [], links: [] });
-        })
-      );
-
-      await searchItems(
-        { collectionFilter: "collection = 'loca2-county'" },
-        { collectionId: "loca2-county" }
-      );
-      expect(hitV2).toBe(true);
     });
   });
 });

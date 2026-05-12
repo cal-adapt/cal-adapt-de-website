@@ -16,7 +16,3 @@ export const SITE_URL =
 export const MAP_API_BASE_URL = "https://map.cal-adapt.org";
 
 export const STAC_API_BASE_URL = "https://stac.cal-adapt.org";
-
-export const STAC_API_V2_BASE_URL =
-  process.env.NEXT_PUBLIC_STAC_API_V2_BASE_URL ??
-  "https://8dawjspn5g.execute-api.us-west-2.amazonaws.com";

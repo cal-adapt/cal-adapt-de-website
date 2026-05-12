@@ -16,4 +16,4 @@ export type {
   StacItem,
   StacItemCollection,
 } from "./stac-api";
-export { getCollectionQueryables, isStacV2CollectionId } from "./stac-api";
+export { getCollectionQueryables } from "./stac-api";
