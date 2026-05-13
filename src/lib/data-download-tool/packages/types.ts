@@ -1,4 +1,4 @@
-import type { MultiSelectOption, SelectOption } from "@/components/common/form";
+import type { MultiSelectOptions, SelectOption } from "@/components/common/form";
 import type {
   ItemSearchFilters,
   StacCollection,
@@ -54,7 +54,11 @@ export interface MultiSelectFieldConfig extends BaseFieldConfig {
   kind: "multi";
   /** Defaults to `true`; set to `false` for optional multi-selects. */
   required?: boolean;
-  options: (config: CustomizeFormConfig) => MultiSelectOption[];
+  /**
+   * Either a flat option list or a list of option groups (rendered with section
+   * headers in the dropdown). Both shapes flow through the same selection state.
+   */
+  options: (config: CustomizeFormConfig) => MultiSelectOptions;
   value: (selections: CustomizeSelections) => string[];
   patch: (next: string[]) => Partial<CustomizeSelections>;
 }

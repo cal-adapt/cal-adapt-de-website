@@ -1,3 +1,9 @@
+import type {
+  MultiSelectOption,
+  MultiSelectOptionGroup,
+  MultiSelectOptions,
+  SelectOption,
+} from "@/components/common/form";
 import type { StacCollection, StacCollectionQueryables } from "@/lib/cal-adapt-api";
 
 import type { CustomizeFormConfig, CustomizeSelections, DataDownloadWorkspaceData } from "../types";
@@ -110,15 +116,33 @@ export function stableMultiKey(parts: readonly (string | readonly string[])[]): 
   return parts.map((p) => (typeof p === "string" ? p : [...p].sort().join("|"))).join("\0");
 }
 
+function isMultiSelectOptionGroup(
+  item: MultiSelectOption | MultiSelectOptionGroup
+): item is MultiSelectOptionGroup {
+  return Array.isArray((item as MultiSelectOptionGroup).options);
+}
+
+/** Flatten possibly-grouped multi-select options into a single ordered option list. */
+export function flattenMultiSelectOptions(options: MultiSelectOptions): MultiSelectOption[] {
+  if (options.length === 0) {
+    return [];
+  }
+  if (isMultiSelectOptionGroup(options[0])) {
+    return (options as MultiSelectOptionGroup[]).flatMap((g) => g.options);
+  }
+  return options as MultiSelectOption[];
+}
+
 /** Resolve labels for a list of option values (falling back to the raw value). */
 export function joinOptionLabels(
   values: string[],
-  options: { value: string; label: string }[] | undefined
+  options: MultiSelectOptions | SelectOption[] | undefined
 ): string {
   if (values.length === 0) {
     return "—";
   }
-  return values.map((v) => options?.find((o) => o.value === v)?.label ?? v).join(", ");
+  const flat = options ? flattenMultiSelectOptions(options as MultiSelectOptions) : [];
+  return values.map((v) => flat.find((o) => o.value === v)?.label ?? v).join(", ");
 }
 
 /**
@@ -131,12 +155,14 @@ export function summaryRowForField(
   selections: CustomizeSelections,
   config: CustomizeFormConfig
 ): { label: string; value: string } {
-  const options = field.options(config);
   if (field.kind === "multi") {
-    return { label: field.label, value: joinOptionLabels(field.value(selections), options) };
+    return {
+      label: field.label,
+      value: joinOptionLabels(field.value(selections), field.options(config)),
+    };
   }
   const picked = field.value(selections);
-  const match = options.find((o) => o.value === picked);
+  const match = field.options(config).find((o) => o.value === picked);
   return { label: field.label, value: match?.label ?? picked };
 }
 

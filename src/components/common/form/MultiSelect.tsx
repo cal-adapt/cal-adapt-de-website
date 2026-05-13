@@ -60,15 +60,69 @@ function MultiSelectCheckboxBox({
   );
 }
 
+function MultiSelectOptionRow({
+  opt,
+  selected,
+  disabled,
+  onToggle,
+}: {
+  opt: MultiSelectOption;
+  selected: boolean;
+  disabled: boolean;
+  onToggle: (value: string) => void;
+}) {
+  return (
+    <li className={fd.option} role="option" aria-selected={selected}>
+      <label className={clsx(fd.optionLabel, styles.optionLabelWithCheckbox)}>
+        <input
+          type="checkbox"
+          className={clsx("sr-only", styles.checkboxInput)}
+          checked={selected}
+          disabled={disabled || opt.disabled}
+          onChange={() => onToggle(opt.value)}
+        />
+        <MultiSelectCheckboxBox mode={selected ? "checked" : "unchecked"}>
+          <MultiSelectCheckboxIcon mode={selected ? "checked" : "unchecked"} />
+        </MultiSelectCheckboxBox>
+        <span className={fd.optionText}>{opt.label}</span>
+      </label>
+    </li>
+  );
+}
+
 export interface MultiSelectOption {
   value: string;
   label: string;
   disabled?: boolean;
 }
 
+/** Optional grouping of options */
+export interface MultiSelectOptionGroup {
+  label: string;
+  options: MultiSelectOption[];
+}
+
+export type MultiSelectOptions = MultiSelectOption[] | MultiSelectOptionGroup[];
+
+function isOptionGroup(
+  item: MultiSelectOption | MultiSelectOptionGroup
+): item is MultiSelectOptionGroup {
+  return Array.isArray((item as MultiSelectOptionGroup).options);
+}
+
+function flattenOptions(options: MultiSelectOptions): MultiSelectOption[] {
+  if (options.length === 0) {
+    return [];
+  }
+  if (isOptionGroup(options[0])) {
+    return (options as MultiSelectOptionGroup[]).flatMap((g) => g.options);
+  }
+  return options as MultiSelectOption[];
+}
+
 export interface MultiSelectProps {
   id?: string;
-  options: MultiSelectOption[];
+  options: MultiSelectOptions;
   value: string[];
   onChange: (next: string[]) => void;
   disabled?: boolean;
@@ -106,15 +160,17 @@ const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(function Mul
   const selectAllInputRef = useRef<HTMLInputElement>(null);
   const listboxId = useId();
 
+  const flatOptions = useMemo(() => flattenOptions(options), [options]);
+
   const enabledValues = useMemo(
-    () => options.filter((o) => !o.disabled).map((o) => o.value),
-    [options]
+    () => flatOptions.filter((o) => !o.disabled).map((o) => o.value),
+    [flatOptions]
   );
 
   const selectedOptions = useMemo(() => {
-    const map = new Map(options.map((o) => [o.value, o]));
+    const map = new Map(flatOptions.map((o) => [o.value, o]));
     return value.map((v) => map.get(v)).filter(Boolean) as MultiSelectOption[];
-  }, [options, value]);
+  }, [flatOptions, value]);
 
   const selectionKey = useMemo(() => value.join("\0"), [value]);
 
@@ -185,7 +241,7 @@ const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(function Mul
       if (disabled) {
         return;
       }
-      const opt = options.find((o) => o.value === v);
+      const opt = flatOptions.find((o) => o.value === v);
       if (opt?.disabled) {
         return;
       }
@@ -195,7 +251,7 @@ const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(function Mul
         onChange([...value, v]);
       }
     },
-    [disabled, onChange, options, value]
+    [disabled, onChange, flatOptions, value]
   );
 
   const removeValue = useCallback(
@@ -349,26 +405,34 @@ const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(function Mul
                 <span className={fd.optionText}>Select all</span>
               </label>
             </li>
-            {options.map((opt) => {
-              const selected = value.includes(opt.value);
-              return (
-                <li key={opt.value} className={fd.option} role="option" aria-selected={selected}>
-                  <label className={clsx(fd.optionLabel, styles.optionLabelWithCheckbox)}>
-                    <input
-                      type="checkbox"
-                      className={clsx("sr-only", styles.checkboxInput)}
-                      checked={selected}
-                      disabled={disabled || opt.disabled}
-                      onChange={() => toggleValue(opt.value)}
-                    />
-                    <MultiSelectCheckboxBox mode={selected ? "checked" : "unchecked"}>
-                      <MultiSelectCheckboxIcon mode={selected ? "checked" : "unchecked"} />
-                    </MultiSelectCheckboxBox>
-                    <span className={fd.optionText}>{opt.label}</span>
-                  </label>
-                </li>
-              );
-            })}
+            {options.length > 0 && isOptionGroup(options[0])
+              ? (options as MultiSelectOptionGroup[]).map((group) => (
+                  <li key={`group:${group.label}`} className={styles.group} role="presentation">
+                    <p className={styles.groupHeader} aria-hidden>
+                      {group.label}
+                    </p>
+                    <ul className={styles.groupList} role="group" aria-label={group.label}>
+                      {group.options.map((opt) => (
+                        <MultiSelectOptionRow
+                          key={opt.value}
+                          opt={opt}
+                          selected={value.includes(opt.value)}
+                          disabled={disabled}
+                          onToggle={toggleValue}
+                        />
+                      ))}
+                    </ul>
+                  </li>
+                ))
+              : (options as MultiSelectOption[]).map((opt) => (
+                  <MultiSelectOptionRow
+                    key={opt.value}
+                    opt={opt}
+                    selected={value.includes(opt.value)}
+                    disabled={disabled}
+                    onToggle={toggleValue}
+                  />
+                ))}
           </ul>
         ) : null}
       </div>
