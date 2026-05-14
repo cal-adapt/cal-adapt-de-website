@@ -30,9 +30,9 @@ export const metrics: Metric[] = [
     title: "Extreme Heat",
     slug: "extreme-heat",
     abs: {
-      mean: "s3://cadcat/wrf/cae/mm4mean/ssp370/gwl/TX99p/d03",
-      min_path: "s3://cadcat/wrf/cae/mm4min/ssp370/gwl/TX99p/d03",
-      max_path: "s3://cadcat/wrf/cae/mm4max/ssp370/gwl/TX99p/d03",
+      mean: "s3://cadcat/wrf/climate-metrics-map/mm4mean/ssp370/gwl/TX99p/d03",
+      min_path: "s3://cadcat/wrf/climate-metrics-map/mm4min/ssp370/gwl/TX99p/d03",
+      max_path: "s3://cadcat/wrf/climate-metrics-map/mm4max/ssp370/gwl/TX99p/d03",
       description: "Mean number of extreme heat days (# of days)",
       short_desc:
         "How many days during the year are expected to be very hot compared to the past (# of days)",
@@ -41,9 +41,9 @@ export const metrics: Metric[] = [
       colormap: "Reds",
     },
     del: {
-      mean: "s3://cadcat/wrf/cae/mm4mean/ssp370/gwl/TX99pd/d03",
-      min_path: "s3://cadcat/wrf/cae/mm4min/ssp370/gwl/TX99pd/d03",
-      max_path: "s3://cadcat/wrf/cae/mm4max/ssp370/gwl/TX99pd/d03",
+      mean: "s3://cadcat/wrf/climate-metrics-map/mm4mean/ssp370/gwl/TX99pd/d03",
+      min_path: "s3://cadcat/wrf/climate-metrics-map/mm4min/ssp370/gwl/TX99pd/d03",
+      max_path: "s3://cadcat/wrf/climate-metrics-map/mm4max/ssp370/gwl/TX99pd/d03",
       description: "Mean annual change in number of extreme heat days (# of days)",
       short_desc:
         "Change in how many days during the year are expected to be very hot compared to the past (# of days)",
@@ -57,9 +57,9 @@ export const metrics: Metric[] = [
     title: "Extreme Precipitation",
     slug: "extreme-precipitation",
     abs: {
-      mean: "s3://cadcat/wrf/cae/mm4mean/ssp370/gwl/R99p/d03",
-      min_path: "s3://cadcat/wrf/cae/mm4min/ssp370/gwl/R99p/d03",
-      max_path: "s3://cadcat/wrf/cae/mm4max/ssp370/gwl/R99p/d03",
+      mean: "s3://cadcat/wrf/climate-metrics-map/mm4mean/ssp370/gwl/R99p/d03",
+      min_path: "s3://cadcat/wrf/climate-metrics-map/mm4min/ssp370/gwl/R99p/d03",
+      max_path: "s3://cadcat/wrf/climate-metrics-map/mm4max/ssp370/gwl/R99p/d03",
       description: "Absolute 99th percentile 1-day accumulated precipitation (mm)",
       short_desc: "How much precipitation will fall on really heavy precipitation days (mm)",
       variable: "R99p",
@@ -67,9 +67,9 @@ export const metrics: Metric[] = [
       colormap: "Blues",
     },
     del: {
-      mean: "s3://cadcat/wrf/cae/mm4mean/ssp370/gwl/R99pd/d03",
-      min_path: "s3://cadcat/wrf/cae/mm4min/ssp370/gwl/R99pd/d03",
-      max_path: "s3://cadcat/wrf/cae/mm4max/ssp370/gwl/R99pd/d03",
+      mean: "s3://cadcat/wrf/climate-metrics-map/mm4mean/ssp370/gwl/R99pd/d03",
+      min_path: "s3://cadcat/wrf/climate-metrics-map/mm4min/ssp370/gwl/R99pd/d03",
+      max_path: "s3://cadcat/wrf/climate-metrics-map/mm4max/ssp370/gwl/R99pd/d03",
       description: "Absolute change in 99th percentile 1-day accumulated precipitation (mm)",
       short_desc:
         "Change in how much more precipitation will fall on really heavy precipitation days (mm)",
@@ -83,9 +83,9 @@ export const metrics: Metric[] = [
     title: "Fire Weather",
     slug: "fire-weather",
     abs: {
-      mean: "s3://cadcat/wrf/cae/mm4mean/ssp370/gwl/ffwige50/d03",
-      min_path: "s3://cadcat/wrf/cae/mm4min/ssp370/gwl/ffwige50/d03",
-      max_path: "s3://cadcat/wrf/cae/mm4max/ssp370/gwl/ffwige50/d03",
+      mean: "s3://cadcat/wrf/climate-metrics-map/mm4mean/ssp370/gwl/ffwige50/d03",
+      min_path: "s3://cadcat/wrf/climate-metrics-map/mm4min/ssp370/gwl/ffwige50/d03",
+      max_path: "s3://cadcat/wrf/climate-metrics-map/mm4max/ssp370/gwl/ffwige50/d03",
       description:
         "Absolute median annual number of days with Fosberg Fire Weather Index (FFWI) value greater than 50 (# of days)",
       short_desc: "How often the weather is conducive for fires in this area (# of days)",
@@ -94,9 +94,9 @@ export const metrics: Metric[] = [
       colormap: "gist_heat_r",
     },
     del: {
-      mean: "s3://cadcat/wrf/cae/mm4mean/ssp370/gwl/ffwige50d/d03",
-      min_path: "s3://cadcat/wrf/cae/mm4min/ssp370/gwl/ffwige50d/d03",
-      max_path: "s3://cadcat/wrf/cae/mm4max/ssp370/gwl/ffwige50d/d03",
+      mean: "s3://cadcat/wrf/climate-metrics-map/mm4mean/ssp370/gwl/ffwige50d/d03",
+      min_path: "s3://cadcat/wrf/climate-metrics-map/mm4min/ssp370/gwl/ffwige50d/d03",
+      max_path: "s3://cadcat/wrf/climate-metrics-map/mm4max/ssp370/gwl/ffwige50d/d03",
       description:
         "Change in median annual number of days with Fosberg Fire Weather Index (FFWI) value greater than 50 (# of days)",
       short_desc: "Change in how often the weather is conducive for fires in this area (# of days)",
