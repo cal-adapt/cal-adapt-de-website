@@ -109,17 +109,18 @@ function buildCustomizeForm(
     }
   }
 
-  let variableIds = coalesceSummaryOrQueryableEnum(summaries, queryables, SUMMARY_VARIABLE);
-  if (variableIds.length === 0 && collection.id === LOCA2_COUNTY_STAC_COLLECTION_ID) {
+  const rawLabels = collection["caladapt:variable_labels"];
+  const variableLabelById: Map<string, string> =
+    rawLabels != null && typeof rawLabels === "object" && !Array.isArray(rawLabels)
+      ? new Map(Object.entries(rawLabels as Record<string, string>))
+      : new Map();
+  let variableIds = [...variableLabelById.keys()];
+  if (variableIds.length === 0) {
+    variableIds = coalesceSummaryOrQueryableEnum(summaries, queryables, SUMMARY_VARIABLE);
+  }
+  if (variableIds.length === 0) {
     variableIds = [...LOCA2_COUNTY_V2_ASSET_VARIABLE_IDS];
   }
-
-  const variableLabels = enumStringsFromStacQueryables(queryables, "variable_label");
-  const variableLabelById = new Map(
-    variableIds
-      .map((id, i) => [id, variableLabels[i] ?? ""] as const)
-      .filter(([, label]) => label.trim().length > 0)
-  );
 
   const sourceIds = coalesceSummaryOrQueryableEnum(summaries, queryables, SUMMARY_MODEL);
   const experimentIds = coalesceSummaryOrQueryableEnum(summaries, queryables, SUMMARY_SCENARIO);
