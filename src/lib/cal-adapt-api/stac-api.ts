@@ -111,7 +111,7 @@ export async function getCollectionQueryables(
   collectionId: string
 ): Promise<StacCollectionQueryables> {
   const res = await collectionQueryablesCollectionsCollectionIdQueryablesGet({
-    path: { collection_id: collectionId },
+    path: { collectionId },
     headers: { Accept: "application/json, application/schema+json" },
   });
   return assertOk<StacCollectionQueryables>(res, API_NAME);
@@ -122,7 +122,7 @@ export async function getCollectionQueryables(
  */
 export async function getCollection(collectionId: string): Promise<StacCollection> {
   const res = await getCollectionCollectionsCollectionIdGet({
-    path: { collection_id: collectionId },
+    path: { collectionId },
     headers: { Accept: "application/json, application/schema+json" },
   });
   return assertOk<StacCollection>(res, API_NAME);
