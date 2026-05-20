@@ -27,15 +27,6 @@ import type { CustomizeFieldConfig, PackageAdapter, PackageBundleMapResult } fro
 
 const STAC_COLLECTION_ID = "standard-year" as const;
 
-function labelsByVariableId(q: StacCollectionQueryables): Map<string, string> {
-  const variableIds = enumStringsFromStacQueryables(q, "variable");
-  const variableLabels = enumStringsFromStacQueryables(q, "variable_label");
-  const entries = variableIds
-    .map((id, index) => [id, variableLabels[index] ?? ""] as const)
-    .filter(([, label]) => label.trim().length > 0);
-  return new Map(entries);
-}
-
 function buildCustomizeForm(
   collection: StacCollection,
   queryables?: StacCollectionQueryables
@@ -46,12 +37,20 @@ function buildCustomizeForm(
     );
   }
 
+  const rawLabels = collection["caladapt:variable_labels"];
+  const variableLabelById: Map<string, string> =
+    rawLabels != null && typeof rawLabels === "object" && !Array.isArray(rawLabels)
+      ? new Map(Object.entries(rawLabels as Record<string, string>))
+      : new Map();
+  let variableIds = [...variableLabelById.keys()];
+  if (variableIds.length === 0) {
+    variableIds = enumStringsFromStacQueryables(queryables, "variable");
+  }
+
   const stationIds = enumStringsFromStacQueryables(queryables, "location");
-  const variableIds = enumStringsFromStacQueryables(queryables, "variable");
   const percentileIds = enumStringsFromStacQueryables(queryables, "percentile");
   const modelIds = enumStringsFromStacQueryables(queryables, "model");
   const gwlIds = sortGwlIds(enumStringsFromStacQueryables(queryables, "time_period"));
-  const variableLabelById = labelsByVariableId(queryables);
 
   const countyOptions: MultiSelectOption[] = stationIds.map((id) => ({
     value: id,
@@ -147,9 +146,13 @@ function searchFiltersKey(selections: CustomizeSelections): string {
 
 function mapItemsToBundles(
   features: StacItem[],
-  selections: CustomizeSelections
+  selections: CustomizeSelections,
+  customizeForm?: CustomizeFormConfig
 ): PackageBundleMapResult {
   const selected = new Set(selections.variables);
+  const labelById = new Map(
+    (customizeForm?.variableOptions ?? []).map(({ value, label }) => [value, label])
+  );
   const bundleBySelection = new Map<string, DownloadBundle>();
   const seenAssetKeys = new Set<string>();
   let totalBytes = 0;
@@ -157,11 +160,7 @@ function mapItemsToBundles(
 
   for (const item of features) {
     const variableId = String(item.properties.variable ?? "");
-    const variableLabelRaw = item.properties.variable_label;
-    const variableLabel =
-      typeof variableLabelRaw === "string" && variableLabelRaw.trim().length > 0
-        ? variableLabelRaw
-        : labelVariable(variableId);
+    const variableLabel = labelById.get(variableId) ?? labelVariable(variableId);
     if (!selected.has(variableId)) {
       continue;
     }
