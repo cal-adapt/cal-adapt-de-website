@@ -146,9 +146,13 @@ function searchFiltersKey(selections: CustomizeSelections): string {
 
 function mapItemsToBundles(
   features: StacItem[],
-  selections: CustomizeSelections
+  selections: CustomizeSelections,
+  customizeForm?: CustomizeFormConfig
 ): PackageBundleMapResult {
   const selected = new Set(selections.variables);
+  const labelById = new Map(
+    (customizeForm?.variableOptions ?? []).map(({ value, label }) => [value, label])
+  );
   const bundleBySelection = new Map<string, DownloadBundle>();
   const seenAssetKeys = new Set<string>();
   let totalBytes = 0;
@@ -156,11 +160,7 @@ function mapItemsToBundles(
 
   for (const item of features) {
     const variableId = String(item.properties.variable ?? "");
-    const variableLabelRaw = item.properties.variable_label;
-    const variableLabel =
-      typeof variableLabelRaw === "string" && variableLabelRaw.trim().length > 0
-        ? variableLabelRaw
-        : labelVariable(variableId);
+    const variableLabel = labelById.get(variableId) ?? labelVariable(variableId);
     if (!selected.has(variableId)) {
       continue;
     }

@@ -80,7 +80,11 @@ export function useStacDownloadSearch(
         if (cancelled) {
           return;
         }
-        const mapped = getPackageAdapterByKind(kind).mapItemsToBundles(data.features, selections);
+        const mapped = getPackageAdapterByKind(kind).mapItemsToBundles(
+          data.features,
+          selections,
+          workspace.customizeForm
+        );
         setFetchResult({
           status: "success",
           bundles: mapped.bundles,
