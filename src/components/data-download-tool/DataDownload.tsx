@@ -17,7 +17,7 @@ import {
   type DownloadBundle,
   getPackageAdapterByKind,
 } from "@/lib/data-download-tool";
-import { getTodaysDateAsString } from "@/utils/date";
+import { formatLocalIsoDate } from "@/utils/date";
 import { downloadFile, downloadUrlsAsZip } from "@/utils/file";
 import { formatBytes } from "@/utils/format";
 import { extractFilenameFromURL } from "@/utils/url";
@@ -36,7 +36,7 @@ const ZIP_FALLBACK_NOTICE =
   "These files could not be bundled into one zip in the browser. Each file is downloading separately instead.";
 
 function buildZipFilename(freqSlug: string, suffix?: string): string {
-  const date = getTodaysDateAsString();
+  const date = formatLocalIsoDate(new Date());
   const tail = suffix ? `-${suffix}` : "";
   return `data-download-bundle-${date}-${freqSlug}${tail}.zip`;
 }

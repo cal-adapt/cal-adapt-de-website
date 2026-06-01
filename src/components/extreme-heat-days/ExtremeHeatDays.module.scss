@@ -1,0 +1,52 @@
+@use "@/styles/abstracts" as *;
+
+.intro {
+  @include flex(column, flex-start, stretch, spacer(3));
+  width: 100%;
+  max-width: max-w(global);
+}
+
+.introCopy {
+  margin: 0;
+  color: color(black);
+  @include type-item(body);
+}
+
+.footnoteRef {
+  font-size: 0.75em;
+  vertical-align: super;
+  line-height: 0;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: spacer(8);
+  width: 100%;
+  align-items: start;
+}
+
+.viewArea {
+  @include flex(column, flex-start, stretch, spacer(7));
+  min-width: 0;
+}
+
+.tabsRow {
+  @include flex(row, space-between, flex-end, spacer(4));
+  width: 100%;
+  border-bottom: 1px solid color(grey-2);
+}
+
+.tabsRowActions {
+  padding-bottom: spacer(2);
+}
+
+.viewTitle {
+  margin: 0;
+  color: color(black);
+  @include type-item(heading-4);
+}
+
+.controlsArea {
+  width: 100%;
+}
