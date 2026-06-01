@@ -68,7 +68,7 @@ export interface MultiSelectOption {
 
 export interface MultiSelectProps {
   id?: string;
-  options: MultiSelectOption[];
+  options: readonly MultiSelectOption[];
   value: string[];
   onChange: (next: string[]) => void;
   disabled?: boolean;
