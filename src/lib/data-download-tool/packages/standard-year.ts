@@ -1,11 +1,11 @@
 import type { MultiSelectOption, SelectOption } from "@/components/common/form";
-import type {
-  ItemSearchFilters,
-  StacCollection,
-  StacCollectionQueryables,
-  StacItem,
+import {
+  type ItemSearchFilters,
+  orFilter,
+  type StacCollection,
+  type StacCollectionQueryables,
+  type StacItem,
 } from "@/lib/cal-adapt-api";
-import { createOrStatement } from "@/utils/query";
 import { toSentenceCase } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
@@ -113,19 +113,13 @@ function buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters 
   const collectionFilter = `collection='${STAC_COLLECTION_ID}'`;
 
   const locationFilter =
-    selections.counties.length > 0 ? createOrStatement("location", selections.counties) : undefined;
+    selections.counties.length > 0 ? orFilter("location", selections.counties) : undefined;
   const variableFilter =
-    selections.variables.length > 0
-      ? createOrStatement("variable", selections.variables)
-      : undefined;
+    selections.variables.length > 0 ? orFilter("variable", selections.variables) : undefined;
   const percentileFilter =
-    selections.percentiles.length > 0
-      ? createOrStatement("percentile", selections.percentiles)
-      : undefined;
+    selections.percentiles.length > 0 ? orFilter("percentile", selections.percentiles) : undefined;
   const timePeriodFilter =
-    selections.timePeriods.length > 0
-      ? createOrStatement("time_period", selections.timePeriods)
-      : undefined;
+    selections.timePeriods.length > 0 ? orFilter("time_period", selections.timePeriods) : undefined;
 
   return {
     collectionFilter,
