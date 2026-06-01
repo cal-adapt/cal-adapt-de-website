@@ -37,6 +37,11 @@ export const navLinks = {
     label: "Data Download Tool",
     href: "/dashboard/data-download-tool",
   },
+  extremeHeatDays: {
+    id: "extreme-heat-days",
+    label: "Extreme Heat Days",
+    href: "/dashboard/extreme-heat-days",
+  },
   renewablesVisualizer: {
     id: "renewables-visualizer",
     label: "Renewables Visualizer",
@@ -72,6 +77,11 @@ export const navGroups = {
   tools: {
     id: "tools",
     label: "Tools",
-    links: [navLinks.climateMetricsMap, navLinks.dataDownload, navLinks.renewablesVisualizer],
+    links: [
+      navLinks.climateMetricsMap,
+      navLinks.dataDownload,
+      navLinks.extremeHeatDays,
+      navLinks.renewablesVisualizer,
+    ],
   },
 } as const satisfies Record<string, NavGroup>;
