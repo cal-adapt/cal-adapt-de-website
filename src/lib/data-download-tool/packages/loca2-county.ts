@@ -1,4 +1,9 @@
-import type { MultiSelectOption, SelectOption } from "@/components/common/form";
+import type {
+  MultiSelectOption,
+  MultiSelectOptionGroup,
+  MultiSelectOptions,
+  SelectOption,
+} from "@/components/common/form";
 import {
   type ItemSearchFilters,
   orFilter,
@@ -59,6 +64,37 @@ const CMIP6_TABLE_ID_BY_FREQUENCY: Readonly<Record<string, string>> = {
   daily: "day",
 };
 
+const LOCA2_COUNTY_GENERAL_USE_MODELS: ReadonlySet<string> = new Set([
+  "ACCESS-CM2",
+  "CNRM-ESM2-1",
+  "EC-Earth3",
+  "FGOALS-g3",
+  "MPI-ESM1-2-HR",
+]);
+
+function buildGroupedModelOptions(modelOptions: MultiSelectOption[]): MultiSelectOptions {
+  const generalUse: MultiSelectOption[] = [];
+  const notGeneralUse: MultiSelectOption[] = [];
+
+  for (const opt of modelOptions) {
+    if (LOCA2_COUNTY_GENERAL_USE_MODELS.has(opt.value)) {
+      generalUse.push(opt);
+    } else {
+      notGeneralUse.push(opt);
+    }
+  }
+  if (generalUse.length === 0 || notGeneralUse.length === 0) {
+    return modelOptions;
+  }
+
+  const groups: MultiSelectOptionGroup[] = [
+    { label: "General use", options: generalUse },
+    { label: "Not general use", options: notGeneralUse },
+  ];
+
+  return groups;
+}
+
 function buildCustomizeForm(
   collection: StacCollection,
   queryables?: StacCollectionQueryables
@@ -73,17 +109,18 @@ function buildCustomizeForm(
     }
   }
 
-  let variableIds = coalesceSummaryOrQueryableEnum(summaries, queryables, SUMMARY_VARIABLE);
-  if (variableIds.length === 0 && collection.id === LOCA2_COUNTY_STAC_COLLECTION_ID) {
+  const rawLabels = collection["caladapt:variable_labels"];
+  const variableLabelById: Map<string, string> =
+    rawLabels != null && typeof rawLabels === "object" && !Array.isArray(rawLabels)
+      ? new Map(Object.entries(rawLabels as Record<string, string>))
+      : new Map();
+  let variableIds = [...variableLabelById.keys()];
+  if (variableIds.length === 0) {
+    variableIds = coalesceSummaryOrQueryableEnum(summaries, queryables, SUMMARY_VARIABLE);
+  }
+  if (variableIds.length === 0) {
     variableIds = [...LOCA2_COUNTY_V2_ASSET_VARIABLE_IDS];
   }
-
-  const variableLabels = enumStringsFromStacQueryables(queryables, "variable_label");
-  const variableLabelById = new Map(
-    variableIds
-      .map((id, i) => [id, variableLabels[i] ?? ""] as const)
-      .filter(([, label]) => label.trim().length > 0)
-  );
 
   const sourceIds = coalesceSummaryOrQueryableEnum(summaries, queryables, SUMMARY_MODEL);
   const experimentIds = coalesceSummaryOrQueryableEnum(summaries, queryables, SUMMARY_SCENARIO);
@@ -291,7 +328,7 @@ const fields: readonly CustomizeFieldConfig[] = [
     kind: "multi",
     label: "Models",
     placeholder: "Choose models…",
-    options: (config) => config.modelOptions,
+    options: (config) => buildGroupedModelOptions(config.modelOptions),
     value: (selections) => selections.models,
     patch: (next) => ({ models: next }),
   },
