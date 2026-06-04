@@ -8,6 +8,7 @@ import {
   colorForGlobalWarmingLevel,
   formatDaysPerYear,
   formatGlobalWarmingLevel,
+  formatGlobalWarmingLevelName,
 } from "@/lib/extreme-heat-days/format";
 
 import styles from "./BarChart.module.scss";
@@ -163,9 +164,17 @@ function XAxis({ globalWarmingLevels, xScale }: XAxisProps) {
       <line className={styles.axisLine} x1={0} x2={PLOT.width} y1={0} y2={0} />
       {globalWarmingLevels.map((level) => {
         const x = (xScale(level) ?? 0) + bandwidth / 2;
+        const name = formatGlobalWarmingLevelName(level);
         return (
           <text key={level} className={styles.tickLabel} x={x} y={20} textAnchor="middle">
-            {formatGlobalWarmingLevel(level)}
+            {name && (
+              <tspan x={x} dy="0">
+                {name}
+              </tspan>
+            )}
+            <tspan x={x} dy={name ? "1.2em" : "0"}>
+              +{formatGlobalWarmingLevel(level)}
+            </tspan>
           </text>
         );
       })}

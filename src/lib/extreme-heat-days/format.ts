@@ -28,6 +28,18 @@ export function formatGlobalWarmingLevel(value: number): string {
   return `${value.toFixed(1)}°C`;
 }
 
+const NAME_BY_GLOBAL_WARMING_LEVEL: Readonly<Record<number, string>> = {
+  0.8: "Historical",
+  1.5: "Near future",
+  2.0: "Mid century",
+  2.5: "Late century",
+  3.0: "End of century",
+};
+
+export function formatGlobalWarmingLevelName(value: number): string {
+  return NAME_BY_GLOBAL_WARMING_LEVEL[value] ?? "";
+}
+
 export function formatDaysPerYear(value: number): string {
   if (!Number.isFinite(value)) return "—";
   return value.toFixed(1);
