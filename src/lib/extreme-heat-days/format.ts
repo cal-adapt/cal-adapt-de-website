@@ -30,9 +30,9 @@ export function formatGlobalWarmingLevel(value: number): string {
 
 const NAME_BY_GLOBAL_WARMING_LEVEL: Readonly<Record<number, string>> = {
   0.8: "Historical",
-  1.5: "Near future",
-  2.0: "Mid century",
-  2.5: "Late century",
+  1.5: "Near-future",
+  2.0: "Mid-century",
+  2.5: "Late-century",
   3.0: "End of century",
 };
 

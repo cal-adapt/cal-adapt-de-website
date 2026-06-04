@@ -120,7 +120,10 @@ export default function ChartView({
       )}
 
       {showSourceCitation && (
-        <p className={styles.sourceCitation}>TODO: Add source citation copy</p>
+        <p className={styles.sourceCitation}>
+          Source: Cal-Adapt. Data: WRF Downscaled CMIP6 Climate Projections (UCLA), WRF Derived.
+          Products (Cal-Adapt)
+        </p>
       )}
     </section>
   );
