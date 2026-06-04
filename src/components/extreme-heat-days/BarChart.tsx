@@ -25,8 +25,8 @@ const Y_AXIS_LABEL = "Number of Extreme Heat Days per Year";
 const X_AXIS_LABEL = "Global Warming Level (°C)";
 
 // Per spec, y-axis is 0–365 days in a year; therefore, bar heights are not rescaled.
-const Y_AXIS_MAX_DAYS = 365;
-const Y_TICK_COUNT = 5;
+const Y_AXIS_MAX_DAYS = 100;
+const Y_TICK_COUNT = 10;
 
 /**
  * Build the d3 scales + tick configuration for the chart. Memoized on the
