@@ -21,19 +21,16 @@ import { hasRenderableSeries } from "@/lib/extreme-heat-days/series";
 
 import ChartView from "./ChartView";
 import Controls from "./Controls";
-import TableView from "./TableView";
 
 import styles from "./ExtremeHeatDays.module.scss";
 
-type ViewMode = "chart" | "table";
+type ViewMode = "chart";
 
 const CHART_VIEW_TABS: readonly TabItem<ViewMode>[] = [
   { value: "chart", label: "Chart", tabId: "ehd-tab-chart", panelId: "ehd-panel-chart" },
-  { value: "table", label: "Table", tabId: "ehd-tab-table", panelId: "ehd-panel-table" },
 ];
 
 const CHART_TAB = CHART_VIEW_TABS[0];
-const TABLE_TAB = CHART_VIEW_TABS[1];
 
 const WHO_HEAT_HEALTH_URL =
   "https://www.who.int/news-room/fact-sheets/detail/climate-change-heat-and-health";
@@ -119,29 +116,18 @@ export default function ExtremeHeatDays() {
               </div>
             )}
           </div>
-          {view === "chart" ? (
-            <ChartView
-              id={CHART_TAB.panelId}
-              labelledBy={CHART_TAB.tabId}
-              title={viewTitle}
-              series={seriesResult.data}
-              status={seriesResult.status}
-              errorMessage={seriesResult.errorMessage}
-              onRetry={seriesResult.retry}
-              threshold={selections.threshold}
-              county={selections.county}
-              chartContainerRef={chartContainerRef}
-            />
-          ) : (
-            <>
-              <h2 className={styles.viewTitle}>{viewTitle}</h2>
-              <TableView
-                id={TABLE_TAB.panelId}
-                labelledBy={TABLE_TAB.tabId}
-                isLoading={isLoading}
-              />
-            </>
-          )}
+          <ChartView
+            id={CHART_TAB.panelId}
+            labelledBy={CHART_TAB.tabId}
+            title={viewTitle}
+            series={seriesResult.data}
+            status={seriesResult.status}
+            errorMessage={seriesResult.errorMessage}
+            onRetry={seriesResult.retry}
+            threshold={selections.threshold}
+            county={selections.county}
+            chartContainerRef={chartContainerRef}
+          />
         </div>
         <aside className={styles.controlsArea} aria-label="Chart controls">
           <Controls

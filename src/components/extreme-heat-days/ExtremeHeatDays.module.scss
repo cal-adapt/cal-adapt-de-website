@@ -41,12 +41,6 @@
   padding-bottom: spacer(2);
 }
 
-.viewTitle {
-  margin: 0;
-  color: color(black);
-  @include type-item(heading-4);
-}
-
 .controlsArea {
   width: 100%;
 }
