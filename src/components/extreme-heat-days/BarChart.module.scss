@@ -1,13 +1,49 @@
 @use "@/styles/abstracts" as *;
 
-.chart {
-  display: block;
+.chartContainer {
+  position: relative;
   width: 100%;
-  height: auto;
+  aspect-ratio: 2 / 1;
+  min-height: 340px;
   max-height: 480px;
 }
 
-.gridline {
+.chart {
+  display: block;
+}
+
+.tooltip {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 10px));
+  pointer-events: none;
+  z-index: 1;
+  background-color: color(black);
+  color: color(white);
+  padding: spacer(1) spacer(2);
+  border-radius: rounded(2);
+  font-weight: 600;
+  white-space: nowrap;
+  @include type-item(small);
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: color(black);
+  }
+}
+
+.chartTitle {
+  fill: color(black);
+  font-family: var(--font-family-base);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.grid line {
   stroke: color(grey-2);
   stroke-width: 1;
   shape-rendering: crispEdges;

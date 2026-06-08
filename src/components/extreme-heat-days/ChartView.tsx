@@ -80,15 +80,13 @@ export default function ChartView({
       aria-busy={isLoading}
     >
       <div ref={chartContainerRef} className={styles.surface}>
-        <div className={styles.titleBlock}>
-          <h2 className={styles.title}>{title}</h2>
-        </div>
         {hasRenderableData && series && values && (
           <BarChart
             globalWarmingLevels={series.globalWarmingLevels}
             values={values}
             thresholdLabel={thresholdLabel}
             county={countyLabel}
+            title={title}
           />
         )}
         {isLoading && (
