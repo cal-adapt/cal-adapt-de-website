@@ -115,6 +115,7 @@ export default function ExtremeHeatDays() {
                 </Button>
               </div>
             )}
+            {/* TODO: Table */}
           </div>
           <ChartView
             id={CHART_TAB.panelId}

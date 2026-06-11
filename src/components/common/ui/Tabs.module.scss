@@ -1,9 +1,5 @@
 @use "@/styles/abstracts" as *;
 
-// Just the tab strip. Intentionally no bottom border or width here — a parent
-// can own those (e.g. to span an underline across the tabs plus an adjacent
-// action button). The selected tab's `margin-bottom: -1px` still overlaps a
-// parent border when one is present.
 .root {
   display: flex;
   flex-direction: row;

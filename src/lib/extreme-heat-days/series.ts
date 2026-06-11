@@ -11,6 +11,7 @@ import { csvParse } from "d3";
 import {
   calAdaptApi,
   type ItemSearchFilters,
+  orFilter,
   type StacItem,
   type StacItemCollection,
 } from "@/lib/cal-adapt-api";
@@ -59,7 +60,6 @@ export function valuesForThreshold(series: ExtremeHeatSeries, threshold: string)
  * True when `series` has enough data to actually plot at `threshold`:
  * non-null series, a matching value column, a non-empty global-warming-level axis,
  * and at least one finite value. shared by `ChartView` and `ExtremeHeatDays`.
- * button is actionable).
  */
 export function hasRenderableSeries(series: ExtremeHeatSeries | null, threshold: string): boolean {
   if (!series || series.globalWarmingLevels.length === 0) return false;
@@ -98,7 +98,7 @@ export interface ExtremeHeatSeries {
 export function buildSearchFilters(selections: ExtremeHeatDaysSelections): ItemSearchFilters {
   return {
     collectionFilter: `collection='${EXTREME_HEAT_STAC_COLLECTION_ID}'`,
-    countyFilter: `county_name='${selections.county}'`,
+    countyFilter: orFilter("county_name", [selections.county]),
   };
 }
 
