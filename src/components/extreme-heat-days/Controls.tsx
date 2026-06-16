@@ -1,6 +1,7 @@
 "use client";
 
 import { FormField, Select } from "@/components/common/form";
+import { featureFlags } from "@/config/feature-flags";
 import {
   CLIMATE_VARIABLE_OPTIONS,
   COUNTY_OPTIONS,
@@ -42,14 +43,16 @@ export default function Controls({ selections, onChange, disabled = false }: Con
           disabled={disabled}
         />
       </FormField>
-      <FormField label="Indicator" hint={CONTROL_TOOLTIPS.indicator} hintVariant="tooltip">
-        <Select
-          value={selections.indicator}
-          onChange={(indicator) => onChange({ ...selections, indicator })}
-          options={INDICATOR_OPTIONS}
-          disabled={disabled}
-        />
-      </FormField>
+      {featureFlags.__FF_EXTREME_HEAT_INDICATOR__ && (
+        <FormField label="Indicator" hint={CONTROL_TOOLTIPS.indicator} hintVariant="tooltip">
+          <Select
+            value={selections.indicator}
+            onChange={(indicator) => onChange({ ...selections, indicator })}
+            options={INDICATOR_OPTIONS}
+            disabled={disabled}
+          />
+        </FormField>
+      )}
       <FormField label="County" hint={CONTROL_TOOLTIPS.county} hintVariant="tooltip">
         <Select
           value={selections.county}
