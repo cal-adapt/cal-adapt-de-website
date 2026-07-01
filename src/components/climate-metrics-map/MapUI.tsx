@@ -158,7 +158,7 @@ export default function MapUI({
     <div
       className={styles.mapUI}
       style={{
-        width: open ? "calc(100% - 212px)" : "calc(100% - 72px)",
+        width: open ? "calc(100% - 275px)" : "calc(100% - 72px)",
         transition: "width 225ms cubic-bezier(0.4, 0, 0.6, 1)",
       }}
     >

@@ -1,0 +1,106 @@
+@use "@/styles/abstracts" as *;
+
+.sidebar {
+  @include flex(column, $justify-content: space-between);
+  background: #fff;
+  border-right: 1px solid color(grey-2);
+  height: 100dvh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  transition: width 225ms cubic-bezier(0.4, 0, 0.6, 1);
+  z-index: z(3);
+
+  &.open {
+    width: 275px;
+  }
+
+  &.closed {
+    width: 72px;
+  }
+}
+
+.top {
+  @include flex(column);
+}
+
+.header {
+  @include flex(row, space-between, center);
+  height: 72px;
+  padding: 0 spacer(7);
+  border-bottom: 1px solid color(grey-2);
+}
+
+.logoLink svg {
+  height: 1.75em;
+}
+
+// Collapsed: no logo, so center the toggle within the icon rail.
+.closed .header {
+  justify-content: center;
+  padding: 0 spacer(4);
+}
+
+.nav {
+  @include flex(column, flex-start, stretch, $gap: spacer(2));
+  padding: spacer(5) spacer(4);
+
+  .navButton {
+    width: 100%;
+    justify-content: flex-start;
+
+    &.selected {
+      background: color(blue-1);
+    }
+
+    &.active {
+      font-weight: font-weight(bold);
+    }
+  }
+
+  // Collapsed (icon-only) tool buttons keep the Button's centered icon.
+  .iconButton {
+    &.selected {
+      background: color(blue-1);
+    }
+  }
+}
+
+.navGroup {
+  @include flex(column, flex-start, stretch, $gap: spacer(2));
+  width: 100%;
+}
+
+.subNav {
+  @include flex(column, flex-start, stretch, $gap: spacer(1));
+  margin-left: spacer(6);
+  padding-left: spacer(4);
+  border-left: 1px solid color(grey-2);
+}
+
+.subNavLink {
+  @include type-item(button);
+  padding: spacer(2) spacer(3);
+  border-radius: rounded(1);
+  color: color(black);
+  text-decoration: none;
+
+  &:hover {
+    background: color(grey-1);
+    text-decoration: none;
+  }
+
+  &.subNavSelected {
+    background: color(blue-1);
+  }
+}
+
+.bottom {
+  @include flex(column, center, flex-end, $gap: spacer(2));
+  padding: spacer(5) spacer(4);
+}
+
+.footerButton {
+  width: 100%;
+  justify-content: flex-start;
+}

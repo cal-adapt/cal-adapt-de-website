@@ -11,9 +11,14 @@ export type ButtonVariant = "primary" | "secondary" | "tertiary" | "accent" | "s
 
 export type ButtonSize = "small" | "large";
 
+export type ButtonShape = "square" | "circle";
+
 export interface ButtonProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  shape?: ButtonShape;
+  /** Icon-only buttons should include the svgOnly prop and an aria-label. */
+  svgOnly?: boolean;
   prefix?: ReactNode; // Icon
   suffix?: ReactNode; // Icon
   href?: string;
@@ -48,6 +53,8 @@ function ButtonContent({
 export default function Button({
   variant = "primary",
   size = "large",
+  shape,
+  svgOnly = false,
   prefix,
   suffix,
   href,
@@ -64,7 +71,15 @@ export default function Button({
   ariaLabel,
   ariaHidden,
 }: ButtonProps) {
-  const buttonClasses = clsx(styles.button, styles[variant], styles[size], className);
+  const buttonClasses = clsx(
+    styles.button,
+    styles[variant],
+    styles[size],
+    svgOnly && styles.svgOnly,
+    svgOnly && shape === "square" && styles.square,
+    svgOnly && shape === "circle" && styles.circle,
+    className
+  );
 
   if (href) {
     if (disabled) {

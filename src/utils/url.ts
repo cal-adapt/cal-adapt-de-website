@@ -1,5 +1,10 @@
 export const isExternalUrl = (url: string) => /^https?:\/\//.test(url);
 
+/** Drop a single trailing slash (keeping root "/") for exact path comparisons. */
+export function normalizePath(path: string): string {
+  return path.length > 1 && path.endsWith("/") ? path.slice(0, -1) : path;
+}
+
 /**
  * Browser downloads/fetch require web schemes. Convert STAC S3 URLs to HTTPS.
  * Example: s3://bucket/path/file.csv -> https://bucket.s3.amazonaws.com/path/file.csv
