@@ -9,6 +9,7 @@ import { analytics } from "@/lib/analytics";
  */
 export default function NotFoundTracker() {
   useEffect(() => {
+    // TODO: Future consideration: Sanitize URL before sending to GA
     const attemptedUrl = window.location.pathname + window.location.search;
     analytics.trackPageNotFound(attemptedUrl, document.referrer || undefined);
   }, []);
