@@ -59,8 +59,7 @@
 
   a {
     color: color(blue-4);
-    text-decoration: underline;
-    text-underline-offset: 2px;
+    font-size: inherit;
 
     &:hover {
       color: color(blue-5);
@@ -74,10 +73,18 @@
   ul,
   ol {
     margin: 0 0 spacer(4);
-    padding-left: spacer(7);
+    padding-left: spacer(4);
 
     @include type-item(body);
     line-height: 1.6;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ol {
+    list-style-type: decimal;
   }
 
   li {
@@ -146,5 +153,20 @@
       font-weight: font-weight(semibold);
       background: color(grey-1);
     }
+  }
+
+  // Bibliography rendered by rehype-citation (citeproc `csl-bib-body`).
+  :global(.csl-bib-body) {
+    margin: spacer(4) 0 0;
+    @include type-item(body);
+    font-size: 1.4rem;
+    line-height: 1.5;
+  }
+
+  :global(.csl-entry) {
+    margin-bottom: spacer(3);
+    padding-left: spacer(5);
+    text-indent: calc(-1 * #{spacer(5)});
+    color: color(grey-5);
   }
 }

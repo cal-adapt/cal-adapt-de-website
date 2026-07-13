@@ -9,14 +9,95 @@ export const metadata = {
 
 ## What is an extreme heat day?
 
-An extreme heat day is defined here as a day in which the maximum daily temperature exceeds the selected temperature threshold, whether it’s an absolute threshold (e.g., 95°F) or a percentile-based threshold. The number of extreme heat days per year is calculated for historical and future global warming levels (GWL): 0.8, 1.5, 2.5, and 3.0°C.
+An extreme heat day is defined here as a day in which the maximum daily
+temperature exceeds the selected temperature threshold, whether it's an absolute
+threshold or a percentile-based threshold (e.g. 99th). Users can select other
+thresholds to explore extreme heat days relevant to their local climate. The
+number of extreme heat days per year is calculated for historical and future
+global warming levels.
 
-Non proident excepteur non voluptate deserunt veniam dolore fugiat ullamco tempor id cupidatat elit magna. Ad exercitation fugiat adipisicing quis eu ullamco sint officia eiusmod quis eu mollit eiusmod enim. Ad deserunt exercitation qui anim. Irure ullamco duis ut. Ullamco do elit id veniam cillum sit exercitation consequat velit adipisicing ut. Do tempor ex nostrud minim. Sunt eu commodo nostrud irure veniam duis quis officia proident ex. Ea cupidatat qui cupidatat consectetur veniam voluptate incididunt elit qui.
+## What is a warm night?
 
-Nostrud duis proident consectetur quis aute in cillum non incididunt. Sunt minim duis mollit reprehenderit anim laboris esse aute sunt reprehenderit commodo. Non ad proident consectetur exercitation in fugiat incididunt nulla excepteur laborum tempor consectetur in aute. Do in irure velit deserunt magna ut consectetur occaecat. In aliquip amet eiusmod ut.
+A warm night is defined here as a day in which the minimum daily temperature
+exceeds the selected temperature threshold, whether it's an absolute threshold or
+a percentile-based threshold (e.g. 99th). Users can select other thresholds to
+explore warm nights relevant to their local climate. The number of warm nights
+per year is calculated for historical and future global warming levels.
 
-Proident veniam ullamco duis cillum nostrud nisi. Id sint fugiat nostrud. Nisi veniam officia commodo culpa consequat nulla in aute sunt irure. Qui nulla qui anim Lorem magna proident ea magna ut laborum reprehenderit. Laboris culpa in mollit qui adipisicing. Et minim et ut consequat incididunt nostrud sint. Velit mollit est pariatur labore velit pariatur ad. Sunt dolore adipisicing Lorem ut duis irure adipisicing enim incididunt cupidatat velit qui fugiat.
+## What are global warming levels?
 
-Officia pariatur in sint et officia. Commodo exercitation nisi eu elit exercitation. Pariatur mollit ea veniam tempor excepteur in. Cillum ut officia non magna consequat commodo amet magna ipsum irure qui aliquip. Aute anim sunt sint dolore adipisicing laborum velit qui aliquip deserunt nulla magna. Non ad aliquip est laboris. Aliquip cupidatat laborum cupidatat anim id mollit esse tempor ex sunt sint.
+A global warming level is defined as the increase in the global mean air
+temperature relative to pre-industrial conditions (1850-1900)
+[@ipcc-allen-special-report-2022]. Global warming levels are frequently used in international
+policy discussions (for example, goals to constrain global warming to 1.5 or
+2 °C). Global warming levels can also be useful in planning processes for
+comparing potential regional responses to climate change across different
+warming levels, enabling comparison of models across emissions scenarios. The
+standard global warming levels are 1.5 °C, 2 °C, 3 °C, and 4 °C.
 
-Nostrud et reprehenderit consequat dolor. Eiusmod in esse in do mollit est. Cillum fugiat ullamco veniam ut ad nisi labore irure et eiusmod quis. Ad adipisicing nostrud exercitation dolor dolore excepteur enim. Officia et veniam occaecat commodo officia sunt aliquip non eiusmod. Amet ex laboris cillum cupidatat ex dolore ut. Adipisicing pariatur aliquip ut do sint ex cillum enim duis fugiat amet adipisicing do ad id. Quis dolore sit esse.
+Which global warming levels will be reached and how quickly depends on societal
+actions around greenhouse gases in the coming decades. The IPCC has developed a
+series of possible scenarios, the Shared Socioeconomic Pathways (SSPs), that
+illustrate a range of possible timelines for future emissions and global
+temperatures. Each SSP scenario provides an estimated timeline for when each GWL
+will be reached.
+
+## How to use temperature thresholds
+
+Using absolute thresholds will answer the question of how many days per year will
+exceed 95 °F? In contrast, using a percentile-based threshold will answer the
+question of: how many days per year will exceed the historically-defined hottest
+temperatures for the selected region?
+
+Percentile-based thresholds are useful for defining extreme heat days across a
+broad range of geographic locations with unique climates. For example, a high
+elevation region may not experience 95 °F, but the historical 99th percentile
+temperature still represents an impactful extreme heat day. These 99th percentile
+extreme heat events represent 3-4 of the hottest days per year _on average_.
+
+## How to interpret the bar chart
+
+The bar chart shows how the number of extreme heat days per year is projected to
+change as global warming increases, based on the location and threshold selected.
+Each bar represents a different global warming level (GWL).
+
+Looking from left to right, the axis shows an increasing amount of global
+warming. The specific year that a given GWL will be reached depends on future
+emissions and societal decisions.
+
+Select the tutorial for a step-by-step guide on using the tool. See the Extreme
+Heat Climate Story for a guided interpretation of results from this tool.
+
+## What are some of the impacts of extreme heat days?
+
+**Extreme heat days pose significant health risks.** Each additional
+extreme-heat day has been associated with a 0.12% higher monthly cardiovascular
+mortality rate in a study comparing heat related deaths across 3,000+ counties in
+the United States [@khatanaAssociation2022].
+
+**Extreme heat contributes to climate hazard frequency and severity.** A NOAA
+review of recent wildfire seasons noted the 2020–2022 western U.S. wildfire
+seasons all burned far more acreage than the annual average recorded since 2016,
+driven by compounding drought and persistent heat [@noaa-wildfire-climate-connection-2023].
+
+**Extreme heat places strain on the energy grid.** During the September 2022 heat
+wave, California's grid set an all-time electricity demand record of roughly
+52,000 megawatts. The state narrowly avoided widespread rolling blackouts only
+through emergency conservation appeals, demand response, and reliance on natural
+gas and imported power [@eia-ca-consumers-heatwave-2022].
+
+## Limitations
+
+This definition of extreme heat days only uses daily temperature data. Several
+other meteorological variables and environmental factors can influence the
+impacts of heat on human health and infrastructure, including humidity, wind
+speed, shading, the built environment, and the timing or duration of heat events.
+
+## Methods
+
+For information on the methods used to calculate extreme heat, see the
+[Methods](/dashboard/extreme-heat-days/methods) page.
+
+## References
+
+[^ref]

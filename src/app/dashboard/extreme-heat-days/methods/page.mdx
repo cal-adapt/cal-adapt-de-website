@@ -11,11 +11,13 @@ export const metadata = {
 
 ### Input data
 
-Maximum daily air temperature at 3 kilometer gridscale resolution for ERA5
-historical reanalysis data and ensemble of 4 bias-adjusted climate model
-simulations, dynamically downscaled using the WRF model for the state of
-California: `EC-Earth3-r1i1p1f1`, `MPI-ESM1-2-HR-r3i1p1f1`, `TaiESM1-r1i1p1f1`,
-`MIROC6-r1i1p1f1`.
+- **Variables:** Maximum daily air temperature (extreme heat days), minimum
+  daily air temperature (warm nights)
+- **Spatial resolution:** 3 kilometer gridscale resolution
+- **Data products:** ERA5 historical reanalysis data and ensemble of 4
+  bias-adjusted climate model simulations, dynamically downscaled using the WRF
+  model for the state of California: `EC-Earth3-r1i1p1f1`,
+  `MPI-ESM1-2-HR-r3i1p1f1`, `TaiESM1-r1i1p1f1`, `MIROC6-r1i1p1f1`.
 
 ### Step 1: Data retrieval and preprocessing
 
@@ -35,19 +37,18 @@ extreme heat threshold unique to the historical conditions at each location.
 ### Step 3: Number of exceedance days in each year
 
 For each threshold (e.g. 95 °F, 100 °F, 99th percentile), the **number of days
-in each year** that the maximum daily temperature exceeds the threshold was
-counted. The exceedance days were calculated for each simulation and GWL.
+in each year** that the maximum (extreme heat days) or minimum (warm nights)
+daily temperature exceeds the threshold was counted. The exceedance days were
+calculated for each simulation and GWL.
 
 #### Plain language example
 
-If a specific location has a historical 99th percentile temperature of 97 °F,
-this represents an "extreme heat" day in the historical period. Step 3 asks:
+If a specific location has a historical 99th percentile maximum temperature of
+97 °F, this represents an "extreme heat" day in the historical period. Step 3 asks:
 under \+1.5 °C of global warming, how many days in each year in that gridcell
 will exceed 97 °F? When asking this question using a fixed temperature
 threshold, it changes to: how many days per year will this gridcell exceed
 95 °F? 100 °F?
-
-\[A figure would be nice here, perhaps a relevant screenshot from the tool itself?\]
 
 ### Step 4: Median and variability over GWL time window
 
@@ -77,12 +78,10 @@ If a grid cell experiences 6 days of extreme heat (say, above 105 °F) in the
 historical period, how many **more** days of extreme heat will that same grid
 cell experience under \+1.5 °C (and 2.0 and so on) of global warming?
 
-\[A figure would be nice here, perhaps a relevant screenshot from the tool itself?\]
-
 ### Step 6: Spatial aggregation
 
 Next, we aggregated the gridded data by spatial unit (e.g. county, city, etc) by
-taking a **median** of all the gridcells within the boundary. A median is used
+taking a **median** of all the grid cells within the boundary. A median is used
 to capture the typical number of extreme heat days within the area of interest
 without introducing bias from any anomalous grid cells.
 
@@ -93,8 +92,6 @@ fully contained within the boundary) to avoid discarding data representative of
 conditions at the edge. Additionally, small spatial units such as census tracts
 may not fully contain any single grid cell, so an all-touched approach is
 generally used across Cal Adapt for consistency across spatial scales.
-
-\[perhaps that figure from guidance materials on census tracts? Idk if repetitive\]
 
 ### Step 7: Simulation aggregation
 

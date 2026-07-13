@@ -25,7 +25,18 @@ const withMDX = createMDX({
   options: {
     // Plugins must be referenced by string name (not imported functions) so they
     // work with Turbopack, which can't pass JS functions to its Rust pipeline.
+    // Any options passed must be JSON-serializable for the same reason.
     remarkPlugins: ["remark-gfm"],
+    rehypePlugins: [
+      [
+        "rehype-citation",
+        {
+          bibliography: "public/references.bib",
+          csl: "public/citation-style-apa.csl",
+          linkCitations: true,
+        },
+      ],
+    ],
   },
 });
 
