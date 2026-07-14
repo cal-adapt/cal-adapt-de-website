@@ -4,11 +4,19 @@ export default defineConfig([
   {
     input: "https://map.cal-adapt.org/openapi.json",
     output: "src/lib/cal-adapt-api/generated/map",
-    plugins: ["@hey-api/typescript", "@hey-api/sdk", "@hey-api/client-fetch"],
+    plugins: [
+      "@hey-api/typescript",
+      "@hey-api/sdk",
+      { name: "@hey-api/client-fetch", baseUrl: "https://map.cal-adapt.org" },
+    ],
   },
   {
     input: "https://stac.cal-adapt.org/openapi.json",
     output: "src/lib/cal-adapt-api/generated/stac",
-    plugins: ["@hey-api/typescript", "@hey-api/sdk", "@hey-api/client-fetch"],
+    plugins: [
+      "@hey-api/typescript",
+      "@hey-api/sdk",
+      { name: "@hey-api/client-fetch", baseUrl: "https://stac.cal-adapt.org" },
+    ],
   },
 ]);
