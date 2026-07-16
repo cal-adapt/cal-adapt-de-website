@@ -10,7 +10,8 @@ const currentEnv: EnvValue = (process.env.NEXT_PUBLIC_APP_ENV as EnvValue) ?? En
 
 const flagDefinitions = {
   __FF_DEBUG__: [Env.Dev, Env.Stg],
-  __FF_EXTREME_HEAT_INDICATOR__: [Env.Dev, Env.Stg],
+  __FF_EXTREME_HEAT_DAYS__: [Env.Dev, Env.Stg],
+  __FF_EXTREME_HEAT_DAYS_INDICATOR__: [Env.Dev, Env.Stg],
 } as const satisfies Record<string, readonly EnvValue[]>;
 
 type FeatureFlags = { [K in keyof typeof flagDefinitions]: boolean };

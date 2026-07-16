@@ -1,10 +1,15 @@
 import { FEEDBACK_URL } from "@/config/constants";
+import { featureFlags } from "@/config/feature-flags";
+
+type FeatureFlagKey = keyof typeof featureFlags;
 
 export interface NavLink {
   id: string;
   label: string;
   href: string;
   external?: boolean;
+  /** When set, the link is only shown if the corresponding feature flag is enabled. */
+  featureFlag?: FeatureFlagKey;
   /** Optional nested pages rendered as an indented sub-navigation group */
   children?: readonly NavLink[];
 }
@@ -49,6 +54,7 @@ export const navLinks = {
     id: "extreme-heat-days",
     label: "Extreme Heat Days",
     href: "/dashboard/extreme-heat-days",
+    featureFlag: "__FF_EXTREME_HEAT_DAYS__",
     children: [
       {
         id: "extreme-heat-days-dashboard",
@@ -104,6 +110,10 @@ export const navLinks = {
   },
 } as const satisfies Record<string, NavLink>;
 
+export function isNavLinkEnabled(link: NavLink): boolean {
+  return link.featureFlag == null || featureFlags[link.featureFlag];
+}
+
 export const navGroups = {
   tools: {
     id: "tools",
@@ -113,6 +123,6 @@ export const navGroups = {
       navLinks.dataDownload,
       navLinks.extremeHeatDays,
       navLinks.renewablesVisualizer,
-    ],
+    ].filter(isNavLinkEnabled),
   },
 } as const satisfies Record<string, NavGroup>;

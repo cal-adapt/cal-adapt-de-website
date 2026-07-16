@@ -43,7 +43,7 @@ export default function Controls({ selections, onChange, disabled = false }: Con
           disabled={disabled}
         />
       </FormField>
-      {featureFlags.__FF_EXTREME_HEAT_INDICATOR__ && (
+      {featureFlags.__FF_EXTREME_HEAT_DAYS_INDICATOR__ && (
         <FormField label="Indicator" hint={CONTROL_TOOLTIPS.indicator} hintVariant="tooltip">
           <Select
             value={selections.indicator}
