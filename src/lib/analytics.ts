@@ -117,6 +117,17 @@ export const analytics = {
       },
     });
   },
+  trackPageNotFound: (attemptedUrl: string, referrer?: string) => {
+    trackEvent({
+      action: "page_not_found",
+      category: "error",
+      label: attemptedUrl,
+      custom_parameters: {
+        attempted_url: attemptedUrl,
+        page_referrer: referrer,
+      },
+    });
+  },
 };
 
 /**
