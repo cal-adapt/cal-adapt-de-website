@@ -11,10 +11,10 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import ErrorView from "@/components/common/layout/ErrorView";
 import Button from "@/components/common/ui/Button";
-import DashboardAppBar2 from "@/components/dashboard/DashboardAppBar2";
-import DashboardSidebar2, {
-  type DashboardSidebar2NavItem,
-} from "@/components/dashboard/DashboardSidebar2";
+import DashboardAppBar from "@/components/dashboard/DashboardAppBar";
+import DashboardSidebar, {
+  type DashboardSidebarNavItem,
+} from "@/components/dashboard/DashboardSidebar";
 import { mediaQueries } from "@/config/breakpoints";
 import { hasNavChildren, type NavLink, navLinks } from "@/config/navigation";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
@@ -25,7 +25,7 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-const SIDEBAR_ITEMS: DashboardSidebar2NavItem[] = [
+const SIDEBAR_ITEMS: DashboardSidebarNavItem[] = [
   { link: navLinks.climateMetricsMap, icon: <MapOutlinedIcon /> },
   { link: navLinks.extremeHeatDays, icon: <ThermostatOutlinedIcon /> },
   { link: navLinks.dataDownload, icon: <DatasetOutlinedIcon /> },
@@ -74,7 +74,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Viewport-locked frame: the sidebar fills the window height and only the
           main content scrolls, so the sidebar stays fully visible on long pages. */}
       <div style={{ display: "flex", height: "100dvh", overflow: "hidden" }}>
-        <DashboardSidebar2
+        <DashboardSidebar
           open={open}
           onToggleOpen={toggleLeftDrawer}
           activeHref={pathname}
@@ -90,9 +90,7 @@ export default function Layout({ children }: LayoutProps) {
             flexDirection: "column",
           }}
         >
-          {/* TODO(dashboard-nav): the previous appbar exposed a side-panel toggle for some
-              tools; DashboardAppBar2 does not yet. Re-add if those tools need it. */}
-          <DashboardAppBar2 page={pageLink} subPage={subPageLink} />
+          <DashboardAppBar page={pageLink} subPage={subPageLink} />
 
           <main id="main-content" style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
             {children}

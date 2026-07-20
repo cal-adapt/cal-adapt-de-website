@@ -6,16 +6,15 @@ import clsx from "clsx";
 
 import type { NavLink } from "@/config/navigation";
 
-import styles from "./DashboardAppBar2.module.scss";
+import styles from "./DashboardAppBar.module.scss";
 
-export interface DashboardAppBar2Props {
+export interface DashboardAppBarProps {
   page: NavLink;
-  /** Active nested page (e.g. "Methods"), shown as the final breadcrumb when present. */
   subPage?: NavLink;
   className?: string;
 }
 
-export default function DashboardAppBar2({ page, subPage, className }: DashboardAppBar2Props) {
+export default function DashboardAppBar({ page, subPage, className }: DashboardAppBarProps) {
   return (
     <header className={clsx(styles.appbar, className)}>
       <div className={styles.left}>

@@ -7,26 +7,26 @@ import Link from "@/components/common/ui/Link";
 import { hasNavChildren, type NavLink, navLinks } from "@/config/navigation";
 import { normalizePath } from "@/utils/url";
 
-import styles from "./DashboardSidebar2.module.scss";
+import styles from "./DashboardSidebar.module.scss";
 
-export interface DashboardSidebar2NavItem {
+export interface DashboardSidebarNavItem {
   link: NavLink;
   icon: ReactNode;
 }
 
-export interface DashboardSidebar2Props {
+export interface DashboardSidebarProps {
   open: boolean;
   onToggleOpen: () => void;
-  items: DashboardSidebar2NavItem[];
+  items: DashboardSidebarNavItem[];
   activeHref?: string;
 }
 
-export default function DashboardSidebar2({
+export default function DashboardSidebar({
   open,
   onToggleOpen,
   items,
   activeHref,
-}: DashboardSidebar2Props) {
+}: DashboardSidebarProps) {
   return (
     <nav className={clsx(styles.sidebar, open ? styles.open : styles.closed)} aria-label="Sidebar">
       <div className={styles.top}>
