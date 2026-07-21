@@ -44,6 +44,28 @@
   font-weight: font-weight(medium);
 }
 
+.svgOnly {
+  padding: 0;
+
+  &.large {
+    width: 40px;
+    height: 40px;
+  }
+
+  &.small {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.square {
+  border-radius: rounded(2);
+}
+
+.circle {
+  border-radius: rounded(circle);
+}
+
 .primary {
   background-color: color(black);
   color: color(white);

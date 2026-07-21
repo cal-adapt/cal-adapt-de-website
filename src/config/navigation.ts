@@ -1,3 +1,4 @@
+import { FEEDBACK_URL } from "@/config/constants";
 import { featureFlags } from "@/config/feature-flags";
 
 type FeatureFlagKey = keyof typeof featureFlags;
@@ -9,6 +10,8 @@ export interface NavLink {
   external?: boolean;
   /** When set, the link is only shown if the corresponding feature flag is enabled. */
   featureFlag?: FeatureFlagKey;
+  /** Optional nested pages rendered as an indented sub-navigation group */
+  children?: readonly NavLink[];
 }
 
 export interface NavGroup {
@@ -25,6 +28,10 @@ export function isNavGroup(item: NavItem): item is NavGroup {
 
 export function isNavLink(item: NavItem): item is NavLink {
   return "href" in item;
+}
+
+export function hasNavChildren(link: NavLink): link is NavLink & { children: readonly NavLink[] } {
+  return Array.isArray(link.children) && link.children.length > 0;
 }
 
 export const navLinks = {
@@ -48,6 +55,23 @@ export const navLinks = {
     label: "Extreme Heat Days",
     href: "/dashboard/extreme-heat-days",
     featureFlag: "__FF_EXTREME_HEAT_DAYS__",
+    children: [
+      {
+        id: "extreme-heat-days-dashboard",
+        label: "Dashboard",
+        href: "/dashboard/extreme-heat-days",
+      },
+      {
+        id: "extreme-heat-days-methods",
+        label: "Methods",
+        href: "/dashboard/extreme-heat-days/methods",
+      },
+      {
+        id: "extreme-heat-days-guidance",
+        label: "Guidance",
+        href: "/dashboard/extreme-heat-days/guidance",
+      },
+    ],
   },
   renewablesVisualizer: {
     id: "renewables-visualizer",
@@ -76,6 +100,12 @@ export const navLinks = {
     id: "contact",
     label: "Contact Us",
     href: "mailto:analytics@cal-adapt.org",
+    external: true,
+  },
+  feedback: {
+    id: "feedback",
+    label: "Feedback",
+    href: FEEDBACK_URL,
     external: true,
   },
 } as const satisfies Record<string, NavLink>;

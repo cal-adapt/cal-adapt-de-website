@@ -34,6 +34,9 @@ import styles from "./MapUI.module.scss";
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 
+const SIDEBAR_WIDTH_OPEN = 275;
+const SIDEBAR_WIDTH_COLLAPSED = 72;
+
 type MapUIProps = {
   metricSelected: number;
   gwlSelected: number;
@@ -158,7 +161,7 @@ export default function MapUI({
     <div
       className={styles.mapUI}
       style={{
-        width: open ? "calc(100% - 212px)" : "calc(100% - 72px)",
+        width: `calc(100% - ${open ? SIDEBAR_WIDTH_OPEN : SIDEBAR_WIDTH_COLLAPSED}px)`,
         transition: "width 225ms cubic-bezier(0.4, 0, 0.6, 1)",
       }}
     >

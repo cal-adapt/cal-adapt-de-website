@@ -2,7 +2,7 @@
 
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
-const DRAWER_WIDTH = 212;
+const DRAWER_WIDTH = 275;
 
 type DrawerState = "open" | "closed";
 
@@ -15,7 +15,7 @@ type LeftDrawerContextType = {
 const LeftDrawerContext = createContext<LeftDrawerContextType | undefined>(undefined);
 
 export const LeftDrawerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const drawerWidth = DRAWER_WIDTH;
 
   const toggleLeftDrawer = (state?: DrawerState) => {

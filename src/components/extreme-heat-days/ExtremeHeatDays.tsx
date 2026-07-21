@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import Alert from "@/components/common/ui/Alert";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
@@ -74,6 +75,11 @@ export default function ExtremeHeatDays() {
 
   return (
     <PageLayout title={navLinks.extremeHeatDays.label}>
+      <Alert severity="info" className={styles.betaAlert} ariaLabel="Beta notice">
+        <strong>This tool is in beta.</strong> Suggestions for improvements, questions, and general
+        comments are all welcome.
+      </Alert>
+
       <div className={styles.intro}>
         <p className={styles.introCopy}>
           A day in which the maximum temperature exceeds a defined threshold that poses a

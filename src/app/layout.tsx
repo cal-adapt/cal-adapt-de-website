@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 
 import GoogleAnalytics from "@/components/common/GoogleAnalytics";
-import Header from "@/components/common/layout/Header";
 import ThemeRegistry from "@/components/common/theme/ThemeRegistry";
 import Button from "@/components/common/ui/Button";
 import WebVitals from "@/components/common/WebVitals";
@@ -27,11 +26,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <Button variant="skip" href="#main-content">
           Skip to main content
         </Button>
-        <Header />
         <ThemeRegistry options={{ key: "mui-theme" }}>
-          <LeftDrawerProvider>
-            <main id="main-content">{children}</main>
-          </LeftDrawerProvider>
+          <LeftDrawerProvider>{children}</LeftDrawerProvider>
         </ThemeRegistry>
       </body>
       <GoogleAnalytics />

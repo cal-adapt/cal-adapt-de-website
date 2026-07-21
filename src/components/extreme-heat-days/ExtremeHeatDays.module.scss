@@ -1,5 +1,10 @@
 @use "@/styles/abstracts" as *;
 
+.betaAlert {
+  width: 100%;
+  max-width: max-w(global);
+}
+
 .intro {
   @include flex(column, flex-start, stretch, spacer(3));
   width: 100%;

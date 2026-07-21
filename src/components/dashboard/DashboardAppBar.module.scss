@@ -1,0 +1,21 @@
+@use "@/styles/abstracts" as *;
+
+.appbar {
+  @include flex($justify-content: space-between);
+  background: color(white);
+  padding: spacer(4) spacer(5);
+  position: sticky;
+  height: 72px;
+  top: 0;
+  border-bottom: 1px solid color(grey-2);
+  z-index: z(2);
+}
+
+.left {
+  @include flex(column, center, center, $gap: spacer(4));
+}
+
+.logo {
+  @include flex;
+  height: 1.75em;
+}
