@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 
-import GoogleAnalytics from "@/components/common/GoogleAnalytics";
+import GoogleAnalytics from "@/components/common/analytics/GoogleAnalytics";
+import WebVitals from "@/components/common/analytics/WebVitals";
 import ThemeRegistry from "@/components/common/theme/ThemeRegistry";
 import Button from "@/components/common/ui/Button";
-import WebVitals from "@/components/common/WebVitals";
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/config/constants";
 import { LeftDrawerProvider } from "@/context/LeftDrawerContext";
 

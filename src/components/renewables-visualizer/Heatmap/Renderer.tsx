@@ -91,7 +91,7 @@ export default function Renderer({
         textAnchor="end"
         dominantBaseline="middle"
       >
-        {MONTH_NAMES[month]}
+        {ALL_MONTHS[month]}
       </text>
     );
   });
