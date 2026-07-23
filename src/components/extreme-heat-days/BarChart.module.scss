@@ -1,0 +1,78 @@
+@use "@/styles/abstracts" as *;
+
+.chartContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  min-height: 340px;
+  max-height: 480px;
+}
+
+.chart {
+  display: block;
+}
+
+.tooltip {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 10px));
+  pointer-events: none;
+  z-index: 1;
+  background-color: color(black);
+  color: color(white);
+  padding: spacer(1) spacer(2);
+  border-radius: rounded(2);
+  font-weight: 600;
+  white-space: nowrap;
+  @include type-item(small);
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: color(black);
+  }
+}
+
+.chartTitle {
+  fill: color(black);
+  font-family: var(--font-family-base);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.grid line {
+  stroke: color(grey-2);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.axisLine {
+  stroke: color(grey-4);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.tickLabel {
+  fill: color(grey-4);
+  font-family: var(--font-family-base);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.axisLabel {
+  fill: color(black);
+  font-family: var(--font-family-base);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.bar {
+  transition: opacity 120ms ease-out;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}

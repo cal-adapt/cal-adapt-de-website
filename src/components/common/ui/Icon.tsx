@@ -2,11 +2,16 @@ import clsx from "clsx";
 import {
   AlertTriangle,
   CheckCircle2,
+  ChevronsLeft,
+  ChevronsRight,
   CircleAlert,
   CircleHelp,
   Download,
+  FlaskConical,
   Info,
   type LucideProps,
+  Mail,
+  MessageSquareText,
   Trash2,
   Undo2,
   X,
@@ -45,6 +50,11 @@ const LUCIDE_ICON_COMPONENTS = {
   alertWarning: AlertTriangle,
   alertError: CircleAlert,
   alertSuccess: CheckCircle2,
+  chevronsLeft: ChevronsLeft,
+  chevronsRight: ChevronsRight,
+  experiment: FlaskConical,
+  feedback: MessageSquareText,
+  mail: Mail,
 };
 
 export type IconVariant = keyof typeof ICON_COMPONENTS | keyof typeof LUCIDE_ICON_COMPONENTS;
@@ -69,7 +79,12 @@ export default function Icon({ variant, className, style, children, ...props }: 
     const iconProps = props as LucideProps;
 
     return (
-      <LucideIcon className={clsx(styles.icon, className)} style={style} {...iconProps}>
+      <LucideIcon
+        className={clsx(styles.icon, className)}
+        style={style}
+        strokeWidth={1.75}
+        {...iconProps}
+      >
         {children}
       </LucideIcon>
     );

@@ -3,7 +3,7 @@
 .mapUI {
   z-index: z(2);
   position: absolute;
-  width: calc(100% - 212px); // account for left drawer
+  width: calc(100% - 275px); // account for left drawer (sync with LeftDrawerContext)
   height: auto;
   padding: spacer(3) spacer(7);
   pointer-events: none;

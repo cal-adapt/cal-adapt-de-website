@@ -7,6 +7,7 @@ import * as stac from "./stac-api";
 
 export const calAdaptApi = { map, stac };
 
+export { orFilter } from "./cql";
 export type { TileJson } from "./map-api";
 export type {
   ItemSearchFilters,

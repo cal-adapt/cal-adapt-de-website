@@ -1,0 +1,20 @@
+@use "@/styles/abstracts" as *;
+
+.title {
+  text-align: center;
+  font-size: 1.75rem;
+}
+
+.closeButton {
+  position: absolute;
+  top: spacer(3);
+  right: spacer(3);
+}
+
+.body {
+  text-align: center;
+}
+
+.surveyLink {
+  color: color(blue-4);
+}

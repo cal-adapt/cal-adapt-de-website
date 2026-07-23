@@ -1,0 +1,31 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  @include flex(column, flex-start, stretch, spacer(3));
+  width: 100%;
+  min-width: 0;
+}
+
+.surface {
+  width: 100%;
+  background-color: color(white);
+  border: 1px solid color(grey-3);
+  border-radius: rounded(2);
+  padding: spacer(3);
+}
+
+.loadingState {
+  @include flex(row, center, center);
+  width: 100%;
+  // Should match BarChart's .chartContainer box to prevent layout shift
+  aspect-ratio: 2 / 1;
+  min-height: 340px;
+  max-height: 480px;
+}
+
+.sourceCitation {
+  @include type-item(small);
+  margin: 0;
+  color: color(grey-4);
+  line-height: 1.4;
+}

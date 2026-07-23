@@ -122,7 +122,7 @@ function flattenOptions(options: MultiSelectOptions): MultiSelectOption[] {
 
 export interface MultiSelectProps {
   id?: string;
-  options: MultiSelectOptions;
+  options: readonly MultiSelectOption[];
   value: string[];
   onChange: (next: string[]) => void;
   disabled?: boolean;

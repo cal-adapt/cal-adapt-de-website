@@ -4,13 +4,13 @@ import type {
   MultiSelectOptions,
   SelectOption,
 } from "@/components/common/form";
-import type {
-  ItemSearchFilters,
-  StacCollection,
-  StacCollectionQueryables,
-  StacItem,
+import {
+  type ItemSearchFilters,
+  orFilter,
+  type StacCollection,
+  type StacCollectionQueryables,
+  type StacItem,
 } from "@/lib/cal-adapt-api";
-import { createOrStatement } from "@/utils/query";
 import { splitStringByPeriod, toSentenceCase } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
@@ -191,19 +191,15 @@ function buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters 
   const collectionFilter = `collection='${LOCA2_COUNTY_STAC_COLLECTION_ID}'`;
 
   const countyFilter =
-    selections.counties.length > 0
-      ? createOrStatement("county_name", selections.counties)
-      : undefined;
+    selections.counties.length > 0 ? orFilter("county_name", selections.counties) : undefined;
 
   const scenarioFilter =
     selections.scenarios.length > 0
-      ? createOrStatement("cmip6:experiment_id", selections.scenarios)
+      ? orFilter("cmip6:experiment_id", selections.scenarios)
       : undefined;
 
   const modelFilter =
-    selections.models.length > 0
-      ? createOrStatement("cmip6:source_id", selections.models)
-      : undefined;
+    selections.models.length > 0 ? orFilter("cmip6:source_id", selections.models) : undefined;
 
   const tableId = CMIP6_TABLE_ID_BY_FREQUENCY[selections.frequency];
   const cmip6TableIdFilter = tableId ? `cmip6:table_id = '${tableId}'` : undefined;

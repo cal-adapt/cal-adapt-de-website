@@ -1,0 +1,30 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  display: flex;
+  flex-direction: row;
+  gap: spacer(5);
+}
+
+.tab {
+  @include type-item(body);
+  @include focus-ring;
+  appearance: none;
+  background: none;
+  border: none;
+  padding: spacer(2) 0;
+  margin-bottom: -1px; // overlap an enclosing bottom border, if any
+  color: color(grey-4);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+
+  &:hover:not(.tabSelected) {
+    color: color(black);
+  }
+}
+
+.tabSelected {
+  color: color(black);
+  border-bottom-color: color(black);
+  font-weight: 600;
+}

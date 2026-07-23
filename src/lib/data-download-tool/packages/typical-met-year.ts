@@ -1,11 +1,11 @@
 import type { MultiSelectOption, SelectOption } from "@/components/common/form";
-import type {
-  ItemSearchFilters,
-  StacCollection,
-  StacCollectionQueryables,
-  StacItem,
+import {
+  type ItemSearchFilters,
+  orFilter,
+  type StacCollection,
+  type StacCollectionQueryables,
+  type StacItem,
 } from "@/lib/cal-adapt-api";
-import { createOrStatement } from "@/utils/query";
 import { toSentenceCase } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
@@ -93,13 +93,11 @@ function buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters 
   const collectionFilter = `collection='${STAC_COLLECTION_ID}'`;
 
   const locationFilter =
-    selections.counties.length > 0 ? createOrStatement("location", selections.counties) : undefined;
+    selections.counties.length > 0 ? orFilter("location", selections.counties) : undefined;
   const modelFilter =
-    selections.models.length > 0 ? createOrStatement("model", selections.models) : undefined;
+    selections.models.length > 0 ? orFilter("model", selections.models) : undefined;
   const timePeriodFilter =
-    selections.timePeriods.length > 0
-      ? createOrStatement("time_period", selections.timePeriods)
-      : undefined;
+    selections.timePeriods.length > 0 ? orFilter("time_period", selections.timePeriods) : undefined;
 
   return {
     collectionFilter,
