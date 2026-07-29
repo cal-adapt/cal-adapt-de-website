@@ -374,7 +374,7 @@ export const loca2CountyPackage: PackageAdapter = {
   stacCollectionId: LOCA2_COUNTY_STAC_COLLECTION_ID,
   needsQueryables: true,
   rail: {
-    title: "LOCA2 county",
+    title: "Aggregated LOCA2 county data",
     listDescription: "Gridded climate projections by county.",
   },
   messages: {
