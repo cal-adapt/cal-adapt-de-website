@@ -7,6 +7,19 @@
 :root {
   --max-width-global: 1440px;
   --max-width-content: 80ch;
+
+  // 0px unless the banner feature flag is on (`data-banner`)
+  --banner-height: 0px;
+}
+
+// Pre-hydration fallbacks when the banner is enabled.
+// Overridden by `SiteBanner` height once mounted.
+:root[data-banner="true"] {
+  --banner-height: 64px;
+
+  @include breakpoint(medium) {
+    --banner-height: 44px;
+  }
 }
 
 /** Colors */

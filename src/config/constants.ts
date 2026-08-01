@@ -7,6 +7,8 @@ export const SITE_DESCRIPTION =
 
 export const FEEDBACK_URL = "https://forms.gle/PS7i5MYzF6ixdiq28";
 
+export const ANALYTICS_ENGINE_URL = "https://analytics.cal-adapt.org";
+
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   (process.env.AWS_BRANCH && process.env.AWS_APP_ID

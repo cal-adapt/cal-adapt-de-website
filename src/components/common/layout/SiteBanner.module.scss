@@ -1,0 +1,49 @@
+@use "@/styles/abstracts" as *;
+
+.banner {
+  @include flex(row, center, center, spacer(3));
+  position: relative;
+  z-index: z(header);
+  width: 100%;
+  padding: spacer(3) spacer(10) spacer(3) spacer(6);
+  background-color: color(blue-5);
+  color: css-var("color-white");
+  text-align: center;
+}
+
+.message {
+  @include type-item(small);
+  margin: 0;
+  color: css-var("color-white");
+}
+
+.link {
+  color: css-var("color-white");
+  font-weight: font-weight(bold);
+  text-decoration: underline;
+  white-space: nowrap;
+
+  &:hover {
+    color: color(blue-2);
+  }
+}
+
+.dismiss {
+  @include flex(row, center, center);
+  @include transition("background-color");
+  @include focus-ring;
+  position: absolute;
+  top: 50%;
+  right: spacer(4);
+  transform: translateY(-50%);
+  padding: spacer(1);
+  border: none;
+  border-radius: rounded(1);
+  background-color: transparent;
+  color: css-var("color-white");
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+}
