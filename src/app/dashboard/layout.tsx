@@ -16,7 +16,7 @@ import DashboardSidebar, {
   type DashboardSidebarNavItem,
 } from "@/components/dashboard/DashboardSidebar";
 import { mediaQueries } from "@/config/breakpoints";
-import { hasNavChildren, type NavLink, navLinks } from "@/config/navigation";
+import { hasNavChildren, isNavLinkEnabled, type NavLink, navLinks } from "@/config/navigation";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
 import { extractSegment, normalizePath } from "@/utils/url";
@@ -30,7 +30,7 @@ const SIDEBAR_ITEMS: DashboardSidebarNavItem[] = [
   { link: navLinks.extremeHeatDays, icon: <ThermostatOutlinedIcon /> },
   { link: navLinks.dataDownload, icon: <DatasetOutlinedIcon /> },
   { link: navLinks.renewablesVisualizer, icon: <WbSunnyOutlinedIcon /> },
-];
+].filter((item) => isNavLinkEnabled(item.link)); // Exclude feature-flag-disabled tools
 
 /** Resolve the active tool's nav link from the current `/dashboard/:tool` segment. */
 function getPageLink(selectedPage: string | null): NavLink {
