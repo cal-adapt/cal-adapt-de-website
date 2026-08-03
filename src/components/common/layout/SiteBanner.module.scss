@@ -5,8 +5,8 @@
   position: relative;
   z-index: z(header);
   width: 100%;
-  height: var(--banner-height);
-  padding: 0 spacer(6);
+  min-height: var(--banner-height);
+  padding: spacer(2) spacer(4);
   background-color: color(orange-2);
   color: color(black);
   text-align: center;
@@ -17,6 +17,7 @@
   @include type-item(small);
   margin: 0;
   color: color(black);
+  width: 100%;
 }
 
 .link {
@@ -31,10 +32,6 @@
 }
 
 .dismiss {
-  position: absolute;
-  top: 50%;
-  right: spacer(4);
-  transform: translateY(-50%);
   width: 24px;
   height: 24px;
   background-color: transparent; // Override tertiary button style
