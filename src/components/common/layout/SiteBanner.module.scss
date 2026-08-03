@@ -18,16 +18,16 @@
   margin: 0;
   color: color(black);
   width: 100%;
-}
 
-.link {
-  color: color(black);
-  font-weight: font-weight(bold);
-  text-decoration: underline;
-  white-space: nowrap;
+  a {
+    color: color(black);
+    font-weight: font-weight(bold);
+    text-decoration: underline;
+    white-space: nowrap;
 
-  &:hover {
-    color: color(grey-5);
+    &:hover {
+      color: color(grey-5);
+    }
   }
 }
 
