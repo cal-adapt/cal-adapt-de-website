@@ -16,7 +16,7 @@ import DashboardSidebar, {
   type DashboardSidebarNavItem,
 } from "@/components/dashboard/DashboardSidebar";
 import { mediaQueries } from "@/config/breakpoints";
-import { hasNavChildren, type NavLink, navLinks } from "@/config/navigation";
+import { hasNavChildren, isNavLinkEnabled, type NavLink, navLinks } from "@/config/navigation";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
 import { extractSegment, normalizePath } from "@/utils/url";
@@ -30,7 +30,7 @@ const SIDEBAR_ITEMS: DashboardSidebarNavItem[] = [
   { link: navLinks.extremeHeatDays, icon: <ThermostatOutlinedIcon /> },
   { link: navLinks.dataDownload, icon: <DatasetOutlinedIcon /> },
   { link: navLinks.renewablesVisualizer, icon: <WbSunnyOutlinedIcon /> },
-];
+].filter((item) => isNavLinkEnabled(item.link)); // Exclude feature-flag-disabled tools
 
 /** Resolve the active tool's nav link from the current `/dashboard/:tool` segment. */
 function getPageLink(selectedPage: string | null): NavLink {
@@ -72,8 +72,15 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <SidePanelProvider>
       {/* Viewport-locked frame: the sidebar fills the window height and only the
-          main content scrolls, so the sidebar stays fully visible on long pages. */}
-      <div style={{ display: "flex", height: "100dvh", overflow: "hidden" }}>
+          main content scrolls, so the sidebar stays fully visible on long pages.
+          The height subtracts the site-wide banner so nothing overflows below it. */}
+      <div
+        style={{
+          display: "flex",
+          height: "calc(100dvh - var(--banner-height, 0px))",
+          overflow: "hidden",
+        }}
+      >
         <DashboardSidebar
           open={open}
           onToggleOpen={toggleLeftDrawer}
