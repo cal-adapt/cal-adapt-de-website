@@ -8,17 +8,14 @@
   --max-width-global: 1440px;
   --max-width-content: 80ch;
 
-  // 0px unless the banner feature flag is on (`data-banner`)
   --banner-height: 0px;
 }
 
-// Pre-hydration fallbacks when the banner is enabled.
-// Overridden by `SiteBanner` height once mounted.
 :root[data-banner="true"] {
   --banner-height: 64px;
 
   @include breakpoint(medium) {
-    --banner-height: 44px;
+    --banner-height: 48px;
   }
 }
 
@@ -37,14 +34,6 @@ $greys: (
   5: #3a3f44,
 );
 
-$blues: (
-  1: #e1f1ff,
-  2: #b9deff,
-  3: #53aeff,
-  4: #007dec,
-  5: #004786,
-);
-
 $reds: (
   1: #ffebee,
   2: #ef9a9a,
@@ -52,10 +41,10 @@ $reds: (
   4: #b71c1c,
 );
 
-$greens: (
-  1: #e8f5e9,
-  2: #81c784,
-  3: #1b5e20,
+$oranges: (
+  1: #f7dbb5,
+  2: #fcc24d,
+  3: #f79226,
 );
 
 $yellows: (
@@ -64,12 +53,27 @@ $yellows: (
   3: #5d4a00,
 );
 
+$greens: (
+  1: #e8f5e9,
+  2: #81c784,
+  3: #1b5e20,
+);
+
+$blues: (
+  1: #e1f1ff,
+  2: #b9deff,
+  3: #4d9de0,
+  4: #007dec,
+  5: #33658a,
+);
+
 $colors: (
   grey: $greys,
   red: $reds,
+  orange: $oranges,
+  yellow: $yellows,
   green: $greens,
   blue: $blues,
-  yellow: $yellows,
 );
 
 :root {

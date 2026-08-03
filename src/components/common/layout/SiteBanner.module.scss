@@ -5,45 +5,46 @@
   position: relative;
   z-index: z(header);
   width: 100%;
-  padding: spacer(3) spacer(10) spacer(3) spacer(6);
-  background-color: color(blue-5);
-  color: css-var("color-white");
+  height: var(--banner-height);
+  padding: 0 spacer(6);
+  background-color: color(orange-2);
+  color: color(black);
   text-align: center;
+  overflow: hidden;
 }
 
 .message {
   @include type-item(small);
   margin: 0;
-  color: css-var("color-white");
+  color: color(black);
 }
 
 .link {
-  color: css-var("color-white");
+  color: color(black);
   font-weight: font-weight(bold);
   text-decoration: underline;
   white-space: nowrap;
 
   &:hover {
-    color: color(blue-2);
+    color: color(grey-5);
   }
 }
 
 .dismiss {
-  @include flex(row, center, center);
-  @include transition("background-color");
-  @include focus-ring;
   position: absolute;
   top: 50%;
   right: spacer(4);
   transform: translateY(-50%);
-  padding: spacer(1);
-  border: none;
-  border-radius: rounded(1);
-  background-color: transparent;
-  color: css-var("color-white");
-  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  background-color: transparent; // Override tertiary button style
 
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: rgba(255, 255, 255, 0.15);
   }
+}
+
+.dismissIcon {
+  width: 14px;
+  height: 14px;
 }
