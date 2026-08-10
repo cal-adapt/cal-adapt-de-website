@@ -4,6 +4,8 @@ import { loca2CountyPackage } from "./loca2-county";
 import { standardYearPackage } from "./standard-year";
 import type { PackageAdapter } from "./types";
 import { typicalMetYearPackage } from "./typical-met-year";
+import { xmyPersistPackage } from "./xmy-persist";
+import { xmyShockPackage } from "./xmy-shock";
 
 /**
  * Registry of every Data Download package. Ordering here does NOT drive UI order
@@ -14,6 +16,8 @@ export const PACKAGE_ADAPTERS: readonly PackageAdapter[] = [
   loca2CountyPackage,
   typicalMetYearPackage,
   standardYearPackage,
+  xmyPersistPackage,
+  xmyShockPackage,
 ];
 
 /**
