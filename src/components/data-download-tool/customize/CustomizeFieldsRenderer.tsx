@@ -48,9 +48,9 @@ function renderField(field: CustomizeFieldConfig, ctx: FieldRenderContext) {
           required={field.required ?? true}
           showFieldErrors={ctx.showFieldErrors}
           hint={hint}
-          options={field.options(ctx.config)}
+          options={field.options(ctx.config, ctx.value)}
           value={field.value(ctx.value)}
-          onChange={(next) => patch(field.patch(next))}
+          onChange={(next) => patch(field.patch(next, ctx.value))}
           placeholder={field.placeholder ?? ""}
         />
       );
@@ -59,8 +59,8 @@ function renderField(field: CustomizeFieldConfig, ctx: FieldRenderContext) {
         <FormField label={field.label} hint={hint} hintVariant="tooltip">
           <Select
             value={field.value(ctx.value)}
-            onChange={(next) => patch(field.patch(next))}
-            options={field.options(ctx.config)}
+            onChange={(next) => patch(field.patch(next, ctx.value))}
+            options={field.options(ctx.config, ctx.value)}
           />
         </FormField>
       );
@@ -94,11 +94,13 @@ export default function CustomizeFieldsRenderer({
   };
   return (
     <>
-      {fields.map((field) => (
-        <div key={field.label} className={styles.editableCell}>
-          {renderField(field, ctx)}
-        </div>
-      ))}
+      {fields
+        .filter((field) => field.visible?.(value) ?? true)
+        .map((field) => (
+          <div key={field.label} className={styles.editableCell}>
+            {renderField(field, ctx)}
+          </div>
+        ))}
     </>
   );
 }

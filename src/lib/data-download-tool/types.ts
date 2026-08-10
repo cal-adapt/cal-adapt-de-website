@@ -1,9 +1,19 @@
 import type { MultiSelectOption, SelectOption } from "@/components/common/form";
 
-export type PackageId = "loca2-county" | "typical-met-year" | "standard-year";
+export type PackageId =
+  | "loca2-county"
+  | "typical-met-year"
+  | "standard-year"
+  | "xmy-persist"
+  | "xmy-shock";
 
 /** Which STAC-driven customize layout to render (LOCA2 county grid vs station-profile packages). */
-export type CustomizeFormKind = "loca2-county" | "standard-year" | "typical-met-year";
+export type CustomizeFormKind =
+  | "loca2-county"
+  | "standard-year"
+  | "typical-met-year"
+  | "xmy-persist"
+  | "xmy-shock";
 
 /**
  * Options + defaults for the Customize step, built from STAC (or future sources).
@@ -17,10 +27,14 @@ export type CustomizeFormConfig = {
   modelOptions: MultiSelectOption[];
   scenarioOptions: MultiSelectOption[];
   countyOptions: MultiSelectOption[];
-  /** station-profile packages (currently standard-year) — `percentile` queryable */
+  /** station-profile packages (standard-year, xmy-persist) — `percentile` queryable */
   percentileOptions?: MultiSelectOption[];
   /** station-profile packages — `time_period` queryable (shown as GWLs in the UI) */
   timePeriodOptions?: MultiSelectOption[];
+  /** standard-year time-based approach — `centered_year` queryable (shown as Years in the UI) */
+  centeredYearOptions?: MultiSelectOption[];
+  /** xmy-shock — `shock_type` queryable (cold / hot shock) */
+  shockTypeOptions?: MultiSelectOption[];
   initial: {
     frequency: string;
     variables: string[];
@@ -29,6 +43,9 @@ export type CustomizeFormConfig = {
     counties: string[];
     percentiles: string[];
     timePeriods: string[];
+    centeredYears: string[];
+    shockTypes: string[];
+    computationApproach?: string;
   };
 };
 
@@ -44,6 +61,10 @@ export type CustomizeSelections = {
   counties: string[];
   percentiles: string[];
   timePeriods: string[];
+  centeredYears: string[];
+  shockTypes: string[];
+  /** standard-year — active approach: `gwl` (warming levels) or `time-based` (centered years); unset for other packages. */
+  computationApproach?: string;
 };
 
 /** One downloadable NetCDF (or other) asset in a STAC item. */

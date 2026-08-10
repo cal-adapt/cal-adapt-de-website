@@ -72,10 +72,10 @@ export type StacCollection = {
   "sci:doi"?: string;
   /** PgSTAC climate-profile collections may omit summaries; use queryables instead. */
   summaries?: Record<string, string[]>;
-  /** Cal-Adapt extension: e.g. `county` (LOCA2 county grid) or `point`
-   * (climate profiles — fixed site, e.g. weather station).
-   */
+  /** Cal-Adapt extension: e.g. `county` (LOCA2 county grid) or `point` */
   "caladapt:spatial_type"?: string;
+  /** Cal-Adapt extension: station id -> display label */
+  "caladapt:station_labels"?: Record<string, string>;
   [key: string]: unknown;
 };
 
@@ -90,6 +90,10 @@ export type ItemSearchFilters = {
   variableFilter?: string;
   percentileFilter?: string;
   timePeriodFilter?: string;
+  /** standard-year time-based approach — STAC `centered_year` */
+  centeredYearFilter?: string;
+  /** xmy-shock — STAC `shock_type` */
+  shockTypeFilter?: string;
   /** LOCA2 county — e.g. `cmip6:table_id = 'mon'` to avoid day + mon duplicate items */
   cmip6TableIdFilter?: string;
 };
@@ -142,6 +146,8 @@ export async function searchItems(filters: ItemSearchFilters): Promise<StacItemC
   if (filters.variableFilter) filterParts.push(filters.variableFilter);
   if (filters.percentileFilter) filterParts.push(filters.percentileFilter);
   if (filters.timePeriodFilter) filterParts.push(filters.timePeriodFilter);
+  if (filters.centeredYearFilter) filterParts.push(filters.centeredYearFilter);
+  if (filters.shockTypeFilter) filterParts.push(filters.shockTypeFilter);
   if (filters.cmip6TableIdFilter) filterParts.push(filters.cmip6TableIdFilter);
 
   const filterStr = filterParts.join(" AND ");

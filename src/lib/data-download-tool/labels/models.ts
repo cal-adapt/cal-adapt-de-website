@@ -5,6 +5,7 @@ const CMIP6_MODEL_LABELS: Readonly<Record<string, string>> = {
   "cnrm-esm2-1": "CNRM-ESM2-1",
   "ec-earth3": "EC-Earth3",
   "ec-earth3-veg": "EC-Earth3-Veg",
+  era5: "ERA5",
   "fgoals-g3": "FGOALS-g3",
   "gfdl-esm4": "GFDL-ESM4",
   "hadgem3-gc31-ll": "HadGEM3-GC31-LL",
