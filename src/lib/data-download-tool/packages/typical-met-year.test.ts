@@ -4,7 +4,7 @@ import type { StacCollection, StacCollectionQueryables, StacItem } from "@/lib/c
 
 import type { CustomizeFormConfig, CustomizeSelections, DataDownloadWorkspaceData } from "../types";
 
-import { buildSummaryRows } from "./shared";
+import { buildSummaryRows, flattenMultiSelectOptions } from "./shared";
 import { typicalMetYearPackage } from "./typical-met-year";
 
 function makeSelections(overrides: Partial<CustomizeSelections> = {}): CustomizeSelections {
@@ -16,6 +16,8 @@ function makeSelections(overrides: Partial<CustomizeSelections> = {}): Customize
     counties: ["san_francisco_intl"],
     percentiles: [],
     timePeriods: ["present-day"],
+    centeredYears: [],
+    shockTypes: [],
     ...overrides,
   };
 }
@@ -39,6 +41,33 @@ function makeItem(overrides: Partial<StacItem> = {}): StacItem {
   };
 }
 
+function multiField(label: string) {
+  const field = typicalMetYearPackage.fields.find((f) => f.label === label);
+  if (field?.kind !== "multi") {
+    throw new Error(`${label} must be a multi-select`);
+  }
+  return field;
+}
+
+function makeTmyConfig() {
+  const collection = {
+    type: "Collection",
+    id: "typical-met-year",
+    description: "",
+    license: "",
+  } as StacCollection;
+  const queryables = {
+    properties: {
+      location: { enum: ["san_francisco_intl"] },
+      model: { enum: ["era5", "ec-earth3"] },
+      time_period: {
+        enum: ["historical", "present-day", "near-future", "mid-century", "mid-late-century"],
+      },
+    },
+  } as unknown as StacCollectionQueryables;
+  return typicalMetYearPackage.buildCustomizeForm(collection, queryables);
+}
+
 describe("typicalMetYearPackage", () => {
   it("builds CQL2 search filters using location/model/time_period keys", () => {
     const filters = typicalMetYearPackage.buildSearchFilters(makeSelections());
@@ -55,6 +84,61 @@ describe("typicalMetYearPackage", () => {
       false
     );
     expect(typicalMetYearPackage.validateSelections(makeSelections({ models: [] }))).toBe(false);
+  });
+
+  it("offers Historical only with ERA5 and warming levels only with a WRF model", () => {
+    const config = makeTmyConfig();
+    const gwls = multiField("GWLs");
+    const periodValues = (models: string[]) =>
+      flattenMultiSelectOptions(gwls.options(config, makeSelections({ models }))).map(
+        (o) => o.value
+      );
+
+    // Both a reanalysis and a projection model selected → every period is offered.
+    expect(periodValues(["era5", "ec-earth3"])).toEqual([
+      "historical",
+      "present-day",
+      "near-future",
+      "mid-century",
+      "mid-late-century",
+    ]);
+
+    // ERA5 only → Historical is the only valid period.
+    expect(periodValues(["era5"])).toEqual(["historical"]);
+
+    // WRF only → Historical is hidden.
+    expect(periodValues(["ec-earth3"])).toEqual([
+      "present-day",
+      "near-future",
+      "mid-century",
+      "mid-late-century",
+    ]);
+  });
+
+  it("prunes now-invalid GWLs when the model selection changes", () => {
+    const models = multiField("Models");
+
+    // Dropping every WRF model removes the warming levels but keeps Historical.
+    expect(
+      models.patch(
+        ["era5"],
+        makeSelections({
+          models: ["era5", "ec-earth3"],
+          timePeriods: ["historical", "present-day"],
+        })
+      )
+    ).toEqual({ models: ["era5"], timePeriods: ["historical"] });
+
+    // Dropping ERA5 removes Historical but keeps the warming levels.
+    expect(
+      models.patch(
+        ["ec-earth3"],
+        makeSelections({
+          models: ["era5", "ec-earth3"],
+          timePeriods: ["historical", "present-day"],
+        })
+      )
+    ).toEqual({ models: ["ec-earth3"], timePeriods: ["present-day"] });
   });
 
   it("throws when buildCustomizeForm is called without queryables", () => {
@@ -108,6 +192,8 @@ describe("typicalMetYearPackage", () => {
         counties: [],
         percentiles: [],
         timePeriods: [],
+        centeredYears: [],
+        shockTypes: [],
       },
     };
     const workspace = { customizeForm: form } as DataDownloadWorkspaceData;
@@ -153,6 +239,64 @@ describe("typicalMetYearPackage", () => {
       "mid-late-century",
       "future-extreme",
     ]);
+  });
+
+  it("labels Location options from caladapt:station_labels, falling back to a humanized id", () => {
+    const collection = {
+      type: "Collection",
+      id: "typical-met-year",
+      description: "",
+      license: "",
+      "caladapt:station_labels": {
+        san_francisco_international_airport_ksfo: "San Francisco International Airport (KSFO)",
+      },
+    } as unknown as StacCollection;
+    const queryables = {
+      properties: {
+        location: { enum: ["san_francisco_international_airport_ksfo", "unmapped_station_kxyz"] },
+        model: { enum: ["ACCESS-CM2"] },
+        time_period: { enum: ["present-day"] },
+      },
+    } as unknown as StacCollectionQueryables;
+
+    const config = typicalMetYearPackage.buildCustomizeForm(collection, queryables);
+    expect(config.countyOptions).toEqual([
+      {
+        value: "san_francisco_international_airport_ksfo",
+        label: "San Francisco International Airport (KSFO)",
+      },
+      { value: "unmapped_station_kxyz", label: "Unmapped Station Kxyz" },
+    ]);
+  });
+
+  it("uses the station label from customizeForm for a bundle's Location meta block", () => {
+    const collection = {
+      type: "Collection",
+      id: "typical-met-year",
+      description: "",
+      license: "",
+      "caladapt:station_labels": {
+        san_francisco_intl: "San Francisco International Airport (KSFO)",
+      },
+    } as unknown as StacCollection;
+    const queryables = {
+      properties: {
+        location: { enum: ["san_francisco_intl"] },
+        model: { enum: ["ACCESS-CM2"] },
+        time_period: { enum: ["present-day"] },
+      },
+    } as unknown as StacCollectionQueryables;
+    const config = typicalMetYearPackage.buildCustomizeForm(collection, queryables);
+
+    const { bundles } = typicalMetYearPackage.mapItemsToBundles(
+      [makeItem()],
+      makeSelections(),
+      config
+    );
+    expect(bundles[0].metaBlocks).toContainEqual({
+      label: "Location",
+      value: "San Francisco International Airport (KSFO)",
+    });
   });
 
   it("emits one asset per file type per (location, time_period, model) bundle", () => {

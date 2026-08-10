@@ -18,13 +18,32 @@ import {
   formatDoiUrl,
   formatTimeSpanLabel,
   humanizeToken,
+  labelStation,
   parseStacAssetSizeBytes,
+  parseStacFileSizeBytes,
   slugifyFilenameSegment,
   stableMultiKey,
+  stationLabelsFromCollection,
 } from "./shared";
 import type { CustomizeFieldConfig, PackageAdapter, PackageBundleMapResult } from "./types";
 
 const STAC_COLLECTION_ID = "typical-met-year" as const;
+
+/** ERA5 is an observed reanalysis (not a WRF projection); its TMY only exists for `historical`. */
+const ERA5_MODEL_ID = "era5" as const;
+const HISTORICAL_PERIOD_ID = "historical" as const;
+
+function isEra5Model(id: string): boolean {
+  return id.toLowerCase() === ERA5_MODEL_ID;
+}
+
+/** `historical` requires ERA5; warming levels require at least one WRF (non-ERA5) model. */
+function periodValidForModels(periodId: string, models: readonly string[]): boolean {
+  if (periodId.toLowerCase() === HISTORICAL_PERIOD_ID) {
+    return models.some(isEra5Model);
+  }
+  return models.some((m) => !isEra5Model(m));
+}
 
 function buildCustomizeForm(
   collection: StacCollection,
@@ -40,9 +59,10 @@ function buildCustomizeForm(
   const modelIds = enumStringsFromStacQueryables(queryables, "model");
   const gwlIds = sortGwlIds(enumStringsFromStacQueryables(queryables, "time_period"));
 
+  const stationLabels = stationLabelsFromCollection(collection);
   const countyOptions: MultiSelectOption[] = stationIds.map((id) => ({
     value: id,
-    label: humanizeToken(id),
+    label: labelStation(id, stationLabels),
   }));
   const modelOptions: MultiSelectOption[] = modelIds.map((id) => ({
     value: id,
@@ -85,6 +105,8 @@ function buildCustomizeForm(
       counties: [],
       percentiles: [],
       timePeriods: [...gwlIds],
+      centeredYears: [],
+      shockTypes: [],
     },
   };
 }
@@ -111,7 +133,14 @@ function searchFiltersKey(selections: CustomizeSelections): string {
   return stableMultiKey([selections.counties, selections.models, selections.timePeriods]);
 }
 
-function mapItemsToBundles(features: StacItem[]): PackageBundleMapResult {
+function mapItemsToBundles(
+  features: StacItem[],
+  _selections: CustomizeSelections,
+  customizeForm?: CustomizeFormConfig
+): PackageBundleMapResult {
+  const locationLabelById = new Map(
+    (customizeForm?.countyOptions ?? []).map((o) => [o.value, o.label])
+  );
   const bundleBySelection = new Map<string, DownloadBundle>();
   const seenAssetKeys = new Set<string>();
   let totalBytes = 0;
@@ -125,7 +154,7 @@ function mapItemsToBundles(features: StacItem[]): PackageBundleMapResult {
 
     let bundle = bundleBySelection.get(bundleKey);
     if (bundle == null) {
-      const locationLabel = humanizeToken(locationRaw);
+      const locationLabel = locationLabelById.get(locationRaw) ?? humanizeToken(locationRaw);
       const gwlLabel = labelGwl(timePeriodRaw);
       const modelLabel = labelCmip6Model(modelRaw);
       bundle = {
@@ -147,7 +176,9 @@ function mapItemsToBundles(features: StacItem[]): PackageBundleMapResult {
       if (!href) {
         continue;
       }
-      const sizeBytes = parseStacAssetSizeBytes(raw as Record<string, unknown>);
+      const sizeBytes =
+        parseStacAssetSizeBytes(raw as Record<string, unknown>) ||
+        parseStacFileSizeBytes(item.properties["file:size"]);
       const fileTypeLabel = /^[a-z0-9]{2,5}$/i.test(assetKey)
         ? assetKey.toUpperCase()
         : humanizeToken(assetKey);
@@ -186,7 +217,11 @@ const fields: readonly CustomizeFieldConfig[] = [
     kind: "multi",
     label: "GWLs",
     placeholder: "Choose GWLs…",
-    options: (config) => config.timePeriodOptions ?? [],
+    // Only offer periods the selected models actually provide (Historical iff ERA5 is selected).
+    options: (config, selections) =>
+      (config.timePeriodOptions ?? []).filter((o) =>
+        periodValidForModels(o.value, selections.models)
+      ),
     value: (selections) => selections.timePeriods,
     patch: (next) => ({ timePeriods: next }),
   },
@@ -196,7 +231,11 @@ const fields: readonly CustomizeFieldConfig[] = [
     placeholder: "Choose models…",
     options: (config) => config.modelOptions,
     value: (selections) => selections.models,
-    patch: (next) => ({ models: next }),
+    // Prune periods no longer valid for the new model set (e.g. dropping every WRF model).
+    patch: (next, selections) => ({
+      models: next,
+      timePeriods: selections.timePeriods.filter((p) => periodValidForModels(p, next)),
+    }),
   },
   {
     kind: "multi",
