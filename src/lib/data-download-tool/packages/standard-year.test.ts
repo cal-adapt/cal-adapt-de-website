@@ -286,7 +286,7 @@ describe("standardYearPackage", () => {
     expect(config.timePeriodOptions?.map((o) => o.value)).toEqual(["present-day", "mid-century"]);
     expect(config.centeredYearOptions?.map((o) => o.value)).toEqual(["2015", "2035", "2055"]);
     expect(config.initial.timePeriods).toEqual(["present-day", "mid-century"]);
-    expect(config.initial.centeredYears).toEqual([]);
+    expect(config.initial.centeredYears).toEqual(["2015", "2035", "2055"]);
   });
 
   it("builds time-based filters when the time-based approach is active", () => {

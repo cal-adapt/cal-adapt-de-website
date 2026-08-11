@@ -155,7 +155,7 @@ function buildCustomizeForm(
       counties: [],
       percentiles: [...percentileIds],
       timePeriods: [...gwlIds],
-      centeredYears: [],
+      centeredYears: [...centeredYearIds],
       shockTypes: [],
       computationApproach: APPROACH_GWL,
     },

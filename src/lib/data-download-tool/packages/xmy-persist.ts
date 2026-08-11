@@ -68,7 +68,7 @@ function buildCustomizeForm(
   const readOnlyFields = [
     {
       label: "Dataset",
-      value: collection.title?.trim() || "Extreme Meteorological Year — Persistence",
+      value: collection.title?.trim() || "Extreme Year (Persistence)",
     },
     { label: "Data format", value: "EPW, CSV" },
     {
@@ -268,7 +268,7 @@ export const xmyPersistPackage: PackageAdapter = {
   stacCollectionId: STAC_COLLECTION_ID,
   needsQueryables: true,
   rail: {
-    title: "Extreme Meteorological Year — Persistence",
+    title: "Extreme Year (Persistence)",
     listDescription: "Sustained extreme climate profiles at stations, by percentile.",
   },
   messages: {

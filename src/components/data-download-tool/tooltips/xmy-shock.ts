@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export const tooltipByLabel: Partial<Record<string, ReactNode>> = {
-  Dataset: "TODO",
+  Dataset: undefined,
   "Data format": "EnergyPlus Weather file (industry standard), tabular format (CSV)",
   "Boundary type": "Localized model data at a weather station",
   "Time span": undefined,

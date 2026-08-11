@@ -68,7 +68,7 @@ function buildCustomizeForm(
   const readOnlyFields = [
     {
       label: "Dataset",
-      value: collection.title?.trim() || "Extreme Meteorological Year — Shock",
+      value: collection.title?.trim() || "Extreme Year (Shock)",
     },
     { label: "Data format", value: "EPW, CSV" },
     {
@@ -269,7 +269,7 @@ export const xmyShockPackage: PackageAdapter = {
   stacCollectionId: STAC_COLLECTION_ID,
   needsQueryables: true,
   rail: {
-    title: "Extreme Meteorological Year — Shock",
+    title: "Extreme Year (Shock)",
     listDescription: "Short-duration hot and cold shock climate profiles at stations.",
   },
   messages: {
