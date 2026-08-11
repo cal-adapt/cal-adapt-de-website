@@ -1,7 +1,6 @@
 /** Human-readable labels for percentile ids (STAC `percentile` queryable on station-profile collections). */
 const PERCENTILE_LABELS: Readonly<Record<string, string>> = {
   "05ptile": "5th percentile",
-  "5ptile": "5th percentile",
   "10ptile": "10th percentile",
   "40ptile": "40th percentile",
   "50ptile": "50th percentile",
@@ -20,7 +19,7 @@ function percentileRank(id: string): number {
   return match ? Number.parseInt(match[1], 10) : Number.POSITIVE_INFINITY;
 }
 
-/** Sort percentile ids ascending by their numeric value (`5ptile` before `95ptile`). */
+/** Sort percentile ids ascending by their numeric value (`05ptile` before `95ptile`). */
 export function sortPercentileIds(ids: readonly string[]): string[] {
   return [...ids].sort((a, b) => {
     const ra = percentileRank(a);

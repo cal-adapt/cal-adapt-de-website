@@ -68,14 +68,14 @@ describe("xmyPersistPackage", () => {
       properties: {
         location: { enum: ["san_francisco_intl"] },
         model: { enum: ["taiesm1"] },
-        percentile: { enum: ["10ptile", "40ptile", "5ptile", "60ptile", "90ptile", "95ptile"] },
+        percentile: { enum: ["10ptile", "40ptile", "05ptile", "60ptile", "90ptile", "95ptile"] },
         time_period: { enum: ["present-day"] },
       },
     } as unknown as StacCollectionQueryables;
 
     const config = xmyPersistPackage.buildCustomizeForm(collection, queryables);
     expect(config.percentileOptions?.map((o) => o.value)).toEqual([
-      "5ptile",
+      "05ptile",
       "10ptile",
       "40ptile",
       "60ptile",
