@@ -67,8 +67,15 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <SidePanelProvider>
       {/* Viewport-locked frame: the sidebar fills the window height and only the
-          main content scrolls, so the sidebar stays fully visible on long pages. */}
-      <div style={{ display: "flex", height: "100dvh", overflow: "hidden" }}>
+          main content scrolls, so the sidebar stays fully visible on long pages.
+          The height subtracts the site-wide banner so nothing overflows below it. */}
+      <div
+        style={{
+          display: "flex",
+          height: "calc(100dvh - var(--banner-height, 0px))",
+          overflow: "hidden",
+        }}
+      >
         <DashboardSidebar
           open={open}
           onToggleOpen={toggleLeftDrawer}

@@ -2,9 +2,12 @@ import { Metadata } from "next";
 
 import GoogleAnalytics from "@/components/common/analytics/GoogleAnalytics";
 import WebVitals from "@/components/common/analytics/WebVitals";
+import SiteBanner from "@/components/common/layout/SiteBanner";
 import ThemeRegistry from "@/components/common/theme/ThemeRegistry";
 import Button from "@/components/common/ui/Button";
-import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/config/constants";
+import Link from "@/components/common/ui/Link";
+import { ANALYTICS_ENGINE_URL, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/config/constants";
+import { featureFlags } from "@/config/feature-flags";
 import { LeftDrawerProvider } from "@/context/LeftDrawerContext";
 
 import "@/styles/global.scss";
@@ -20,12 +23,20 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  const showBanner = featureFlags.__FF_SITE_BANNER__;
+
   return (
-    <html lang="en">
+    <html lang="en" data-banner={showBanner ? "true" : undefined}>
       <body>
         <Button variant="skip" href="#main-content">
           Skip to main content
         </Button>
+        {showBanner && (
+          <SiteBanner>
+            The Cal-Adapt: Analytics Engine website has a new look and improved navigation.{" "}
+            <Link href={ANALYTICS_ENGINE_URL}>Explore the new site!</Link>
+          </SiteBanner>
+        )}
         <ThemeRegistry options={{ key: "mui-theme" }}>
           <LeftDrawerProvider>{children}</LeftDrawerProvider>
         </ThemeRegistry>
