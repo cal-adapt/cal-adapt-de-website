@@ -117,7 +117,7 @@ describe("typicalMetYearPackage", () => {
   it("locks Models and GWLs to ERA5 + Historical under the reanalysis data source", () => {
     const config = makeTmyConfig();
     const models = multiField("Models");
-    const gwls = multiField("GWLs");
+    const gwls = multiField("Global Warming Levels");
     const reanalysis = makeSelections({ dataSource: "historical-reanalysis" });
 
     expect(models.options(config, reanalysis)).toEqual([{ value: "era5", label: "ERA5" }]);
@@ -135,7 +135,7 @@ describe("typicalMetYearPackage", () => {
   it("uses the projection pools for Models and GWLs under the projections data source", () => {
     const config = makeTmyConfig();
     const models = multiField("Models");
-    const gwls = multiField("GWLs");
+    const gwls = multiField("Global Warming Levels");
     const projections = makeSelections({
       dataSource: "climate-projections",
       models: ["ec-earth3"],
@@ -239,9 +239,9 @@ describe("typicalMetYearPackage", () => {
     expect(rows).toEqual([
       { label: "Dataset", value: "Typical Met Year" },
       { label: "Data source", value: "Climate projections" },
-      { label: "GWLs", value: "Present day" },
+      { label: "Global Warming Levels", value: "Present day" },
       { label: "Models", value: "ACCESS-CM2" },
-      { label: "Location", value: "San Francisco Intl" },
+      { label: "Locations", value: "San Francisco Intl" },
     ]);
   });
 

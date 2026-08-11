@@ -7,8 +7,10 @@ export const tooltipByLabel: Partial<Record<string, ReactNode>> = {
   "Time span": undefined,
   License: undefined,
   DOI: "Digital Object Identifier for citing the source dataset",
-  Location: "Weather stations in California",
-  GWLs: "Present day (1.2°C), Near future (1.5°C), Mid-century (2.0°C), Mid-late century (2.5°C)",
-  Models: "TODO",
-  "Shock type": "TODO",
+  Locations: "Weather stations in California",
+  "Global Warming Levels":
+    "Global mean temperature increase relative to the 1850-1900 pre-industrial baseline",
+  Models: "Bias-adjusted, dynamically downscaled (WRF) climate simulations",
+  "Shock type":
+    "Whether the profile represents an extreme hot event (heatwave) or an extreme cold event (cold snap)",
 };

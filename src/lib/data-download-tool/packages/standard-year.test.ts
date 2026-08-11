@@ -150,11 +150,11 @@ describe("standardYearPackage", () => {
     // In the GWL approach the Years row is hidden; the toggle row is surfaced.
     expect(rows).toEqual([
       { label: "Dataset", value: "Standard Year" },
-      { label: "Computation approach", value: "Warming level" },
-      { label: "GWLs", value: "Present day" },
+      { label: "Computation approach", value: "Global warming level" },
+      { label: "Global Warming Levels", value: "Present day" },
       { label: "Variables", value: "Max Temp" },
       { label: "Percentiles", value: "50th percentile" },
-      { label: "Location", value: "San Francisco Intl" },
+      { label: "Locations", value: "San Francisco Intl" },
     ]);
   });
 
@@ -199,7 +199,7 @@ describe("standardYearPackage", () => {
       { label: "Years", value: "2015" },
       { label: "Variables", value: "Max Temp" },
       { label: "Percentiles", value: "50th percentile" },
-      { label: "Location", value: "San Francisco Intl" },
+      { label: "Locations", value: "San Francisco Intl" },
     ]);
   });
 
@@ -346,7 +346,7 @@ describe("standardYearPackage", () => {
   });
 
   it("reveals GWLs xor Years based on the active approach", () => {
-    const gwls = multiField("GWLs");
+    const gwls = multiField("Global Warming Levels");
     const years = multiField("Years");
 
     const gwl = makeSelections({ computationApproach: "gwl" });

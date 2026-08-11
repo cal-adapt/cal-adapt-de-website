@@ -38,7 +38,7 @@ const DATA_SOURCE_REANALYSIS = "historical-reanalysis" as const;
 const DATA_SOURCE_PROJECTIONS = "climate-projections" as const;
 
 const DATA_SOURCE_OPTIONS: SelectOption[] = [
-  { value: DATA_SOURCE_REANALYSIS, label: "Historical Reanalysis (ERA)" },
+  { value: DATA_SOURCE_REANALYSIS, label: "Historical reanalysis (ERA)" },
   { value: DATA_SOURCE_PROJECTIONS, label: "Climate projections" },
 ];
 
@@ -191,7 +191,7 @@ function mapItemsToBundles(
         stacItemId: slugifyFilenameSegment(`tmy-${locationRaw}-${modelRaw}-${timePeriodRaw}`),
         metaBlocks: [
           { label: "Location", value: locationLabel },
-          { label: "GWLs", value: gwlLabel },
+          { label: "Global Warming Levels", value: gwlLabel },
           { label: "Model", value: modelLabel },
         ],
         filenameSuffix: `${modelLabel}-${locationLabel}`,
@@ -254,8 +254,8 @@ const fields: readonly CustomizeFieldConfig[] = [
   },
   {
     kind: "multi",
-    label: "GWLs",
-    placeholder: "Choose GWLs…",
+    label: "Global Warming Levels",
+    placeholder: "Choose global warming levels…",
     // Reanalysis only has Historical, so lock field to that single option;
     // climate projection selections are preserved via `selections.timePeriods` for the toggle back.
     options: (config, selections) =>
@@ -281,7 +281,7 @@ const fields: readonly CustomizeFieldConfig[] = [
   },
   {
     kind: "multi",
-    label: "Location",
+    label: "Locations",
     placeholder: "Choose stations…",
     options: (config) => config.countyOptions,
     value: (selections) => selections.counties,

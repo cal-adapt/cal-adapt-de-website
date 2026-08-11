@@ -166,7 +166,7 @@ function mapItemsToBundles(
         ),
         metaBlocks: [
           { label: "Location", value: locationLabel },
-          { label: "GWLs", value: gwlLabel },
+          { label: "Global Warming Levels", value: gwlLabel },
           { label: "Model", value: modelLabel },
           { label: "Percentile", value: percentileLabel },
         ],
@@ -222,8 +222,8 @@ function validateSelections(selections: CustomizeSelections): boolean {
 const fields: readonly CustomizeFieldConfig[] = [
   {
     kind: "multi",
-    label: "GWLs",
-    placeholder: "Choose GWLs…",
+    label: "Global Warming Levels",
+    placeholder: "Choose global warming levels…",
     options: (config) => config.timePeriodOptions ?? [],
     value: (selections) => selections.timePeriods,
     patch: (next) => ({ timePeriods: next }),
@@ -246,7 +246,7 @@ const fields: readonly CustomizeFieldConfig[] = [
   },
   {
     kind: "multi",
-    label: "Location",
+    label: "Locations",
     placeholder: "Choose stations…",
     options: (config) => config.countyOptions,
     value: (selections) => selections.counties,
@@ -268,7 +268,7 @@ export const xmyPersistPackage: PackageAdapter = {
   stacCollectionId: STAC_COLLECTION_ID,
   needsQueryables: true,
   rail: {
-    title: "Extreme year (persistence)",
+    title: "Extreme Meteorological Year — Persistence",
     listDescription: "Sustained extreme climate profiles at stations, by percentile.",
   },
   messages: {

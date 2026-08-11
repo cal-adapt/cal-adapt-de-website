@@ -44,7 +44,7 @@ const APPROACH_GWL = "gwl" as const;
 const APPROACH_TIME_BASED = "time-based" as const;
 
 const APPROACH_OPTIONS: SelectOption[] = [
-  { value: APPROACH_GWL, label: "Warming level" },
+  { value: APPROACH_GWL, label: "Global warming level" },
   { value: APPROACH_TIME_BASED, label: "Time-based (years)" },
 ];
 
@@ -153,7 +153,7 @@ function buildCustomizeForm(
       models: [...modelIds],
       scenarios: [],
       counties: [],
-      percentiles: ["50ptile"],
+      percentiles: [...percentileIds],
       timePeriods: [...gwlIds],
       centeredYears: [],
       shockTypes: [],
@@ -256,7 +256,7 @@ function mapItemsToBundles(
       const isTimeBased = timePeriodRaw === TIME_BASED_PERIOD || centeredYearRaw !== "";
       const periodBlock = isTimeBased
         ? { label: "Year", value: centeredYearRaw || "—" }
-        : { label: "GWLs", value: labelGwl(timePeriodRaw) };
+        : { label: "Global Warming Levels", value: labelGwl(timePeriodRaw) };
       bundle = {
         stacItemId: slugifyFilenameSegment(
           `standard-year-${locationRaw}-${timePeriodRaw}-${centeredYearRaw}-${percentileRaw}`
@@ -325,8 +325,8 @@ const fields: readonly CustomizeFieldConfig[] = [
   },
   {
     kind: "multi",
-    label: "GWLs",
-    placeholder: "Choose GWLs…",
+    label: "Global Warming Levels",
+    placeholder: "Choose global warming levels…",
     visible: (selections) => !isTimeBasedApproach(selections),
     options: (config) => config.timePeriodOptions ?? [],
     value: (selections) => selections.timePeriods,
@@ -365,7 +365,7 @@ const fields: readonly CustomizeFieldConfig[] = [
   },
   {
     kind: "multi",
-    label: "Location",
+    label: "Locations",
     placeholder: "Choose stations…",
     options: (config) => config.countyOptions,
     value: (selections) => selections.counties,
