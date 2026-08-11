@@ -46,6 +46,7 @@ export type CustomizeFormConfig = {
     centeredYears: string[];
     shockTypes: string[];
     computationApproach?: string;
+    dataSource?: string;
   };
 };
 
@@ -65,6 +66,8 @@ export type CustomizeSelections = {
   shockTypes: string[];
   /** standard-year — active approach: `gwl` (warming levels) or `time-based` (centered years); unset for other packages. */
   computationApproach?: string;
+  /** typical-met-year — active data source: `historical-reanalysis` or `climate-projections`; unset for other packages. */
+  dataSource?: string;
 };
 
 /** One downloadable NetCDF (or other) asset in a STAC item. */

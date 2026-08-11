@@ -29,20 +29,29 @@ import type { CustomizeFieldConfig, PackageAdapter, PackageBundleMapResult } fro
 
 const STAC_COLLECTION_ID = "typical-met-year" as const;
 
-/** ERA5 is an observed reanalysis (not a WRF projection); its TMY only exists for `historical`. */
+// ERA5 is observed reanalysis and only exists for `historical`;
+// the other models are climate projections and only exist for the warming levels.
 const ERA5_MODEL_ID = "era5" as const;
 const HISTORICAL_PERIOD_ID = "historical" as const;
+
+const DATA_SOURCE_REANALYSIS = "historical-reanalysis" as const;
+const DATA_SOURCE_PROJECTIONS = "climate-projections" as const;
+
+const DATA_SOURCE_OPTIONS: SelectOption[] = [
+  { value: DATA_SOURCE_REANALYSIS, label: "Historical Reanalysis (ERA)" },
+  { value: DATA_SOURCE_PROJECTIONS, label: "Climate projections" },
+];
 
 function isEra5Model(id: string): boolean {
   return id.toLowerCase() === ERA5_MODEL_ID;
 }
 
-/** `historical` requires ERA5; warming levels require at least one WRF (non-ERA5) model. */
-function periodValidForModels(periodId: string, models: readonly string[]): boolean {
-  if (periodId.toLowerCase() === HISTORICAL_PERIOD_ID) {
-    return models.some(isEra5Model);
-  }
-  return models.some((m) => !isEra5Model(m));
+function isHistoricalPeriod(id: string): boolean {
+  return id.toLowerCase() === HISTORICAL_PERIOD_ID;
+}
+
+function isReanalysisSource(selections: CustomizeSelections): boolean {
+  return selections.dataSource === DATA_SOURCE_REANALYSIS;
 }
 
 function buildCustomizeForm(
@@ -59,16 +68,21 @@ function buildCustomizeForm(
   const modelIds = enumStringsFromStacQueryables(queryables, "model");
   const gwlIds = sortGwlIds(enumStringsFromStacQueryables(queryables, "time_period"));
 
+  // ERA5 and Historical live behind the Data source toggle, so the Models/GWLs
+  // multiselects only offer the climate-projection values.
+  const projectionModelIds = modelIds.filter((id) => !isEra5Model(id));
+  const warmingPeriodIds = gwlIds.filter((id) => !isHistoricalPeriod(id));
+
   const stationLabels = stationLabelsFromCollection(collection);
   const countyOptions: MultiSelectOption[] = stationIds.map((id) => ({
     value: id,
     label: labelStation(id, stationLabels),
   }));
-  const modelOptions: MultiSelectOption[] = modelIds.map((id) => ({
+  const modelOptions: MultiSelectOption[] = projectionModelIds.map((id) => ({
     value: id,
     label: labelCmip6Model(id),
   }));
-  const timePeriodOptions: MultiSelectOption[] = gwlIds.map((id) => ({
+  const timePeriodOptions: MultiSelectOption[] = warmingPeriodIds.map((id) => ({
     value: id,
     label: labelGwl(id),
   }));
@@ -100,26 +114,41 @@ function buildCustomizeForm(
     initial: {
       frequency: "",
       variables: [],
-      models: [...modelIds],
+      models: [...projectionModelIds],
       scenarios: [],
       counties: [],
       percentiles: [],
-      timePeriods: [...gwlIds],
+      timePeriods: [...warmingPeriodIds],
       centeredYears: [],
       shockTypes: [],
+      dataSource: DATA_SOURCE_PROJECTIONS,
     },
+  };
+}
+
+/** Model + time period actually queried, resolved from the chosen data source. */
+function effectiveModelPeriod(selections: CustomizeSelections): {
+  models: string[];
+  timePeriods: string[];
+} {
+  if (isReanalysisSource(selections)) {
+    return { models: [ERA5_MODEL_ID], timePeriods: [HISTORICAL_PERIOD_ID] };
+  }
+  return {
+    models: selections.models.filter((id) => !isEra5Model(id)),
+    timePeriods: selections.timePeriods.filter((id) => !isHistoricalPeriod(id)),
   };
 }
 
 function buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters {
   const collectionFilter = `collection='${STAC_COLLECTION_ID}'`;
+  const { models, timePeriods } = effectiveModelPeriod(selections);
 
   const locationFilter =
     selections.counties.length > 0 ? orFilter("location", selections.counties) : undefined;
-  const modelFilter =
-    selections.models.length > 0 ? orFilter("model", selections.models) : undefined;
+  const modelFilter = models.length > 0 ? orFilter("model", models) : undefined;
   const timePeriodFilter =
-    selections.timePeriods.length > 0 ? orFilter("time_period", selections.timePeriods) : undefined;
+    timePeriods.length > 0 ? orFilter("time_period", timePeriods) : undefined;
 
   return {
     collectionFilter,
@@ -130,7 +159,8 @@ function buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters 
 }
 
 function searchFiltersKey(selections: CustomizeSelections): string {
-  return stableMultiKey([selections.counties, selections.models, selections.timePeriods]);
+  const { models, timePeriods } = effectiveModelPeriod(selections);
+  return stableMultiKey([selections.counties, models, timePeriods]);
 }
 
 function mapItemsToBundles(
@@ -205,37 +235,49 @@ function mapItemsToBundles(
 }
 
 function validateSelections(selections: CustomizeSelections): boolean {
-  return (
-    selections.counties.length > 0 &&
-    selections.timePeriods.length > 0 &&
-    selections.models.length > 0
-  );
+  if (selections.counties.length === 0) {
+    return false;
+  }
+  // Reanalysis implies ERA5 + Historical, so a location is enough. Projections
+  // still require at least one climate projections model and warming level.
+  const { models, timePeriods } = effectiveModelPeriod(selections);
+  return models.length > 0 && timePeriods.length > 0;
 }
 
 const fields: readonly CustomizeFieldConfig[] = [
   {
+    kind: "single",
+    label: "Data source",
+    options: () => DATA_SOURCE_OPTIONS,
+    value: (selections) => selections.dataSource ?? DATA_SOURCE_PROJECTIONS,
+    patch: (next) => ({ dataSource: next }),
+  },
+  {
     kind: "multi",
     label: "GWLs",
     placeholder: "Choose GWLs…",
-    // Only offer periods the selected models actually provide (Historical iff ERA5 is selected).
+    // Reanalysis only has Historical, so lock field to that single option;
+    // climate projection selections are preserved via `selections.timePeriods` for the toggle back.
     options: (config, selections) =>
-      (config.timePeriodOptions ?? []).filter((o) =>
-        periodValidForModels(o.value, selections.models)
-      ),
-    value: (selections) => selections.timePeriods,
-    patch: (next) => ({ timePeriods: next }),
+      isReanalysisSource(selections)
+        ? [{ value: HISTORICAL_PERIOD_ID, label: labelGwl(HISTORICAL_PERIOD_ID) }]
+        : (config.timePeriodOptions ?? []),
+    value: (selections) =>
+      isReanalysisSource(selections) ? [HISTORICAL_PERIOD_ID] : selections.timePeriods,
+    patch: (next, selections) => (isReanalysisSource(selections) ? {} : { timePeriods: next }),
   },
   {
     kind: "multi",
     label: "Models",
     placeholder: "Choose models…",
-    options: (config) => config.modelOptions,
-    value: (selections) => selections.models,
-    // Prune periods no longer valid for the new model set (e.g. dropping every WRF model).
-    patch: (next, selections) => ({
-      models: next,
-      timePeriods: selections.timePeriods.filter((p) => periodValidForModels(p, next)),
-    }),
+    // Reanalysis only has ERA5, so lock the field to that single option;
+    // projection selections are preserved (via `selections.models`) for the toggle back.
+    options: (config, selections) =>
+      isReanalysisSource(selections)
+        ? [{ value: ERA5_MODEL_ID, label: labelCmip6Model(ERA5_MODEL_ID) }]
+        : config.modelOptions,
+    value: (selections) => (isReanalysisSource(selections) ? [ERA5_MODEL_ID] : selections.models),
+    patch: (next, selections) => (isReanalysisSource(selections) ? {} : { models: next }),
   },
   {
     kind: "multi",
@@ -248,10 +290,8 @@ const fields: readonly CustomizeFieldConfig[] = [
 ];
 
 function zipFilenameSlug(selections: CustomizeSelections): string {
-  const slug =
-    selections.timePeriods.join("-").replace(/\s+/g, "-") ||
-    selections.models.join("-") ||
-    "typical-met-year";
+  const { models, timePeriods } = effectiveModelPeriod(selections);
+  const slug = timePeriods.join("-").replace(/\s+/g, "-") || models.join("-") || "typical-met-year";
   return slug.toLowerCase().replace(/[^a-z0-9-]+/gi, "-");
 }
 

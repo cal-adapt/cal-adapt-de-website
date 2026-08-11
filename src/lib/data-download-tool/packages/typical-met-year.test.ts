@@ -4,7 +4,7 @@ import type { StacCollection, StacCollectionQueryables, StacItem } from "@/lib/c
 
 import type { CustomizeFormConfig, CustomizeSelections, DataDownloadWorkspaceData } from "../types";
 
-import { buildSummaryRows, flattenMultiSelectOptions } from "./shared";
+import { buildSummaryRows } from "./shared";
 import { typicalMetYearPackage } from "./typical-met-year";
 
 function makeSelections(overrides: Partial<CustomizeSelections> = {}): CustomizeSelections {
@@ -18,6 +18,7 @@ function makeSelections(overrides: Partial<CustomizeSelections> = {}): Customize
     timePeriods: ["present-day"],
     centeredYears: [],
     shockTypes: [],
+    dataSource: "climate-projections",
     ...overrides,
   };
 }
@@ -45,6 +46,14 @@ function multiField(label: string) {
   const field = typicalMetYearPackage.fields.find((f) => f.label === label);
   if (field?.kind !== "multi") {
     throw new Error(`${label} must be a multi-select`);
+  }
+  return field;
+}
+
+function singleField(label: string) {
+  const field = typicalMetYearPackage.fields.find((f) => f.label === label);
+  if (field?.kind !== "single") {
+    throw new Error(`${label} must be a single-select`);
   }
   return field;
 }
@@ -86,59 +95,87 @@ describe("typicalMetYearPackage", () => {
     expect(typicalMetYearPackage.validateSelections(makeSelections({ models: [] }))).toBe(false);
   });
 
-  it("offers Historical only with ERA5 and warming levels only with a WRF model", () => {
+  it("keeps ERA5 and Historical out of the projection option pools", () => {
     const config = makeTmyConfig();
-    const gwls = multiField("GWLs");
-    const periodValues = (models: string[]) =>
-      flattenMultiSelectOptions(gwls.options(config, makeSelections({ models }))).map(
-        (o) => o.value
-      );
-
-    // Both a reanalysis and a projection model selected → every period is offered.
-    expect(periodValues(["era5", "ec-earth3"])).toEqual([
-      "historical",
+    expect(config.modelOptions.map((o) => o.value)).toEqual(["ec-earth3"]);
+    expect(config.timePeriodOptions?.map((o) => o.value)).toEqual([
       "present-day",
       "near-future",
       "mid-century",
       "mid-late-century",
     ]);
-
-    // ERA5 only → Historical is the only valid period.
-    expect(periodValues(["era5"])).toEqual(["historical"]);
-
-    // WRF only → Historical is hidden.
-    expect(periodValues(["ec-earth3"])).toEqual([
+    expect(config.initial.models).toEqual(["ec-earth3"]);
+    expect(config.initial.timePeriods).toEqual([
       "present-day",
       "near-future",
       "mid-century",
       "mid-late-century",
     ]);
+    expect(config.initial.dataSource).toBe("climate-projections");
   });
 
-  it("prunes now-invalid GWLs when the model selection changes", () => {
+  it("locks Models and GWLs to ERA5 + Historical under the reanalysis data source", () => {
+    const config = makeTmyConfig();
     const models = multiField("Models");
+    const gwls = multiField("GWLs");
+    const reanalysis = makeSelections({ dataSource: "historical-reanalysis" });
 
-    // Dropping every WRF model removes the warming levels but keeps Historical.
-    expect(
-      models.patch(
-        ["era5"],
-        makeSelections({
-          models: ["era5", "ec-earth3"],
-          timePeriods: ["historical", "present-day"],
-        })
-      )
-    ).toEqual({ models: ["era5"], timePeriods: ["historical"] });
+    expect(models.options(config, reanalysis)).toEqual([{ value: "era5", label: "ERA5" }]);
+    expect(models.value(reanalysis)).toEqual(["era5"]);
+    // The single option can't be changed away from ERA5.
+    expect(models.patch(["ec-earth3"], reanalysis)).toEqual({});
 
-    // Dropping ERA5 removes Historical but keeps the warming levels.
-    expect(
-      models.patch(
-        ["ec-earth3"],
-        makeSelections({
-          models: ["era5", "ec-earth3"],
-          timePeriods: ["historical", "present-day"],
-        })
-      )
-    ).toEqual({ models: ["ec-earth3"], timePeriods: ["present-day"] });
+    expect(gwls.options(config, reanalysis)).toEqual([
+      { value: "historical", label: "Historical" },
+    ]);
+    expect(gwls.value(reanalysis)).toEqual(["historical"]);
+    expect(gwls.patch(["present-day"], reanalysis)).toEqual({});
+  });
+
+  it("uses the projection pools for Models and GWLs under the projections data source", () => {
+    const config = makeTmyConfig();
+    const models = multiField("Models");
+    const gwls = multiField("GWLs");
+    const projections = makeSelections({
+      dataSource: "climate-projections",
+      models: ["ec-earth3"],
+      timePeriods: ["present-day"],
+    });
+
+    expect(models.options(config, projections)).toEqual(config.modelOptions);
+    expect(models.value(projections)).toEqual(["ec-earth3"]);
+    expect(gwls.options(config, projections)).toEqual(config.timePeriodOptions);
+    expect(gwls.value(projections)).toEqual(["present-day"]);
+  });
+
+  it("routes the Data source toggle to the right model/time_period in search filters", () => {
+    const dataSource = singleField("Data source");
+    expect(dataSource.value(makeSelections())).toBe("climate-projections");
+    expect(dataSource.patch("historical-reanalysis", makeSelections())).toEqual({
+      dataSource: "historical-reanalysis",
+    });
+
+    // Reanalysis forces ERA5 + Historical, ignoring any stale projection selections.
+    const reanalysis = typicalMetYearPackage.buildSearchFilters(
+      makeSelections({
+        dataSource: "historical-reanalysis",
+        models: ["ec-earth3"],
+        timePeriods: ["present-day"],
+      })
+    );
+    expect(reanalysis.modelFilter).toBe("(model='era5')");
+    expect(reanalysis.timePeriodFilter).toBe("(time_period='historical')");
+
+    // Projections query the chosen climate projections models and warming levels.
+    const projections = typicalMetYearPackage.buildSearchFilters(
+      makeSelections({
+        dataSource: "climate-projections",
+        models: ["ec-earth3"],
+        timePeriods: ["present-day"],
+      })
+    );
+    expect(projections.modelFilter).toBe("(model='ec-earth3')");
+    expect(projections.timePeriodFilter).toBe("(time_period='present-day')");
   });
 
   it("throws when buildCustomizeForm is called without queryables", () => {
@@ -194,12 +231,14 @@ describe("typicalMetYearPackage", () => {
         timePeriods: [],
         centeredYears: [],
         shockTypes: [],
+        dataSource: "climate-projections",
       },
     };
     const workspace = { customizeForm: form } as DataDownloadWorkspaceData;
     const rows = buildSummaryRows(typicalMetYearPackage, workspace, makeSelections());
     expect(rows).toEqual([
       { label: "Dataset", value: "Typical Met Year" },
+      { label: "Data source", value: "Climate projections" },
       { label: "GWLs", value: "Present day" },
       { label: "Models", value: "ACCESS-CM2" },
       { label: "Location", value: "San Francisco Intl" },

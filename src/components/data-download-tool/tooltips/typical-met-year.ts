@@ -8,6 +8,7 @@ export const tooltipByLabel: Partial<Record<string, ReactNode>> = {
   License: undefined,
   DOI: "Digital Object Identifier for citing the source dataset",
   Location: "Weather stations in California",
+  "Data source": "TODO",
   GWLs: "Present day (1.2°C), Near future (1.5°C), Mid-century (2.0°C), Mid-late century (2.5°C)",
   Models: "Bias adjusted dynamically downscaled climate models (WRF)",
 };
