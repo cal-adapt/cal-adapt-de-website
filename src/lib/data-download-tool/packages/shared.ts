@@ -32,6 +32,23 @@ export function humanizeToken(id: string): string {
   return id.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+/**
+ * Station id → display label map from the Cal-Adapt `caladapt:station_labels`
+ * collection extension (station-profile collections). Empty map when absent.
+ */
+export function stationLabelsFromCollection(collection: StacCollection): Map<string, string> {
+  const raw = collection["caladapt:station_labels"];
+  if (raw != null && typeof raw === "object" && !Array.isArray(raw)) {
+    return new Map(Object.entries(raw as Record<string, string>).map(([k, v]) => [k, String(v)]));
+  }
+  return new Map();
+}
+
+/** Canonical station label, falling back to a humanized id when unmapped. */
+export function labelStation(id: string, labels: Map<string, string>): string {
+  return labels.get(id) ?? humanizeToken(id);
+}
+
 /** Coerce anything that looks like a filename-safe segment. */
 export function slugifyFilenameSegment(raw: string, max = 48): string {
   return raw
@@ -158,11 +175,11 @@ export function summaryRowForField(
   if (field.kind === "multi") {
     return {
       label: field.label,
-      value: joinOptionLabels(field.value(selections), field.options(config)),
+      value: joinOptionLabels(field.value(selections), field.options(config, selections)),
     };
   }
   const picked = field.value(selections);
-  const match = field.options(config).find((o) => o.value === picked);
+  const match = field.options(config, selections).find((o) => o.value === picked);
   return { label: field.label, value: match?.label ?? picked };
 }
 
@@ -180,6 +197,8 @@ export function buildSummaryRows(
   const form = workspace.customizeForm;
   return [
     ...form.readOnlyFields,
-    ...adapter.fields.map((field) => summaryRowForField(field, selections, form)),
+    ...adapter.fields
+      .filter((field) => field.visible?.(selections) ?? true)
+      .map((field) => summaryRowForField(field, selections, form)),
   ];
 }

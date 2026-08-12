@@ -36,18 +36,25 @@ export interface PackageRailInfo {
 }
 
 /**
- * Declarative config for one editable row in the Customize step. Each adapter
- * exposes an array of these in `PackageAdapter.fields`; the shared renderer turns
- * them into form controls, and `buildSummaryRows` derives review-step text rows
- * from the same array — so edit view and review view cannot drift.
+ * One editable row in the Customize step. Each adapter lists these in
+ * `PackageAdapter.fields`; the renderer draws them as form controls, and
+ * `buildSummaryRows` reuses the same list for the review step.
  *
- * Callbacks are lenses over `CustomizeFormConfig` (for option pools) and
- * `CustomizeSelections` (for the user's current picks).
+ * `options` and `patch` receive the current `CustomizeFormConfig` and
+ * `CustomizeSelections`, so a field can react to other fields. For example, TMY
+ * only offers Historical when ERA5 is selected, and clears invalid GWLs when the
+ * model changes.
  */
 interface BaseFieldConfig {
-  /** Display label; also used as the key into per-kind `tooltipByLabel` maps. */
+  /** Display label; also the key into per-kind `tooltipByLabel` maps. */
   label: string;
   placeholder?: string;
+  /**
+   * Return `false` to hide this field (in both the form and the review summary).
+   * Lets a package show only the relevant fields — e.g. Standard Year shows either
+   * GWLs or Years depending on the computation approach. Always shown by default.
+   */
+  visible?: (selections: CustomizeSelections) => boolean;
 }
 
 export interface MultiSelectFieldConfig extends BaseFieldConfig {
@@ -55,19 +62,20 @@ export interface MultiSelectFieldConfig extends BaseFieldConfig {
   /** Defaults to `true`; set to `false` for optional multi-selects. */
   required?: boolean;
   /**
-   * Either a flat option list or a list of option groups (rendered with section
-   * headers in the dropdown). Both shapes flow through the same selection state.
+   * A flat option list or a list of option groups (rendered with section headers
+   * in the dropdown). Both shapes flow through the same selection state.
    */
-  options: (config: CustomizeFormConfig) => MultiSelectOptions;
+  options: (config: CustomizeFormConfig, selections: CustomizeSelections) => MultiSelectOptions;
   value: (selections: CustomizeSelections) => string[];
-  patch: (next: string[]) => Partial<CustomizeSelections>;
+  /** Returns the selection patch (before-change state in `selections`). */
+  patch: (next: string[], selections: CustomizeSelections) => Partial<CustomizeSelections>;
 }
 
 export interface SingleSelectFieldConfig extends BaseFieldConfig {
   kind: "single";
-  options: (config: CustomizeFormConfig) => SelectOption[];
+  options: (config: CustomizeFormConfig, selections: CustomizeSelections) => SelectOption[];
   value: (selections: CustomizeSelections) => string;
-  patch: (next: string) => Partial<CustomizeSelections>;
+  patch: (next: string, selections: CustomizeSelections) => Partial<CustomizeSelections>;
 }
 
 export type CustomizeFieldConfig = MultiSelectFieldConfig | SingleSelectFieldConfig;

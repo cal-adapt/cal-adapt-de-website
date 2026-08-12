@@ -16,6 +16,8 @@ function makeSelections(overrides: Partial<CustomizeSelections> = {}): Customize
     counties: ["Alameda County"],
     percentiles: [],
     timePeriods: [],
+    centeredYears: [],
+    shockTypes: [],
     ...overrides,
   };
 }
@@ -109,6 +111,8 @@ describe("loca2CountyPackage", () => {
         counties: [],
         percentiles: [],
         timePeriods: [],
+        centeredYears: [],
+        shockTypes: [],
       },
     };
     const workspace = { customizeForm: form } as DataDownloadWorkspaceData;
@@ -145,7 +149,7 @@ describe("loca2CountyPackage", () => {
     if (modelsField?.kind !== "multi") {
       throw new Error("Models field must be a multi-select");
     }
-    const options = modelsField.options(config);
+    const options = modelsField.options(config, makeSelections());
     expect(options).toEqual([
       {
         label: "General use",
@@ -182,7 +186,7 @@ describe("loca2CountyPackage", () => {
     if (modelsField?.kind !== "multi") {
       throw new Error("Models field must be a multi-select");
     }
-    expect(modelsField.options(config)).toEqual([
+    expect(modelsField.options(config, makeSelections())).toEqual([
       { value: "ACCESS-CM2", label: "ACCESS-CM2" },
       { value: "EC-Earth3", label: "EC-Earth3" },
     ]);

@@ -2,6 +2,7 @@ import type { MultiSelectOption, SelectOption } from "@/components/common/form";
 import {
   type ItemSearchFilters,
   orFilter,
+  orFilterNumeric,
   type StacCollection,
   type StacCollectionQueryables,
   type StacItem,
@@ -10,7 +11,7 @@ import { toSentenceCase } from "@/utils/string";
 import { normalizeDownloadUrl } from "@/utils/url";
 
 import { labelGwl, sortGwlIds } from "../labels/gwls";
-import { labelPercentile } from "../labels/percentiles";
+import { labelPercentile, sortPercentileIds } from "../labels/percentiles";
 import { labelVariable } from "../labels/variables";
 import type { CustomizeFormConfig, CustomizeSelections, DownloadBundle } from "../types";
 
@@ -19,13 +20,48 @@ import {
   formatDoiUrl,
   formatTimeSpanLabel,
   humanizeToken,
+  labelStation,
   parseStacAssetSizeBytes,
+  parseStacFileSizeBytes,
   slugifyFilenameSegment,
   stableMultiKey,
+  stationLabelsFromCollection,
 } from "./shared";
 import type { CustomizeFieldConfig, PackageAdapter, PackageBundleMapResult } from "./types";
 
 const STAC_COLLECTION_ID = "standard-year" as const;
+
+/**
+ * Standard Year exposes two computation approaches via the `time_period` queryable:
+ * GWLs and time-based (years) where items additionally keyed by `centered_year`.
+ * Only 50th percentile has a time-based approach.
+ */
+const TIME_BASED_PERIOD = "time-based" as const;
+
+// `gwl` filters on the warming-level `time_period`s; `time-based` filters on
+// `time_period='time-based'` + `centered_year`. Only one branch is shown at a time.
+const APPROACH_GWL = "gwl" as const;
+const APPROACH_TIME_BASED = "time-based" as const;
+
+const APPROACH_OPTIONS: SelectOption[] = [
+  { value: APPROACH_GWL, label: "Global warming level" },
+  { value: APPROACH_TIME_BASED, label: "Time-based (years)" },
+];
+
+function isTimeBasedApproach(selections: CustomizeSelections): boolean {
+  return selections.computationApproach === APPROACH_TIME_BASED;
+}
+
+/** Percentiles published for the time-based approach (only the median today). */
+const TIME_BASED_PERCENTILE_IDS: readonly string[] = ["50ptile"];
+
+function isTimeBasedPercentile(id: string): boolean {
+  return TIME_BASED_PERCENTILE_IDS.includes(id.toLowerCase());
+}
+
+function sortCenteredYearIds(ids: readonly string[]): string[] {
+  return [...ids].sort((a, b) => Number(a) - Number(b));
+}
 
 function buildCustomizeForm(
   collection: StacCollection,
@@ -48,13 +84,22 @@ function buildCustomizeForm(
   }
 
   const stationIds = enumStringsFromStacQueryables(queryables, "location");
-  const percentileIds = enumStringsFromStacQueryables(queryables, "percentile");
+  const percentileIds = sortPercentileIds(enumStringsFromStacQueryables(queryables, "percentile"));
   const modelIds = enumStringsFromStacQueryables(queryables, "model");
-  const gwlIds = sortGwlIds(enumStringsFromStacQueryables(queryables, "time_period"));
+  // `time-based` is a mode marker, not a warming level — surface it as the separate "Years" field.
+  const gwlIds = sortGwlIds(
+    enumStringsFromStacQueryables(queryables, "time_period").filter(
+      (id) => id !== TIME_BASED_PERIOD
+    )
+  );
+  const centeredYearIds = sortCenteredYearIds(
+    enumStringsFromStacQueryables(queryables, "centered_year")
+  );
 
+  const stationLabels = stationLabelsFromCollection(collection);
   const countyOptions: MultiSelectOption[] = stationIds.map((id) => ({
     value: id,
-    label: humanizeToken(id),
+    label: labelStation(id, stationLabels),
   }));
 
   const variableOptions: MultiSelectOption[] = variableIds.map((id) => ({
@@ -70,6 +115,11 @@ function buildCustomizeForm(
   const timePeriodOptions: MultiSelectOption[] = gwlIds.map((id) => ({
     value: id,
     label: labelGwl(id),
+  }));
+
+  const centeredYearOptions: MultiSelectOption[] = centeredYearIds.map((id) => ({
+    value: id,
+    label: id,
   }));
 
   const emptySelect: SelectOption[] = [];
@@ -96,14 +146,18 @@ function buildCustomizeForm(
     countyOptions,
     percentileOptions,
     timePeriodOptions,
+    centeredYearOptions,
     initial: {
       frequency: "",
       variables: [...variableIds],
       models: [...modelIds],
       scenarios: [],
       counties: [],
-      percentiles: ["50ptile"],
+      percentiles: [...percentileIds],
       timePeriods: [...gwlIds],
+      centeredYears: [...centeredYearIds],
+      shockTypes: [],
+      computationApproach: APPROACH_GWL,
     },
   };
 }
@@ -117,8 +171,18 @@ function buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters 
     selections.variables.length > 0 ? orFilter("variable", selections.variables) : undefined;
   const percentileFilter =
     selections.percentiles.length > 0 ? orFilter("percentile", selections.percentiles) : undefined;
-  const timePeriodFilter =
-    selections.timePeriods.length > 0 ? orFilter("time_period", selections.timePeriods) : undefined;
+
+  // The active approach — not stale selections — decides which time filters apply.
+  const timeBased = isTimeBasedApproach(selections);
+  const timePeriodFilter = timeBased
+    ? `time_period='${TIME_BASED_PERIOD}'`
+    : selections.timePeriods.length > 0
+      ? orFilter("time_period", selections.timePeriods)
+      : undefined;
+  const centeredYearFilter =
+    timeBased && selections.centeredYears.length > 0
+      ? orFilterNumeric("centered_year", selections.centeredYears)
+      : undefined;
 
   return {
     collectionFilter,
@@ -126,15 +190,18 @@ function buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters 
     variableFilter,
     percentileFilter,
     timePeriodFilter,
+    centeredYearFilter,
   };
 }
 
 function searchFiltersKey(selections: CustomizeSelections): string {
   return stableMultiKey([
+    [selections.computationApproach ?? APPROACH_GWL],
     selections.counties,
     selections.variables,
     selections.percentiles,
     selections.timePeriods,
+    selections.centeredYears,
   ]);
 }
 
@@ -146,6 +213,9 @@ function mapItemsToBundles(
   const selected = new Set(selections.variables);
   const labelById = new Map(
     (customizeForm?.variableOptions ?? []).map(({ value, label }) => [value, label])
+  );
+  const locationLabelById = new Map(
+    (customizeForm?.countyOptions ?? []).map(({ value, label }) => [value, label])
   );
   const bundleBySelection = new Map<string, DownloadBundle>();
   const seenAssetKeys = new Set<string>();
@@ -168,25 +238,32 @@ function mapItemsToBundles(
     if (!href) {
       continue;
     }
-    const sizeBytes = parseStacAssetSizeBytes(assetEntry as Record<string, unknown>);
+    const sizeBytes =
+      parseStacAssetSizeBytes(assetEntry as Record<string, unknown>) ||
+      parseStacFileSizeBytes(item.properties["file:size"]);
 
     const percentileRaw = String(item.properties.percentile ?? "");
     const timePeriodRaw = String(item.properties.time_period ?? "");
+    const centeredYearRaw =
+      item.properties.centered_year != null ? String(item.properties.centered_year) : "";
     const locationRaw = String(item.properties.location ?? "");
-    const bundleKey = `${locationRaw}\0${timePeriodRaw}\0${percentileRaw}`;
+    const bundleKey = `${locationRaw}\0${timePeriodRaw}\0${centeredYearRaw}\0${percentileRaw}`;
 
     let bundle = bundleBySelection.get(bundleKey);
     if (bundle == null) {
-      const locationLabel = humanizeToken(locationRaw);
-      const gwlLabel = labelGwl(timePeriodRaw);
+      const locationLabel = locationLabelById.get(locationRaw) ?? humanizeToken(locationRaw);
       const percentileLabel = labelPercentile(percentileRaw);
+      const isTimeBased = timePeriodRaw === TIME_BASED_PERIOD || centeredYearRaw !== "";
+      const periodBlock = isTimeBased
+        ? { label: "Year", value: centeredYearRaw || "—" }
+        : { label: "Global Warming Levels", value: labelGwl(timePeriodRaw) };
       bundle = {
         stacItemId: slugifyFilenameSegment(
-          `standard-year-${locationRaw}-${timePeriodRaw}-${percentileRaw}`
+          `standard-year-${locationRaw}-${timePeriodRaw}-${centeredYearRaw}-${percentileRaw}`
         ),
         metaBlocks: [
           { label: "Location", value: locationLabel },
-          { label: "GWLs", value: gwlLabel },
+          periodBlock,
           { label: "Percentile", value: percentileLabel },
         ],
         filenameSuffix: `${percentileLabel}-${locationLabel}`,
@@ -218,22 +295,51 @@ function mapItemsToBundles(
 }
 
 function validateSelections(selections: CustomizeSelections): boolean {
-  return (
+  const base =
     selections.counties.length > 0 &&
     selections.variables.length > 0 &&
-    selections.percentiles.length > 0 &&
-    selections.timePeriods.length > 0
-  );
+    selections.percentiles.length > 0;
+  return isTimeBasedApproach(selections)
+    ? base && selections.centeredYears.length > 0
+    : base && selections.timePeriods.length > 0;
 }
 
 const fields: readonly CustomizeFieldConfig[] = [
   {
+    kind: "single",
+    label: "Computation approach",
+    options: () => APPROACH_OPTIONS,
+    value: (selections) => selections.computationApproach ?? APPROACH_GWL,
+    // Entering the time-based approach prunes non-median percentiles, since only
+    // the 50th exists there.
+    patch: (next, selections) => {
+      if (next === APPROACH_TIME_BASED) {
+        const median = selections.percentiles.filter(isTimeBasedPercentile);
+        return {
+          computationApproach: APPROACH_TIME_BASED,
+          percentiles: median.length > 0 ? median : [...TIME_BASED_PERCENTILE_IDS],
+        };
+      }
+      return { computationApproach: APPROACH_GWL };
+    },
+  },
+  {
     kind: "multi",
-    label: "GWLs",
-    placeholder: "Choose GWLs…",
+    label: "Global Warming Levels",
+    placeholder: "Choose global warming levels…",
+    visible: (selections) => !isTimeBasedApproach(selections),
     options: (config) => config.timePeriodOptions ?? [],
     value: (selections) => selections.timePeriods,
     patch: (next) => ({ timePeriods: next }),
+  },
+  {
+    kind: "multi",
+    label: "Years",
+    placeholder: "Choose years (time-based)…",
+    visible: (selections) => isTimeBasedApproach(selections),
+    options: (config) => config.centeredYearOptions ?? [],
+    value: (selections) => selections.centeredYears,
+    patch: (next) => ({ centeredYears: next }),
   },
   {
     kind: "multi",
@@ -247,13 +353,19 @@ const fields: readonly CustomizeFieldConfig[] = [
     kind: "multi",
     label: "Percentiles",
     placeholder: "Choose percentiles…",
-    options: (config) => config.percentileOptions ?? [],
+    // Time-based data is only published at the 50th percentile.
+    options: (config, selections) => {
+      const all = config.percentileOptions ?? [];
+      return isTimeBasedApproach(selections)
+        ? all.filter((o) => isTimeBasedPercentile(o.value))
+        : all;
+    },
     value: (selections) => selections.percentiles,
     patch: (next) => ({ percentiles: next }),
   },
   {
     kind: "multi",
-    label: "Location",
+    label: "Locations",
     placeholder: "Choose stations…",
     options: (config) => config.countyOptions,
     value: (selections) => selections.counties,
@@ -263,7 +375,9 @@ const fields: readonly CustomizeFieldConfig[] = [
 
 function zipFilenameSlug(selections: CustomizeSelections): string {
   const slug =
-    selections.timePeriods.join("-").replace(/\s+/g, "-") ||
+    (isTimeBasedApproach(selections)
+      ? selections.centeredYears.join("-")
+      : selections.timePeriods.join("-").replace(/\s+/g, "-")) ||
     selections.percentiles.join("-") ||
     "standard-year";
   return slug.toLowerCase().replace(/[^a-z0-9-]+/gi, "-");
@@ -280,9 +394,9 @@ export const standardYearPackage: PackageAdapter = {
   },
   messages: {
     skipped:
-      "Select at least one location, GWL, variables, and percentiles on the previous step to fetch files.",
+      "Select at least one location, GWL (or year), variables, and percentiles on the previous step to fetch files.",
     empty:
-      "No files matched your selections. Try broadening location, GWL, variables, or percentiles.",
+      "No files matched your selections. Try broadening location, GWL/year, variables, or percentiles.",
     variableTableHeaders: { metric: "Metric", download: "Single variable" },
   },
   buildCustomizeForm,

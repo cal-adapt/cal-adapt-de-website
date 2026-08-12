@@ -15,3 +15,18 @@ export function orFilter(propertyName: string, values: string[]): string {
   const orStatements = values.map((value) => `${propertyName}='${value}'`);
   return `(${orStatements.join(" or ")})`;
 }
+
+/**
+ * Similar to `orFilter` but emits unquoted numeric literals, e.g.
+ * `(centered_year=2015 or centered_year=2025)`. Use for STAC item properties
+ * stored as JSON numbers. Non-numeric values are skipped.
+ */
+export function orFilterNumeric(propertyName: string, values: string[]): string {
+  const numeric = values.filter((v) => v.trim() !== "" && Number.isFinite(Number(v)));
+  if (numeric.length === 0) {
+    return "";
+  }
+
+  const orStatements = numeric.map((value) => `${propertyName}=${Number(value)}`);
+  return `(${orStatements.join(" or ")})`;
+}

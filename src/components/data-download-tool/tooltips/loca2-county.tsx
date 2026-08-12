@@ -58,7 +58,7 @@ export const tooltipByLabel: Partial<Record<string, ReactNode>> = {
     "A specific, quantifiable measure used to assess and understand different aspects of climate change",
   Models: models,
   Scenarios: scenarios,
-  Counties: "California counties used as the spatial boundary for aggregating gridded data.",
+  Counties: "California counties used as the spatial boundary for aggregating gridded data",
   Frequency:
     "The timescale of the data. All LOCA2 data is downscaled at a native daily resolution. A pre-aggregated version at a monthly resolution is also available.",
 };

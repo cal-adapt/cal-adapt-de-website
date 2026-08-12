@@ -3,10 +3,6 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 
-import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-import ThermostatOutlinedIcon from "@mui/icons-material/ThermostatOutlined";
-import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import ErrorView from "@/components/common/layout/ErrorView";
@@ -15,8 +11,9 @@ import DashboardAppBar from "@/components/dashboard/DashboardAppBar";
 import DashboardSidebar, {
   type DashboardSidebarNavItem,
 } from "@/components/dashboard/DashboardSidebar";
+import { dashboardTools } from "@/components/dashboard/tools";
 import { mediaQueries } from "@/config/breakpoints";
-import { hasNavChildren, isNavLinkEnabled, type NavLink, navLinks } from "@/config/navigation";
+import { hasNavChildren, type NavLink, navLinks } from "@/config/navigation";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
 import { extractSegment, normalizePath } from "@/utils/url";
@@ -25,12 +22,10 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-const SIDEBAR_ITEMS: DashboardSidebarNavItem[] = [
-  { link: navLinks.climateMetricsMap, icon: <MapOutlinedIcon /> },
-  { link: navLinks.extremeHeatDays, icon: <ThermostatOutlinedIcon /> },
-  { link: navLinks.dataDownload, icon: <DatasetOutlinedIcon /> },
-  { link: navLinks.renewablesVisualizer, icon: <WbSunnyOutlinedIcon /> },
-].filter((item) => isNavLinkEnabled(item.link)); // Exclude feature-flag-disabled tools
+const SIDEBAR_ITEMS: DashboardSidebarNavItem[] = dashboardTools.map((tool) => ({
+  link: tool.navLink,
+  icon: tool.sidebarIcon,
+}));
 
 /** Resolve the active tool's nav link from the current `/dashboard/:tool` segment. */
 function getPageLink(selectedPage: string | null): NavLink {

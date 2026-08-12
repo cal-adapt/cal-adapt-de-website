@@ -183,6 +183,8 @@ function buildCustomizeForm(
       counties: [],
       percentiles: [],
       timePeriods: [],
+      centeredYears: [],
+      shockTypes: [],
     },
   };
 }

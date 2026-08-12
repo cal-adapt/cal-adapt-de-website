@@ -11,6 +11,8 @@ export const PACKAGE_RAIL_SECTION_TITLE = "Select a package preset from the opti
 export const PACKAGE_RAIL_DISPLAY_ORDER: readonly PackageId[] = [
   "typical-met-year",
   "standard-year",
+  "xmy-persist",
+  "xmy-shock",
   "loca2-county",
 ] as const;
 

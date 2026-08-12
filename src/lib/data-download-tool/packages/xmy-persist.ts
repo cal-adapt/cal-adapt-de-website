@@ -11,6 +11,7 @@ import { normalizeDownloadUrl } from "@/utils/url";
 
 import { labelGwl, sortGwlIds } from "../labels/gwls";
 import { labelCmip6Model } from "../labels/models";
+import { labelPercentile, sortPercentileIds } from "../labels/percentiles";
 import type { CustomizeFormConfig, CustomizeSelections, DownloadBundle } from "../types";
 
 import {
@@ -27,32 +28,7 @@ import {
 } from "./shared";
 import type { CustomizeFieldConfig, PackageAdapter, PackageBundleMapResult } from "./types";
 
-const STAC_COLLECTION_ID = "typical-met-year" as const;
-
-// ERA5 is observed reanalysis and only exists for `historical`;
-// the other models are climate projections and only exist for the warming levels.
-const ERA5_MODEL_ID = "era5" as const;
-const HISTORICAL_PERIOD_ID = "historical" as const;
-
-const DATA_SOURCE_REANALYSIS = "historical-reanalysis" as const;
-const DATA_SOURCE_PROJECTIONS = "climate-projections" as const;
-
-const DATA_SOURCE_OPTIONS: SelectOption[] = [
-  { value: DATA_SOURCE_REANALYSIS, label: "Historical reanalysis (ERA)" },
-  { value: DATA_SOURCE_PROJECTIONS, label: "Climate projections" },
-];
-
-function isEra5Model(id: string): boolean {
-  return id.toLowerCase() === ERA5_MODEL_ID;
-}
-
-function isHistoricalPeriod(id: string): boolean {
-  return id.toLowerCase() === HISTORICAL_PERIOD_ID;
-}
-
-function isReanalysisSource(selections: CustomizeSelections): boolean {
-  return selections.dataSource === DATA_SOURCE_REANALYSIS;
-}
+const STAC_COLLECTION_ID = "xmy-persist" as const;
 
 function buildCustomizeForm(
   collection: StacCollection,
@@ -60,29 +36,29 @@ function buildCustomizeForm(
 ): CustomizeFormConfig {
   if (queryables == null) {
     throw new Error(
-      "[data-download] typical-met-year requires STAC v2 queryables; pass options.queryables."
+      "[data-download] xmy-persist requires STAC v2 queryables; pass options.queryables."
     );
   }
 
   const stationIds = enumStringsFromStacQueryables(queryables, "location");
   const modelIds = enumStringsFromStacQueryables(queryables, "model");
+  const percentileIds = sortPercentileIds(enumStringsFromStacQueryables(queryables, "percentile"));
   const gwlIds = sortGwlIds(enumStringsFromStacQueryables(queryables, "time_period"));
-
-  // ERA5 and Historical live behind the Data source toggle, so the Models/GWLs
-  // multiselects only offer the climate-projection values.
-  const projectionModelIds = modelIds.filter((id) => !isEra5Model(id));
-  const warmingPeriodIds = gwlIds.filter((id) => !isHistoricalPeriod(id));
 
   const stationLabels = stationLabelsFromCollection(collection);
   const countyOptions: MultiSelectOption[] = stationIds.map((id) => ({
     value: id,
     label: labelStation(id, stationLabels),
   }));
-  const modelOptions: MultiSelectOption[] = projectionModelIds.map((id) => ({
+  const modelOptions: MultiSelectOption[] = modelIds.map((id) => ({
     value: id,
     label: labelCmip6Model(id),
   }));
-  const timePeriodOptions: MultiSelectOption[] = warmingPeriodIds.map((id) => ({
+  const percentileOptions: MultiSelectOption[] = percentileIds.map((id) => ({
+    value: id,
+    label: labelPercentile(id),
+  }));
+  const timePeriodOptions: MultiSelectOption[] = gwlIds.map((id) => ({
     value: id,
     label: labelGwl(id),
   }));
@@ -90,7 +66,10 @@ function buildCustomizeForm(
   const emptySelect: SelectOption[] = [];
 
   const readOnlyFields = [
-    { label: "Dataset", value: collection.title?.trim() || "Typical Meteorological Year" },
+    {
+      label: "Dataset",
+      value: collection.title?.trim() || "Extreme Year (Persistence)",
+    },
     { label: "Data format", value: "EPW, CSV" },
     {
       label: "Boundary type",
@@ -102,65 +81,57 @@ function buildCustomizeForm(
   ];
 
   return {
-    kind: "typical-met-year",
+    kind: "xmy-persist",
     readOnlyFields,
     frequencyOptions: emptySelect,
     variableOptions: [],
     modelOptions,
     scenarioOptions: [],
     countyOptions,
-    percentileOptions: [],
+    percentileOptions,
     timePeriodOptions,
     initial: {
       frequency: "",
       variables: [],
-      models: [...projectionModelIds],
+      models: [...modelIds],
       scenarios: [],
       counties: [],
-      percentiles: [],
-      timePeriods: [...warmingPeriodIds],
+      percentiles: [...percentileIds],
+      timePeriods: [...gwlIds],
       centeredYears: [],
       shockTypes: [],
-      dataSource: DATA_SOURCE_PROJECTIONS,
     },
-  };
-}
-
-/** Model + time period actually queried, resolved from the chosen data source. */
-function effectiveModelPeriod(selections: CustomizeSelections): {
-  models: string[];
-  timePeriods: string[];
-} {
-  if (isReanalysisSource(selections)) {
-    return { models: [ERA5_MODEL_ID], timePeriods: [HISTORICAL_PERIOD_ID] };
-  }
-  return {
-    models: selections.models.filter((id) => !isEra5Model(id)),
-    timePeriods: selections.timePeriods.filter((id) => !isHistoricalPeriod(id)),
   };
 }
 
 function buildSearchFilters(selections: CustomizeSelections): ItemSearchFilters {
   const collectionFilter = `collection='${STAC_COLLECTION_ID}'`;
-  const { models, timePeriods } = effectiveModelPeriod(selections);
 
   const locationFilter =
     selections.counties.length > 0 ? orFilter("location", selections.counties) : undefined;
-  const modelFilter = models.length > 0 ? orFilter("model", models) : undefined;
+  const modelFilter =
+    selections.models.length > 0 ? orFilter("model", selections.models) : undefined;
+  const percentileFilter =
+    selections.percentiles.length > 0 ? orFilter("percentile", selections.percentiles) : undefined;
   const timePeriodFilter =
-    timePeriods.length > 0 ? orFilter("time_period", timePeriods) : undefined;
+    selections.timePeriods.length > 0 ? orFilter("time_period", selections.timePeriods) : undefined;
 
   return {
     collectionFilter,
     locationFilter,
     modelFilter,
+    percentileFilter,
     timePeriodFilter,
   };
 }
 
 function searchFiltersKey(selections: CustomizeSelections): string {
-  const { models, timePeriods } = effectiveModelPeriod(selections);
-  return stableMultiKey([selections.counties, models, timePeriods]);
+  return stableMultiKey([
+    selections.counties,
+    selections.models,
+    selections.percentiles,
+    selections.timePeriods,
+  ]);
 }
 
 function mapItemsToBundles(
@@ -179,22 +150,27 @@ function mapItemsToBundles(
   for (const item of features) {
     const modelRaw = String(item.properties.model ?? "");
     const timePeriodRaw = String(item.properties.time_period ?? "");
+    const percentileRaw = String(item.properties.percentile ?? "");
     const locationRaw = String(item.properties.location ?? "");
-    const bundleKey = `${locationRaw}\0${timePeriodRaw}\0${modelRaw}`;
+    const bundleKey = `${locationRaw}\0${timePeriodRaw}\0${modelRaw}\0${percentileRaw}`;
 
     let bundle = bundleBySelection.get(bundleKey);
     if (bundle == null) {
       const locationLabel = locationLabelById.get(locationRaw) ?? humanizeToken(locationRaw);
       const gwlLabel = labelGwl(timePeriodRaw);
       const modelLabel = labelCmip6Model(modelRaw);
+      const percentileLabel = labelPercentile(percentileRaw);
       bundle = {
-        stacItemId: slugifyFilenameSegment(`tmy-${locationRaw}-${modelRaw}-${timePeriodRaw}`),
+        stacItemId: slugifyFilenameSegment(
+          `xmy-persist-${locationRaw}-${modelRaw}-${timePeriodRaw}-${percentileRaw}`
+        ),
         metaBlocks: [
           { label: "Location", value: locationLabel },
           { label: "Global Warming Levels", value: gwlLabel },
           { label: "Model", value: modelLabel },
+          { label: "Percentile", value: percentileLabel },
         ],
-        filenameSuffix: `${modelLabel}-${locationLabel}`,
+        filenameSuffix: `${percentileLabel}-${modelLabel}-${locationLabel}`,
         assets: [],
       };
       bundleBySelection.set(bundleKey, bundle);
@@ -235,49 +211,38 @@ function mapItemsToBundles(
 }
 
 function validateSelections(selections: CustomizeSelections): boolean {
-  if (selections.counties.length === 0) {
-    return false;
-  }
-  // Reanalysis implies ERA5 + Historical, so a location is enough. Projections
-  // still require at least one climate projections model and warming level.
-  const { models, timePeriods } = effectiveModelPeriod(selections);
-  return models.length > 0 && timePeriods.length > 0;
+  return (
+    selections.counties.length > 0 &&
+    selections.timePeriods.length > 0 &&
+    selections.models.length > 0 &&
+    selections.percentiles.length > 0
+  );
 }
 
 const fields: readonly CustomizeFieldConfig[] = [
   {
-    kind: "single",
-    label: "Data source",
-    options: () => DATA_SOURCE_OPTIONS,
-    value: (selections) => selections.dataSource ?? DATA_SOURCE_PROJECTIONS,
-    patch: (next) => ({ dataSource: next }),
-  },
-  {
     kind: "multi",
     label: "Global Warming Levels",
     placeholder: "Choose global warming levels…",
-    // Reanalysis only has Historical, so lock field to that single option;
-    // climate projection selections are preserved via `selections.timePeriods` for the toggle back.
-    options: (config, selections) =>
-      isReanalysisSource(selections)
-        ? [{ value: HISTORICAL_PERIOD_ID, label: labelGwl(HISTORICAL_PERIOD_ID) }]
-        : (config.timePeriodOptions ?? []),
-    value: (selections) =>
-      isReanalysisSource(selections) ? [HISTORICAL_PERIOD_ID] : selections.timePeriods,
-    patch: (next, selections) => (isReanalysisSource(selections) ? {} : { timePeriods: next }),
+    options: (config) => config.timePeriodOptions ?? [],
+    value: (selections) => selections.timePeriods,
+    patch: (next) => ({ timePeriods: next }),
   },
   {
     kind: "multi",
     label: "Models",
     placeholder: "Choose models…",
-    // Reanalysis only has ERA5, so lock the field to that single option;
-    // projection selections are preserved (via `selections.models`) for the toggle back.
-    options: (config, selections) =>
-      isReanalysisSource(selections)
-        ? [{ value: ERA5_MODEL_ID, label: labelCmip6Model(ERA5_MODEL_ID) }]
-        : config.modelOptions,
-    value: (selections) => (isReanalysisSource(selections) ? [ERA5_MODEL_ID] : selections.models),
-    patch: (next, selections) => (isReanalysisSource(selections) ? {} : { models: next }),
+    options: (config) => config.modelOptions,
+    value: (selections) => selections.models,
+    patch: (next) => ({ models: next }),
+  },
+  {
+    kind: "multi",
+    label: "Percentiles",
+    placeholder: "Choose percentiles…",
+    options: (config) => config.percentileOptions ?? [],
+    value: (selections) => selections.percentiles,
+    patch: (next) => ({ percentiles: next }),
   },
   {
     kind: "multi",
@@ -290,23 +255,26 @@ const fields: readonly CustomizeFieldConfig[] = [
 ];
 
 function zipFilenameSlug(selections: CustomizeSelections): string {
-  const { models, timePeriods } = effectiveModelPeriod(selections);
-  const slug = timePeriods.join("-").replace(/\s+/g, "-") || models.join("-") || "typical-met-year";
+  const slug =
+    selections.percentiles.join("-") ||
+    selections.timePeriods.join("-").replace(/\s+/g, "-") ||
+    "xmy-persist";
   return slug.toLowerCase().replace(/[^a-z0-9-]+/gi, "-");
 }
 
-export const typicalMetYearPackage: PackageAdapter = {
-  id: "typical-met-year",
-  kind: "typical-met-year",
+export const xmyPersistPackage: PackageAdapter = {
+  id: "xmy-persist",
+  kind: "xmy-persist",
   stacCollectionId: STAC_COLLECTION_ID,
   needsQueryables: true,
   rail: {
-    title: "Typical meteorological year",
-    listDescription: "Representative year climate profiles for analysis.",
+    title: "Extreme Year (Persistence)",
+    listDescription: "Sustained extreme climate profiles at stations, by percentile.",
   },
   messages: {
-    skipped: "Select at least one location, GWL, and model on the previous step to fetch files.",
-    empty: "No files matched your selections. Try broadening location, GWL, or model choices.",
+    skipped:
+      "Select at least one location, GWL, model, and percentile on the previous step to fetch files.",
+    empty: "No files matched your selections. Try broadening location, GWL, model, or percentiles.",
     variableTableHeaders: { metric: "File type", download: "Single file" },
   },
   buildCustomizeForm,
