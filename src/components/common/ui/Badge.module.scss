@@ -1,11 +1,42 @@
 @use "@/styles/abstracts" as *;
 
 .root {
+  display: inline-flex;
+  align-items: center;
+  gap: spacer(1);
+  width: fit-content;
+  border-radius: rounded(2);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Sizes */
+
+.sm {
   @include type-item(label);
-  display: inline-block;
   padding: 1px spacer(1);
-  border-radius: rounded(1);
+  font-size: calc(font-size(label) * 0.9);
+}
+
+.md {
+  @include type-item(label);
+  padding: spacer(1) spacer(2);
+}
+
+.lg {
+  @include type-item(label);
+  padding: spacer(1) spacer(2);
+  font-size: calc(font-size(label) * 1.15);
+}
+
+/* Variants */
+
+.blue {
+  background-color: color(blue-4);
+  color: color(white);
+}
+
+.blueSubtle {
   background-color: color(blue-1);
   color: color(blue-5);
-  font-size: calc(font-size(label) * 0.9);
 }

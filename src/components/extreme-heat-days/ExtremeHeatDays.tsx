@@ -4,6 +4,7 @@ import { type ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import Alert from "@/components/common/ui/Alert";
+import Badge from "@/components/common/ui/Badge";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
@@ -19,6 +20,7 @@ import {
   selectionsToSearchParams,
 } from "@/lib/extreme-heat-days/search-params";
 import { hasRenderableSeries } from "@/lib/extreme-heat-days/series";
+import { formatIsoDateLong } from "@/utils/date";
 
 import ChartView from "./ChartView";
 import Controls from "./Controls";
@@ -36,6 +38,9 @@ const CHART_TAB = CHART_VIEW_TABS[0];
 const WHO_HEAT_HEALTH_URL =
   "https://www.who.int/news-room/fact-sheets/detail/climate-change-heat-and-health";
 const WHO_CITATION_LABEL = "Source: World Health Organization — Climate change, heat and health";
+
+// Manually bump date when the tool is meaningfully updated
+const LAST_UPDATED_ISO = "2026-08-13";
 
 const INTRO_COPY_BY_VARIABLE: Record<string, ReactNode> = {
   "extreme-heat-days": (
@@ -111,10 +116,21 @@ export default function ExtremeHeatDays() {
   }, [selections.climateVariable, exportCountyLabel]);
 
   return (
-    <PageLayout title={navLinks.extremeHeatDays.label}>
+    <PageLayout
+      title={
+        <>
+          {navLinks.extremeHeatDays.label}
+          <Badge variant="blue" size="lg" className={styles.betaBadge}>
+            Beta
+          </Badge>
+        </>
+      }
+    >
       <Alert severity="info" className={styles.betaAlert} ariaLabel="Beta notice">
-        <strong>This tool is in beta.</strong> Suggestions for improvements, questions, and general
-        comments are all welcome.
+        <strong>This tool is in active development.</strong> This beta release supports Extreme Heat
+        Days and Warm Nights at the county level. Upcoming updates will add more spatial
+        aggregations (utilities, forecast zones, and electric balancing areas), custom temperature
+        thresholds, and additional metrics. Suggestions, questions, and comments are welcome.
       </Alert>
 
       <div className={styles.intro}>{INTRO_COPY_BY_VARIABLE[selections.climateVariable]}</div>
@@ -166,6 +182,13 @@ export default function ExtremeHeatDays() {
           />
         </aside>
       </div>
+
+      <footer className={styles.pageFooter}>
+        <p className={styles.lastUpdated}>
+          Last updated:{" "}
+          <time dateTime={LAST_UPDATED_ISO}>{formatIsoDateLong(LAST_UPDATED_ISO)}</time>
+        </p>
+      </footer>
     </PageLayout>
   );
 }
