@@ -1,7 +1,7 @@
 import { formatLocalIsoDate } from "@/utils/date";
 import { toKebabCase } from "@/utils/string";
 
-import { type ExtremeHeatDaysSelections, THRESHOLD_OPTIONS } from "./options";
+import { type ExtremeHeatDaysSelections, getHeatMetric, HEAT_METRICS } from "./options";
 
 /**
  *  Keys match global-warming-level values used in `series.globalWarmingLevels`.
@@ -21,7 +21,8 @@ export function colorForGlobalWarmingLevel(value: number): string {
 }
 
 export function formatViewTitle(selections: ExtremeHeatDaysSelections): string {
-  return `Extreme Heat Frequency by Global Warming Level: ${selections.county} County`;
+  const metric = getHeatMetric(selections.climateVariable);
+  return `${metric.titleLabel} Frequency by Global Warming Level: ${selections.county} County`;
 }
 
 export function formatGlobalWarmingLevel(value: number): string {
@@ -46,15 +47,25 @@ export function formatDaysPerYear(value: number): string {
 }
 
 export function formatThresholdLabel(threshold: string): string {
-  return THRESHOLD_OPTIONS.find((option) => option.value === threshold)?.label ?? threshold;
+  for (const metric of Object.values(HEAT_METRICS)) {
+    const option = metric.thresholdOptions.find((o) => o.value === threshold);
+    if (option) return option.label;
+  }
+  return threshold;
 }
 
 /**
  * File name used when the user downloads the chart as a PNG. Pattern:
- * `extreme-heat-days_<county-slug>_<YYYY-MM-DD>.png`.
+ * `<metric-prefix>_<county-slug>_<YYYY-MM-DD>.png`
+ * (e.g. `warm-nights_sacramento_2026-01-15.png`).
  */
-export function formatChartExportFilename(county: string, date: Date = new Date()): string {
+export function formatChartExportFilename(
+  climateVariable: string,
+  county: string,
+  date: Date = new Date()
+): string {
+  const prefix = getHeatMetric(climateVariable).exportFilenamePrefix;
   const countySlug = toKebabCase(county) || "unknown";
   const dateSlug = formatLocalIsoDate(date);
-  return `extreme-heat-days_${countySlug}_${dateSlug}.png`;
+  return `${prefix}_${countySlug}_${dateSlug}.png`;
 }

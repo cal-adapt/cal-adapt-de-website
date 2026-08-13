@@ -30,12 +30,12 @@ const initial: FetchState = {
 
 /**
  * Fetch the parsed extreme heat series for the current selections, with a
- * small status state machine. Consistently handles cancellation, error capture,
- * and re-fetch semantics consistently.
+ * small status state machine that handles cancellation, error capture, and
+ * re-fetch semantics.
  *
- * Re-fetches only when `searchFiltersKey(selections)` changes (currently:
- * `selections.county`). Threshold and indicator changes don't trigger network
- * since they're resolved client-side from `series.valuesByVariable`.
+ * Re-fetches whenever `searchFiltersKey(selections)` changes. In this collection
+ * the climate variable, threshold, boundary, and county each select a different
+ * STAC item/CSV, so all of them are part of the key.
  *
  * Also exposes `retry()`, which re-runs the same request without changing selections.
  */
@@ -74,10 +74,9 @@ export function useExtremeHeatSeries(
       cancelled = true;
     };
     // `selections` is intentionally omitted from deps; `filtersKey` derives
-    // from the subset of selections that actually affects the API call.
-    // Including the full object would force a refetch on every threshold or
-    // indicator change even though those produce identical requests.
-    // `retryNonce` is included so `retry()` can re-run the same request.
+    // from the subset of selections that actually affects the API call (all of
+    // variable/threshold/boundary/county here). `retryNonce` is included so
+    // `retry()` can re-run the same request.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersKey, retryNonce]);
 

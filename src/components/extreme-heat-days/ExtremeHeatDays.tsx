@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { type ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import Alert from "@/components/common/ui/Alert";
@@ -37,8 +37,43 @@ const WHO_HEAT_HEALTH_URL =
   "https://www.who.int/news-room/fact-sheets/detail/climate-change-heat-and-health";
 const WHO_CITATION_LABEL = "Source: World Health Organization — Climate change, heat and health";
 
+const INTRO_COPY_BY_VARIABLE: Record<string, ReactNode> = {
+  "extreme-heat-days": (
+    <>
+      <p className={styles.introCopy}>
+        A day in which the maximum temperature exceeds a defined threshold that poses a significant
+        risk to human health, ecosystems, and infrastructure.
+      </p>
+      <p className={styles.introCopy}>
+        Extreme heat is the deadliest weather-related hazard in many parts of the world
+        <sup className={styles.footnoteRef}>
+          <Link href={WHO_HEAT_HEALTH_URL} aria-label={WHO_CITATION_LABEL}>
+            [1]
+          </Link>
+        </sup>
+        . Tracking extreme heat days helps identify populations at risk, inform public health
+        responses, and monitor how heat hazards are shifting under climate change in both intensity
+        and frequency.
+      </p>
+    </>
+  ),
+  // TODO: Placeholder copy
+  "warm-nights": (
+    <>
+      <p className={styles.introCopy}>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+        labore et dolore magna aliqua.
+      </p>
+      <p className={styles.introCopy}>
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+        dolore eu fugiat nulla pariatur.
+      </p>
+    </>
+  ),
+};
+
 export default function ExtremeHeatDays() {
-  // Selections live in the URL so deep links and back/forward "just work".
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -56,22 +91,24 @@ export default function ExtremeHeatDays() {
 
   const [view, setView] = useState<ViewMode>("chart");
 
-  // Re-runs only when a selection that affects the API call changes (currently: county)
   const seriesResult = useExtremeHeatSeries(selections);
   const isLoading = seriesResult.status === "loading";
 
   // Chart export plumbing; the button lives in the tabs row here but the
   // SVG it exports is rendered by `ChartView`.
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
-  const canExportChart = hasRenderableSeries(seriesResult.data, selections.threshold);
+  const canExportChart = hasRenderableSeries(seriesResult.data);
   const exportCountyLabel = seriesResult.data?.county || selections.county;
   const handleExportChart = useCallback(() => {
     const svg = chartContainerRef.current?.querySelector<SVGSVGElement>("svg");
     if (!svg) return;
-    exportSvgAsPng(svg, formatChartExportFilename(exportCountyLabel)).catch((error) => {
+    exportSvgAsPng(
+      svg,
+      formatChartExportFilename(selections.climateVariable, exportCountyLabel)
+    ).catch((error) => {
       console.error("[extreme-heat-days] chart export failed:", error);
     });
-  }, [exportCountyLabel]);
+  }, [selections.climateVariable, exportCountyLabel]);
 
   return (
     <PageLayout title={navLinks.extremeHeatDays.label}>
@@ -80,23 +117,7 @@ export default function ExtremeHeatDays() {
         comments are all welcome.
       </Alert>
 
-      <div className={styles.intro}>
-        <p className={styles.introCopy}>
-          A day in which the maximum temperature exceeds a defined threshold that poses a
-          significant risk to human health, ecosystems, and infrastructure.
-        </p>
-        <p className={styles.introCopy}>
-          Extreme heat is the deadliest weather-related hazard in many parts of the world
-          <sup className={styles.footnoteRef}>
-            <Link href={WHO_HEAT_HEALTH_URL} aria-label={WHO_CITATION_LABEL}>
-              [1]
-            </Link>
-          </sup>
-          . Tracking extreme heat days helps identify populations at risk, inform public health
-          responses, and monitor how heat hazards are shifting under climate change in both
-          intensity and frequency.
-        </p>
-      </div>
+      <div className={styles.intro}>{INTRO_COPY_BY_VARIABLE[selections.climateVariable]}</div>
 
       <div className={styles.workspace}>
         <div className={styles.viewArea}>
@@ -131,6 +152,7 @@ export default function ExtremeHeatDays() {
             status={seriesResult.status}
             errorMessage={seriesResult.errorMessage}
             onRetry={seriesResult.retry}
+            climateVariable={selections.climateVariable}
             threshold={selections.threshold}
             county={selections.county}
             chartContainerRef={chartContainerRef}

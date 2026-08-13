@@ -1,12 +1,11 @@
-import type { SelectOption } from "@/components/common/form";
-
 import {
   CLIMATE_VARIABLE_OPTIONS,
   COUNTY_OPTIONS,
   DEFAULT_SELECTIONS,
+  defaultThresholdFor,
   type ExtremeHeatDaysSelections,
   INDICATOR_OPTIONS,
-  THRESHOLD_OPTIONS,
+  thresholdOptionsFor,
 } from "./options";
 
 interface ReadableSearchParams {
@@ -56,25 +55,42 @@ const PARAM_KEYS = {
 function readField(
   params: ReadableSearchParams,
   field: keyof ExtremeHeatDaysSelections,
-  options: readonly SelectOption[]
+  allowed: readonly string[],
+  fallback: string
 ): string {
-  return readEnumParam(
-    params,
-    PARAM_KEYS[field],
-    options.map((option) => option.value),
-    DEFAULT_SELECTIONS[field]
-  );
+  return readEnumParam(params, PARAM_KEYS[field], allowed, fallback);
 }
 
 export function selectionsFromSearchParams(
   params: ReadableSearchParams
 ): ExtremeHeatDaysSelections {
-  return {
-    climateVariable: readField(params, "climateVariable", CLIMATE_VARIABLE_OPTIONS),
-    threshold: readField(params, "threshold", THRESHOLD_OPTIONS),
-    indicator: readField(params, "indicator", INDICATOR_OPTIONS),
-    county: readField(params, "county", COUNTY_OPTIONS),
-  };
+  const climateVariable = readField(
+    params,
+    "climateVariable",
+    CLIMATE_VARIABLE_OPTIONS.map((option) => option.value),
+    DEFAULT_SELECTIONS.climateVariable
+  );
+  // Threshold options are metric-specific, so validate against (and fall back
+  // to) the selected climate variable's options.
+  const threshold = readField(
+    params,
+    "threshold",
+    thresholdOptionsFor(climateVariable).map((option) => option.value),
+    defaultThresholdFor(climateVariable)
+  );
+  const indicator = readField(
+    params,
+    "indicator",
+    INDICATOR_OPTIONS.map((option) => option.value),
+    DEFAULT_SELECTIONS.indicator
+  );
+  const county = readField(
+    params,
+    "county",
+    COUNTY_OPTIONS.map((option) => option.value),
+    DEFAULT_SELECTIONS.county
+  );
+  return { climateVariable, threshold, indicator, county };
 }
 
 export function selectionsToSearchParams(selections: ExtremeHeatDaysSelections): URLSearchParams {

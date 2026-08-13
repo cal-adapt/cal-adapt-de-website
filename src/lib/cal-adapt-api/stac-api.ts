@@ -96,6 +96,10 @@ export type ItemSearchFilters = {
   shockTypeFilter?: string;
   /** LOCA2 county — e.g. `cmip6:table_id = 'mon'` to avoid day + mon duplicate items */
   cmip6TableIdFilter?: string;
+  /** eh-metrics boundary type — e.g. `boundary='ca_counties'` */
+  boundaryFilter?: string;
+  /** eh-metrics threshold — e.g. `threshold_name='t2max_ge100F'` */
+  thresholdNameFilter?: string;
 };
 
 /** JSON Schema queryables document (`/collections/{id}/queryables`). */
@@ -149,6 +153,8 @@ export async function searchItems(filters: ItemSearchFilters): Promise<StacItemC
   if (filters.centeredYearFilter) filterParts.push(filters.centeredYearFilter);
   if (filters.shockTypeFilter) filterParts.push(filters.shockTypeFilter);
   if (filters.cmip6TableIdFilter) filterParts.push(filters.cmip6TableIdFilter);
+  if (filters.boundaryFilter) filterParts.push(filters.boundaryFilter);
+  if (filters.thresholdNameFilter) filterParts.push(filters.thresholdNameFilter);
 
   const filterStr = filterParts.join(" AND ");
 

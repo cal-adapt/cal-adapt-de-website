@@ -1,118 +1,113 @@
-// Pipeline for a single county:
-//  1. STAC `/search` filtered by `county_name` → 1 item.
-//  2. Read that item's `data` asset href, normalize `s3://` → `https://`.
-//  3. Fetch the CSV (~250 B, 5 rows × {warming_level + 3 metric columns}).
-//  4. Parse into a small `ExtremeHeatSeries` shape that holds values keyed by
-//     STAC `variable_id`, so switching threshold/indicator client-side does
-//     not require a refetch.
+// Pipeline for a single region (county in MVP 1.1):
+//  1. STAC `/search` filtered by `variable_id`, `boundary`, and `threshold_name`
+//     → exactly 1 item (the combination is unique in the collection).
+//  2. That item's `data` asset href is an S3 *directory prefix*, not a file.
+//     Normalize `s3://` → `https://` and append the region's CSV filename.
+//  3. Fetch the region CSV (~450 B; `warming_level` + multi-model
+//     median/p10/p90 across the five global warming levels).
+//  4. Parse into `ExtremeHeatSeries`, collapsing duplicate `warming_level`
+//     rows by averaging (the raw CSVs currently repeat each level; see the
+//     tolerant-parse note below).
 
 import { csvParse } from "d3";
 
 import {
   calAdaptApi,
   type ItemSearchFilters,
-  orFilter,
   type StacItem,
   type StacItemCollection,
 } from "@/lib/cal-adapt-api";
 import { normalizeDownloadUrl } from "@/utils/url";
 
-import type { ExtremeHeatDaysSelections } from "./options";
+import { type ExtremeHeatDaysSelections, getHeatMetric, type HeatVariableId } from "./options";
 
 /**
- * STAC collection id for the per-county CSV summaries. Each item is one
- * California county and points to a single CSV containing all three heat
- * metrics across five global warming levels.
+ * STAC collection id for the multi-metric, per-boundary CSV summaries. Items are
+ * keyed by (variable_id × boundary × threshold_name); each item's `data` asset
+ * is a directory prefix containing one CSV per region.
  */
-export const EXTREME_HEAT_STAC_COLLECTION_ID = "wrf-extreme-heat-tool-county-csv" as const;
+export const EXTREME_HEAT_STAC_COLLECTION_ID = "eh-metrics-mm-boundary-csv" as const;
 
-/** Columns in the per-county CSVs that hold actual chart values, keyed by the
- *  STAC `variable_id` they correspond to. Non-value columns are handled separately. */
-const VALUE_COLUMN_VARIABLE_IDS = [
-  "t2max_99pctl",
-  "t2max_ge100F",
-  "t2max_ge105F",
-] as const satisfies readonly string[];
-
-export type ValueColumnVariableId = (typeof VALUE_COLUMN_VARIABLE_IDS)[number];
+/** Boundary type exposed in MVP 1.1. MVP 1.3 generalizes this into a
+ *  user-selectable "Spatial Aggregation". */
+export const COUNTY_BOUNDARY_ID = "ca_counties" as const;
 
 /**
- * Bridge between the UI's threshold values and the STAC `variable_id` /
- * CSV column they correspond to. Keep in sync with `THRESHOLD_OPTIONS` in `./options.ts`.
+ * Build the STAC `threshold_name` for the current selection, e.g.
+ * `t2max_ge100F` (extreme heat days) or `t2min_ge80F` (warm nights).
  */
-const STAC_VARIABLE_ID_BY_THRESHOLD: Readonly<Record<string, ValueColumnVariableId>> = {
-  "100F": "t2max_ge100F",
-  "105F": "t2max_ge105F",
-};
-
-export function stacVariableIdForThreshold(threshold: string): ValueColumnVariableId | null {
-  return STAC_VARIABLE_ID_BY_THRESHOLD[threshold] ?? null;
-}
-
-/** Locate the CSV column matching the current threshold out of a series.
- *  Returns `null` when the threshold has no corresponding STAC variable. */
-export function valuesForThreshold(series: ExtremeHeatSeries, threshold: string): number[] | null {
-  const variableId = stacVariableIdForThreshold(threshold);
-  return variableId ? series.valuesByVariable[variableId] : null;
+export function thresholdNameFor(selections: ExtremeHeatDaysSelections): string {
+  const metric = getHeatMetric(selections.climateVariable);
+  return `${metric.tempStat}_ge${selections.threshold}`;
 }
 
 /**
- * True when `series` has enough data to actually plot at `threshold`:
- * non-null series, a matching value column, a non-empty global-warming-level axis,
- * and at least one finite value. shared by `ChartView` and `ExtremeHeatDays`.
- */
-export function hasRenderableSeries(series: ExtremeHeatSeries | null, threshold: string): boolean {
-  if (!series || series.globalWarmingLevels.length === 0) return false;
-  const values = valuesForThreshold(series, threshold);
-  if (!values || values.length === 0) return false;
-  return values.some((v) => Number.isFinite(v));
-}
-
-/**
- * Chart-ready shape for one county. Holds all three heat metrics so threshold
- * switches are zero-network (just a different column lookup).
+ * Chart-ready shape for one region + metric + threshold. The threshold is baked
+ * into the fetched item, so unlike MVP 1.0 there is a single value series
+ * (`median`) rather than a column-per-threshold lookup.
  */
 export interface ExtremeHeatSeries {
-  /** Full county name (e.g. "Sacramento"); matches STAC `county_name`. */
+  variableId: HeatVariableId;
+  /** STAC `boundary` type, e.g. "ca_counties". */
+  boundary: string;
+  /** Region label (county name in MVP 1.1), e.g. "Sacramento". */
   county: string;
-  /** FIPS code (e.g. "06067"); matches STAC `county_code`. */
-  countyCode: string;
+  /** STAC `threshold_name`, e.g. "t2max_ge100F". */
+  thresholdName: string;
   /** Global warming levels in °C, sorted ascending. */
   globalWarmingLevels: number[];
-  /** Metric values keyed by STAC `variable_id`. Each array is index-aligned
-   *  with `globalWarmingLevels`. */
-  valuesByVariable: Record<ValueColumnVariableId, number[]>;
-  /** STAC item this series was derived from — useful for downstream metadata. */
+  /** Multi-model median count per year; the plotted value. Index-aligned with
+   *  `globalWarmingLevels`. */
+  median: number[];
+  /** Multi-model 10th percentile (uncertainty band lower bound). */
+  p10: number[];
+  /** Multi-model 90th percentile (uncertainty band upper bound). */
+  p90: number[];
+  /** STAC item this series was derived from. */
   sourceItem: StacItem;
-  /** https URL of the CSV asset that produced this series. */
+  /** https URL of the region CSV that produced this series. */
   sourceCsvUrl: string;
 }
 
 /**
- * Build STAC `/search` filters for the current selections.
- *
- * Only `county` affects the search currently; each STAC item bundles all three
- * heat metrics for that county into a single CSV. Threshold + indicator are
- * resolved client-side from `ExtremeHeatSeries.valuesByVariable`.
+ * True when `series` has enough data to plot: a non-null series, a non-empty
+ * global-warming-level axis, and at least one finite median value.
+ */
+export function hasRenderableSeries(series: ExtremeHeatSeries | null): boolean {
+  if (!series || series.globalWarmingLevels.length === 0) return false;
+  return series.median.some((v) => Number.isFinite(v));
+}
+
+/**
+ * Build STAC `/search` filters for the current selections. The tuple
+ * (variable_id, boundary, threshold_name) resolves to exactly one item.
  */
 export function buildSearchFilters(selections: ExtremeHeatDaysSelections): ItemSearchFilters {
+  const metric = getHeatMetric(selections.climateVariable);
   return {
     collectionFilter: `collection='${EXTREME_HEAT_STAC_COLLECTION_ID}'`,
-    countyFilter: orFilter("county_name", [selections.county]),
+    variableFilter: `variable_id='${metric.variableId}'`,
+    boundaryFilter: `boundary='${COUNTY_BOUNDARY_ID}'`,
+    thresholdNameFilter: `threshold_name='${thresholdNameFor(selections)}'`,
   };
 }
 
 /**
  * Stable cache key over the subset of selections that affect the API call.
- * Used as the effect dep in `useExtremeHeatSeries` so unrelated control
- * changes (threshold, indicator) don't trigger an identical refetch.
+ * Unlike MVP 1.0, threshold and climate variable are part of the fetch (they
+ * select the STAC item/CSV), so all of them belong in the key.
  */
 export function searchFiltersKey(selections: ExtremeHeatDaysSelections): string {
-  return selections.county;
+  const metric = getHeatMetric(selections.climateVariable);
+  return [
+    metric.variableId,
+    COUNTY_BOUNDARY_ID,
+    thresholdNameFor(selections),
+    selections.county,
+  ].join("|");
 }
 
-/** Run the STAC `/search` step in isolation. Used both by the series fetch
- *  and by callers that want the raw STAC `FeatureCollection`. */
+/** Run the STAC `/search` step in isolation. */
 export async function searchExtremeHeatItems(
   selections: ExtremeHeatDaysSelections
 ): Promise<StacItemCollection> {
@@ -120,30 +115,50 @@ export async function searchExtremeHeatItems(
 }
 
 /**
- * End-to-end fetch: STAC search → CSV download → parsed series. Throws if any
- * step fails so the calling hook can surface a single error state.
+ * End-to-end fetch: STAC search → region CSV download → parsed series. Throws if
+ * any step fails so the calling hook can surface a single error state.
  */
 export async function fetchExtremeHeatSeries(
   selections: ExtremeHeatDaysSelections
 ): Promise<ExtremeHeatSeries> {
+  const thresholdName = thresholdNameFor(selections);
   const items = await searchExtremeHeatItems(selections);
   const item = items.features[0];
   if (!item) {
-    throw new Error(`No STAC item found for county "${selections.county}"`);
+    throw new Error(
+      `No STAC item found for ${selections.climateVariable} in "${selections.county}" at ${thresholdName}`
+    );
   }
 
-  const csvUrl = resolveCsvUrl(item);
+  const csvUrl = resolveRegionCsvUrl(item, selections, thresholdName);
   const csvText = await fetchCsvText(csvUrl);
 
-  return parseCountyCsv(csvText, item, csvUrl);
+  return parseRegionCsv(csvText, item, csvUrl, selections, thresholdName);
 }
 
-function resolveCsvUrl(item: StacItem): string {
+/**
+ * The `data` asset href is a directory prefix; the per-region CSV lives under it
+ * named `{Region} County_{threshold}.csv` with spaces replaced by underscores
+ * (e.g. `Sacramento_County_t2max_ge100F.csv`).
+ */
+function resolveRegionCsvUrl(
+  item: StacItem,
+  selections: ExtremeHeatDaysSelections,
+  thresholdName: string
+): string {
   const rawHref = item.assets.data?.href;
   if (typeof rawHref !== "string" || rawHref.length === 0) {
     throw new Error(`STAC item ${item.id} has no \`data\` asset href`);
   }
-  return normalizeDownloadUrl(rawHref);
+  const prefix = normalizeDownloadUrl(rawHref);
+  const base = prefix.endsWith("/") ? prefix : `${prefix}/`;
+  return `${base}${encodeURIComponent(countyCsvFileName(selections.county, thresholdName))}`;
+}
+
+/** Region CSV filename for a county boundary. */
+function countyCsvFileName(county: string, thresholdName: string): string {
+  const region = `${county} County`.replace(/\s+/g, "_");
+  return `${region}_${thresholdName}.csv`;
 }
 
 async function fetchCsvText(url: string): Promise<string> {
@@ -154,42 +169,64 @@ async function fetchCsvText(url: string): Promise<string> {
   return response.text();
 }
 
-function parseCountyCsv(text: string, item: StacItem, csvUrl: string): ExtremeHeatSeries {
+interface LevelAccumulator {
+  median: number[];
+  p10: number[];
+  p90: number[];
+}
+
+function parseRegionCsv(
+  text: string,
+  item: StacItem,
+  csvUrl: string,
+  selections: ExtremeHeatDaysSelections,
+  thresholdName: string
+): ExtremeHeatSeries {
   const rows = csvParse(text);
 
-  const globalWarmingLevels: number[] = [];
-  const valuesByVariable: Record<ValueColumnVariableId, number[]> = {
-    t2max_99pctl: [],
-    t2max_ge100F: [],
-    t2max_ge105F: [],
-  };
-
+  // NOTE: The current CSVs repeat each warming level across several rows.
+  // Group by warming level and average the values so we plot one point per level.
+  const byLevel = new Map<number, LevelAccumulator>();
   for (const row of rows) {
     const globalWarmingLevel = Number(row.warming_level);
     if (!Number.isFinite(globalWarmingLevel)) continue;
-    globalWarmingLevels.push(globalWarmingLevel);
-    for (const variableId of VALUE_COLUMN_VARIABLE_IDS) {
-      const raw = row[variableId];
-      valuesByVariable[variableId].push(raw == null ? NaN : Number(raw));
-    }
+    const acc = byLevel.get(globalWarmingLevel) ?? { median: [], p10: [], p90: [] };
+    acc.median.push(toNumber(row.multimodel_median));
+    acc.p10.push(toNumber(row.multimodel_p10));
+    acc.p90.push(toNumber(row.multimodel_p90));
+    byLevel.set(globalWarmingLevel, acc);
   }
 
-  // STAC item ids are FIPS-suffixed (e.g. ...-06067). Pull the code from
-  // properties when present, fall back to the id suffix.
-  const countyName = stringProp(item, "county_name") ?? "";
-  const countyCode = stringProp(item, "county_code") ?? item.id.slice(-5);
+  const globalWarmingLevels = [...byLevel.keys()].sort((a, b) => a - b);
+  const median = globalWarmingLevels.map((level) => mean(byLevel.get(level)!.median));
+  const p10 = globalWarmingLevels.map((level) => mean(byLevel.get(level)!.p10));
+  const p90 = globalWarmingLevels.map((level) => mean(byLevel.get(level)!.p90));
+
+  const metric = getHeatMetric(selections.climateVariable);
 
   return {
-    county: countyName,
-    countyCode,
+    variableId: metric.variableId,
+    boundary: COUNTY_BOUNDARY_ID,
+    county: selections.county,
+    thresholdName,
     globalWarmingLevels,
-    valuesByVariable,
+    median,
+    p10,
+    p90,
     sourceItem: item,
     sourceCsvUrl: csvUrl,
   };
 }
 
-function stringProp(item: StacItem, key: string): string | undefined {
-  const value = item.properties[key];
-  return typeof value === "string" && value.length > 0 ? value : undefined;
+/** Parse a CSV cell to a number, treating missing/empty cells as NaN. */
+function toNumber(raw: string | undefined): number {
+  if (raw == null || raw === "") return NaN;
+  return Number(raw);
+}
+
+/** Mean of the finite values, or NaN when there are none. */
+function mean(values: number[]): number {
+  const finite = values.filter((v) => Number.isFinite(v));
+  if (finite.length === 0) return NaN;
+  return finite.reduce((sum, v) => sum + v, 0) / finite.length;
 }

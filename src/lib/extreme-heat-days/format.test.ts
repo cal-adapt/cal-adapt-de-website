@@ -36,6 +36,12 @@ describe("formatViewTitle", () => {
       "Extreme Heat Frequency by Global Warming Level: Sacramento County"
     );
   });
+
+  it("reflects the warm-nights metric label", () => {
+    expect(formatViewTitle({ ...SELECTIONS, climateVariable: "warm-nights" })).toBe(
+      "Warm Nights Frequency by Global Warming Level: Sacramento County"
+    );
+  });
 });
 
 describe("formatGlobalWarmingLevel", () => {
@@ -64,26 +70,36 @@ describe("formatDaysPerYear", () => {
 });
 
 describe("formatThresholdLabel", () => {
-  it("maps known threshold values to their display label", () => {
+  it("maps known threshold values to their display label across metrics", () => {
     expect(formatThresholdLabel("100F")).toBe("100°F");
     expect(formatThresholdLabel("105F")).toBe("105°F");
+    expect(formatThresholdLabel("80F")).toBe("80°F");
   });
 
   it("passes through an unknown threshold unchanged", () => {
-    expect(formatThresholdLabel("110F")).toBe("110F");
+    expect(formatThresholdLabel("999F")).toBe("999F");
   });
 });
 
 describe("formatChartExportFilename", () => {
-  it("builds a slugified, dated PNG filename", () => {
+  it("builds a slugified, dated PNG filename with the metric prefix", () => {
     const date = new Date(2026, 0, 15);
-    expect(formatChartExportFilename("San Diego", date)).toBe(
+    expect(formatChartExportFilename("extreme-heat-days", "San Diego", date)).toBe(
       "extreme-heat-days_san-diego_2026-01-15.png"
+    );
+  });
+
+  it("uses the warm-nights prefix for that metric", () => {
+    const date = new Date(2026, 0, 15);
+    expect(formatChartExportFilename("warm-nights", "San Diego", date)).toBe(
+      "warm-nights_san-diego_2026-01-15.png"
     );
   });
 
   it("falls back to 'unknown' when the county slug is empty", () => {
     const date = new Date(2026, 0, 15);
-    expect(formatChartExportFilename("", date)).toBe("extreme-heat-days_unknown_2026-01-15.png");
+    expect(formatChartExportFilename("extreme-heat-days", "", date)).toBe(
+      "extreme-heat-days_unknown_2026-01-15.png"
+    );
   });
 });
