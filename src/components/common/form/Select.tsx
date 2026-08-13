@@ -14,12 +14,15 @@ import {
 import clsx from "clsx";
 import { Check, ChevronDown } from "lucide-react";
 
+import Badge from "@/components/common/ui/Badge";
+
 import styles from "./FormDropdown.module.scss";
 
 export interface SelectOption {
   value: string;
   label: string;
   disabled?: boolean;
+  hint?: string;
 }
 
 export interface SelectProps {
@@ -147,6 +150,7 @@ const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
                   className={styles.option}
                   role="option"
                   aria-selected={isSelected}
+                  title={opt.hint}
                 >
                   <button
                     type="button"
@@ -161,6 +165,11 @@ const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
                     }}
                   >
                     <span className={styles.optionText}>{opt.label}</span>
+                    {opt.hint ? (
+                      <Badge variant="blue-subtle" size="sm">
+                        {opt.hint}
+                      </Badge>
+                    ) : null}
                     {isSelected ? (
                       <Check className={styles.optionCheck} size={16} strokeWidth={2} aria-hidden />
                     ) : null}

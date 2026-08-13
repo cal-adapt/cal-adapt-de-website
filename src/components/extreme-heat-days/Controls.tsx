@@ -3,7 +3,7 @@
 import { FormField, Select } from "@/components/common/form";
 import { featureFlags } from "@/config/feature-flags";
 import {
-  CLIMATE_VARIABLE_OPTIONS,
+  CLIMATE_VARIABLE_SELECT_OPTIONS,
   COUNTY_OPTIONS,
   defaultThresholdFor,
   type ExtremeHeatDaysSelections,
@@ -42,7 +42,7 @@ export default function Controls({ selections, onChange, disabled = false }: Con
               threshold: defaultThresholdFor(climateVariable),
             })
           }
-          options={CLIMATE_VARIABLE_OPTIONS}
+          options={CLIMATE_VARIABLE_SELECT_OPTIONS}
           disabled={disabled}
         />
       </FormField>

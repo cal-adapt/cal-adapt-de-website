@@ -27,10 +27,18 @@ import Controls from "./Controls";
 
 import styles from "./ExtremeHeatDays.module.scss";
 
-type ViewMode = "chart";
+type ViewMode = "chart" | "table";
 
 const CHART_VIEW_TABS: readonly TabItem<ViewMode>[] = [
   { value: "chart", label: "Chart", tabId: "ehd-tab-chart", panelId: "ehd-panel-chart" },
+  {
+    value: "table",
+    label: "Table",
+    tabId: "ehd-tab-table",
+    panelId: "ehd-panel-table",
+    disabled: true,
+    hint: "Coming soon",
+  },
 ];
 
 const CHART_TAB = CHART_VIEW_TABS[0];
@@ -158,7 +166,6 @@ export default function ExtremeHeatDays() {
                 </Button>
               </div>
             )}
-            {/* TODO: Table */}
           </div>
           <ChartView
             id={CHART_TAB.panelId}
