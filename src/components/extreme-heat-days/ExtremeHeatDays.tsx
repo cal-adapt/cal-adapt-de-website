@@ -135,10 +135,8 @@ export default function ExtremeHeatDays() {
       }
     >
       <Alert severity="info" className={styles.betaAlert} ariaLabel="Beta notice">
-        <strong>This tool is in active development.</strong> This beta release supports Extreme Heat
-        Days and Warm Nights at the county level. Upcoming updates will add more spatial
-        aggregations (utilities, forecast zones, and electric balancing areas), custom temperature
-        thresholds, and additional metrics. Suggestions, questions, and comments are welcome.
+        <strong>This tool is in beta.</strong> Suggestions for improvements, questions, and general
+        comments are all welcome.
       </Alert>
 
       <div className={styles.intro}>{INTRO_COPY_BY_VARIABLE[selections.climateVariable]}</div>
