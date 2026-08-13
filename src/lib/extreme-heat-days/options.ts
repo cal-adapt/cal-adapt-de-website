@@ -132,6 +132,17 @@ export const CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = Object.values(H
   (metric) => ({ value: metric.value, label: metric.label })
 );
 
+export const COMING_SOON_CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = [
+  { value: "heat-waves", label: "Heat Waves", disabled: true, hint: "Coming soon" },
+];
+
+/** All climate-variable options for the dropdown: selectable metrics followed by
+ *  coming soon options. */
+export const CLIMATE_VARIABLE_SELECT_OPTIONS: readonly SelectOption[] = [
+  ...CLIMATE_VARIABLE_OPTIONS,
+  ...COMING_SOON_CLIMATE_VARIABLE_OPTIONS,
+];
+
 export const INDICATOR_OPTIONS: readonly SelectOption[] = [
   { value: "frequency", label: "Frequency" },
 ];

@@ -28,3 +28,8 @@
   border-bottom-color: color(black);
   font-weight: 600;
 }
+
+.tabDisabled {
+  color: color(grey-3);
+  cursor: not-allowed;
+}
