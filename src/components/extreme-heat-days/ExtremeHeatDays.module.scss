@@ -1,5 +1,10 @@
 @use "@/styles/abstracts" as *;
 
+.betaBadge {
+  vertical-align: 33%;
+  margin-left: spacer(3);
+}
+
 .betaAlert {
   width: 100%;
   max-width: max-w(global);
@@ -48,4 +53,17 @@
 
 .controlsArea {
   width: 100%;
+}
+
+.pageFooter {
+  width: 100%;
+  max-width: max-w(global);
+  padding-top: spacer(4);
+  border-top: 1px solid color(grey-2);
+}
+
+.lastUpdated {
+  margin: 0;
+  color: color(grey-4);
+  @include type-item(small);
 }
