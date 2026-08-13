@@ -29,6 +29,24 @@ describe("selectionsFromSearchParams", () => {
       DEFAULT_SELECTIONS.climateVariable
     );
   });
+
+  it("validates the threshold against the selected metric's options", () => {
+    // 80F is a valid warm-nights threshold but not an extreme-heat-days one.
+    const warmNights = new URLSearchParams("variable=warm-nights&threshold=80F");
+    expect(selectionsFromSearchParams(warmNights)).toMatchObject({
+      climateVariable: "warm-nights",
+      threshold: "80F",
+    });
+
+    // 80F is invalid for extreme heat days → falls back to that metric's default.
+    const heatDays = new URLSearchParams("variable=extreme-heat-days&threshold=80F");
+    expect(selectionsFromSearchParams(heatDays).threshold).toBe("100F");
+  });
+
+  it("falls back to the metric default threshold for warm nights when omitted", () => {
+    const params = new URLSearchParams("variable=warm-nights");
+    expect(selectionsFromSearchParams(params).threshold).toBe("70F");
+  });
 });
 
 describe("selectionsToSearchParams", () => {

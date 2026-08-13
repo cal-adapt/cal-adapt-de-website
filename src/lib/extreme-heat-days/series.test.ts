@@ -8,121 +8,121 @@ import { server } from "@/testing/mocks/server";
 import { DEFAULT_SELECTIONS, type ExtremeHeatDaysSelections } from "./options";
 import {
   buildSearchFilters,
+  COUNTY_BOUNDARY_ID,
   EXTREME_HEAT_STAC_COLLECTION_ID,
   type ExtremeHeatSeries,
   fetchExtremeHeatSeries,
   hasRenderableSeries,
   searchFiltersKey,
-  stacVariableIdForThreshold,
-  valuesForThreshold,
+  thresholdNameFor,
 } from "./series";
 
 function makeSeries(overrides: Partial<ExtremeHeatSeries> = {}): ExtremeHeatSeries {
   return {
+    variableId: "eh_days",
+    boundary: COUNTY_BOUNDARY_ID,
     county: "Sacramento",
-    countyCode: "06067",
+    thresholdName: "t2max_ge100F",
     globalWarmingLevels: [0.8, 1.5, 2.0],
-    valuesByVariable: {
-      t2max_99pctl: [40, 42, 44],
-      t2max_ge100F: [10, 20, 30],
-      t2max_ge105F: [2, 5, 9],
-    },
+    median: [10, 20, 30],
+    p10: [8, 18, 28],
+    p90: [12, 22, 32],
     sourceItem: {} as StacItem,
     sourceCsvUrl: "https://example.com/sacramento.csv",
     ...overrides,
   };
 }
 
-describe("stacVariableIdForThreshold", () => {
-  it("maps known thresholds to their STAC variable id", () => {
-    expect(stacVariableIdForThreshold("100F")).toBe("t2max_ge100F");
-    expect(stacVariableIdForThreshold("105F")).toBe("t2max_ge105F");
+describe("thresholdNameFor", () => {
+  it("builds a t2max threshold_name for extreme heat days", () => {
+    expect(thresholdNameFor({ ...DEFAULT_SELECTIONS, threshold: "105F" })).toBe("t2max_ge105F");
   });
 
-  it("returns null for an unmapped threshold", () => {
-    expect(stacVariableIdForThreshold("110F")).toBeNull();
-  });
-});
-
-describe("valuesForThreshold", () => {
-  it("returns the column matching the threshold", () => {
-    expect(valuesForThreshold(makeSeries(), "100F")).toEqual([10, 20, 30]);
-    expect(valuesForThreshold(makeSeries(), "105F")).toEqual([2, 5, 9]);
-  });
-
-  it("returns null when the threshold has no STAC variable", () => {
-    expect(valuesForThreshold(makeSeries(), "110F")).toBeNull();
+  it("builds a t2min threshold_name for warm nights", () => {
+    expect(
+      thresholdNameFor({ ...DEFAULT_SELECTIONS, climateVariable: "warm-nights", threshold: "80F" })
+    ).toBe("t2min_ge80F");
   });
 });
 
 describe("hasRenderableSeries", () => {
   it("is false for a null series", () => {
-    expect(hasRenderableSeries(null, "100F")).toBe(false);
+    expect(hasRenderableSeries(null)).toBe(false);
   });
 
   it("is false when there are no global warming levels", () => {
-    expect(hasRenderableSeries(makeSeries({ globalWarmingLevels: [] }), "100F")).toBe(false);
+    expect(hasRenderableSeries(makeSeries({ globalWarmingLevels: [] }))).toBe(false);
   });
 
-  it("is false for a threshold with no matching column", () => {
-    expect(hasRenderableSeries(makeSeries(), "110F")).toBe(false);
+  it("is false when every median value is non-finite", () => {
+    expect(hasRenderableSeries(makeSeries({ median: [NaN, NaN, NaN] }))).toBe(false);
   });
 
-  it("is false when every value is non-finite", () => {
-    const series = makeSeries({
-      valuesByVariable: {
-        t2max_99pctl: [NaN, NaN, NaN],
-        t2max_ge100F: [NaN, NaN, NaN],
-        t2max_ge105F: [NaN, NaN, NaN],
-      },
-    });
-    expect(hasRenderableSeries(series, "100F")).toBe(false);
-  });
-
-  it("is true when at least one value is finite", () => {
-    const series = makeSeries({
-      valuesByVariable: {
-        t2max_99pctl: [NaN, NaN, NaN],
-        t2max_ge100F: [NaN, 20, NaN],
-        t2max_ge105F: [NaN, NaN, NaN],
-      },
-    });
-    expect(hasRenderableSeries(series, "100F")).toBe(true);
+  it("is true when at least one median value is finite", () => {
+    expect(hasRenderableSeries(makeSeries({ median: [NaN, 20, NaN] }))).toBe(true);
   });
 });
 
 describe("buildSearchFilters", () => {
-  it("filters by the extreme-heat collection and the selected county", () => {
+  it("filters by collection, variable, boundary, and threshold_name", () => {
     expect(buildSearchFilters({ ...DEFAULT_SELECTIONS, county: "Fresno" })).toEqual({
       collectionFilter: `collection='${EXTREME_HEAT_STAC_COLLECTION_ID}'`,
-      countyFilter: "(county_name='Fresno')",
+      variableFilter: "variable_id='eh_days'",
+      boundaryFilter: `boundary='${COUNTY_BOUNDARY_ID}'`,
+      thresholdNameFilter: "threshold_name='t2max_ge100F'",
+    });
+  });
+
+  it("uses the warm-nights variable and t2min threshold", () => {
+    expect(
+      buildSearchFilters({
+        ...DEFAULT_SELECTIONS,
+        climateVariable: "warm-nights",
+        threshold: "80F",
+      })
+    ).toMatchObject({
+      variableFilter: "variable_id='warm_nights'",
+      thresholdNameFilter: "threshold_name='t2min_ge80F'",
     });
   });
 });
 
 describe("searchFiltersKey", () => {
-  it("keys only on county (so threshold/indicator changes don't refetch)", () => {
+  it("keys on variable, boundary, threshold, and county (all affect the fetch)", () => {
     const base: ExtremeHeatDaysSelections = { ...DEFAULT_SELECTIONS, county: "Kern" };
-    expect(searchFiltersKey(base)).toBe("Kern");
-    expect(searchFiltersKey({ ...base, threshold: "105F", indicator: "frequency" })).toBe("Kern");
-    expect(searchFiltersKey({ ...base, county: "Marin" })).toBe("Marin");
+    expect(searchFiltersKey(base)).toBe("eh_days|ca_counties|t2max_ge100F|Kern");
+    expect(searchFiltersKey({ ...base, threshold: "105F" })).toBe(
+      "eh_days|ca_counties|t2max_ge105F|Kern"
+    );
+    expect(searchFiltersKey({ ...base, climateVariable: "warm-nights", threshold: "80F" })).toBe(
+      "warm_nights|ca_counties|t2min_ge80F|Kern"
+    );
+    expect(searchFiltersKey({ ...base, county: "Marin" })).toBe(
+      "eh_days|ca_counties|t2max_ge100F|Marin"
+    );
   });
 });
 
 describe("fetchExtremeHeatSeries", () => {
-  const S3_HREF = "s3://test-bucket/extreme-heat/sacramento.csv";
-  const NORMALIZED_CSV_URL = "https://test-bucket.s3.amazonaws.com/extreme-heat/sacramento.csv";
+  const ASSET_PREFIX =
+    "s3://cadcat/wrf/extreme-heat-tool/multimodel_per_boundary/eh_days/ca_counties/ssp370/t2max_ge100F/";
+  const NORMALIZED_CSV_URL =
+    "https://cadcat.s3.amazonaws.com/wrf/extreme-heat-tool/multimodel_per_boundary/eh_days/ca_counties/ssp370/t2max_ge100F/Sacramento_County_t2max_ge100F.csv";
 
   const SELECTIONS: ExtremeHeatDaysSelections = { ...DEFAULT_SELECTIONS, county: "Sacramento" };
 
   function makeItem(overrides: Partial<StacItem> = {}): StacItem {
     return {
       type: "Feature",
-      id: "wrf-extreme-heat-tool-county-csv-06067",
+      id: "eh-metrics-mm-boundary-csv-eh_days-ca_counties-t2max_ge100F",
       geometry: null,
       links: [],
-      assets: { data: { href: S3_HREF } },
-      properties: { county_name: "Sacramento", county_code: "06067" },
+      assets: { data: { href: ASSET_PREFIX } },
+      properties: {
+        variable_id: "eh_days",
+        boundary: "ca_counties",
+        threshold_name: "t2max_ge100F",
+      },
       ...overrides,
     };
   }
@@ -145,34 +145,36 @@ describe("fetchExtremeHeatSeries", () => {
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
-  it("parses the county CSV into a chart-ready series", async () => {
+  it("parses the region CSV into a chart-ready median series", async () => {
     mockSearch([makeItem()]);
     mockCsv(
       [
-        "warming_level,t2max_99pctl,t2max_ge100F,t2max_ge105F",
-        "0.8,40.1,10,2",
-        "1.5,42.0,20,5",
-        "2.0,44.5,30,9",
+        "warming_level,multimodel_median,multimodel_p10,multimodel_p90",
+        "0.8,34.0,30.0,38.0",
+        "1.5,48.0,44.0,52.0",
+        "2.0,52.5,48.5,56.5",
       ].join("\n")
     );
 
     const series = await fetchExtremeHeatSeries(SELECTIONS);
 
     expect(series.county).toBe("Sacramento");
-    expect(series.countyCode).toBe("06067");
+    expect(series.variableId).toBe("eh_days");
+    expect(series.thresholdName).toBe("t2max_ge100F");
     expect(series.globalWarmingLevels).toEqual([0.8, 1.5, 2.0]);
-    expect(series.valuesByVariable.t2max_ge100F).toEqual([10, 20, 30]);
-    expect(series.valuesByVariable.t2max_ge105F).toEqual([2, 5, 9]);
+    expect(series.median).toEqual([34.0, 48.0, 52.5]);
+    expect(series.p10).toEqual([30.0, 44.0, 48.5]);
+    expect(series.p90).toEqual([38.0, 52.0, 56.5]);
     expect(series.sourceCsvUrl).toBe(NORMALIZED_CSV_URL);
   });
 
-  it("normalizes the s3:// asset href to https before fetching the CSV", async () => {
+  it("builds the county CSV url (with `_County` suffix) under the asset prefix", async () => {
     let requestedUrl = "";
     mockSearch([makeItem()]);
     server.use(
       http.get(NORMALIZED_CSV_URL, ({ request }) => {
         requestedUrl = request.url;
-        return HttpResponse.text("warming_level,t2max_ge100F\n0.8,10");
+        return HttpResponse.text("warming_level,multimodel_median\n0.8,10");
       })
     );
 
@@ -181,59 +183,61 @@ describe("fetchExtremeHeatSeries", () => {
     expect(requestedUrl).toBe(NORMALIZED_CSV_URL);
   });
 
-  it("skips rows with a non-numeric warming level", async () => {
+  it("averages duplicate warming-level rows (tolerant parse)", async () => {
     mockSearch([makeItem()]);
     mockCsv(
       [
-        "warming_level,t2max_99pctl,t2max_ge100F,t2max_ge105F",
-        "0.8,40.1,10,2",
-        "not-a-number,1,1,1",
-        "2.0,44.5,30,9",
+        "warming_level,multimodel_median,multimodel_p10,multimodel_p90",
+        "0.8,34.0,34.0,34.0",
+        "0.8,32.0,32.0,32.0",
+        "1.5,50.0,50.0,50.0",
+        "1.5,46.0,46.0,46.0",
       ].join("\n")
     );
 
     const series = await fetchExtremeHeatSeries(SELECTIONS);
 
+    expect(series.globalWarmingLevels).toEqual([0.8, 1.5]);
+    expect(series.median).toEqual([33.0, 48.0]);
+  });
+
+  it("skips rows with a non-numeric warming level", async () => {
+    mockSearch([makeItem()]);
+    mockCsv(["warming_level,multimodel_median", "0.8,10", "not-a-number,999", "2.0,30"].join("\n"));
+
+    const series = await fetchExtremeHeatSeries(SELECTIONS);
+
     expect(series.globalWarmingLevels).toEqual([0.8, 2.0]);
-    expect(series.valuesByVariable.t2max_ge100F).toEqual([10, 30]);
+    expect(series.median).toEqual([10, 30]);
   });
 
-  it("represents an absent metric column as NaN", async () => {
+  it("represents an absent median cell as NaN", async () => {
     mockSearch([makeItem()]);
-    // CSV omits the t2max_ge105F column entirely.
-    mockCsv(["warming_level,t2max_99pctl,t2max_ge100F", "0.8,40.1,10", "1.5,42.0,20"].join("\n"));
+    mockCsv(["warming_level,multimodel_p10", "0.8,5", "1.5,6"].join("\n"));
 
     const series = await fetchExtremeHeatSeries(SELECTIONS);
 
-    expect(series.valuesByVariable.t2max_ge105F).toEqual([NaN, NaN]);
-    expect(series.valuesByVariable.t2max_ge100F).toEqual([10, 20]);
+    expect(series.median).toEqual([NaN, NaN]);
   });
 
-  it("reads an empty metric cell as 0 (current parser behavior)", async () => {
-    mockSearch([makeItem()]);
-    mockCsv(["warming_level,t2max_ge100F,t2max_ge105F", "0.8,,2", "1.5,20,5"].join("\n"));
-
-    const series = await fetchExtremeHeatSeries(SELECTIONS);
-
-    // Number("") === 0, so an empty cell is NOT treated as missing data.
-    expect(series.valuesByVariable.t2max_ge100F[0]).toBe(0);
-    expect(series.valuesByVariable.t2max_ge100F[1]).toBe(20);
-  });
-
-  it("falls back to the FIPS id suffix when county_code is absent", async () => {
-    mockSearch([makeItem({ properties: { county_name: "Sacramento" } })]);
-    mockCsv("warming_level,t2max_ge100F\n0.8,10");
-
-    const series = await fetchExtremeHeatSeries(SELECTIONS);
-
-    expect(series.countyCode).toBe("06067");
-  });
-
-  it("throws when no STAC item matches the county", async () => {
-    mockSearch([]);
-    await expect(fetchExtremeHeatSeries(SELECTIONS)).rejects.toThrow(
-      'No STAC item found for county "Sacramento"'
+  it("appends the CSV filename to a prefix href that lacks a trailing slash", async () => {
+    let requestedUrl = "";
+    mockSearch([makeItem({ assets: { data: { href: ASSET_PREFIX.replace(/\/$/, "") } } })]);
+    server.use(
+      http.get(NORMALIZED_CSV_URL, ({ request }) => {
+        requestedUrl = request.url;
+        return HttpResponse.text("warming_level,multimodel_median\n0.8,10");
+      })
     );
+
+    await fetchExtremeHeatSeries(SELECTIONS);
+
+    expect(requestedUrl).toBe(NORMALIZED_CSV_URL);
+  });
+
+  it("throws when no STAC item matches the selection", async () => {
+    mockSearch([]);
+    await expect(fetchExtremeHeatSeries(SELECTIONS)).rejects.toThrow("No STAC item found");
   });
 
   it("throws when the STAC item has no data asset href", async () => {

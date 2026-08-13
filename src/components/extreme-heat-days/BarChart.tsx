@@ -12,22 +12,22 @@ import { Text } from "@visx/text";
 
 import { motion, useReducedMotion } from "motion/react";
 
+import { buildTickValues, niceCeil } from "@/lib/extreme-heat-days/axis";
 import {
   colorForGlobalWarmingLevel,
   formatDaysPerYear,
   formatGlobalWarmingLevel,
   formatGlobalWarmingLevelName,
 } from "@/lib/extreme-heat-days/format";
+import { toSentenceCase } from "@/utils/string";
 
 import styles from "./BarChart.module.scss";
 
 const TITLE_BAND = 52;
 const MARGIN = { top: 24, right: 24, bottom: 78, left: 86 } as const;
 
-const Y_AXIS_LABEL = "Number of Extreme Heat Days per Year";
 const X_AXIS_LABEL = "Global Warming Level (°C)";
 
-const Y_AXIS_MAX_DAYS = 70;
 const Y_TICK_COUNT = 5;
 
 const BAR_GROW_DURATION = 0.5;
@@ -57,6 +57,18 @@ export interface BarChartProps {
   county: string;
   /** Rendered as SVG text to include in PNG exports. */
   title: string;
+  /** Y-axis title */
+  yAxisLabel: string;
+  /** Fixed y-axis domain max */
+  yAxisMax?: number;
+  /** Spacing between y-axis gridlines/ticks */
+  yAxisTickStep?: number;
+  /** Metric noun for accessible text */
+  accessibleNoun: string;
+  /** Threshold direction for accessible text (e.g., "maximum" or "minimum") */
+  tempExtremum: string;
+  /** Unit for bar values/tooltips */
+  valueUnit: string;
 }
 
 export default function BarChart({
@@ -65,6 +77,12 @@ export default function BarChart({
   thresholdLabel,
   county,
   title,
+  yAxisLabel,
+  yAxisMax,
+  yAxisTickStep,
+  accessibleNoun,
+  tempExtremum,
+  valueUnit,
 }: BarChartProps) {
   const titleId = useId();
   const descId = useId();
@@ -75,16 +93,24 @@ export default function BarChart({
   const plotWidth = Math.max(0, width - MARGIN.left - MARGIN.right);
   const plotHeight = Math.max(0, height - TITLE_BAND - MARGIN.top - MARGIN.bottom);
 
+  const yAxisDomainMax = yAxisMax ?? niceCeil(Math.max(0, ...values.filter(Number.isFinite)));
+
+  // Explicit gridlines/ticks at a fixed step (e.g. every 25)
+  const yTickValues = useMemo(
+    () => buildTickValues(yAxisDomainMax, yAxisTickStep),
+    [yAxisDomainMax, yAxisTickStep]
+  );
+
   const { xScale, yScale } = useMemo(() => {
     return {
-      yScale: scaleLinear<number>({ domain: [0, Y_AXIS_MAX_DAYS], range: [plotHeight, 0] }),
+      yScale: scaleLinear<number>({ domain: [0, yAxisDomainMax], range: [plotHeight, 0] }),
       xScale: scaleBand<number>({
         domain: globalWarmingLevels,
         range: [0, plotWidth],
         padding: 0.3,
       }),
     };
-  }, [globalWarmingLevels, plotWidth, plotHeight]);
+  }, [globalWarmingLevels, plotWidth, plotHeight, yAxisDomainMax]);
 
   const bandwidth = xScale.bandwidth();
 
@@ -94,12 +120,13 @@ export default function BarChart({
   const valuesKey = values.join(",");
 
   const accessibleDescription =
-    `Bar chart of extreme heat days per year for ${county} County across ` +
+    `Bar chart of ${accessibleNoun} per year for ${county} County across ` +
     `global warming levels of ${globalWarmingLevels.map(formatGlobalWarmingLevel).join(", ")}, ` +
-    `where an extreme heat day reaches a maximum temperature of ${thresholdLabel} or higher. ` +
+    `where the daily ${tempExtremum} temperature reaches ${thresholdLabel} or higher. ` +
     `Values: ${globalWarmingLevels
       .map(
-        (level, i) => `${formatGlobalWarmingLevel(level)} → ${formatDaysPerYear(values[i])} days`
+        (level, i) =>
+          `${formatGlobalWarmingLevel(level)} → ${formatDaysPerYear(values[i])} ${valueUnit}`
       )
       .join("; ")}.`;
 
@@ -117,7 +144,9 @@ export default function BarChart({
           aria-labelledby={titleId}
           aria-describedby={descId}
         >
-          <title id={titleId}>Extreme heat days per year by global warming level</title>
+          <title
+            id={titleId}
+          >{`${toSentenceCase(accessibleNoun)} per year by global warming level`}</title>
           <desc id={descId}>{accessibleDescription}</desc>
 
           <Text
@@ -138,11 +167,11 @@ export default function BarChart({
               className={styles.grid}
               scale={yScale}
               width={plotWidth}
-              numTicks={Y_TICK_COUNT}
+              {...(yTickValues ? { tickValues: yTickValues } : { numTicks: Y_TICK_COUNT })}
             />
             <AxisLeft
               scale={yScale}
-              numTicks={Y_TICK_COUNT}
+              {...(yTickValues ? { tickValues: yTickValues } : { numTicks: Y_TICK_COUNT })}
               tickLength={0}
               hideAxisLine
               hideTicks
@@ -162,7 +191,7 @@ export default function BarChart({
               const y = yScale(value);
               const barHeight = Math.max(0, plotHeight - y);
               const radius = Math.min(BAR_CORNER_RADIUS, bandwidth / 2, barHeight);
-              const label = `${formatDaysPerYear(value)} days`;
+              const label = `${formatDaysPerYear(value)} ${valueUnit}`;
               // Offsets convert plot-group coords to the container-pixel coords
               // the tooltip overlay is positioned in
               const showTooltip = () =>
@@ -247,7 +276,7 @@ export default function BarChart({
             textAnchor="middle"
             verticalAnchor="middle"
           >
-            {Y_AXIS_LABEL}
+            {yAxisLabel}
           </Text>
         </svg>
       )}

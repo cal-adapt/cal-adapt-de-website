@@ -7,11 +7,8 @@ import Button from "@/components/common/ui/Button";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import type { ExtremeHeatSeriesStatus } from "@/hooks/use-extreme-heat-series";
 import { formatThresholdLabel } from "@/lib/extreme-heat-days/format";
-import {
-  type ExtremeHeatSeries,
-  hasRenderableSeries,
-  valuesForThreshold,
-} from "@/lib/extreme-heat-days/series";
+import { getHeatMetric } from "@/lib/extreme-heat-days/options";
+import { type ExtremeHeatSeries, hasRenderableSeries } from "@/lib/extreme-heat-days/series";
 
 import BarChart from "./BarChart";
 
@@ -26,7 +23,9 @@ export interface ChartViewProps {
   errorMessage: string | null;
   /** Re-trigger the data fetch; wired to the error-state "Retry" button. */
   onRetry: () => void;
-  /** Current threshold selection; picks which CSV column to render. */
+  /** Selected climate variable; drives metric-specific chart labels/copy. */
+  climateVariable: string;
+  /** Current threshold selection; used for labels and no-data copy. */
   threshold: string;
   /** County label for accessible chart description; falls back to `series.county`
    *  if present, but kept as a prop so loading/empty states can still name the
@@ -47,6 +46,7 @@ export default function ChartView({
   status,
   errorMessage,
   onRetry,
+  climateVariable,
   threshold,
   county,
   id,
@@ -61,8 +61,8 @@ export default function ChartView({
     }
   }, [status, errorMessage]);
 
-  const values = series ? valuesForThreshold(series, threshold) : null;
-  const hasRenderableData = hasRenderableSeries(series, threshold);
+  const metric = getHeatMetric(climateVariable);
+  const hasRenderableData = hasRenderableSeries(series);
 
   const showErrorAlert = status === "error";
   const showNoDataAlert = status === "success" && !hasRenderableData;
@@ -70,6 +70,7 @@ export default function ChartView({
 
   const thresholdLabel = formatThresholdLabel(threshold);
   const countyLabel = series?.county || county;
+  const tempExtremum = metric.tempStat === "t2max" ? "maximum" : "minimum";
 
   return (
     <section
@@ -80,18 +81,24 @@ export default function ChartView({
       aria-busy={isLoading}
     >
       <div ref={chartContainerRef} className={styles.surface}>
-        {hasRenderableData && series && values && (
+        {hasRenderableData && series && (
           <BarChart
             globalWarmingLevels={series.globalWarmingLevels}
-            values={values}
+            values={series.median}
             thresholdLabel={thresholdLabel}
             county={countyLabel}
             title={title}
+            yAxisLabel={metric.yAxisLabel}
+            yAxisMax={metric.yAxisMax}
+            yAxisTickStep={metric.yAxisTickStep}
+            accessibleNoun={metric.accessibleNoun}
+            tempExtremum={tempExtremum}
+            valueUnit={metric.valueUnit}
           />
         )}
         {isLoading && (
           <div className={styles.loadingState}>
-            <LoadingSpinner label="Loading extreme heat days data" />
+            <LoadingSpinner label={`Loading ${metric.accessibleNoun} data`} />
           </div>
         )}
       </div>
@@ -105,15 +112,15 @@ export default function ChartView({
             </Button>
           }
         >
-          We couldn&apos;t load extreme heat days data for {countyLabel} County. Check your
+          We couldn&apos;t load {metric.accessibleNoun} data for {countyLabel} County. Check your
           connection and try again.
         </Alert>
       )}
 
       {showNoDataAlert && (
         <Alert severity="info" ariaLabel="No data available">
-          No extreme heat days data is available for {countyLabel} County at {thresholdLabel}. Try a
-          different county or threshold.
+          No {metric.accessibleNoun} data is available for {countyLabel} County at {thresholdLabel}.
+          Try a different county or threshold.
         </Alert>
       )}
 
