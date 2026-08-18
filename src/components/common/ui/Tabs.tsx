@@ -4,6 +4,8 @@ import { type KeyboardEvent, useRef } from "react";
 
 import clsx from "clsx";
 
+import Badge from "./Badge";
+
 import styles from "./Tabs.module.scss";
 
 export interface TabItem<T extends string> {
@@ -17,9 +19,9 @@ export interface TabItem<T extends string> {
   /** DOM id of the panel this tab controls; wired to the button's
    *  `aria-controls`. */
   panelId: string;
-  /* Disabled tabs are skipped by keyboard navigation */
+  /* Disabled tabs are skipped by keyboard navigation. */
   disabled?: boolean;
-  /** Hover tooltip for the tab (e.g. "Coming soon" on a disabled tab). */
+  /** Short note rendered as an always-visible badge on the tab */
   hint?: string;
 }
 
@@ -97,7 +99,6 @@ export default function Tabs<T extends string>({ value, onChange, tabs, label }:
             aria-selected={selected}
             aria-controls={tab.disabled ? undefined : tab.panelId}
             aria-disabled={tab.disabled || undefined}
-            title={tab.hint}
             tabIndex={selected ? 0 : -1}
             className={clsx(
               styles.tab,
@@ -112,6 +113,11 @@ export default function Tabs<T extends string>({ value, onChange, tabs, label }:
             onKeyDown={(e) => handleKeyDown(e, index)}
           >
             {tab.label}
+            {tab.hint ? (
+              <Badge variant="blue-subtle" size="sm" className={styles.tabHint}>
+                {tab.hint}
+              </Badge>
+            ) : null}
           </button>
         );
       })}
