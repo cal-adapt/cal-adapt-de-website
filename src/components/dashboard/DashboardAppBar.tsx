@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import MuiBreadcrumbs from "@mui/material/Breadcrumbs";
 import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
@@ -5,6 +7,8 @@ import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 
 import type { NavLink } from "@/config/navigation";
+
+import BreadcrumbToolLink from "./BreadcrumbToolLink";
 
 import styles from "./DashboardAppBar.module.scss";
 
@@ -23,9 +27,15 @@ export default function DashboardAppBar({ page, subPage, className }: DashboardA
             Cal-Adapt
           </MuiLink>
           {subPage ? (
-            <MuiLink underline="hover" color="inherit" href={page.href}>
-              {page.label}
-            </MuiLink>
+            <Suspense
+              fallback={
+                <MuiLink underline="hover" color="inherit" href={page.href}>
+                  {page.label}
+                </MuiLink>
+              }
+            >
+              <BreadcrumbToolLink href={page.href} label={page.label} />
+            </Suspense>
           ) : (
             <Typography color="text.primary">{page.label}</Typography>
           )}
