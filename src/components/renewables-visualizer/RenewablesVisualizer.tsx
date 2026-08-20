@@ -21,13 +21,16 @@ import Grid from "@mui/material/Unstable_Grid2";
 
 import clsx from "clsx";
 
+import InterpretSection from "@/components/common/content/InterpretSection";
 import Alert from "@/components/common/ui/Alert";
 import Button from "@/components/common/ui/Button";
+import Link from "@/components/common/ui/Link";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import PageLayout from "@/components/dashboard/PageLayout";
 import SidePanel from "@/components/dashboard/SidePanel";
 import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
 import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
+import { navLinks } from "@/config/navigation";
 import { useInstallationParams } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
@@ -615,6 +618,17 @@ export default function RenewablesViz() {
           </Grid>
         </Grid>
       </Accordion>
+
+      <InterpretSection title="How to interpret this tool">
+        <p>
+          The Renewables Visualizer shows the reliability of solar and wind power generation
+          potential at a given location. To be more specific, it shows the number of resource
+          drought days (less than 50% of that location&apos;s average generation) per month
+          throughout a representative 30-year period. See the{" "}
+          <Link href={`${navLinks.renewablesVisualizer.href}/guidance`}>Guidance tab</Link> for more
+          information on this tool.
+        </p>
+      </InterpretSection>
 
       <Box className={styles.sidepanel}>
         <SidePanel
