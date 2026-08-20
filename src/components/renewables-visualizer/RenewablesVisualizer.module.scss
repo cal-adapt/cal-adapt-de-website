@@ -67,7 +67,7 @@
 }
 
 .flexParams {
-  @include flex(row, flex-end, stretch, spacer(8));
+  @include flex(row, flex-start, stretch, spacer(8));
   margin: 0 0 spacer(7) 0;
 }
 
