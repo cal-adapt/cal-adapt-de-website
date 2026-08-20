@@ -22,12 +22,6 @@
   @include type-item(body);
 }
 
-.footnoteRef {
-  font-size: 0.75em;
-  vertical-align: super;
-  line-height: 0;
-}
-
 .workspace {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 280px;
@@ -53,6 +47,51 @@
 
 .controlsArea {
   width: 100%;
+}
+
+.chartInfo {
+  @include flex(column, flex-start, stretch, spacer(3));
+  width: 100%;
+  max-width: max-w(global);
+  padding-top: spacer(6);
+  border-top: 1px solid color(grey-2);
+}
+
+.chartInfoTitle {
+  margin: 0;
+  color: color(black);
+  font-size: 1.8rem;
+  font-weight: font-weight(bold);
+}
+
+.referencesTitle {
+  margin: spacer(5) 0 0;
+  color: color(black);
+  font-size: 1.8rem;
+  font-weight: font-weight(bold);
+}
+
+// Numbered, hanging-indent bibliography — shares its formatting (see
+// src/styles/abstracts/_citations.scss) with the guidance page's
+// rehype-citation-rendered References section.
+.references {
+  @extend %citation-list;
+}
+
+.referenceEntry {
+  @extend %citation-entry;
+}
+
+.referenceNumber {
+  @extend %citation-number;
+}
+
+.referenceText {
+  @extend %citation-text;
+
+  a {
+    @extend %citation-link;
+  }
 }
 
 .pageFooter {

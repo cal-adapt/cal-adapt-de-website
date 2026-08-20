@@ -1,0 +1,37 @@
+@use "@/styles/abstracts" as *;
+
+.stat {
+  margin: 0;
+  padding: spacer(5) 0 0;
+  border-top: 1px solid color(grey-2);
+
+  // Higher specificity than MdxContent's global `.content p` rule, which
+  // would otherwise silently win and flatten these back to body text.
+  .label {
+    margin: 0 0 spacer(3);
+    color: color(black);
+    font-size: 2rem;
+    font-weight: font-weight(bold);
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .body {
+    color: color(grey-4);
+
+    // Children come from markdown (a <p>), which MdxContent's global
+    // `.content p` rule would otherwise win against at equal specificity.
+    p {
+      margin: 0;
+      @include type-item(small);
+      line-height: 1.5;
+    }
+  }
+}
+
+.icon {
+  width: 2.2rem;
+  height: 2.2rem;
+  margin-bottom: spacer(3);
+  color: color(red-4);
+}

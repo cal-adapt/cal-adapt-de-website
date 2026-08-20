@@ -1,7 +1,13 @@
 @use "@/styles/abstracts" as *;
 
+.layout {
+  @include flex(row, flex-start, flex-start, spacer(9));
+  width: 100%;
+}
+
 .content {
   width: 100%;
+  min-width: 0;
   max-width: max-w(content);
   color: color(black);
   font-family: font-family(base);
@@ -21,11 +27,32 @@
     line-height: 1.25;
     font-weight: font-weight(bold);
     text-wrap: balance;
+    scroll-margin-top: spacer(6);
   }
 
   h1 {
-    font-size: 3.2rem;
-    letter-spacing: -0.02em;
+    font-size: 3.6rem;
+    letter-spacing: -0.03em;
+  }
+
+  // Signature draw-in: a warming-stripes rule under the title, once per page
+  // load (see src/lib/color/signature-scale.ts).
+  h1::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 4px;
+    margin-top: spacer(5);
+    border-radius: rounded(pill);
+    background: linear-gradient(90deg, color(blue-4) 0%, color(orange-3) 50%, color(red-4) 100%);
+    transform-origin: left;
+    animation: draw-in 900ms var(--ease-out-quart, ease-out) 200ms both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    h1::after {
+      animation: none;
+    }
   }
 
   h2 {
@@ -155,18 +182,41 @@
     }
   }
 
-  // Bibliography rendered by rehype-citation (citeproc `csl-bib-body`).
+  // Numbered bibliography rendered by rehype-citation (citeproc `csl-bib-body`).
+  // Shares its formatting (see src/styles/abstracts/_citations.scss) with
+  // hand-authored reference lists like ExtremeHeatDays.module.scss's.
   :global(.csl-bib-body) {
-    margin: spacer(4) 0 0;
-    @include type-item(body);
-    font-size: 1.4rem;
-    line-height: 1.5;
+    @extend %citation-list;
   }
 
   :global(.csl-entry) {
-    margin-bottom: spacer(3);
-    padding-left: spacer(5);
-    text-indent: calc(-1 * #{spacer(5)});
-    color: color(grey-5);
+    @extend %citation-entry;
+  }
+
+  :global(.csl-left-margin) {
+    @extend %citation-number;
+  }
+
+  :global(.csl-right-inline) {
+    @extend %citation-text;
+  }
+
+  // In-text citations, rendered as `<sup><a>`. The base reset flattens `sup`
+  // to `vertical-align: baseline`, so restore the raised numeral locally.
+  :global(sup) {
+    @extend %citation-sup;
+  }
+
+  :global(sup a[href^="#bib-"]) {
+    @extend %citation-link;
+  }
+}
+
+@keyframes draw-in {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
   }
 }

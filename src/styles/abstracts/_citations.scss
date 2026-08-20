@@ -1,0 +1,51 @@
+@use "functions" as *;
+@use "mixins" as *;
+
+// Shared citation formatting, extended by both the MDX-rendered bibliography
+// (rehype-citation's csl-* classes — see MdxContent.module.scss) and
+// hand-authored reference lists (see ExtremeHeatDays.module.scss), so the two
+// can never drift apart. Also covers the inline superscript marker, extended
+// by both MdxContent's global `sup` rule and the `Citation` component.
+
+%citation-sup {
+  font-size: 0.7em;
+  vertical-align: super;
+  line-height: 0;
+}
+
+%citation-link {
+  color: color(blue-4);
+  text-decoration: none;
+
+  &:hover {
+    color: color(blue-5);
+  }
+}
+
+%citation-list {
+  margin: spacer(4) 0 0;
+  padding: 0;
+  list-style: none;
+  @include type-item(body);
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: color(grey-5);
+}
+
+%citation-entry {
+  clear: both;
+  margin-bottom: spacer(2);
+}
+
+%citation-number {
+  float: left;
+  min-width: 2em;
+  color: color(grey-4);
+  font-family: font-family(label);
+}
+
+%citation-text {
+  display: block;
+  margin-left: 2em;
+  padding-left: 1em;
+}
