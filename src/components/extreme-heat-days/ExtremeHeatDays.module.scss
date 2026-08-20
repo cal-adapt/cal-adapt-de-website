@@ -49,21 +49,6 @@
   width: 100%;
 }
 
-.chartInfo {
-  @include flex(column, flex-start, stretch, spacer(3));
-  width: 100%;
-  max-width: max-w(global);
-  padding-top: spacer(6);
-  border-top: 1px solid color(grey-2);
-}
-
-.chartInfoTitle {
-  margin: 0;
-  color: color(black);
-  font-size: 1.8rem;
-  font-weight: font-weight(bold);
-}
-
 .referencesTitle {
   margin: spacer(5) 0 0;
   color: color(black);
