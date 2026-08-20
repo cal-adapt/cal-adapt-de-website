@@ -1,22 +1,19 @@
 // MapUI
 // UI controls for the Climate Metrics Map interface.
-// Includes GWL and metric selectors, value type tabs, tooltip help, and info popover.
+// Includes GWL and metric selectors, value type tabs, and tooltip help.
 
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import QuestionMarkOutlinedIcon from "@mui/icons-material/QuestionMarkOutlined";
 import { FormControl } from "@mui/material";
 import Box from "@mui/material/Box";
-import Fab from "@mui/material/Fab";
 import Fade from "@mui/material/Fade";
 import Grid from "@mui/material/Grid";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
-import Popover from "@mui/material/Popover";
 import Select from "@mui/material/Select";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
@@ -78,8 +75,6 @@ export default function MapUI({
   metrics,
 }: MapUIProps) {
   const { open, drawerWidth } = useLeftDrawer();
-  const [helpAnchorEl, setHelpAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const helpButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const fullWidthUIItem = open ? `100%` : `calc(100% - ${drawerWidth} - 72px)`;
   const handleValueTypeChange = (event: React.SyntheticEvent, newValue: ValueType) => {
@@ -101,29 +96,6 @@ export default function MapUI({
       router.push(`?${params.toString()}`);
     }
   };
-
-  const handleHelpClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setHelpAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setHelpAnchorEl(null);
-  };
-
-  const helpOpen = Boolean(helpAnchorEl);
-  const id = "help-popover";
-  const labelledBy = "help-popover-title";
-
-  useEffect(() => {
-    // Auto-open help popover on load
-    const timeout = setTimeout(() => {
-      if (helpButtonRef.current) {
-        setHelpAnchorEl(helpButtonRef.current);
-      }
-    }, 1000); // delay in milliseconds (e.g., 1000ms = 1 second)
-
-    return () => clearTimeout(timeout); // cleanup on unmount
-  }, []);
 
   // Load query params into state
   useEffect(() => {
@@ -292,142 +264,6 @@ export default function MapUI({
           </Grid>
           {/* Spacer */}
           <Grid item xs />
-          {/* Bottom Columns */}
-          <Grid container item justifyContent="center">
-            <Grid item xs={10}></Grid>
-            <Grid item xs={2}>
-              <Fab
-                className={styles.helpButton}
-                color="secondary"
-                sx={{ float: "right", mr: "50px" }}
-                aria-label="Open help dialog"
-                aria-controls={helpOpen ? id : undefined}
-                aria-expanded={helpOpen}
-                aria-haspopup="dialog"
-                size="medium"
-                onClick={handleHelpClick}
-                ref={helpButtonRef}
-              >
-                <QuestionMarkOutlinedIcon />
-              </Fab>
-              <Popover
-                id={id}
-                className="help-popover"
-                aria-labelledby={labelledBy}
-                open={helpOpen}
-                anchorEl={helpAnchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                sx={{
-                  "& .MuiPaper-root": {
-                    width: "400px", // Set width
-                    height: "500px", // Set height
-                    padding: "30px",
-                  },
-                }}
-              >
-                <Typography variant="h5" id={labelledBy}>
-                  About the Climate Metrics Map tool
-                </Typography>
-                <Typography variant="body1" id={labelledBy}>
-                  <p>
-                    Showing the absolute and change in extreme weather across heat, precipitation,
-                    and fire weather over the potential futures in California allows individuals,
-                    planners, researchers, and interested parties to examine the general shape of
-                    climate projections.
-                  </p>
-                </Typography>
-
-                <Typography variant="h6" style={{ marginTop: "15px" }} id={labelledBy}>
-                  Projections Type
-                </Typography>
-                <Typography variant="body1" id={labelledBy}>
-                  <p>
-                    <strong>Absolute</strong>: show the average expected value for the chosen metric
-                    and at the selected Global Warming Level (GWL).
-                  </p>
-                  <p>
-                    <strong>Delta</strong>: show the change between a 0.8° C world (approximately
-                    1987-2016) and the selected GWL
-                  </p>
-                </Typography>
-
-                <Typography variant="h6" id={labelledBy} style={{ marginTop: "15px" }}>
-                  Global Warming Level
-                </Typography>
-                <Typography variant="body1">
-                  <p>
-                    Show what different parts of California will look like when the world, as a
-                    whole, has increased average temperature compared to pre-industrial by the
-                    chosen amount.
-                  </p>
-                  <p>
-                    For additional information go to:{" "}
-                    <a
-                      href="https://cmip5.cal-adapt.org/blog/understanding-warming-levels"
-                      target="_blank"
-                    >
-                      <span className="underline">
-                        Understanding Climate Futures through the lens of global Warming Levels
-                      </span>
-                    </a>
-                  </p>
-                </Typography>
-                <Typography id={labelledBy} variant="body1" style={{ marginTop: "15px" }}>
-                  Use the dropdown menu to select a global warming scenario (e.g., 1.5°C, 2.0°C).
-                  This will adjust the data overlays to reflect projected changes under the selected
-                  warming level. (
-                  <a href="https://climate.gov" target="_blank">
-                    <span className="underline">Climate.gov</span>
-                  </a>{" "}
-                  has more information)
-                </Typography>
-
-                <Typography id={labelledBy} variant="h6" sx={{ mt: "15px" }}>
-                  Metric
-                </Typography>
-                <Typography id={labelledBy} variant="body1">
-                  <p>
-                    Choose a climate metric to display on the map (e.g., extreme temperature,
-                    extreme precipitation, fire weather index) Each metric provides a unique
-                    perspective on how climate change impacts various regions.
-                  </p>
-                  (A plain language description of metrics can be found{" "}
-                  <a
-                    href="https://docs.google.com/document/d/19UB672X38z21QlEkieWEwWLwZQWU_L7wMW5zq9bo7tc/edit?usp=sharing"
-                    target="_blank"
-                  >
-                    <span className="underline">here</span>
-                  </a>
-                  )
-                </Typography>
-                <Typography id={labelledBy} variant="h6" sx={{ mt: "15px" }}>
-                  Interactive Map Features
-                </Typography>
-                <Typography id={labelledBy} variant="body1">
-                  <p>
-                    <strong>Pan and Zoom:</strong> Click and drag to move the map, and use the
-                    scroll wheel or zoom buttons to focus on specific areas.
-                  </p>
-                  <p>
-                    <strong>Region Highlighting:</strong> Click on a region to view localized
-                    climate data and projections.
-                  </p>
-                  <p>
-                    <strong>Legend:</strong> The color scale on the map legend indicates the range
-                    of values for the selected metric.
-                  </p>
-                </Typography>
-              </Popover>
-            </Grid>
-          </Grid>
         </Grid>
       </Box>
     </div>
