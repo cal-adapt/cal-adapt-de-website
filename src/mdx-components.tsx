@@ -8,6 +8,9 @@ import Specs from "@/components/common/content/Specs";
 import Stat from "@/components/common/content/Stat";
 import StatGrid from "@/components/common/content/StatGrid";
 import Step from "@/components/common/content/Step";
+import TurbinePowerCurve from "@/components/common/content/TurbinePowerCurve";
+import WarmingLevelTimeIndex from "@/components/common/content/WarmingLevelTimeIndex";
+import WindFarmLayout from "@/components/common/content/WindFarmLayout";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
@@ -19,6 +22,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     SectionDivider,
     Specs,
     Spec,
+    TurbinePowerCurve,
+    WindFarmLayout,
+    WarmingLevelTimeIndex,
     ...components,
   };
 }
