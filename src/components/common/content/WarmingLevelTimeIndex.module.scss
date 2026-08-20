@@ -1,0 +1,71 @@
+@use "@/styles/abstracts" as *;
+
+.figure {
+  margin: spacer(5) 0;
+  padding: spacer(6) spacer(5) spacer(5);
+  border: 1px solid color(grey-2);
+  border-radius: rounded(2);
+  background: color(white);
+}
+
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.rowLabel {
+  fill: color(grey-5);
+  font-family: font-family(base);
+  font-weight: font-weight(semibold);
+  font-size: 13px;
+}
+
+.track {
+  stroke: color(grey-3);
+  stroke-width: 2;
+}
+
+// The 30-year window averaged around each model's target GWL tick.
+.window {
+  fill: color(red-4);
+  opacity: 0.1;
+}
+
+.tick {
+  fill: color(grey-3);
+}
+
+.tickTarget {
+  fill: color(red-4);
+}
+
+.levelLabel {
+  fill: color(grey-4);
+  font-family: font-family(base);
+  font-size: 11px;
+}
+
+.levelLabelTarget {
+  fill: color(red-4);
+  font-family: font-family(base);
+  font-weight: font-weight(bold);
+  font-size: 11px;
+}
+
+.yearLabel {
+  fill: color(grey-4);
+  font-family: font-family(label);
+  font-size: 10px;
+}
+
+.bracket {
+  stroke: color(red-4);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
+
+.mergeLine {
+  stroke: color(grey-3);
+  stroke-width: 1;
+}

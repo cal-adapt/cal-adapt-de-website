@@ -356,16 +356,6 @@ export default function RenewablesViz() {
           resource drought days (less than 40% average generation) per month throughout a
           representative 30-year period.{" "}
         </Typography>
-        <Typography variant="body1">
-          <a
-            style={{ textDecoration: "underline", display: "inline-block" }}
-            href="https://drive.google.com/file/d/1YSe6oi6GksTvwUVBhkv-ZLrHkr3SzMqq/view?usp=drive_link"
-            target="_blank"
-            aria-label="Read more in the documentation"
-          >
-            Read more in the documentation
-          </a>
-        </Typography>
       </Box>
 
       <Grid container xs={12}>
