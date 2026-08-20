@@ -32,8 +32,8 @@ export const tooltips: Tooltip[] = [
     id: 3,
     title: "Projections Type",
     long_text:
-      "Absolute: shows the average expected value for the chosen metric at the selected Global Warming Level (GWL). Delta: shows the change between a 0.8°C world (approximately 1987-2016) and the selected GWL.",
+      "Absolute shows the expected value at the selected warming level. Delta shows the change from the historical baseline (0.8°C).",
     short_text:
-      "Absolute: shows the average expected value for the chosen metric at the selected Global Warming Level (GWL). Delta: shows the change between a 0.8°C world (approximately 1987-2016) and the selected GWL.",
+      "Absolute shows the expected value at the selected warming level. Delta shows the change from the historical baseline (0.8°C).",
   },
 ];
