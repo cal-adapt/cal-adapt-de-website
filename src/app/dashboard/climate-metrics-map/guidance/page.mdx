@@ -1,0 +1,149 @@
+import { SITE_TITLE } from "@/config/constants";
+import { navLinks } from "@/config/navigation";
+
+export const metadata = {
+  title: `Guidance & Methods - ${navLinks.climateMetricsMap.label} - ${SITE_TITLE}`,
+};
+
+# Climate Metrics Map: Guidance & Methods
+
+## About the Climate Metrics Map
+
+Showing the absolute and change in extreme weather across heat, precipitation,
+and fire weather over the potential futures in California allows individuals,
+planners, researchers, and interested parties to examine the general shape of
+climate projections.
+
+## Projections Type
+
+- **Absolute:** show the average expected value for the chosen metric at the
+  selected Global Warming Level (GWL).
+- **Delta:** show the change between a 0.8 °C world (approximately 1987-2016)
+  and the selected GWL.
+
+## Global Warming Level
+
+Show what different parts of California will look like when the world, as a
+whole, has increased average temperature compared to pre-industrial by the
+chosen amount.
+
+For additional information, see
+[Understanding Climate Futures Through the Lens of Global Warming Levels](https://analytics.cal-adapt.org/scientific-guidance/global-warming-levels.html).
+
+Use the dropdown menu to select a global warming level (e.g., 1.5 °C, 2.0 °C).
+This will adjust the data overlays to reflect projected changes under the
+selected warming level.
+
+## Metric
+
+Choose a climate metric to display on the map (e.g., extreme temperature,
+extreme precipitation, fire weather index). Each metric provides a unique
+perspective on how climate change impacts various regions. A plain language
+description of each metric can be found below.
+
+## Interactive Map Features
+
+- **Pan and Zoom:** Click and drag to move the map, and use the scroll wheel
+  or zoom buttons to focus on specific areas.
+- **Region Highlighting:** Click on a region to view localized climate data
+  and projections.
+- **Legend:** The color scale on the map legend indicates the range of values
+  for the selected metric. All of these maps may be used for many things. Our
+  "Takeaway" is not the limit of useful information but a common use for this
+  map.
+
+<SectionDivider />
+
+## Methods
+
+The sections above describe how to use the map. The definitions below
+describe what each metric means, exactly how it was calculated, and a common
+takeaway for interpreting it.
+
+### Fire Weather
+
+<Specs>
+<Spec label="Metric">
+
+Change in median annual number of days with Fosberg Fire Weather Index (FFWI)
+value > 50
+
+</Spec>
+<Spec label="Description">
+
+How many more days a year there is weather that is conducive to wildfires.
+The FFWI is based on changes in temperature, wind, and humidity. A FFWI value
+of 50 or greater indicates significant fire weather conditions.
+
+</Spec>
+<Spec label="Technical definition">
+
+Number of FFWI days above a value of 50 in relation to the historical
+baseline of 0.8 °C GWL
+
+</Spec>
+<Spec label="Takeaway">
+
+Shows how often the weather is conducive for fires in this area.
+
+</Spec>
+</Specs>
+
+### Extreme Heat
+
+<Specs>
+<Spec label="Metric">
+
+Mean annual change in extreme heat days
+
+</Spec>
+<Spec label="Description">
+
+How many more extremely hot days there are in a year. Extremely hot is
+defined as above the peak temperature that has occurred in the past,
+historically about 3 to 4 of the hottest days of the year.
+
+</Spec>
+<Spec label="Technical definition">
+
+Number of maximum air temperature days exceeding the 99th percentile in
+relation to the historical baseline of 0.8 °C GWL
+
+</Spec>
+<Spec label="Takeaway">
+
+Shows how many days during the year are expected to be very hot compared to
+the past.
+
+</Spec>
+</Specs>
+
+### Extreme Precipitation
+
+<Specs>
+<Spec label="Metric">
+
+Absolute change in 99th percentile 1-day accumulated precipitation (mm)
+
+</Spec>
+<Spec label="Description">
+
+How much more rain falls on really heavy rain days.
+
+</Spec>
+<Spec label="Technical definition">
+
+Change in 99th percentile precipitation, excluding snowfall, in relation to
+the historical baseline of 0.8 °C GWL
+
+</Spec>
+<Spec label="Takeaway">
+
+Shows how much more precipitation will fall on really heavy precipitation
+days. Much more of California's precipitation will be coming in the form of
+extreme events, i.e., extreme, problematic events will be more frequent. A
+change in those types of extreme events strains our resources and
+infrastructure.
+
+</Spec>
+</Specs>
