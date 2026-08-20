@@ -167,7 +167,6 @@ export default function MapUI({
                     >
                       <Tabs
                         aria-labelledby="value-type-label"
-                        className="container container--transparent"
                         value={valueType}
                         onChange={handleValueTypeChange}
                         centered
