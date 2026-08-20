@@ -361,263 +361,265 @@ export default function RenewablesViz() {
         </Typography>
       </Box>
 
-      <Grid container xs={12}>
-        {/* Heatmap parameters section */}
-        <Grid xs={12}>
-          <Box>
-            <Box className={styles.flexParams}>
-              <Box className={styles.flexParamsItem}>
-                <Typography
-                  className={styles.optionGroupTitle}
-                  variant="body2"
-                  aria-label="Resource of interest"
-                >
-                  Resource
-                </Typography>
-                <Typography
-                  variant="body1"
-                  aria-label={`Selected Resource: ${resList[resSelected]}`}
-                >
-                  {resList[resSelected]}
-                </Typography>
-              </Box>
-              <Box className={styles.flexParamsItem}>
-                <Typography
-                  className={styles.optionGroupTitle}
-                  variant="body2"
-                  aria-label="Global Warming Level"
-                >
-                  Global Warming Level
-                </Typography>
-                <Typography
-                  variant="body1"
-                  aria-label={`Selected Global Warming Level: ${globalWarmingLevelsList[gwlSelected]}`}
-                >
-                  {globalWarmingLevelsList[gwlSelected]}°
-                </Typography>
-              </Box>
-              {resSelected == 0 && ( // Solar configuration
+      <Box>
+        <Grid container xs={12}>
+          {/* Heatmap parameters section */}
+          <Grid xs={12}>
+            <Box>
+              <Box className={styles.flexParams}>
                 <Box className={styles.flexParamsItem}>
                   <Typography
                     className={styles.optionGroupTitle}
                     variant="body2"
-                    aria-label="Photovoltaic Configuration"
+                    aria-label="Resource of interest"
                   >
-                    Photovoltaic Configuration
+                    Resource
                   </Typography>
                   <Typography
                     variant="body1"
-                    aria-label={`Selected Photovoltaic Configuration: ${photoConfigSelected}`}
+                    aria-label={`Selected Resource: ${resList[resSelected]}`}
                   >
-                    {photoConfigSelected}
+                    {resList[resSelected]}
                   </Typography>
                 </Box>
-              )}
-              {resSelected == 1 && ( // Wind installation
                 <Box className={styles.flexParamsItem}>
                   <Typography
                     className={styles.optionGroupTitle}
                     variant="body2"
-                    aria-label="Installation type"
+                    aria-label="Global Warming Level"
                   >
-                    Installation Design Parameters
+                    Global Warming Level
                   </Typography>
                   <Typography
                     variant="body1"
-                    aria-label={`Selected Installation Design: ${installationList[installationSelected]}`}
+                    aria-label={`Selected Global Warming Level: ${globalWarmingLevelsList[gwlSelected]}`}
                   >
-                    {installationList[installationSelected]}
+                    {globalWarmingLevelsList[gwlSelected]}°
                   </Typography>
                 </Box>
-              )}
-
-              <Box className={styles.flexParamsItem}>
-                <Typography
-                  className={styles.inline}
-                  variant="subtitle1"
-                  aria-label="Edit parameters"
-                >
-                  Edit parameters
-                </Typography>
-                <IconButton
-                  className={styles.inline}
-                  onClick={toggleOpen}
-                  aria-label="Open settings"
-                >
-                  <SettingsOutlinedIcon />
-                </IconButton>
-              </Box>
-            </Box>
-            {/* Global warming level information */}
-            {queriedData && !isLoading && isPointValid && (
-              <Box className={styles.alerts} sx={{ maxWidth: "100%" }}>
-                <Alert ariaLabel="Global models estimate information">
-                  Global models estimate that {gwlYearEstimateData[gwlSelected].name}° global
-                  warming levels (GWL) will be reached between{" "}
-                  <strong>{gwlYearEstimateData[gwlSelected].estimatedStartYear}</strong> and{" "}
-                  <strong>{gwlYearEstimateData[gwlSelected].estimatedEndYear}</strong>
-                  <div className={styles.cta}>
-                    <Button
-                      href="https://cmip5.cal-adapt.org/blog/understanding-warming-levels"
-                      aria-label="Learn more about GWL"
+                {resSelected == 0 && ( // Solar configuration
+                  <Box className={styles.flexParamsItem}>
+                    <Typography
+                      className={styles.optionGroupTitle}
+                      variant="body2"
+                      aria-label="Photovoltaic Configuration"
                     >
-                      Learn more about GWL
-                    </Button>
-                  </div>
-                </Alert>
-              </Box>
-            )}
-          </Box>
-        </Grid>
-      </Grid>
-      <Accordion
-        expanded={accordionExpanded}
-        onChange={handleAccordionChange}
-        slots={{ transition: Fade as AccordionSlots["transition"] }}
-        slotProps={{ transition: { timeout: 400 } }}
-        sx={[
-          accordionExpanded
-            ? {
-                "& .MuiAccordion-region": {
-                  height: "auto",
-                },
-                "& .MuiAccordionDetails-root": {
-                  display: "block",
-                },
-                "&.Mui-expanded": {
-                  margin: 0,
-                },
-              }
-            : {
-                "& .MuiAccordion-region": {
-                  height: 0,
-                },
-                "& .MuiAccordionDetails-root": {
-                  display: "none",
-                },
-              },
-        ]}
-      >
-        <Grid container xs={12} justifyContent="flex-end">
-          {/* Locator map instruction section */}
-          <Grid
-            xs={12}
-            sx={{
-              display: "flex",
-              justifyContent: accordionExpanded ? "flex-start" : "flex-end",
-            }}
-          >
-            <Box sx={{ width: accordionExpanded ? "100%" : "auto" }}>
-              <AccordionSummary
-                onClick={handleSummaryClick}
-                expandIcon={
-                  apiParams.point !== null ? (
-                    <ExpandMoreIcon className={styles.rotatedIcon} />
-                  ) : null
-                }
-                aria-controls="panel1-content"
-                id="panel1-header"
-                sx={{
-                  "& .MuiAccordionSummary-content": {
-                    marginTop: "20px",
-                    marginBottom: "20px",
-                    justifyContent: accordionExpanded ? "flex-start" : "flex-end",
-                  },
-                  width: "100%",
-                }}
-              >
-                <EditLocationOutlinedIcon aria-label="Edit location" />
-                <Typography
-                  className={styles.inline}
-                  variant="h5"
-                  style={{
-                    marginLeft: "10px",
-                  }}
-                  aria-label={
-                    locationStatus !== "none" ? "Change your location" : "Select your location"
-                  }
-                >
-                  {locationStatus !== "none" ? "Change your location" : "Select your location"}
-                </Typography>
-              </AccordionSummary>
-            </Box>
-          </Grid>
-
-          {/* Heatmap section */}
-          <Grid
-            xs={accordionExpanded ? 0 : 8.5}
-            sx={{
-              maxWidth: "100%",
-              pr: 4,
-              marginLeft: "auto",
-              paddingRight: 0,
-            }}
-          >
-            {locationStatus === "no-data" && (
-              <Box
-                sx={{ marginBottom: "30px" }}
-                style={{ display: accordionExpanded ? "none" : "block" }}
-              >
-                <Alert>
-                  You have selected a location with land use or land cover restrictions. No data
-                  will be returned.&nbsp;
-                  <span
-                    onClick={accordionExpanded ? undefined : handleAccordionChange}
-                    aria-label="Select another location"
-                  >
-                    <strong>Select another location </strong>
-                  </span>
-                  to try again
-                </Alert>
-              </Box>
-            )}
-            {locationStatus === "data" && (
-              <Box
-                ref={heatmapContainerRef}
-                className={clsx(styles.heatmap, {
-                  [styles.loading]: isLoading,
-                })}
-                style={{ display: accordionExpanded ? "none" : "block" }}
-              >
-                {isLoading && (
-                  <Box className={styles.loadingContainer}>
-                    <LoadingSpinner aria-label="Loading heatmap data" />
+                      Photovoltaic Configuration
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      aria-label={`Selected Photovoltaic Configuration: ${photoConfigSelected}`}
+                    >
+                      {photoConfigSelected}
+                    </Typography>
                   </Box>
                 )}
-                {!isLoading && isPointValid && (
-                  <Heatmap
-                    width={heatmapWidth}
-                    height={HEATMAP_HEIGHT}
-                    data={queriedData}
-                    gwlSelected={gwlSelected}
-                    aria-label="Heatmap visualization"
-                    currentColorMap={currentColorMap}
-                    isColorRev={isColorRev}
-                  />
+                {resSelected == 1 && ( // Wind installation
+                  <Box className={styles.flexParamsItem}>
+                    <Typography
+                      className={styles.optionGroupTitle}
+                      variant="body2"
+                      aria-label="Installation type"
+                    >
+                      Installation Design Parameters
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      aria-label={`Selected Installation Design: ${installationList[installationSelected]}`}
+                    >
+                      {installationList[installationSelected]}
+                    </Typography>
+                  </Box>
                 )}
-              </Box>
-            )}
-          </Grid>
 
-          {/* Locator map section */}
-          <Grid xs={accordionExpanded ? 12 : 3.5} sx={{ alignItems: "flex-end" }}>
-            <AccordionDetails className={styles.customAccordionDetails}>
-              <Box className={styles.map}>
-                <MapboxMap
-                  mapMarker={mapMarker}
-                  setMapMarker={setMapMarker}
-                  ref={mapRef}
-                  locationSelected={apiParams.point}
-                  setLocationSelected={setLocationSelected}
-                  height={MAP_HEIGHT}
-                  aria-label="Map for selecting location of heatmap data"
-                  maskStr={maskStr}
-                />
+                <Box className={styles.flexParamsItem}>
+                  <Typography
+                    className={styles.inline}
+                    variant="subtitle1"
+                    aria-label="Edit parameters"
+                  >
+                    Edit parameters
+                  </Typography>
+                  <IconButton
+                    className={styles.inline}
+                    onClick={toggleOpen}
+                    aria-label="Open settings"
+                  >
+                    <SettingsOutlinedIcon />
+                  </IconButton>
+                </Box>
               </Box>
-            </AccordionDetails>
+              {/* Global warming level information */}
+              {queriedData && !isLoading && isPointValid && (
+                <Box className={styles.alerts} sx={{ maxWidth: "100%" }}>
+                  <Alert ariaLabel="Global models estimate information">
+                    Global models estimate that {gwlYearEstimateData[gwlSelected].name}° global
+                    warming levels (GWL) will be reached between{" "}
+                    <strong>{gwlYearEstimateData[gwlSelected].estimatedStartYear}</strong> and{" "}
+                    <strong>{gwlYearEstimateData[gwlSelected].estimatedEndYear}</strong>
+                    <div className={styles.cta}>
+                      <Button
+                        href="https://cmip5.cal-adapt.org/blog/understanding-warming-levels"
+                        aria-label="Learn more about GWL"
+                      >
+                        Learn more about GWL
+                      </Button>
+                    </div>
+                  </Alert>
+                </Box>
+              )}
+            </Box>
           </Grid>
         </Grid>
-      </Accordion>
+        <Accordion
+          expanded={accordionExpanded}
+          onChange={handleAccordionChange}
+          slots={{ transition: Fade as AccordionSlots["transition"] }}
+          slotProps={{ transition: { timeout: 400 } }}
+          sx={[
+            accordionExpanded
+              ? {
+                  "& .MuiAccordion-region": {
+                    height: "auto",
+                  },
+                  "& .MuiAccordionDetails-root": {
+                    display: "block",
+                  },
+                  "&.Mui-expanded": {
+                    margin: 0,
+                  },
+                }
+              : {
+                  "& .MuiAccordion-region": {
+                    height: 0,
+                  },
+                  "& .MuiAccordionDetails-root": {
+                    display: "none",
+                  },
+                },
+          ]}
+        >
+          <Grid container xs={12} justifyContent="flex-end">
+            {/* Locator map instruction section */}
+            <Grid
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: accordionExpanded ? "flex-start" : "flex-end",
+              }}
+            >
+              <Box sx={{ width: accordionExpanded ? "100%" : "auto" }}>
+                <AccordionSummary
+                  onClick={handleSummaryClick}
+                  expandIcon={
+                    apiParams.point !== null ? (
+                      <ExpandMoreIcon className={styles.rotatedIcon} />
+                    ) : null
+                  }
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                  sx={{
+                    "& .MuiAccordionSummary-content": {
+                      marginTop: "20px",
+                      marginBottom: "20px",
+                      justifyContent: accordionExpanded ? "flex-start" : "flex-end",
+                    },
+                    width: "100%",
+                  }}
+                >
+                  <EditLocationOutlinedIcon aria-label="Edit location" />
+                  <Typography
+                    className={styles.inline}
+                    variant="h5"
+                    style={{
+                      marginLeft: "10px",
+                    }}
+                    aria-label={
+                      locationStatus !== "none" ? "Change your location" : "Select your location"
+                    }
+                  >
+                    {locationStatus !== "none" ? "Change your location" : "Select your location"}
+                  </Typography>
+                </AccordionSummary>
+              </Box>
+            </Grid>
+
+            {/* Heatmap section */}
+            <Grid
+              xs={accordionExpanded ? 0 : 8.5}
+              sx={{
+                maxWidth: "100%",
+                pr: 4,
+                marginLeft: "auto",
+                paddingRight: 0,
+              }}
+            >
+              {locationStatus === "no-data" && (
+                <Box
+                  sx={{ marginBottom: "30px" }}
+                  style={{ display: accordionExpanded ? "none" : "block" }}
+                >
+                  <Alert>
+                    You have selected a location with land use or land cover restrictions. No data
+                    will be returned.&nbsp;
+                    <span
+                      onClick={accordionExpanded ? undefined : handleAccordionChange}
+                      aria-label="Select another location"
+                    >
+                      <strong>Select another location </strong>
+                    </span>
+                    to try again
+                  </Alert>
+                </Box>
+              )}
+              {locationStatus === "data" && (
+                <Box
+                  ref={heatmapContainerRef}
+                  className={clsx(styles.heatmap, {
+                    [styles.loading]: isLoading,
+                  })}
+                  style={{ display: accordionExpanded ? "none" : "block" }}
+                >
+                  {isLoading && (
+                    <Box className={styles.loadingContainer}>
+                      <LoadingSpinner aria-label="Loading heatmap data" />
+                    </Box>
+                  )}
+                  {!isLoading && isPointValid && (
+                    <Heatmap
+                      width={heatmapWidth}
+                      height={HEATMAP_HEIGHT}
+                      data={queriedData}
+                      gwlSelected={gwlSelected}
+                      aria-label="Heatmap visualization"
+                      currentColorMap={currentColorMap}
+                      isColorRev={isColorRev}
+                    />
+                  )}
+                </Box>
+              )}
+            </Grid>
+
+            {/* Locator map section */}
+            <Grid xs={accordionExpanded ? 12 : 3.5} sx={{ alignItems: "flex-end" }}>
+              <AccordionDetails className={styles.customAccordionDetails}>
+                <Box className={styles.map}>
+                  <MapboxMap
+                    mapMarker={mapMarker}
+                    setMapMarker={setMapMarker}
+                    ref={mapRef}
+                    locationSelected={apiParams.point}
+                    setLocationSelected={setLocationSelected}
+                    height={MAP_HEIGHT}
+                    aria-label="Map for selecting location of heatmap data"
+                    maskStr={maskStr}
+                  />
+                </Box>
+              </AccordionDetails>
+            </Grid>
+          </Grid>
+        </Accordion>
+      </Box>
 
       <InterpretSection title="How to interpret this tool">
         <p>
