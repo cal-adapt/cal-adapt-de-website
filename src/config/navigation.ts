@@ -44,6 +44,18 @@ export const navLinks = {
     id: "climate-metrics-map",
     label: "Climate Metrics Map",
     href: "/dashboard/climate-metrics-map",
+    children: [
+      {
+        id: "climate-metrics-map-dashboard",
+        label: "Dashboard",
+        href: "/dashboard/climate-metrics-map",
+      },
+      {
+        id: "climate-metrics-map-guidance",
+        label: "Guidance",
+        href: "/dashboard/climate-metrics-map/guidance",
+      },
+    ],
   },
   dataDownload: {
     id: "data-download-tool",
