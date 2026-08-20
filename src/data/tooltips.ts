@@ -28,4 +28,12 @@ export const tooltips: Tooltip[] = [
     long_text: "The resource of interest. Either Solar / Wind",
     short_text: "The resource of interest. Either Solar / Wind",
   },
+  {
+    id: 3,
+    title: "Projections Type",
+    long_text:
+      "Absolute: shows the average expected value for the chosen metric at the selected Global Warming Level (GWL). Delta: shows the change between a 0.8°C world (approximately 1987-2016) and the selected GWL.",
+    short_text:
+      "Absolute: shows the average expected value for the chosen metric at the selected Global Warming Level (GWL). Delta: shows the change between a 0.8°C world (approximately 1987-2016) and the selected GWL.",
+  },
 ];
