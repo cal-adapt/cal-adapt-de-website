@@ -3,6 +3,7 @@
 import { type ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import InterpretSection from "@/components/common/content/InterpretSection";
 import Alert from "@/components/common/ui/Alert";
 import Badge from "@/components/common/ui/Badge";
 import Button from "@/components/common/ui/Button";
@@ -45,12 +46,12 @@ const CHART_TAB = CHART_VIEW_TABS[0];
 
 const CHART_INFO = (
   <>
-    <p className={styles.introCopy}>
+    <p>
       The bar chart shows how the number of extreme heat days per year is projected to change as
       global warming increases, based on the location and threshold selected. Each bar represents a
       different global warming level (GWL).
     </p>
-    <p className={styles.introCopy}>
+    <p>
       Looking from left to right, the axis shows an increasing amount of global warming. The
       specific year that a given GWL will be reached depends on future emissions and societal
       decisions.
@@ -225,10 +226,7 @@ export default function ExtremeHeatDays() {
       </div>
 
       {view === "chart" && (
-        <section className={styles.chartInfo} aria-labelledby="chart-info-heading">
-          <h2 id="chart-info-heading" className={styles.chartInfoTitle}>
-            How to interpret this figure
-          </h2>
+        <InterpretSection title="How to interpret this figure">
           {CHART_INFO}
 
           {CHART_REFERENCES.length > 0 && (
@@ -252,7 +250,7 @@ export default function ExtremeHeatDays() {
               </ol>
             </>
           )}
-        </section>
+        </InterpretSection>
       )}
 
       <footer className={styles.pageFooter}>
