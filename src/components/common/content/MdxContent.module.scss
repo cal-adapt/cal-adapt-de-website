@@ -1,10 +1,5 @@
 @use "@/styles/abstracts" as *;
 
-.layout {
-  @include flex(row, flex-start, flex-start, spacer(9));
-  width: 100%;
-}
-
 .content {
   width: 100%;
   min-width: 0;
