@@ -170,22 +170,41 @@ export default function MapUI({
           <Grid container spacing={2}>
             <Grid item xs={3}>
               <div className={styles.parameterSelection}>
-                <div className={styles.valueType}>
-                  <Box
-                    sx={{
-                      width: fullWidthUIItem,
-                    }}
-                  >
-                    <Tabs
-                      className="container container--transparent"
-                      value={valueType}
-                      onChange={handleValueTypeChange}
-                      centered
+                <div className="container container--transparent">
+                  <div className="option-group option-group--vertical">
+                    <div className="option-group__title">
+                      <Typography variant="body2" id="value-type-label">
+                        Projections Type
+                      </Typography>
+                      <HtmlTooltip
+                        textFragment={
+                          <React.Fragment>
+                            <p>{tooltips[3].long_text}</p>
+                          </React.Fragment>
+                        }
+                        iconFragment={<InfoOutlinedIcon />}
+                        TransitionComponent={Fade}
+                        TransitionProps={{ timeout: 600 }}
+                        placement="right-end"
+                      />
+                    </div>
+                    <Box
+                      sx={{
+                        width: fullWidthUIItem,
+                      }}
                     >
-                      <Tab value="abs" label="Absolute" />
-                      <Tab value="del" label="Delta" />
-                    </Tabs>
-                  </Box>
+                      <Tabs
+                        aria-labelledby="value-type-label"
+                        className="container container--transparent"
+                        value={valueType}
+                        onChange={handleValueTypeChange}
+                        centered
+                      >
+                        <Tab value="abs" label="Absolute" />
+                        <Tab value="del" label="Delta" />
+                      </Tabs>
+                    </Box>
+                  </div>
                 </div>
                 <div className="container container--transparent">
                   <div className="option-group option-group--vertical">
