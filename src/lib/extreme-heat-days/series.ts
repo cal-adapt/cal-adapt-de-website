@@ -1,4 +1,4 @@
-// Pipeline for a single region (county in MVP 1.1):
+// Pipeline for a single region:
 //  1. STAC `/search` filtered by `variable_id`, `boundary`, and `threshold_name`
 //     → exactly 1 item (the combination is unique in the collection).
 //  2. That item's `data` asset href is an S3 *directory prefix*, not a file.
@@ -19,7 +19,12 @@ import {
 } from "@/lib/cal-adapt-api";
 import { normalizeDownloadUrl } from "@/utils/url";
 
-import { type ExtremeHeatDaysSelections, getHeatMetric, type HeatVariableId } from "./options";
+import {
+  type ExtremeHeatDaysSelections,
+  getHeatMetric,
+  type HeatVariableId,
+  regionLabelFor,
+} from "./options";
 
 /**
  * STAC collection id for the multi-metric, per-boundary CSV summaries. Items are
@@ -27,10 +32,6 @@ import { type ExtremeHeatDaysSelections, getHeatMetric, type HeatVariableId } fr
  * is a directory prefix containing one CSV per region.
  */
 export const EXTREME_HEAT_STAC_COLLECTION_ID = "eh-metrics-mm-boundary-csv" as const;
-
-/** Boundary type exposed in MVP 1.1. MVP 1.3 generalizes this into a
- *  user-selectable "Spatial Aggregation". */
-export const COUNTY_BOUNDARY_ID = "ca_counties" as const;
 
 /**
  * Build the STAC `threshold_name` for the current selection, e.g.
@@ -50,8 +51,7 @@ export interface ExtremeHeatSeries {
   variableId: HeatVariableId;
   /** STAC `boundary` type, e.g. "ca_counties". */
   boundary: string;
-  /** Region label (county name in MVP 1.1), e.g. "Sacramento". */
-  county: string;
+  location: string;
   /** STAC `threshold_name`, e.g. "t2max_ge100F". */
   thresholdName: string;
   /** Global warming levels in °C, sorted ascending. */
@@ -87,7 +87,7 @@ export function buildSearchFilters(selections: ExtremeHeatDaysSelections): ItemS
   return {
     collectionFilter: `collection='${EXTREME_HEAT_STAC_COLLECTION_ID}'`,
     variableFilter: `variable_id='${metric.variableId}'`,
-    boundaryFilter: `boundary='${COUNTY_BOUNDARY_ID}'`,
+    boundaryFilter: `boundary='${selections.spatialAggregation}'`,
     thresholdNameFilter: `threshold_name='${thresholdNameFor(selections)}'`,
   };
 }
@@ -101,9 +101,9 @@ export function searchFiltersKey(selections: ExtremeHeatDaysSelections): string 
   const metric = getHeatMetric(selections.climateVariable);
   return [
     metric.variableId,
-    COUNTY_BOUNDARY_ID,
+    selections.spatialAggregation,
     thresholdNameFor(selections),
-    selections.county,
+    selections.location,
   ].join("|");
 }
 
@@ -126,7 +126,7 @@ export async function fetchExtremeHeatSeries(
   const item = items.features[0];
   if (!item) {
     throw new Error(
-      `No STAC item found for ${selections.climateVariable} in "${selections.county}" at ${thresholdName}`
+      `No STAC item found for ${selections.climateVariable} in "${selections.location}" at ${thresholdName}`
     );
   }
 
@@ -138,7 +138,7 @@ export async function fetchExtremeHeatSeries(
 
 /**
  * The `data` asset href is a directory prefix; the per-region CSV lives under it
- * named `{Region} County_{threshold}.csv` with spaces replaced by underscores
+ * as `{regionLabel}_{threshold}.csv` with spaces replaced by underscores
  * (e.g. `Sacramento_County_t2max_ge100F.csv`).
  */
 function resolveRegionCsvUrl(
@@ -152,12 +152,11 @@ function resolveRegionCsvUrl(
   }
   const prefix = normalizeDownloadUrl(rawHref);
   const base = prefix.endsWith("/") ? prefix : `${prefix}/`;
-  return `${base}${encodeURIComponent(countyCsvFileName(selections.county, thresholdName))}`;
+  return `${base}${encodeURIComponent(regionCsvFileName(selections, thresholdName))}`;
 }
 
-/** Region CSV filename for a county boundary. */
-function countyCsvFileName(county: string, thresholdName: string): string {
-  const region = `${county} County`.replace(/\s+/g, "_");
+function regionCsvFileName(selections: ExtremeHeatDaysSelections, thresholdName: string): string {
+  const region = regionLabelFor(selections).replace(/\s+/g, "_");
   return `${region}_${thresholdName}.csv`;
 }
 
@@ -206,8 +205,8 @@ function parseRegionCsv(
 
   return {
     variableId: metric.variableId,
-    boundary: COUNTY_BOUNDARY_ID,
-    county: selections.county,
+    boundary: selections.spatialAggregation,
+    location: selections.location,
     thresholdName,
     globalWarmingLevels,
     median,

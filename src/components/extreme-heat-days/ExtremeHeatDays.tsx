@@ -15,7 +15,7 @@ import { navLinks } from "@/config/navigation";
 import { useExtremeHeatSeries } from "@/hooks/use-extreme-heat-series";
 import { exportSvgAsPng } from "@/lib/extreme-heat-days/export-chart";
 import { formatChartExportFilename, formatViewTitle } from "@/lib/extreme-heat-days/format";
-import type { ExtremeHeatDaysSelections } from "@/lib/extreme-heat-days/options";
+import { type ExtremeHeatDaysSelections, regionLabelFor } from "@/lib/extreme-heat-days/options";
 import {
   selectionsFromSearchParams,
   selectionsToSearchParams,
@@ -169,6 +169,7 @@ export default function ExtremeHeatDays() {
 
   const selections = useMemo(() => selectionsFromSearchParams(searchParams), [searchParams]);
   const viewTitle = formatViewTitle(selections);
+  const locationLabel = regionLabelFor(selections);
 
   const handleSelectionsChange = useCallback(
     (next: ExtremeHeatDaysSelections) => {
@@ -187,17 +188,17 @@ export default function ExtremeHeatDays() {
   // SVG it exports is rendered by `ChartView`.
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
   const canExportChart = hasRenderableSeries(seriesResult.data);
-  const exportCountyLabel = seriesResult.data?.county || selections.county;
+  const exportLocationLabel = seriesResult.data?.location || selections.location;
   const handleExportChart = useCallback(() => {
     const svg = chartContainerRef.current?.querySelector<SVGSVGElement>("svg");
     if (!svg) return;
     exportSvgAsPng(
       svg,
-      formatChartExportFilename(selections.climateVariable, exportCountyLabel)
+      formatChartExportFilename(selections.climateVariable, exportLocationLabel)
     ).catch((error) => {
       console.error("[extreme-heat-days] chart export failed:", error);
     });
-  }, [selections.climateVariable, exportCountyLabel]);
+  }, [selections.climateVariable, exportLocationLabel]);
 
   return (
     <PageLayout
@@ -251,7 +252,7 @@ export default function ExtremeHeatDays() {
             onRetry={seriesResult.retry}
             climateVariable={selections.climateVariable}
             threshold={selections.threshold}
-            county={selections.county}
+            locationLabel={locationLabel}
             chartContainerRef={chartContainerRef}
           />
         </div>

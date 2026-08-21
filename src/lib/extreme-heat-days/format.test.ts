@@ -16,7 +16,8 @@ const SELECTIONS: ExtremeHeatDaysSelections = {
   climateVariable: "extreme-heat-days",
   threshold: "100F",
   indicator: "frequency",
-  county: "Sacramento",
+  spatialAggregation: "ca_counties",
+  location: "Sacramento",
 };
 
 describe("colorForGlobalWarmingLevel", () => {
@@ -31,7 +32,7 @@ describe("colorForGlobalWarmingLevel", () => {
 });
 
 describe("formatViewTitle", () => {
-  it("includes the selected county", () => {
+  it("includes the selected county with its ' County' suffix", () => {
     expect(formatViewTitle(SELECTIONS)).toBe(
       "Extreme Heat Frequency by Global Warming Level: Sacramento County"
     );
@@ -41,6 +42,16 @@ describe("formatViewTitle", () => {
     expect(formatViewTitle({ ...SELECTIONS, climateVariable: "warm-nights" })).toBe(
       "Warm Nights Frequency by Global Warming Level: Sacramento County"
     );
+  });
+
+  it("uses the raw location name for non-county aggregations", () => {
+    expect(
+      formatViewTitle({
+        ...SELECTIONS,
+        spatialAggregation: "forecast_zones",
+        location: "Greater Bay Area",
+      })
+    ).toBe("Extreme Heat Frequency by Global Warming Level: Greater Bay Area");
   });
 });
 
@@ -96,7 +107,7 @@ describe("formatChartExportFilename", () => {
     );
   });
 
-  it("falls back to 'unknown' when the county slug is empty", () => {
+  it("falls back to 'unknown' when the location slug is empty", () => {
     const date = new Date(2026, 0, 15);
     expect(formatChartExportFilename("extreme-heat-days", "", date)).toBe(
       "extreme-heat-days_unknown_2026-01-15.png"

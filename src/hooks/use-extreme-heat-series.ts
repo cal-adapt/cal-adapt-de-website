@@ -34,8 +34,8 @@ const initial: FetchState = {
  * re-fetch semantics.
  *
  * Re-fetches whenever `searchFiltersKey(selections)` changes. In this collection
- * the climate variable, threshold, boundary, and county each select a different
- * STAC item/CSV, so all of them are part of the key.
+ * the climate variable, threshold, spatial aggregation, and location each select
+ * a different STAC item/CSV, so all of them are part of the key.
  *
  * Also exposes `retry()`, which re-runs the same request without changing selections.
  */
@@ -75,7 +75,7 @@ export function useExtremeHeatSeries(
     };
     // `selections` is intentionally omitted from deps; `filtersKey` derives
     // from the subset of selections that actually affects the API call (all of
-    // variable/threshold/boundary/county here). `retryNonce` is included so
+    // variable/threshold/aggregation/location here). `retryNonce` is included so
     // `retry()` can re-run the same request.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersKey, retryNonce]);

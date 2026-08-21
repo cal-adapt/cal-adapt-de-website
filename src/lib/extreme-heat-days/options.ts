@@ -9,7 +9,9 @@ export interface ExtremeHeatDaysSelections {
   climateVariable: string;
   threshold: string;
   indicator: string;
-  county: string;
+  /** STAC `boundary` id, e.g. "ca_counties". */
+  spatialAggregation: string;
+  location: string;
 }
 
 /** STAC `variable_id`s supported by the `eh-metrics-mm-boundary-csv` collection. */
@@ -216,9 +218,123 @@ export const COUNTY_OPTIONS: readonly SelectOption[] = CALIFORNIA_COUNTY_NAMES.m
   label: name,
 }));
 
+/** One STAC `boundary` type and its selectable regions. */
+export interface SpatialAggregationConfig {
+  /** STAC `boundary` id, e.g. "ca_counties". */
+  value: string;
+  label: string;
+  /** Appended to `location` for chart titles and CSV filenames, e.g. " County". */
+  regionSuffix: string;
+  locations: readonly SelectOption[];
+  defaultLocation: string;
+}
+
+const toLocationOptions = (names: readonly string[]): readonly SelectOption[] =>
+  names.map((name) => ({ value: name, label: name }));
+
+// Names match S3 filename tokens (underscores → spaces).
+const FORECAST_ZONE_NAMES: readonly string[] = [
+  "Big Creek East",
+  "Big Creek West",
+  "Burbank Glendale",
+  "Central Coast",
+  "Central Valley",
+  "Eastern",
+  "Greater Bay Area",
+  "Imperial Irrigation District",
+  "LADWP Coastal",
+  "LADWP Inland",
+  "LA Metro",
+  "North Coast",
+  "North Valley",
+  "Northeast",
+  "Rest of BANC Control Area",
+  "SDG&E",
+  "SMUD Service Territory",
+  "Southern Valley",
+  "Turlock Irrigation District",
+  "Valley Electric",
+];
+
+const ELECTRIC_BALANCING_AREA_NAMES: readonly string[] = [
+  "BANC",
+  "CALISO",
+  "IID",
+  "LADWP",
+  "NV Energy",
+  "PacificCorp West",
+  "TID",
+  "WALC",
+];
+
+const COUNTY_AGGREGATION: SpatialAggregationConfig = {
+  value: "ca_counties",
+  label: "County",
+  regionSuffix: " County",
+  locations: COUNTY_OPTIONS,
+  defaultLocation: "Sacramento",
+};
+
+const FORECAST_ZONES_AGGREGATION: SpatialAggregationConfig = {
+  value: "forecast_zones",
+  label: "Forecast Zones",
+  regionSuffix: "",
+  locations: toLocationOptions(FORECAST_ZONE_NAMES),
+  defaultLocation: "Greater Bay Area",
+};
+
+const ELECTRIC_BALANCING_AGGREGATION: SpatialAggregationConfig = {
+  value: "electric_balancing_areas",
+  label: "Electric Balancing Areas",
+  regionSuffix: "",
+  locations: toLocationOptions(ELECTRIC_BALANCING_AREA_NAMES),
+  defaultLocation: "CALISO",
+};
+
+/** Keyed by STAC `boundary`. Insertion order is the dropdown order. */
+export const SPATIAL_AGGREGATIONS: Readonly<Record<string, SpatialAggregationConfig>> = {
+  [COUNTY_AGGREGATION.value]: COUNTY_AGGREGATION,
+  [FORECAST_ZONES_AGGREGATION.value]: FORECAST_ZONES_AGGREGATION,
+  [ELECTRIC_BALANCING_AGGREGATION.value]: ELECTRIC_BALANCING_AGGREGATION,
+};
+
+const DEFAULT_AGGREGATION = COUNTY_AGGREGATION;
+
+export function getSpatialAggregation(value: string): SpatialAggregationConfig {
+  return SPATIAL_AGGREGATIONS[value] ?? DEFAULT_AGGREGATION;
+}
+
+export function locationOptionsFor(spatialAggregation: string): readonly SelectOption[] {
+  return getSpatialAggregation(spatialAggregation).locations;
+}
+
+export function defaultLocationFor(spatialAggregation: string): string {
+  return getSpatialAggregation(spatialAggregation).defaultLocation;
+}
+
+export function regionLabelFor(selections: ExtremeHeatDaysSelections): string {
+  return `${selections.location}${getSpatialAggregation(selections.spatialAggregation).regionSuffix}`;
+}
+
+export const SPATIAL_AGGREGATION_OPTIONS: readonly SelectOption[] = Object.values(
+  SPATIAL_AGGREGATIONS
+).map((aggregation) => ({ value: aggregation.value, label: aggregation.label }));
+
+/** Greyed-out in the dropdown; ignored by URL validation and fetch. */
+export const COMING_SOON_SPATIAL_AGGREGATION_OPTIONS: readonly SelectOption[] = [
+  { value: "ious_pous", label: "Utilities", disabled: true, hint: "Coming soon" },
+  { value: "ca_census_tracts", label: "Census Tract", disabled: true, hint: "Coming soon" },
+];
+
+export const SPATIAL_AGGREGATION_SELECT_OPTIONS: readonly SelectOption[] = [
+  ...SPATIAL_AGGREGATION_OPTIONS,
+  ...COMING_SOON_SPATIAL_AGGREGATION_OPTIONS,
+];
+
 export const DEFAULT_SELECTIONS: ExtremeHeatDaysSelections = {
   climateVariable: DEFAULT_METRIC.value,
   threshold: DEFAULT_METRIC.defaultThreshold,
   indicator: "frequency",
-  county: "Sacramento",
+  spatialAggregation: DEFAULT_AGGREGATION.value,
+  location: DEFAULT_AGGREGATION.defaultLocation,
 };

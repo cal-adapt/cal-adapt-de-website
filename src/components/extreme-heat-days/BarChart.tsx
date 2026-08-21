@@ -54,7 +54,7 @@ export interface BarChartProps {
   globalWarmingLevels: number[];
   values: number[];
   thresholdLabel: string;
-  county: string;
+  locationLabel: string;
   /** Rendered as SVG text to include in PNG exports. */
   title: string;
   /** Y-axis title */
@@ -75,7 +75,7 @@ export default function BarChart({
   globalWarmingLevels,
   values,
   thresholdLabel,
-  county,
+  locationLabel,
   title,
   yAxisLabel,
   yAxisMax,
@@ -115,12 +115,12 @@ export default function BarChart({
   const bandwidth = xScale.bandwidth();
 
   // Re-grow bars only when the data changes: keying each bar by the values
-  // remounts it on a threshold/county switch (replaying the grow) but leaves it
+  // remounts it on a threshold/location switch (replaying the grow) but leaves it
   // untouched on resize
   const valuesKey = values.join(",");
 
   const accessibleDescription =
-    `Bar chart of ${accessibleNoun} per year for ${county} County across ` +
+    `Bar chart of ${accessibleNoun} per year for ${locationLabel} across ` +
     `global warming levels of ${globalWarmingLevels.map(formatGlobalWarmingLevel).join(", ")}, ` +
     `where the daily ${tempExtremum} temperature reaches ${thresholdLabel} or higher. ` +
     `Values: ${globalWarmingLevels
