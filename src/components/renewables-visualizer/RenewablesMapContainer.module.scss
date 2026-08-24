@@ -1,0 +1,39 @@
+.container {
+  position: relative;
+  width: 100%;
+}
+
+.mainLayout {
+  display: flex;
+  position: relative;
+  width: 100%;
+}
+
+.mapContainer {
+  position: relative;
+  flex: 1;
+  min-height: 500px;
+  
+  @media (max-width: 768px) {
+    min-height: 300px;
+  }
+}
+
+.inspectorBox {
+  flex-shrink: 0;
+  width: 360px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow-y: auto;
+
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.mobileDrawer {
+  @media (min-width: 769px) {
+    display: none !important;
+  }
+}

@@ -1,0 +1,17 @@
+.container {
+  padding: 0;
+  overflow-y: auto;
+  height: 100%;
+
+  // Ensure tables and content are responsive
+  table {
+    width: 100%;
+  }
+
+  // Improve readability on small screens
+  @media (max-width: 600px) {
+    table {
+      font-size: 0.85rem;
+    }
+  }
+}

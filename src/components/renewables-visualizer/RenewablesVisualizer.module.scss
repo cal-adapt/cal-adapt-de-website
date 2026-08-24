@@ -1,5 +1,26 @@
 @use "@/styles/abstracts" as *;
 
+.container {
+  width: 100%;
+}
+
+.introSection {
+  padding: spacer(4) 0;
+  background-color: #f5f5f5;
+  margin-bottom: spacer(3);
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modeSelector {
+  padding: spacer(2) 0;
+  margin-bottom: spacer(3);
+}
+
+.mainContent {
+  width: 100%;
+  min-height: 500px;
+}
+
 .intro {
   @include flex(column, $gap: spacer(3));
 }
