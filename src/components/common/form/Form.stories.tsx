@@ -53,25 +53,22 @@ export const SelectWithDescriptions: Story = {
               {
                 value: "ca_counties",
                 label: "County",
-                description: "Administrative counties (58 total)",
+                description: "Local government administrative boundary",
               },
               {
                 value: "ca_watersheds",
                 label: "Watersheds",
-                description: "Hydrologic units at HUC8 level",
+                description: "Land area draining to a common water body",
               },
               {
                 value: "forecast_zones",
-                label: "Forecast Zones",
-                description:
-                  "California electricity demand forecast zones (used by the California Energy Commission)",
+                label: "Electricity Forecast Zones",
+                description: "Region used for electricity demand planning",
               },
               {
-                value: "ious_pous",
-                label: "Utilities",
-                disabled: true,
-                hint: "Coming soon",
-                description: "California investor-owned (IOU) and publicly-owned (POU) utilities",
+                value: "electric_balancing_areas",
+                label: "Electric Balancing Areas",
+                description: "Grid region managed by a single electricity operator",
               },
             ]}
           />
@@ -95,7 +92,7 @@ export const WithInlineHint: Story = {
             onChange={setValue}
             options={[
               { value: "ca_counties", label: "County" },
-              { value: "forecast_zones", label: "Forecast Zones" },
+              { value: "forecast_zones", label: "Electricity Forecast Zones" },
             ]}
           />
         </FormField>
@@ -119,7 +116,7 @@ export const WithTooltipHint: Story = {
             onChange={setValue}
             options={[
               { value: "ca_counties", label: "County" },
-              { value: "forecast_zones", label: "Forecast Zones" },
+              { value: "forecast_zones", label: "Electricity Forecast Zones" },
             ]}
           />
         </FormField>

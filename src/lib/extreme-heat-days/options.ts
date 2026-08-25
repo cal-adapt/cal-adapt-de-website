@@ -415,7 +415,7 @@ const WATERSHED_NAMES: readonly string[] = [
 const COUNTY_AGGREGATION: SpatialAggregationConfig = {
   value: "ca_counties",
   label: "County",
-  description: "Administrative counties (58 total)",
+  description: "Local government administrative boundary",
   regionSuffix: " County",
   locations: COUNTY_OPTIONS,
   defaultLocation: "Sacramento",
@@ -424,7 +424,7 @@ const COUNTY_AGGREGATION: SpatialAggregationConfig = {
 const WATERSHEDS_AGGREGATION: SpatialAggregationConfig = {
   value: "ca_watersheds",
   label: "Watersheds",
-  description: "Hydrologic units at HUC8 level",
+  description: "Land area draining to a common water body",
   regionSuffix: "",
   locations: toLocationOptions(WATERSHED_NAMES),
   defaultLocation: "Lower Sacramento",
@@ -432,9 +432,8 @@ const WATERSHEDS_AGGREGATION: SpatialAggregationConfig = {
 
 const FORECAST_ZONES_AGGREGATION: SpatialAggregationConfig = {
   value: "forecast_zones",
-  label: "Forecast Zones",
-  description:
-    "California electricity demand forecast zones (used by the California Energy Commission)",
+  label: "Electricity Forecast Zones",
+  description: "Region used for electricity demand planning",
   regionSuffix: "",
   locations: toLocationOptions(FORECAST_ZONE_NAMES),
   defaultLocation: "Greater Bay Area",
@@ -443,7 +442,7 @@ const FORECAST_ZONES_AGGREGATION: SpatialAggregationConfig = {
 const ELECTRIC_BALANCING_AGGREGATION: SpatialAggregationConfig = {
   value: "electric_balancing_areas",
   label: "Electric Balancing Areas",
-  description: "California electric balancing authority areas",
+  description: "Grid region managed by a single electricity operator",
   regionSuffix: "",
   locations: toLocationOptions(ELECTRIC_BALANCING_AREA_NAMES),
   defaultLocation: "CALISO",
@@ -482,29 +481,6 @@ export const SPATIAL_AGGREGATION_OPTIONS: readonly SelectOption[] = Object.value
   label: aggregation.label,
   description: aggregation.description,
 }));
-
-/** Greyed-out in the dropdown; ignored by URL validation and fetch. */
-export const COMING_SOON_SPATIAL_AGGREGATION_OPTIONS: readonly SelectOption[] = [
-  {
-    value: "ious_pous",
-    label: "Utilities",
-    disabled: true,
-    hint: "Coming soon",
-    description: "California investor-owned (IOU) and publicly-owned (POU) utilities",
-  },
-  {
-    value: "ca_census_tracts",
-    label: "Census Tract",
-    disabled: true,
-    hint: "Coming soon",
-    description: "Census block groups and tracts",
-  },
-];
-
-export const SPATIAL_AGGREGATION_SELECT_OPTIONS: readonly SelectOption[] = [
-  ...SPATIAL_AGGREGATION_OPTIONS,
-  ...COMING_SOON_SPATIAL_AGGREGATION_OPTIONS,
-];
 
 export const DEFAULT_SELECTIONS: ExtremeHeatDaysSelections = {
   climateVariable: DEFAULT_METRIC.value,

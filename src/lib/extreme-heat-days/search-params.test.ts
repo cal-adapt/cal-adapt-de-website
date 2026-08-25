@@ -44,13 +44,11 @@ describe("selectionsFromSearchParams", () => {
     });
   });
 
-  it("ignores greyed-out coming-soon aggregations", () => {
-    for (const value of ["ious_pous", "ca_census_tracts"]) {
-      const params = new URLSearchParams(`aggregation=${value}`);
-      expect(selectionsFromSearchParams(params).spatialAggregation).toBe(
-        DEFAULT_SELECTIONS.spatialAggregation
-      );
-    }
+  it("falls back for unknown aggregations", () => {
+    const params = new URLSearchParams("aggregation=ious_pous");
+    expect(selectionsFromSearchParams(params).spatialAggregation).toBe(
+      DEFAULT_SELECTIONS.spatialAggregation
+    );
   });
 
   it("maps the 'variable' query key onto climateVariable", () => {

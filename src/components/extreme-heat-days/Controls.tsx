@@ -10,7 +10,7 @@ import {
   getHeatMetric,
   INDICATOR_OPTIONS,
   locationOptionsFor,
-  SPATIAL_AGGREGATION_SELECT_OPTIONS,
+  SPATIAL_AGGREGATION_OPTIONS,
   thresholdOptionsFor,
 } from "@/lib/extreme-heat-days/options";
 import { CONTROL_TOOLTIPS } from "@/lib/extreme-heat-days/tooltips";
@@ -81,11 +81,11 @@ export default function Controls({ selections, onChange, disabled = false }: Con
               location: defaultLocationFor(spatialAggregation),
             })
           }
-          options={SPATIAL_AGGREGATION_SELECT_OPTIONS}
+          options={SPATIAL_AGGREGATION_OPTIONS}
           disabled={disabled}
         />
       </FormField>
-      <FormField label="Location" hint={CONTROL_TOOLTIPS.location} hintVariant="tooltip">
+      <FormField label="Location">
         <Select
           value={selections.location}
           onChange={(location) => onChange({ ...selections, location })}
