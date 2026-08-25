@@ -9,6 +9,6 @@ export const CONTROL_TOOLTIPS: Omit<
   climateVariable: "The type of climate data being displayed.",
   indicator:
     "An indicator is a parameter that describes the state or trend of a climate variable. Indicators may be represented by one or more metrics, each quantifying a different aspect of a climate hazard.",
-  spatialAggregation: "TODO",
+  spatialAggregation: "Spatial boundary over which the data is aggregated.",
   location: "TODO",
 };

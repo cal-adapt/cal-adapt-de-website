@@ -223,6 +223,7 @@ export interface SpatialAggregationConfig {
   /** STAC `boundary` id, e.g. "ca_counties". */
   value: string;
   label: string;
+  description: string;
   /** Appended to `location` for chart titles and CSV filenames, e.g. " County". */
   regionSuffix: string;
   locations: readonly SelectOption[];
@@ -270,6 +271,7 @@ const ELECTRIC_BALANCING_AREA_NAMES: readonly string[] = [
 const COUNTY_AGGREGATION: SpatialAggregationConfig = {
   value: "ca_counties",
   label: "County",
+  description: "Administrative counties (58 total)",
   regionSuffix: " County",
   locations: COUNTY_OPTIONS,
   defaultLocation: "Sacramento",
@@ -278,6 +280,8 @@ const COUNTY_AGGREGATION: SpatialAggregationConfig = {
 const FORECAST_ZONES_AGGREGATION: SpatialAggregationConfig = {
   value: "forecast_zones",
   label: "Forecast Zones",
+  description:
+    "California electricity demand forecast zones (used by the California Energy Commission)",
   regionSuffix: "",
   locations: toLocationOptions(FORECAST_ZONE_NAMES),
   defaultLocation: "Greater Bay Area",
@@ -286,6 +290,7 @@ const FORECAST_ZONES_AGGREGATION: SpatialAggregationConfig = {
 const ELECTRIC_BALANCING_AGGREGATION: SpatialAggregationConfig = {
   value: "electric_balancing_areas",
   label: "Electric Balancing Areas",
+  description: "California electric balancing authority areas",
   regionSuffix: "",
   locations: toLocationOptions(ELECTRIC_BALANCING_AREA_NAMES),
   defaultLocation: "CALISO",
@@ -318,12 +323,28 @@ export function regionLabelFor(selections: ExtremeHeatDaysSelections): string {
 
 export const SPATIAL_AGGREGATION_OPTIONS: readonly SelectOption[] = Object.values(
   SPATIAL_AGGREGATIONS
-).map((aggregation) => ({ value: aggregation.value, label: aggregation.label }));
+).map((aggregation) => ({
+  value: aggregation.value,
+  label: aggregation.label,
+  description: aggregation.description,
+}));
 
 /** Greyed-out in the dropdown; ignored by URL validation and fetch. */
 export const COMING_SOON_SPATIAL_AGGREGATION_OPTIONS: readonly SelectOption[] = [
-  { value: "ious_pous", label: "Utilities", disabled: true, hint: "Coming soon" },
-  { value: "ca_census_tracts", label: "Census Tract", disabled: true, hint: "Coming soon" },
+  {
+    value: "ious_pous",
+    label: "Utilities",
+    disabled: true,
+    hint: "Coming soon",
+    description: "California investor-owned (IOU) and publicly-owned (POU) utilities",
+  },
+  {
+    value: "ca_census_tracts",
+    label: "Census Tract",
+    disabled: true,
+    hint: "Coming soon",
+    description: "Census block groups and tracts",
+  },
 ];
 
 export const SPATIAL_AGGREGATION_SELECT_OPTIONS: readonly SelectOption[] = [
