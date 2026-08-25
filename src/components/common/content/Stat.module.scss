@@ -2,8 +2,9 @@
 
 .stat {
   margin: 0;
-  padding: spacer(5) 0 0;
-  border-top: 1px solid color(grey-2);
+  padding: spacer(5);
+  border: 1px solid color(grey-2);
+  border-radius: rounded(2);
 
   // Higher specificity than MdxContent's global `.content p` rule, which
   // would otherwise silently win and flatten these back to body text.
