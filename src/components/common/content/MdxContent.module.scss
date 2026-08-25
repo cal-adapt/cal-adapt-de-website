@@ -30,26 +30,6 @@
     letter-spacing: -0.03em;
   }
 
-  // Signature draw-in: a warming-stripes rule under the title, once per page
-  // load (see src/lib/color/signature-scale.ts).
-  h1::after {
-    content: "";
-    display: block;
-    width: 100%;
-    height: 4px;
-    margin-top: spacer(5);
-    border-radius: rounded(pill);
-    background: linear-gradient(90deg, color(blue-4) 0%, color(orange-3) 50%, color(red-4) 100%);
-    transform-origin: left;
-    animation: draw-in 900ms var(--ease-out-quart, ease-out) 200ms both;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    h1::after {
-      animation: none;
-    }
-  }
-
   h2 {
     font-size: 2.6rem;
     letter-spacing: -0.01em;
@@ -204,14 +184,5 @@
 
   :global(sup a[href^="#bib-"]) {
     @extend %citation-link;
-  }
-}
-
-@keyframes draw-in {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
   }
 }
