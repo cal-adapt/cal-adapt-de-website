@@ -11,8 +11,10 @@ import Citation from "@/components/common/ui/Citation";
 import Icon from "@/components/common/ui/Icon";
 import Tabs, { type TabItem } from "@/components/common/ui/Tabs";
 import PageLayout from "@/components/dashboard/PageLayout";
+import { FEEDBACK_URL } from "@/config/constants";
 import { navLinks } from "@/config/navigation";
 import { useExtremeHeatSeries } from "@/hooks/use-extreme-heat-series";
+import { analytics } from "@/lib/analytics";
 import { exportSvgAsPng } from "@/lib/extreme-heat-days/export-chart";
 import { formatChartExportFilename, formatViewTitle } from "@/lib/extreme-heat-days/format";
 import { type ExtremeHeatDaysSelections, regionLabelFor } from "@/lib/extreme-heat-days/options";
@@ -212,8 +214,15 @@ export default function ExtremeHeatDays() {
       }
     >
       <Alert severity="info" className={styles.betaAlert} ariaLabel="Beta notice">
-        <strong>This tool is in beta.</strong> Suggestions for improvements, questions, and general
-        comments are all welcome.
+        Suggestions for improvements, questions, and general comments are all welcome. Fill out the
+        feedback form{" "}
+        <Link
+          href={FEEDBACK_URL}
+          onClick={() => analytics.trackExternalLink(FEEDBACK_URL, "feedback survey")}
+        >
+          here
+        </Link>
+        .
       </Alert>
 
       <div className={styles.intro}>{INTRO_COPY_BY_VARIABLE[selections.climateVariable]}</div>
