@@ -235,6 +235,40 @@ describe("fetchExtremeHeatSeries", () => {
     expect(series.location).toBe("SDG&E");
   });
 
+  it("builds a watershed region CSV url without a County suffix", async () => {
+    const watershedPrefix =
+      "s3://cadcat/wrf/extreme-heat-tool/multimodel_per_boundary/eh_days/ca_watersheds/ssp370/t2max_ge100F/";
+    const watershedCsvUrl =
+      "https://cadcat.s3.amazonaws.com/wrf/extreme-heat-tool/multimodel_per_boundary/eh_days/ca_watersheds/ssp370/t2max_ge100F/Lower_Sacramento_t2max_ge100F.csv";
+    let requestedUrl = "";
+    mockSearch([
+      makeItem({
+        assets: { data: { href: watershedPrefix } },
+        properties: {
+          variable_id: "eh_days",
+          boundary: "ca_watersheds",
+          threshold_name: "t2max_ge100F",
+        },
+      }),
+    ]);
+    server.use(
+      http.get(watershedCsvUrl, ({ request }) => {
+        requestedUrl = request.url;
+        return HttpResponse.text("warming_level,multimodel_median\n0.8,10");
+      })
+    );
+
+    const series = await fetchExtremeHeatSeries({
+      ...DEFAULT_SELECTIONS,
+      spatialAggregation: "ca_watersheds",
+      location: "Lower Sacramento",
+    });
+
+    expect(requestedUrl).toBe(watershedCsvUrl);
+    expect(series.boundary).toBe("ca_watersheds");
+    expect(series.location).toBe("Lower Sacramento");
+  });
+
   it("averages duplicate warming-level rows (tolerant parse)", async () => {
     mockSearch([makeItem()]);
     mockCsv(

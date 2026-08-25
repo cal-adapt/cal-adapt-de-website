@@ -36,6 +36,12 @@ describe("selectionsFromSearchParams", () => {
       spatialAggregation: "forecast_zones",
       location: "Greater Bay Area",
     });
+
+    const watersheds = new URLSearchParams("aggregation=ca_watersheds&location=Russian");
+    expect(selectionsFromSearchParams(watersheds)).toMatchObject({
+      spatialAggregation: "ca_watersheds",
+      location: "Russian",
+    });
   });
 
   it("ignores greyed-out coming-soon aggregations", () => {

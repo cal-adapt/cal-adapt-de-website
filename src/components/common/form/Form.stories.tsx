@@ -56,6 +56,11 @@ export const SelectWithDescriptions: Story = {
                 description: "Administrative counties (58 total)",
               },
               {
+                value: "ca_watersheds",
+                label: "Watersheds",
+                description: "Hydrologic units at HUC8 level",
+              },
+              {
                 value: "forecast_zones",
                 label: "Forecast Zones",
                 description:
