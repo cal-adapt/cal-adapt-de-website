@@ -4,7 +4,8 @@ import { toKebabCase } from "@/utils/string";
 import {
   type ExtremeHeatDaysSelections,
   getHeatMetric,
-  HEAT_METRICS,
+  isAllowedThreshold,
+  parseThresholdNumber,
   regionLabelFor,
 } from "./options";
 
@@ -27,7 +28,7 @@ export function colorForGlobalWarmingLevel(value: number): string {
 
 export function formatViewTitle(selections: ExtremeHeatDaysSelections): string {
   const metric = getHeatMetric(selections.climateVariable);
-  return `${metric.titleLabel} Frequency by Global Warming Level: ${regionLabelFor(selections)}`;
+  return `${metric.titleLabel} Frequency by Global Warming Level: ${regionLabelFor(selections)} (${formatThresholdLabel(selections.threshold)})`;
 }
 
 export function formatGlobalWarmingLevel(value: number): string {
@@ -52,11 +53,10 @@ export function formatDaysPerYear(value: number): string {
 }
 
 export function formatThresholdLabel(threshold: string): string {
-  for (const metric of Object.values(HEAT_METRICS)) {
-    const option = metric.thresholdOptions.find((o) => o.value === threshold);
-    if (option) return option.label;
-  }
-  return threshold;
+  if (!isAllowedThreshold(threshold)) return threshold;
+  const n = parseThresholdNumber(threshold);
+  if (n == null) return threshold;
+  return threshold.endsWith("pctl") ? `${n}th percentile` : `${n}°F`;
 }
 
 /**

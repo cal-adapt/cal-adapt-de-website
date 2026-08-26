@@ -33,10 +33,7 @@ export interface HeatMetricConfig {
   label: string;
   /** Temperature statistic used to build the STAC `threshold_name`. */
   tempStat: "t2max" | "t2min";
-  /** Curated threshold options. `value` is the UI token (e.g. "100F"), which
-   *  combines with `tempStat` into a `threshold_name` (e.g. `t2max_ge100F`). */
-  thresholdOptions: readonly SelectOption[];
-  /** Default threshold token for this metric. */
+  /** Default absolute threshold token for this metric, e.g. "100F". */
   defaultThreshold: string;
   /** Chart y-axis label. */
   yAxisLabel: string;
@@ -62,16 +59,11 @@ const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   variableId: "eh_days",
   label: "Extreme Heat Days",
   tempStat: "t2max",
-  thresholdOptions: [
-    { value: "100F", label: "100°F" },
-    { value: "105F", label: "105°F" },
-  ],
   defaultThreshold: "100F",
   yAxisLabel: "Number of Extreme Heat Days per Year",
-  // Worst case ~155 days/yr (Imperial @ 100°F) in the eh-metrics collection; the
-  // old source only reached ~58, hence the previous cap of 70.
-  yAxisMax: 160,
-  yAxisTickStep: 25,
+  // 50°F can approach a full year of exceedances; 400 keeps 50-unit ticks without clipping.
+  yAxisMax: 400,
+  yAxisTickStep: 50,
   titleLabel: "Extreme Heat",
   accessibleNoun: "extreme heat days",
   valueUnit: "days",
@@ -84,23 +76,9 @@ const WARM_NIGHTS_METRIC: HeatMetricConfig = {
   variableId: "warm_nights",
   label: "Warm Nights",
   tempStat: "t2min",
-  // Warm nights are defined by overnight *minimum* temperature, so meaningful
-  // thresholds are far lower than the daytime-max heat-day thresholds. Live data
-  // shows ≥80°F overnight mins are ~never reached in CA; 65–70°F is where the
-  // signal (and the standard ~18–20°C "warm night" definition) lives.
-  thresholdOptions: [
-    { value: "60F", label: "60°F" },
-    { value: "65F", label: "65°F" },
-    { value: "70F", label: "70°F" },
-    { value: "75F", label: "75°F" },
-    { value: "80F", label: "80°F" },
-  ],
   defaultThreshold: "70F",
   yAxisLabel: "Number of Warm Nights per Year",
-  // Worst case ~253 nights/yr (Imperial @ 60°F, the lowest threshold) so the
-  // fixed axis never clips.
-  yAxisMax: 260,
-  // 50s keep the tall 0–260 axis readable; 25s would be too dense.
+  yAxisMax: 400,
   yAxisTickStep: 50,
   titleLabel: "Warm Nights",
   accessibleNoun: "warm nights",
@@ -122,12 +100,86 @@ export function getHeatMetric(climateVariable: string): HeatMetricConfig {
   return HEAT_METRICS[climateVariable] ?? DEFAULT_METRIC;
 }
 
-export function thresholdOptionsFor(climateVariable: string): readonly SelectOption[] {
-  return getHeatMetric(climateVariable).thresholdOptions;
+export type ThresholdKind = "absolute" | "relative";
+
+export const THRESHOLD_KIND_OPTIONS: readonly SelectOption[] = [
+  { value: "absolute", label: "Absolute" },
+  { value: "relative", label: "Relative" },
+];
+
+export const ABSOLUTE_THRESHOLD_MIN_F = 50;
+export const ABSOLUTE_THRESHOLD_MAX_F = 135;
+export const RELATIVE_THRESHOLD_MIN_PCTL = 75;
+export const RELATIVE_THRESHOLD_MAX_PCTL = 99;
+
+const DEFAULT_RELATIVE_THRESHOLD = "98pctl";
+
+export function thresholdKindFor(threshold: string): ThresholdKind {
+  return threshold.endsWith("pctl") ? "relative" : "absolute";
+}
+
+export function thresholdRangeFor(kind: ThresholdKind): { min: number; max: number } {
+  switch (kind) {
+    case "absolute":
+      return { min: ABSOLUTE_THRESHOLD_MIN_F, max: ABSOLUTE_THRESHOLD_MAX_F };
+    case "relative":
+      return { min: RELATIVE_THRESHOLD_MIN_PCTL, max: RELATIVE_THRESHOLD_MAX_PCTL };
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
+}
+
+export function parseThresholdNumber(threshold: string): number | null {
+  const match = /^(?<n>\d+)(?<unit>F|pctl)$/.exec(threshold);
+  if (!match?.groups) return null;
+  return Number(match.groups.n);
+}
+
+export function thresholdTokenFor(kind: ThresholdKind, value: number): string {
+  const rounded = Math.round(value);
+  switch (kind) {
+    case "absolute":
+      return `${rounded}F`;
+    case "relative":
+      return `${rounded}pctl`;
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
+}
+
+export function isAllowedThreshold(threshold: string): boolean {
+  const kind: ThresholdKind | null = threshold.endsWith("pctl")
+    ? "relative"
+    : threshold.endsWith("F")
+      ? "absolute"
+      : null;
+  if (kind == null) return false;
+  const n = parseThresholdNumber(threshold);
+  if (n == null) return false;
+  const { min, max } = thresholdRangeFor(kind);
+  if (n < min || n > max) return false;
+  return thresholdTokenFor(kind, n) === threshold;
 }
 
 export function defaultThresholdFor(climateVariable: string): string {
   return getHeatMetric(climateVariable).defaultThreshold;
+}
+
+export function defaultThresholdForKind(climateVariable: string, kind: ThresholdKind): string {
+  switch (kind) {
+    case "absolute":
+      return defaultThresholdFor(climateVariable);
+    case "relative":
+      return DEFAULT_RELATIVE_THRESHOLD;
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
 }
 
 export const CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = Object.values(HEAT_METRICS).map(

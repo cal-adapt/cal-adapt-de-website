@@ -5,9 +5,9 @@ import {
   defaultThresholdFor,
   type ExtremeHeatDaysSelections,
   INDICATOR_OPTIONS,
+  isAllowedThreshold,
   locationOptionsFor,
   SPATIAL_AGGREGATION_OPTIONS,
-  thresholdOptionsFor,
 } from "./options";
 
 interface ReadableSearchParams {
@@ -73,12 +73,11 @@ export function selectionsFromSearchParams(
     CLIMATE_VARIABLE_OPTIONS.map((option) => option.value),
     DEFAULT_SELECTIONS.climateVariable
   );
-  const threshold = readField(
-    params,
-    "threshold",
-    thresholdOptionsFor(climateVariable).map((option) => option.value),
-    defaultThresholdFor(climateVariable)
-  );
+  const rawThreshold = params.get(PARAM_KEYS.threshold);
+  const threshold =
+    rawThreshold !== null && isAllowedThreshold(rawThreshold)
+      ? rawThreshold
+      : defaultThresholdFor(climateVariable);
   const indicator = readField(
     params,
     "indicator",
