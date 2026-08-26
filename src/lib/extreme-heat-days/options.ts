@@ -37,11 +37,6 @@ export interface HeatMetricConfig {
   defaultThreshold: string;
   /** Chart y-axis label. */
   yAxisLabel: string;
-  /** Fixed y-axis domain max; omit to derive the max from the data. */
-  yAxisMax?: number;
-  /** Spacing between y-axis gridlines/ticks (in the value unit); omit to let the
-   *  chart choose ~5 nice ticks automatically. */
-  yAxisTickStep?: number;
   /** Metric label used inside the chart title, e.g. "Warm Nights". */
   titleLabel: string;
   /** Noun used in accessible chart text, e.g. "warm nights". */
@@ -61,9 +56,6 @@ const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   tempStat: "t2max",
   defaultThreshold: "100F",
   yAxisLabel: "Number of Extreme Heat Days per Year",
-  // 50°F can approach a full year of exceedances; 400 keeps 50-unit ticks without clipping.
-  yAxisMax: 400,
-  yAxisTickStep: 50,
   titleLabel: "Extreme Heat",
   accessibleNoun: "extreme heat days",
   valueUnit: "days",
@@ -78,8 +70,6 @@ const WARM_NIGHTS_METRIC: HeatMetricConfig = {
   tempStat: "t2min",
   defaultThreshold: "70F",
   yAxisLabel: "Number of Warm Nights per Year",
-  yAxisMax: 400,
-  yAxisTickStep: 50,
   titleLabel: "Warm Nights",
   accessibleNoun: "warm nights",
   valueUnit: "nights",

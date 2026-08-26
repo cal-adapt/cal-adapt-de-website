@@ -12,7 +12,6 @@ import { Text } from "@visx/text";
 
 import { motion, useReducedMotion } from "motion/react";
 
-import { buildTickValues, niceCeil } from "@/lib/extreme-heat-days/axis";
 import {
   colorForGlobalWarmingLevel,
   formatDaysPerYear,
@@ -59,10 +58,8 @@ export interface BarChartProps {
   title: string;
   /** Y-axis title */
   yAxisLabel: string;
-  /** Fixed y-axis domain max */
-  yAxisMax?: number;
-  /** Spacing between y-axis gridlines/ticks */
-  yAxisTickStep?: number;
+  /** Y-axis domain max, already resolved by the caller (see resolveYAxisMax) */
+  yAxisMax: number;
   /** Metric noun for accessible text */
   accessibleNoun: string;
   /** Threshold direction for accessible text (e.g., "maximum" or "minimum") */
@@ -79,7 +76,6 @@ export default function BarChart({
   title,
   yAxisLabel,
   yAxisMax,
-  yAxisTickStep,
   accessibleNoun,
   tempExtremum,
   valueUnit,
@@ -93,24 +89,16 @@ export default function BarChart({
   const plotWidth = Math.max(0, width - MARGIN.left - MARGIN.right);
   const plotHeight = Math.max(0, height - TITLE_BAND - MARGIN.top - MARGIN.bottom);
 
-  const yAxisDomainMax = yAxisMax ?? niceCeil(Math.max(0, ...values.filter(Number.isFinite)));
-
-  // Explicit gridlines/ticks at a fixed step (e.g. every 25)
-  const yTickValues = useMemo(
-    () => buildTickValues(yAxisDomainMax, yAxisTickStep),
-    [yAxisDomainMax, yAxisTickStep]
-  );
-
   const { xScale, yScale } = useMemo(() => {
     return {
-      yScale: scaleLinear<number>({ domain: [0, yAxisDomainMax], range: [plotHeight, 0] }),
+      yScale: scaleLinear<number>({ domain: [0, yAxisMax], range: [plotHeight, 0] }),
       xScale: scaleBand<number>({
         domain: globalWarmingLevels,
         range: [0, plotWidth],
         padding: 0.3,
       }),
     };
-  }, [globalWarmingLevels, plotWidth, plotHeight, yAxisDomainMax]);
+  }, [globalWarmingLevels, plotWidth, plotHeight, yAxisMax]);
 
   const bandwidth = xScale.bandwidth();
 
@@ -167,11 +155,11 @@ export default function BarChart({
               className={styles.grid}
               scale={yScale}
               width={plotWidth}
-              {...(yTickValues ? { tickValues: yTickValues } : { numTicks: Y_TICK_COUNT })}
+              numTicks={Y_TICK_COUNT}
             />
             <AxisLeft
               scale={yScale}
-              {...(yTickValues ? { tickValues: yTickValues } : { numTicks: Y_TICK_COUNT })}
+              numTicks={Y_TICK_COUNT}
               tickLength={0}
               hideAxisLine
               hideTicks
