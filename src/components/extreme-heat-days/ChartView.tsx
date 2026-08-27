@@ -86,7 +86,7 @@ export default function ChartView({
             locationLabel={locationLabel}
             title={title}
             yAxisLabel={metric.yAxisLabel}
-            yAxisMax={resolveYAxisMax([...series.median, ...series.p10, ...series.p90])}
+            yAxisMax={resolveYAxisMax(series.median)}
             accessibleNoun={metric.accessibleNoun}
             tempExtremum={tempExtremum}
             valueUnit={metric.valueUnit}

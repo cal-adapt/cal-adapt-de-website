@@ -8,7 +8,7 @@ const Y_AXIS_HEADROOM_RATIO = 0.2;
 
 /**
  * Resolve the y-axis domain max for the currently displayed series: the max
- * across every value passed in (typically that location's own median/p10/p90
+ * across every value passed in (typically that location's own plotted values
  * at every global warming level) plus headroom, so the tallest bar doesn't
  * touch the axis top. Unique per threshold *and* per location -- a mild
  * location's chart should show its own real scale, not a boundary-type-wide
