@@ -54,7 +54,7 @@ export default function Controls({ selections, onChange, disabled = false }: Con
           disabled={disabled}
         />
       </FormField>
-      <FormField label="Thresholding">
+      <FormField label="Threshold Type" hint={CONTROL_TOOLTIPS.thresholdType} hintVariant="tooltip">
         <Select
           value={thresholdKind}
           onChange={(kind) =>

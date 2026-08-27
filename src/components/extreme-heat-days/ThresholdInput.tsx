@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import clsx from "clsx";
-
+import { formatThresholdLabel } from "@/lib/extreme-heat-days/format";
 import {
   parseThresholdNumber,
   type ThresholdKind,
@@ -35,89 +34,81 @@ export default function ThresholdInput({
   value,
   onChange,
   disabled = false,
-  invalid = false,
   "aria-describedby": ariaDescribedBy,
   "aria-invalid": ariaInvalid,
   "aria-required": ariaRequired,
 }: ThresholdInputProps) {
   const { min, max } = thresholdRangeFor(kind);
   const numeric = parseThresholdNumber(value) ?? min;
-  const [draft, setDraft] = useState(String(numeric));
+  const [draft, setDraft] = useState(numeric);
 
   useEffect(() => {
-    setDraft(String(numeric));
+    setDraft(numeric);
   }, [numeric]);
 
   const commit = (raw: number) => {
     const next = clamp(Math.round(raw), min, max);
-    setDraft(String(next));
+    setDraft(next);
     const token = thresholdTokenFor(kind, next);
     if (token !== value) onChange(token);
   };
 
-  const unit = kind === "relative" ? "th percentile" : "°F";
-  const sliderValue = Number.isFinite(Number(draft)) ? Number(draft) : numeric;
+  const sliderValue = Number.isFinite(draft) ? draft : numeric;
   const progress = ((clamp(sliderValue, min, max) - min) / (max - min)) * 100;
+  const valueText =
+    kind === "relative" ? `${sliderValue}th percentile` : `${sliderValue} degrees Fahrenheit`;
 
   return (
-    <div className={styles.root}>
-      <div className={styles.numberRow}>
+    <div className={styles.root} style={{ ["--slider-progress" as string]: `${progress}%` }}>
+      <span className={styles.endLabel} aria-hidden>
+        {min}
+      </span>
+      <div className={styles.sliderCol}>
+        <div className={styles.valueLane} aria-hidden>
+          <span className={styles.value}>
+            {formatThresholdLabel(thresholdTokenFor(kind, sliderValue))}
+          </span>
+        </div>
+        <div className={styles.ticks} aria-hidden>
+          {tickValues(min, max).map((tick) => (
+            <span
+              key={tick}
+              className={styles.tick}
+              style={{ left: `${((tick - min) / (max - min)) * 100}%` }}
+            />
+          ))}
+        </div>
         <input
           id={id}
-          type="number"
-          className={clsx(styles.number, invalid && styles.numberInvalid)}
+          type="range"
+          className={styles.slider}
           min={min}
           max={max}
           step={1}
-          value={draft}
+          value={sliderValue}
           disabled={disabled}
           aria-describedby={ariaDescribedBy}
           aria-invalid={ariaInvalid}
           aria-required={ariaRequired}
-          onChange={(event) => setDraft(event.target.value)}
-          onBlur={() => {
-            const parsed = Number(draft);
-            if (!Number.isFinite(parsed)) {
-              setDraft(String(numeric));
-              return;
-            }
-            commit(parsed);
-          }}
-          onKeyDown={(event) => {
-            if (event.key !== "Enter") return;
-            event.currentTarget.blur();
-          }}
+          aria-valuetext={valueText}
+          onPointerUp={(event) => commit(Number(event.currentTarget.value))}
+          onChange={(event) => setDraft(Number(event.target.value))}
+          onKeyUp={(event) => commit(Number(event.currentTarget.value))}
         />
-        <span className={styles.unit}>{unit}</span>
       </div>
-      <div
-        className={styles.sliderBlock}
-        style={{ ["--slider-progress" as string]: `${progress}%` }}
-      >
-        <div className={styles.sliderRow}>
-          <span className={styles.endLabel} aria-hidden>
-            {min}
-          </span>
-          <div className={styles.sliderCol}>
-            <input
-              type="range"
-              className={styles.slider}
-              min={min}
-              max={max}
-              step={1}
-              value={sliderValue}
-              disabled={disabled}
-              aria-labelledby={id}
-              onPointerUp={(event) => commit(Number(event.currentTarget.value))}
-              onChange={(event) => setDraft(event.target.value)}
-              onKeyUp={(event) => commit(Number(event.currentTarget.value))}
-            />
-          </div>
-          <span className={styles.endLabel} aria-hidden>
-            {max}
-          </span>
-        </div>
-      </div>
+      <span className={styles.endLabel} aria-hidden>
+        {max}
+      </span>
     </div>
   );
+}
+
+function tickValues(min: number, max: number): number[] {
+  const step = 5;
+  const ticks: number[] = [];
+  const start = Math.ceil(min / step) * step;
+  for (let tick = start; tick <= max; tick += step) {
+    ticks.push(tick);
+  }
+  return ticks;
 }

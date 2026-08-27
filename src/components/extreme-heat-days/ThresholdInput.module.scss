@@ -2,39 +2,13 @@
 
 $track-height: 8px;
 $thumb-size: 20px;
+$tick-height: 6px;
+$tick-gap: 4px;
+$value-lane-height: 1.25em;
+$slider-top-space: calc(#{$value-lane-height} + #{$tick-height} + #{$tick-gap});
 
 .root {
-  @include flex(column, flex-start, stretch, spacer(2));
-  width: 100%;
-}
-
-.numberRow {
-  @include flex(row, flex-start, center, spacer(2));
-}
-
-.number {
-  @include form-control;
-  width: 8rem;
-  flex: 0 0 auto;
-}
-
-.numberInvalid {
-  @include form-control-error;
-}
-
-.unit {
-  @include type-item(body);
-  color: color(grey-4);
-  white-space: nowrap;
-}
-
-.sliderBlock {
-  position: relative;
-  width: 100%;
-}
-
-.sliderRow {
-  @include flex(row, flex-start, center, spacer(2));
+  @include flex(row, flex-start, flex-start, spacer(2));
   width: 100%;
 }
 
@@ -42,6 +16,9 @@ $thumb-size: 20px;
   @include type-item(small);
   flex: 0 0 auto;
   min-width: 3ch;
+  height: $thumb-size;
+  margin-top: $slider-top-space;
+  line-height: $thumb-size;
   color: color(grey-4);
   font-variant-numeric: tabular-nums;
 }
@@ -51,8 +28,48 @@ $thumb-size: 20px;
 }
 
 .sliderCol {
+  position: relative;
   flex: 1 1 auto;
   min-width: 0;
+  padding-top: $slider-top-space;
+}
+
+.valueLane {
+  position: absolute;
+  left: calc($thumb-size / 2);
+  right: calc($thumb-size / 2);
+  top: 0;
+  height: $value-lane-height;
+  pointer-events: none;
+}
+
+.value {
+  position: absolute;
+  top: 0;
+  left: var(--slider-progress, 0%);
+  transform: translateX(-50%);
+  @include type-item(small);
+  color: color(blue-5);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ticks {
+  position: absolute;
+  left: calc($thumb-size / 2);
+  right: calc($thumb-size / 2);
+  top: $value-lane-height;
+  height: $tick-height;
+  pointer-events: none;
+}
+
+.tick {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: $tick-height;
+  background: color(grey-3);
+  transform: translateX(-50%);
 }
 
 .slider {
