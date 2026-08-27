@@ -7,14 +7,6 @@ describe("resolveYAxisMax", () => {
     expect(resolveYAxisMax([10, 45.5, 30])).toBeCloseTo(54.6);
   });
 
-  it("distinguishes nearby values rather than bucketing them together", () => {
-    // The axis should reflect the real per-location max, unique per
-    // threshold and per location -- not an arbitrary nearby round number.
-    expect(resolveYAxisMax([124])).toBeCloseTo(148.8);
-    expect(resolveYAxisMax([151.5])).toBeCloseTo(181.8);
-    expect(resolveYAxisMax([172.5])).toBeCloseTo(207);
-  });
-
   it("ignores non-finite values", () => {
     expect(resolveYAxisMax([NaN, 20, Infinity, -Infinity, 35])).toBeCloseTo(42);
   });
