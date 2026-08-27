@@ -379,6 +379,8 @@ export const loca2CountyPackage: PackageAdapter = {
     title: "Aggregated LOCA2 county data",
     listDescription: "Gridded climate projections by county.",
   },
+  methodsUrl:
+    "https://analytics.cal-adapt.org/data-tools/data-documentation/climate-model-sims.html",
   messages: {
     skipped:
       "Select at least one county, model, scenario, and variables on the previous step to fetch files.",

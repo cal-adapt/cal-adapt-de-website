@@ -1,11 +1,12 @@
 "use client";
 
-import type { DataDownloadWorkspaceData } from "@/lib/data-download-tool";
+import Link from "@/components/common/ui/Link";
+import { type DataDownloadWorkspaceData, getPackageAdapter } from "@/lib/data-download-tool";
 
 import styles from "./WorkspaceDatasetIntro.module.scss";
 
 export interface WorkspaceDatasetIntroProps {
-  workspace: Pick<DataDownloadWorkspaceData, "datasetDescription">;
+  workspace: Pick<DataDownloadWorkspaceData, "datasetDescription" | "catalogPackageId">;
 }
 
 /**
@@ -14,6 +15,8 @@ export interface WorkspaceDatasetIntroProps {
  */
 export default function WorkspaceDatasetIntro({ workspace }: WorkspaceDatasetIntroProps) {
   const description = workspace.datasetDescription.trim();
+  const { methodsUrl } = getPackageAdapter(workspace.catalogPackageId);
+
   if (description.length === 0) {
     return null;
   }
@@ -21,6 +24,10 @@ export default function WorkspaceDatasetIntro({ workspace }: WorkspaceDatasetInt
   return (
     <div className={styles.root}>
       <p className={styles.copy}>{description}</p>
+      <p className={styles.methodsLine}>
+        To find more information about the dataset and methods, visit the documentation page{" "}
+        <Link href={methodsUrl}>here</Link>.
+      </p>
     </div>
   );
 }
