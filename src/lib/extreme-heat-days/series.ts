@@ -35,7 +35,7 @@ export const EXTREME_HEAT_STAC_COLLECTION_ID = "eh-metrics-mm-boundary-csv" as c
 
 /**
  * Build the STAC `threshold_name` for the current selection, e.g.
- * `t2max_ge100F` (extreme heat days) or `t2min_ge80F` (warm nights).
+ * `t2max_ge100F` (absolute) or `t2max_ge98pctl` (relative).
  */
 export function thresholdNameFor(selections: ExtremeHeatDaysSelections): string {
   const metric = getHeatMetric(selections.climateVariable);

@@ -42,6 +42,17 @@ describe("thresholdNameFor", () => {
       thresholdNameFor({ ...DEFAULT_SELECTIONS, climateVariable: "warm-nights", threshold: "80F" })
     ).toBe("t2min_ge80F");
   });
+
+  it("builds a percentile threshold_name", () => {
+    expect(thresholdNameFor({ ...DEFAULT_SELECTIONS, threshold: "98pctl" })).toBe("t2max_ge98pctl");
+    expect(
+      thresholdNameFor({
+        ...DEFAULT_SELECTIONS,
+        climateVariable: "warm-nights",
+        threshold: "75pctl",
+      })
+    ).toBe("t2min_ge75pctl");
+  });
 });
 
 describe("hasRenderableSeries", () => {
@@ -104,6 +115,9 @@ describe("searchFiltersKey", () => {
     expect(searchFiltersKey(base)).toBe("eh_days|ca_counties|t2max_ge100F|Kern");
     expect(searchFiltersKey({ ...base, threshold: "105F" })).toBe(
       "eh_days|ca_counties|t2max_ge105F|Kern"
+    );
+    expect(searchFiltersKey({ ...base, threshold: "98pctl" })).toBe(
+      "eh_days|ca_counties|t2max_ge98pctl|Kern"
     );
     expect(searchFiltersKey({ ...base, climateVariable: "warm-nights", threshold: "80F" })).toBe(
       "warm_nights|ca_counties|t2min_ge80F|Kern"

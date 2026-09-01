@@ -60,15 +60,16 @@ describe("selectionsFromSearchParams", () => {
   });
 
   it("validates the threshold against the selected metric's options", () => {
-    // 80F is a valid warm-nights threshold but not an extreme-heat-days one.
     const warmNights = new URLSearchParams("variable=warm-nights&threshold=80F");
     expect(selectionsFromSearchParams(warmNights)).toMatchObject({
       climateVariable: "warm-nights",
       threshold: "80F",
     });
 
-    // 80F is invalid for extreme heat days → falls back to that metric's default.
-    const heatDays = new URLSearchParams("variable=extreme-heat-days&threshold=80F");
+    const relative = new URLSearchParams("variable=extreme-heat-days&threshold=98pctl");
+    expect(selectionsFromSearchParams(relative).threshold).toBe("98pctl");
+
+    const heatDays = new URLSearchParams("variable=extreme-heat-days&threshold=40F");
     expect(selectionsFromSearchParams(heatDays).threshold).toBe("100F");
   });
 
