@@ -1,0 +1,49 @@
+@use "@/styles/abstracts" as *;
+
+.specs {
+  margin: spacer(5) 0;
+  border: 1px solid color(grey-2);
+  border-radius: rounded(2);
+  overflow: hidden;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: spacer(5);
+  padding: spacer(4) spacer(5);
+
+  &:not(:first-child) {
+    border-top: 1px solid color(grey-2);
+  }
+}
+
+.label {
+  margin: 0;
+  padding-top: 0.2em;
+  color: color(black);
+  font-family: font-family(label);
+  font-size: 1.3rem;
+  font-weight: font-weight(regular);
+  letter-spacing: letter-spacing(label);
+  text-transform: text-transform(label);
+}
+
+.value {
+  margin: 0;
+  min-width: 0;
+  color: color(black);
+
+  // Value copy comes from markdown (p, code, etc.) styled by MdxContent's
+  // global article rules — only tighten spacing for the boxed context.
+  > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+@include breakpoint-max(medium) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: spacer(1);
+  }
+}

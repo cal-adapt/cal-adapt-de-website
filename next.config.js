@@ -28,11 +28,12 @@ const withMDX = createMDX({
     // Any options passed must be JSON-serializable for the same reason.
     remarkPlugins: ["remark-gfm"],
     rehypePlugins: [
+      "rehype-slug",
       [
         "rehype-citation",
         {
           bibliography: "public/references.bib",
-          csl: "public/citation-style-apa.csl",
+          csl: "public/citation-style-nature.csl",
           linkCitations: true,
         },
       ],

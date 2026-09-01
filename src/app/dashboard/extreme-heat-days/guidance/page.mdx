@@ -2,10 +2,10 @@ import { SITE_TITLE } from "@/config/constants";
 import { navLinks } from "@/config/navigation";
 
 export const metadata = {
-  title: `Guidance - ${navLinks.extremeHeatDays.label} - ${SITE_TITLE}`,
+  title: `Guidance & Methods - ${navLinks.extremeHeatDays.label} - ${SITE_TITLE}`,
 };
 
-# Extreme Heat Days: Guidance
+# Extreme Heat Days: Guidance & Methods
 
 ## What is an extreme heat day?
 
@@ -27,8 +27,8 @@ per year is calculated for historical and future global warming levels.
 ## What are global warming levels?
 
 A global warming level is defined as the increase in the global mean air
-temperature relative to pre-industrial conditions (1850-1900)
-[@ipcc-allen-special-report-2022]. Global warming levels are frequently used in international
+temperature relative to pre-industrial conditions (1850-1900)[@ipcc-allen-special-report-2022].
+Global warming levels are frequently used in international
 policy discussions (for example, goals to constrain global warming to 1.5 or
 2 °C). Global warming levels can also be useful in planning processes for
 comparing potential regional responses to climate change across different
@@ -42,7 +42,7 @@ illustrate a range of possible timelines for future emissions and global
 temperatures. Each SSP scenario provides an estimated timeline for when each GWL
 will be reached.
 
-## How to use temperature thresholds
+## How should temperature thresholds be used?
 
 Using absolute thresholds will answer the question of how many days per year will
 exceed 95 °F? In contrast, using a percentile-based threshold will answer the
@@ -55,36 +55,32 @@ elevation region may not experience 95 °F, but the historical 99th percentile
 temperature still represents an impactful extreme heat day. These 99th percentile
 extreme heat events represent 3-4 of the hottest days per year _on average_.
 
-## How to interpret the bar chart
+## What are some impacts of extreme heat?
 
-The bar chart shows how the number of extreme heat days per year is projected to
-change as global warming increases, based on the location and threshold selected.
-Each bar represents a different global warming level (GWL).
+<StatGrid>
+<Stat icon="heartPulse" label="Increases in cardiovascular mortality">
 
-Looking from left to right, the axis shows an increasing amount of global
-warming. The specific year that a given GWL will be reached depends on future
-emissions and societal decisions.
+Each additional extreme-heat day has been associated with a 0.12% higher monthly
+cardiovascular mortality rate in a study comparing heat related deaths across
+3,000+ counties in the United States[@khatanaAssociation2022].
 
-Select the tutorial for a step-by-step guide on using the tool. See the Extreme
-Heat Climate Story for a guided interpretation of results from this tool.
+</Stat>
+<Stat icon="flame" label="Increased wildfire risk">
 
-## What are some of the impacts of extreme heat days?
+A NOAA review of recent wildfire seasons noted the 2020–2022 western U.S.
+wildfire seasons all burned far more acreage than the annual average recorded
+since 2016, driven by compounding drought and persistent heat[@noaa-wildfire-climate-connection-2023].
 
-**Extreme heat days pose significant health risks.** Each additional
-extreme-heat day has been associated with a 0.12% higher monthly cardiovascular
-mortality rate in a study comparing heat related deaths across 3,000+ counties in
-the United States [@khatanaAssociation2022].
+</Stat>
+<Stat icon="bolt" label="Stresses to the electricity grid">
 
-**Extreme heat contributes to climate hazard frequency and severity.** A NOAA
-review of recent wildfire seasons noted the 2020–2022 western U.S. wildfire
-seasons all burned far more acreage than the annual average recorded since 2016,
-driven by compounding drought and persistent heat [@noaa-wildfire-climate-connection-2023].
+During the September 2022 heat wave, California's grid set an all-time
+electricity demand record of roughly 52,000 megawatts. The state narrowly
+avoided widespread rolling blackouts only through emergency conservation
+appeals, demand response, and reliance on natural gas and imported power[@eia-ca-consumers-heatwave-2022].
 
-**Extreme heat places strain on the energy grid.** During the September 2022 heat
-wave, California's grid set an all-time electricity demand record of roughly
-52,000 megawatts. The state narrowly avoided widespread rolling blackouts only
-through emergency conservation appeals, demand response, and reliance on natural
-gas and imported power [@eia-ca-consumers-heatwave-2022].
+</Stat>
+</StatGrid>
 
 ## Limitations
 
@@ -93,10 +89,152 @@ other meteorological variables and environmental factors can influence the
 impacts of heat on human health and infrastructure, including humidity, wind
 speed, shading, the built environment, and the timing or duration of heat events.
 
+<hr />
+
 ## Methods
 
-For information on the methods used to calculate extreme heat, see the
-[Methods](/dashboard/extreme-heat-days/methods) page.
+The sections above describe what extreme heat days and warm nights mean and how
+to use them. The steps below describe exactly how those numbers were calculated,
+from raw climate model output to the values shown in the tool.
+
+### Input data
+
+<Specs>
+<Spec label="Variables">
+
+Maximum daily air temperature (extreme heat days), minimum daily air
+temperature (warm nights)
+
+</Spec>
+<Spec label="Spatial resolution">
+
+3 kilometer gridscale resolution
+
+</Spec>
+<Spec label="Data products">
+
+ERA5 historical reanalysis data and ensemble of 4 bias-adjusted climate model
+simulations, dynamically downscaled using the WRF model for the state of
+California: `EC-Earth3-r1i1p1f1`, `MPI-ESM1-2-HR-r3i1p1f1`, `TaiESM1-r1i1p1f1`,
+`MIROC6-r1i1p1f1`.
+
+</Spec>
+</Specs>
+
+<Step n={1} totalSteps={7} title="Data retrieval and preprocessing">
+
+Using Cal-Adapt's open source Python library `climakitae`, input data was
+retrieved. Climate model simulations were retrieved for historical and future
+global warming levels (GWL): 0.8, 1.5, 2.5, and 3.0 °C. This retrieval process
+pulls the 30 year time window around the year (+/- 15 years) in which the global
+warming level is reached. ERA5 historical reanalysis data was retrieved for
+1987-2017, corresponding to GWL 0.8.
+
+</Step>
+
+<Step n={2} totalSteps={7} title="Percentile-based threshold">
+
+For percentile-based thresholds, a per-gridcell historical temperature threshold
+was calculated using the 0.8 GWL for each simulation. This value represents an
+extreme heat threshold unique to the historical conditions at each location.
+
+</Step>
+
+<Step n={3} totalSteps={7} title="Number of exceedance days in each year">
+
+For each threshold (e.g. 95 °F, 100 °F, 99th percentile), the **number of days
+in each year** that the maximum (extreme heat days) or minimum (warm nights)
+daily temperature exceeds the threshold was counted. The exceedance days were
+calculated for each simulation and GWL.
+
+<Callout title="Plain language example">
+
+If a specific location has a historical 99th percentile maximum temperature of
+97 °F, this represents an "extreme heat" day in the historical period. Step 3 asks:
+under \+1.5 °C of global warming, how many days in each year in that gridcell
+will exceed 97 °F? When asking this question using a fixed temperature
+threshold, it changes to: how many days per year will this gridcell exceed
+95 °F? 100 °F?
+
+</Callout>
+
+</Step>
+
+<Step n={4} totalSteps={7} title="Median and variability over GWL time window">
+
+The following metrics were calculated for each simulation across the 30-year
+period corresponding to each GWL: median, 10th percentile, 90th percentile. This
+collapses the time dimension, yielding a single value per metric per simulation.
+
+<Callout title="Why compute the 10th and 90th percentile?">
+
+The 10th and 90th percentile values represent the number of extreme heat days on
+a particularly cold year and particularly hot year, respectively. Together,
+these provide an estimate of the range of year-to-year variability of extreme
+heat under future conditions. These 10th and 90th percentiles specifically
+represent conditions that would be expected to occur once every 10 years on
+average.
+
+</Callout>
+
+</Step>
+
+<Step n={5} totalSteps={7} title="Change signal">
+
+For each GWL above the reference period (1.5 °C and higher) and for each metric
+(median, 10th percentile, 90th percentile), the historical baseline value was
+subtracted from the future GWL value. This difference represents the projected
+change in extreme heat days relative to the historical period.
+
+<Callout title="Plain language example">
+
+If a grid cell experiences 6 days of extreme heat (say, above 105 °F) in the
+historical period, how many **more** days of extreme heat will that same grid
+cell experience under \+1.5 °C (and 2.0 and so on) of global warming?
+
+</Callout>
+
+</Step>
+
+<Step n={6} totalSteps={7} title="Spatial aggregation">
+
+Next, we aggregated the gridded data by spatial unit (e.g. county, city, etc) by
+taking a **median** of all the grid cells within the boundary. A median is used
+to capture the typical number of extreme heat days within the area of interest
+without introducing bias from any anomalous grid cells.
+
+<Callout title="Grid cells at the edge">
+
+All grid cells within or touching the spatial boundary were included (even if not
+fully contained within the boundary) to avoid discarding data representative of
+conditions at the edge. Additionally, small spatial units such as census tracts
+may not fully contain any single grid cell, so an all-touched approach is
+generally used across Cal Adapt for consistency across spatial scales.
+
+</Callout>
+
+</Step>
+
+<Step n={7} totalSteps={7} title="Simulation aggregation">
+
+Finally, the data was aggregated across simulations using a median. The final
+data product is a table for each county containing the following variables:
+
+#### Absolute variables
+
+- Number of annual exceedance days (for each GWL and threshold)
+- 10th percentile number of annual exceedance days (for each GWL and threshold)
+- 90th percentile number of annual exceedance days (for each GWL and threshold)
+
+#### Relative change variables
+
+- Change from reference period: number of annual exceedance days (for each GWL and threshold)
+- Change from reference period: 10th percentile number of annual exceedance days (for each GWL and threshold)
+- Change from reference period: 90th percentile number of annual exceedance days (for each GWL and threshold)
+
+</Step>
+
+<hr />
 
 ## References
 

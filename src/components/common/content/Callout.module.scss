@@ -1,0 +1,40 @@
+@use "@/styles/abstracts" as *;
+
+.callout {
+  margin: spacer(5) 0;
+  padding: spacer(4) spacer(5);
+  border: 1px solid color(grey-2);
+  border-radius: rounded(2);
+  background: color(grey-1);
+}
+
+.header {
+  @include flex(row, flex-start, center, spacer(2));
+  margin-bottom: spacer(2);
+
+  // Higher specificity than MdxContent's global `.content p` rule, which
+  // would otherwise silently win and flatten this back to body text.
+  .title {
+    margin: 0;
+    color: color(black);
+    font-size: 1.4rem;
+    font-weight: font-weight(bold);
+    line-height: 1.2;
+  }
+}
+
+.icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  color: color(blue-4);
+}
+
+.body {
+  color: color(grey-5);
+
+  // Body copy comes from markdown (p, strong, etc.) styled by MdxContent's
+  // global article rules — only tighten spacing for the boxed context.
+  > :last-child {
+    margin-bottom: 0;
+  }
+}

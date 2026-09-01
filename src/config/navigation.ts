@@ -62,11 +62,6 @@ export const navLinks = {
         href: "/dashboard/extreme-heat-days",
       },
       {
-        id: "extreme-heat-days-methods",
-        label: "Methods",
-        href: "/dashboard/extreme-heat-days/methods",
-      },
-      {
         id: "extreme-heat-days-guidance",
         label: "Guidance",
         href: "/dashboard/extreme-heat-days/guidance",

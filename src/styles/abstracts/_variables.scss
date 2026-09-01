@@ -44,7 +44,10 @@ $reds: (
 $oranges: (
   1: #f7dbb5,
   2: #fcc24d,
-  3: #f79226,
+  // Darkened from #f79226 (same hue/saturation, lower lightness) for
+  // adequate text contrast against white — the original was ~2.3:1, below
+  // the 3:1 minimum even for large/bold text; this is ~3.9:1.
+  3: #c56907,
 );
 
 $yellows: (
