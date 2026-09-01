@@ -1,10 +1,12 @@
 import {
   CLIMATE_VARIABLE_OPTIONS,
-  COUNTY_OPTIONS,
   DEFAULT_SELECTIONS,
+  defaultLocationFor,
   defaultThresholdFor,
   type ExtremeHeatDaysSelections,
   INDICATOR_OPTIONS,
+  locationOptionsFor,
+  SPATIAL_AGGREGATION_OPTIONS,
   thresholdOptionsFor,
 } from "./options";
 
@@ -49,7 +51,8 @@ const PARAM_KEYS = {
   climateVariable: "variable",
   threshold: "threshold",
   indicator: "indicator",
-  county: "county",
+  spatialAggregation: "aggregation",
+  location: "location",
 } as const satisfies Record<keyof ExtremeHeatDaysSelections, string>;
 
 function readField(
@@ -70,8 +73,6 @@ export function selectionsFromSearchParams(
     CLIMATE_VARIABLE_OPTIONS.map((option) => option.value),
     DEFAULT_SELECTIONS.climateVariable
   );
-  // Threshold options are metric-specific, so validate against (and fall back
-  // to) the selected climate variable's options.
   const threshold = readField(
     params,
     "threshold",
@@ -84,13 +85,19 @@ export function selectionsFromSearchParams(
     INDICATOR_OPTIONS.map((option) => option.value),
     DEFAULT_SELECTIONS.indicator
   );
-  const county = readField(
+  const spatialAggregation = readField(
     params,
-    "county",
-    COUNTY_OPTIONS.map((option) => option.value),
-    DEFAULT_SELECTIONS.county
+    "spatialAggregation",
+    SPATIAL_AGGREGATION_OPTIONS.map((option) => option.value),
+    DEFAULT_SELECTIONS.spatialAggregation
   );
-  return { climateVariable, threshold, indicator, county };
+  const location = readField(
+    params,
+    "location",
+    locationOptionsFor(spatialAggregation).map((option) => option.value),
+    defaultLocationFor(spatialAggregation)
+  );
+  return { climateVariable, threshold, indicator, spatialAggregation, location };
 }
 
 export function selectionsToSearchParams(selections: ExtremeHeatDaysSelections): URLSearchParams {

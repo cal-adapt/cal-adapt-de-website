@@ -11,11 +11,13 @@ import Citation from "@/components/common/ui/Citation";
 import Icon from "@/components/common/ui/Icon";
 import Tabs, { type TabItem } from "@/components/common/ui/Tabs";
 import PageLayout from "@/components/dashboard/PageLayout";
+import { FEEDBACK_URL } from "@/config/constants";
 import { navLinks } from "@/config/navigation";
 import { useExtremeHeatSeries } from "@/hooks/use-extreme-heat-series";
+import { analytics } from "@/lib/analytics";
 import { exportSvgAsPng } from "@/lib/extreme-heat-days/export-chart";
 import { formatChartExportFilename, formatViewTitle } from "@/lib/extreme-heat-days/format";
-import type { ExtremeHeatDaysSelections } from "@/lib/extreme-heat-days/options";
+import { type ExtremeHeatDaysSelections, regionLabelFor } from "@/lib/extreme-heat-days/options";
 import {
   selectionsFromSearchParams,
   selectionsToSearchParams,
@@ -169,6 +171,7 @@ export default function ExtremeHeatDays() {
 
   const selections = useMemo(() => selectionsFromSearchParams(searchParams), [searchParams]);
   const viewTitle = formatViewTitle(selections);
+  const locationLabel = regionLabelFor(selections);
 
   const handleSelectionsChange = useCallback(
     (next: ExtremeHeatDaysSelections) => {
@@ -187,17 +190,17 @@ export default function ExtremeHeatDays() {
   // SVG it exports is rendered by `ChartView`.
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
   const canExportChart = hasRenderableSeries(seriesResult.data);
-  const exportCountyLabel = seriesResult.data?.county || selections.county;
+  const exportLocationLabel = seriesResult.data?.location || selections.location;
   const handleExportChart = useCallback(() => {
     const svg = chartContainerRef.current?.querySelector<SVGSVGElement>("svg");
     if (!svg) return;
     exportSvgAsPng(
       svg,
-      formatChartExportFilename(selections.climateVariable, exportCountyLabel)
+      formatChartExportFilename(selections.climateVariable, exportLocationLabel)
     ).catch((error) => {
       console.error("[extreme-heat-days] chart export failed:", error);
     });
-  }, [selections.climateVariable, exportCountyLabel]);
+  }, [selections.climateVariable, exportLocationLabel]);
 
   return (
     <PageLayout
@@ -211,8 +214,15 @@ export default function ExtremeHeatDays() {
       }
     >
       <Alert severity="info" className={styles.betaAlert} ariaLabel="Beta notice">
-        <strong>This tool is in beta.</strong> Suggestions for improvements, questions, and general
-        comments are all welcome.
+        Suggestions for improvements, questions, and general comments are all welcome. Fill out the
+        feedback form{" "}
+        <Link
+          href={FEEDBACK_URL}
+          onClick={() => analytics.trackExternalLink(FEEDBACK_URL, "feedback survey")}
+        >
+          here
+        </Link>
+        .
       </Alert>
 
       <div className={styles.intro}>{INTRO_COPY_BY_VARIABLE[selections.climateVariable]}</div>
@@ -251,7 +261,7 @@ export default function ExtremeHeatDays() {
             onRetry={seriesResult.retry}
             climateVariable={selections.climateVariable}
             threshold={selections.threshold}
-            county={selections.county}
+            locationLabel={locationLabel}
             chartContainerRef={chartContainerRef}
           />
         </div>

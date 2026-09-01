@@ -2,7 +2,9 @@ import { useState } from "react";
 
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { FormField, Label, Select } from "@/components/common/form";
+import { userEvent, within } from "storybook/test";
+
+import { FormField, Label, MultiSelect, Select } from "@/components/common/form";
 
 const meta = {
   title: "Common/Form",
@@ -30,6 +32,151 @@ export const SelectField: Story = {
             options={[
               { value: "daily", label: "Daily" },
               { value: "monthly", label: "Monthly" },
+            ]}
+          />
+        </FormField>
+      </div>
+    );
+  },
+};
+
+export const SelectWithDescriptions: Story = {
+  render: function SelectWithDescriptionsStory() {
+    const [value, setValue] = useState("ca_counties");
+    return (
+      <div style={{ width: 320 }}>
+        <FormField label="Spatial aggregation">
+          <Select
+            value={value}
+            onChange={setValue}
+            options={[
+              {
+                value: "ca_counties",
+                label: "County",
+                description: "Local government administrative boundary",
+              },
+              {
+                value: "ca_watersheds",
+                label: "Watersheds",
+                description: "Land area draining to a common water body",
+              },
+              {
+                value: "forecast_zones",
+                label: "Electricity Forecast Zones",
+                description: "Region used for electricity demand planning",
+              },
+              {
+                value: "electric_balancing_areas",
+                label: "Electric Balancing Areas",
+                description: "Grid region managed by a single electricity operator",
+              },
+            ]}
+          />
+        </FormField>
+      </div>
+    );
+  },
+};
+
+export const WithInlineHint: Story = {
+  render: function WithInlineHintStory() {
+    const [value, setValue] = useState("ca_counties");
+    return (
+      <div style={{ width: 320 }}>
+        <FormField
+          label="Spatial aggregation"
+          hint="The geographic boundary used to group and summarize the data."
+        >
+          <Select
+            value={value}
+            onChange={setValue}
+            options={[
+              { value: "ca_counties", label: "County" },
+              { value: "forecast_zones", label: "Electricity Forecast Zones" },
+            ]}
+          />
+        </FormField>
+      </div>
+    );
+  },
+};
+
+export const WithTooltipHint: Story = {
+  render: function WithTooltipHintStory() {
+    const [value, setValue] = useState("ca_counties");
+    return (
+      <div style={{ width: 320, paddingTop: "8rem" }}>
+        <FormField
+          label="Spatial aggregation"
+          hint="The geographic boundary used to group and summarize the data."
+          hintVariant="tooltip"
+        >
+          <Select
+            value={value}
+            onChange={setValue}
+            options={[
+              { value: "ca_counties", label: "County" },
+              { value: "forecast_zones", label: "Electricity Forecast Zones" },
+            ]}
+          />
+        </FormField>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: "Additional information" }));
+  },
+};
+
+export const MultiSelectField: Story = {
+  render: function MultiSelectFieldStory() {
+    const [value, setValue] = useState<string[]>(["ssp245"]);
+    return (
+      <div style={{ width: 320 }}>
+        <FormField label="Scenarios" required>
+          <MultiSelect
+            value={value}
+            onChange={setValue}
+            placeholder="Select scenarios"
+            options={[
+              { value: "ssp245", label: "SSP2-4.5" },
+              { value: "ssp370", label: "SSP3-7.0" },
+              { value: "ssp585", label: "SSP5-8.5" },
+            ]}
+          />
+        </FormField>
+      </div>
+    );
+  },
+};
+
+export const MultiSelectWithDescriptions: Story = {
+  render: function MultiSelectWithDescriptionsStory() {
+    const [value, setValue] = useState<string[]>(["ssp245", "ssp370"]);
+    return (
+      <div style={{ width: 320 }}>
+        <FormField label="Scenarios">
+          <MultiSelect
+            value={value}
+            onChange={setValue}
+            placeholder="Select scenarios"
+            options={[
+              {
+                value: "ssp245",
+                label: "SSP2-4.5",
+                description: "A middle of the road global emissions scenario",
+              },
+              {
+                value: "ssp370",
+                label: "SSP3-7.0",
+                description: "A high global emissions scenario",
+              },
+              {
+                value: "ssp585",
+                label: "SSP5-8.5",
+                description: "A very high global emissions scenario",
+              },
             ]}
           />
         </FormField>

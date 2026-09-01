@@ -9,17 +9,46 @@ describe("selectionsFromSearchParams", () => {
   });
 
   it("reads valid values from their query keys", () => {
-    const params = new URLSearchParams("county=Fresno&threshold=105F");
+    const params = new URLSearchParams("location=Fresno&threshold=105F");
     expect(selectionsFromSearchParams(params)).toEqual({
       ...DEFAULT_SELECTIONS,
-      county: "Fresno",
+      location: "Fresno",
       threshold: "105F",
     });
   });
 
   it("falls back to defaults for values outside the allowed set", () => {
-    const params = new URLSearchParams("county=Atlantis&threshold=999F");
+    const params = new URLSearchParams("location=Atlantis&threshold=999F");
     expect(selectionsFromSearchParams(params)).toEqual(DEFAULT_SELECTIONS);
+  });
+
+  it("validates the location against the selected aggregation's options", () => {
+    const forecastZones = new URLSearchParams(
+      "aggregation=forecast_zones&location=Greater Bay Area"
+    );
+    expect(selectionsFromSearchParams(forecastZones)).toMatchObject({
+      spatialAggregation: "forecast_zones",
+      location: "Greater Bay Area",
+    });
+
+    const mismatch = new URLSearchParams("aggregation=forecast_zones&location=Fresno");
+    expect(selectionsFromSearchParams(mismatch)).toMatchObject({
+      spatialAggregation: "forecast_zones",
+      location: "Greater Bay Area",
+    });
+
+    const watersheds = new URLSearchParams("aggregation=ca_watersheds&location=Russian");
+    expect(selectionsFromSearchParams(watersheds)).toMatchObject({
+      spatialAggregation: "ca_watersheds",
+      location: "Russian",
+    });
+  });
+
+  it("falls back for unknown aggregations", () => {
+    const params = new URLSearchParams("aggregation=ious_pous");
+    expect(selectionsFromSearchParams(params).spatialAggregation).toBe(
+      DEFAULT_SELECTIONS.spatialAggregation
+    );
   });
 
   it("maps the 'variable' query key onto climateVariable", () => {
@@ -57,11 +86,11 @@ describe("selectionsToSearchParams", () => {
   it("serializes only changed fields under their mapped keys", () => {
     const params = selectionsToSearchParams({
       ...DEFAULT_SELECTIONS,
-      county: "Los Angeles",
+      location: "Los Angeles",
       threshold: "105F",
     });
 
-    expect(params.get("county")).toBe("Los Angeles");
+    expect(params.get("location")).toBe("Los Angeles");
     expect(params.get("threshold")).toBe("105F");
     expect(params.get("variable")).toBeNull();
     expect(params.get("indicator")).toBeNull();
@@ -69,11 +98,22 @@ describe("selectionsToSearchParams", () => {
 });
 
 describe("round-trip", () => {
-  it("preserves a non-default selection through to/from", () => {
+  it("preserves a non-default county selection through to/from", () => {
     const selections: ExtremeHeatDaysSelections = {
       ...DEFAULT_SELECTIONS,
-      county: "Imperial",
+      location: "Imperial",
       threshold: "105F",
+    };
+
+    const restored = selectionsFromSearchParams(selectionsToSearchParams(selections));
+    expect(restored).toEqual(selections);
+  });
+
+  it("preserves a non-default aggregation + location through to/from", () => {
+    const selections: ExtremeHeatDaysSelections = {
+      ...DEFAULT_SELECTIONS,
+      spatialAggregation: "electric_balancing_areas",
+      location: "CALISO",
     };
 
     const restored = selectionsFromSearchParams(selectionsToSearchParams(selections));

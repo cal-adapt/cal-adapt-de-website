@@ -8,7 +8,6 @@ import { server } from "@/testing/mocks/server";
 import { DEFAULT_SELECTIONS, type ExtremeHeatDaysSelections } from "./options";
 import {
   buildSearchFilters,
-  COUNTY_BOUNDARY_ID,
   EXTREME_HEAT_STAC_COLLECTION_ID,
   type ExtremeHeatSeries,
   fetchExtremeHeatSeries,
@@ -20,8 +19,8 @@ import {
 function makeSeries(overrides: Partial<ExtremeHeatSeries> = {}): ExtremeHeatSeries {
   return {
     variableId: "eh_days",
-    boundary: COUNTY_BOUNDARY_ID,
-    county: "Sacramento",
+    boundary: "ca_counties",
+    location: "Sacramento",
     thresholdName: "t2max_ge100F",
     globalWarmingLevels: [0.8, 1.5, 2.0],
     median: [10, 20, 30],
@@ -65,11 +64,23 @@ describe("hasRenderableSeries", () => {
 
 describe("buildSearchFilters", () => {
   it("filters by collection, variable, boundary, and threshold_name", () => {
-    expect(buildSearchFilters({ ...DEFAULT_SELECTIONS, county: "Fresno" })).toEqual({
+    expect(buildSearchFilters({ ...DEFAULT_SELECTIONS, location: "Fresno" })).toEqual({
       collectionFilter: `collection='${EXTREME_HEAT_STAC_COLLECTION_ID}'`,
       variableFilter: "variable_id='eh_days'",
-      boundaryFilter: `boundary='${COUNTY_BOUNDARY_ID}'`,
+      boundaryFilter: "boundary='ca_counties'",
       thresholdNameFilter: "threshold_name='t2max_ge100F'",
+    });
+  });
+
+  it("filters by the selected spatial aggregation (boundary)", () => {
+    expect(
+      buildSearchFilters({
+        ...DEFAULT_SELECTIONS,
+        spatialAggregation: "forecast_zones",
+        location: "Greater Bay Area",
+      })
+    ).toMatchObject({
+      boundaryFilter: "boundary='forecast_zones'",
     });
   });
 
@@ -88,8 +99,8 @@ describe("buildSearchFilters", () => {
 });
 
 describe("searchFiltersKey", () => {
-  it("keys on variable, boundary, threshold, and county (all affect the fetch)", () => {
-    const base: ExtremeHeatDaysSelections = { ...DEFAULT_SELECTIONS, county: "Kern" };
+  it("keys on variable, aggregation, threshold, and location (all affect the fetch)", () => {
+    const base: ExtremeHeatDaysSelections = { ...DEFAULT_SELECTIONS, location: "Kern" };
     expect(searchFiltersKey(base)).toBe("eh_days|ca_counties|t2max_ge100F|Kern");
     expect(searchFiltersKey({ ...base, threshold: "105F" })).toBe(
       "eh_days|ca_counties|t2max_ge105F|Kern"
@@ -97,9 +108,16 @@ describe("searchFiltersKey", () => {
     expect(searchFiltersKey({ ...base, climateVariable: "warm-nights", threshold: "80F" })).toBe(
       "warm_nights|ca_counties|t2min_ge80F|Kern"
     );
-    expect(searchFiltersKey({ ...base, county: "Marin" })).toBe(
+    expect(searchFiltersKey({ ...base, location: "Marin" })).toBe(
       "eh_days|ca_counties|t2max_ge100F|Marin"
     );
+    expect(
+      searchFiltersKey({
+        ...base,
+        spatialAggregation: "electric_balancing_areas",
+        location: "CALISO",
+      })
+    ).toBe("eh_days|electric_balancing_areas|t2max_ge100F|CALISO");
   });
 });
 
@@ -109,7 +127,7 @@ describe("fetchExtremeHeatSeries", () => {
   const NORMALIZED_CSV_URL =
     "https://cadcat.s3.amazonaws.com/wrf/extreme-heat-tool/multimodel_per_boundary/eh_days/ca_counties/ssp370/t2max_ge100F/Sacramento_County_t2max_ge100F.csv";
 
-  const SELECTIONS: ExtremeHeatDaysSelections = { ...DEFAULT_SELECTIONS, county: "Sacramento" };
+  const SELECTIONS: ExtremeHeatDaysSelections = { ...DEFAULT_SELECTIONS, location: "Sacramento" };
 
   function makeItem(overrides: Partial<StacItem> = {}): StacItem {
     return {
@@ -158,7 +176,7 @@ describe("fetchExtremeHeatSeries", () => {
 
     const series = await fetchExtremeHeatSeries(SELECTIONS);
 
-    expect(series.county).toBe("Sacramento");
+    expect(series.location).toBe("Sacramento");
     expect(series.variableId).toBe("eh_days");
     expect(series.thresholdName).toBe("t2max_ge100F");
     expect(series.globalWarmingLevels).toEqual([0.8, 1.5, 2.0]);
@@ -181,6 +199,74 @@ describe("fetchExtremeHeatSeries", () => {
     await fetchExtremeHeatSeries(SELECTIONS);
 
     expect(requestedUrl).toBe(NORMALIZED_CSV_URL);
+  });
+
+  it("builds a non-county region CSV url, encoding special characters", async () => {
+    const forecastZonePrefix =
+      "s3://cadcat/wrf/extreme-heat-tool/multimodel_per_boundary/eh_days/forecast_zones/ssp370/t2max_ge100F/";
+    const forecastZoneCsvUrl =
+      "https://cadcat.s3.amazonaws.com/wrf/extreme-heat-tool/multimodel_per_boundary/eh_days/forecast_zones/ssp370/t2max_ge100F/SDG%26E_t2max_ge100F.csv";
+    let requestedUrl = "";
+    mockSearch([
+      makeItem({
+        assets: { data: { href: forecastZonePrefix } },
+        properties: {
+          variable_id: "eh_days",
+          boundary: "forecast_zones",
+          threshold_name: "t2max_ge100F",
+        },
+      }),
+    ]);
+    server.use(
+      http.get(forecastZoneCsvUrl, ({ request }) => {
+        requestedUrl = request.url;
+        return HttpResponse.text("warming_level,multimodel_median\n0.8,10");
+      })
+    );
+
+    const series = await fetchExtremeHeatSeries({
+      ...DEFAULT_SELECTIONS,
+      spatialAggregation: "forecast_zones",
+      location: "SDG&E",
+    });
+
+    expect(requestedUrl).toBe(forecastZoneCsvUrl);
+    expect(series.boundary).toBe("forecast_zones");
+    expect(series.location).toBe("SDG&E");
+  });
+
+  it("builds a watershed region CSV url without a County suffix", async () => {
+    const watershedPrefix =
+      "s3://cadcat/wrf/extreme-heat-tool/multimodel_per_boundary/eh_days/ca_watersheds/ssp370/t2max_ge100F/";
+    const watershedCsvUrl =
+      "https://cadcat.s3.amazonaws.com/wrf/extreme-heat-tool/multimodel_per_boundary/eh_days/ca_watersheds/ssp370/t2max_ge100F/Lower_Sacramento_t2max_ge100F.csv";
+    let requestedUrl = "";
+    mockSearch([
+      makeItem({
+        assets: { data: { href: watershedPrefix } },
+        properties: {
+          variable_id: "eh_days",
+          boundary: "ca_watersheds",
+          threshold_name: "t2max_ge100F",
+        },
+      }),
+    ]);
+    server.use(
+      http.get(watershedCsvUrl, ({ request }) => {
+        requestedUrl = request.url;
+        return HttpResponse.text("warming_level,multimodel_median\n0.8,10");
+      })
+    );
+
+    const series = await fetchExtremeHeatSeries({
+      ...DEFAULT_SELECTIONS,
+      spatialAggregation: "ca_watersheds",
+      location: "Lower Sacramento",
+    });
+
+    expect(requestedUrl).toBe(watershedCsvUrl);
+    expect(series.boundary).toBe("ca_watersheds");
+    expect(series.location).toBe("Lower Sacramento");
   });
 
   it("averages duplicate warming-level rows (tolerant parse)", async () => {

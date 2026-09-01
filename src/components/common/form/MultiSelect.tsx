@@ -73,7 +73,13 @@ function MultiSelectOptionRow({
 }) {
   return (
     <li className={fd.option} role="option" aria-selected={selected}>
-      <label className={clsx(fd.optionLabel, styles.optionLabelWithCheckbox)}>
+      <label
+        className={clsx(
+          fd.optionLabel,
+          styles.optionLabelWithCheckbox,
+          opt.description && styles.optionLabelWithDescription
+        )}
+      >
         <input
           type="checkbox"
           className={clsx("sr-only", styles.checkboxInput)}
@@ -84,7 +90,12 @@ function MultiSelectOptionRow({
         <MultiSelectCheckboxBox mode={selected ? "checked" : "unchecked"}>
           <MultiSelectCheckboxIcon mode={selected ? "checked" : "unchecked"} />
         </MultiSelectCheckboxBox>
-        <span className={fd.optionText}>{opt.label}</span>
+        <span className={fd.optionCopy}>
+          <span className={fd.optionHead}>
+            <span className={fd.optionText}>{opt.label}</span>
+          </span>
+          {opt.description ? <span className={fd.optionDescription}>{opt.description}</span> : null}
+        </span>
       </label>
     </li>
   );
@@ -94,6 +105,7 @@ export interface MultiSelectOption {
   value: string;
   label: string;
   disabled?: boolean;
+  description?: string;
 }
 
 /** Optional grouping of options */

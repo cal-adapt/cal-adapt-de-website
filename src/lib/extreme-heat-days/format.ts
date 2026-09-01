@@ -1,7 +1,12 @@
 import { formatLocalIsoDate } from "@/utils/date";
 import { toKebabCase } from "@/utils/string";
 
-import { type ExtremeHeatDaysSelections, getHeatMetric, HEAT_METRICS } from "./options";
+import {
+  type ExtremeHeatDaysSelections,
+  getHeatMetric,
+  HEAT_METRICS,
+  regionLabelFor,
+} from "./options";
 
 /**
  *  Keys match global-warming-level values used in `series.globalWarmingLevels`.
@@ -22,7 +27,7 @@ export function colorForGlobalWarmingLevel(value: number): string {
 
 export function formatViewTitle(selections: ExtremeHeatDaysSelections): string {
   const metric = getHeatMetric(selections.climateVariable);
-  return `${metric.titleLabel} Frequency by Global Warming Level: ${selections.county} County`;
+  return `${metric.titleLabel} Frequency by Global Warming Level: ${regionLabelFor(selections)}`;
 }
 
 export function formatGlobalWarmingLevel(value: number): string {
@@ -56,16 +61,16 @@ export function formatThresholdLabel(threshold: string): string {
 
 /**
  * File name used when the user downloads the chart as a PNG. Pattern:
- * `<metric-prefix>_<county-slug>_<YYYY-MM-DD>.png`
+ * `<metric-prefix>_<location-slug>_<YYYY-MM-DD>.png`
  * (e.g. `warm-nights_sacramento_2026-01-15.png`).
  */
 export function formatChartExportFilename(
   climateVariable: string,
-  county: string,
+  location: string,
   date: Date = new Date()
 ): string {
   const prefix = getHeatMetric(climateVariable).exportFilenamePrefix;
-  const countySlug = toKebabCase(county) || "unknown";
+  const locationSlug = toKebabCase(location) || "unknown";
   const dateSlug = formatLocalIsoDate(date);
-  return `${prefix}_${countySlug}_${dateSlug}.png`;
+  return `${prefix}_${locationSlug}_${dateSlug}.png`;
 }
