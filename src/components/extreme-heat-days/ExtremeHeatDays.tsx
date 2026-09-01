@@ -9,6 +9,7 @@ import Badge from "@/components/common/ui/Badge";
 import Button from "@/components/common/ui/Button";
 import Citation from "@/components/common/ui/Citation";
 import Icon from "@/components/common/ui/Icon";
+import Link from "@/components/common/ui/Link";
 import Tabs, { type TabItem } from "@/components/common/ui/Tabs";
 import PageLayout from "@/components/dashboard/PageLayout";
 import { FEEDBACK_URL } from "@/config/constants";
@@ -120,45 +121,6 @@ const INTRO_COPY_BY_VARIABLE: Record<string, ReactNode> = {
       <p className={styles.introCopy}>
         Tracking warm nights can inform how communities implement public safety announcements,
         emergency personnel, and manage their crops and electrical assets.
-      </p>
-    </>
-  ),
-};
-
-// Manually bump date when the tool is meaningfully updated
-const LAST_UPDATED_ISO = "2026-08-13";
-
-const INTRO_COPY_BY_VARIABLE: Record<string, ReactNode> = {
-  "extreme-heat-days": (
-    <>
-      <p className={styles.introCopy}>
-        A day in which the maximum temperature exceeds a defined threshold that poses a significant
-        risk to human health, ecosystems, and infrastructure.
-      </p>
-      <p className={styles.introCopy}>
-        Extreme heat is the deadliest weather-related hazard in many parts of the world
-        <sup className={styles.footnoteRef}>
-          <Link href={WHO_HEAT_HEALTH_URL} aria-label={WHO_CITATION_LABEL}>
-            [1]
-          </Link>
-        </sup>
-        . Tracking extreme heat days helps identify populations at risk, inform public health
-        responses, and monitor how heat hazards are shifting under climate change in both intensity
-        and frequency.
-      </p>
-    </>
-  ),
-  // TODO: Placeholder copy
-  "warm-nights": (
-    <>
-      <p className={styles.introCopy}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-        labore et dolore magna aliqua.
-      </p>
-      <p className={styles.introCopy}>
-        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-        dolore eu fugiat nulla pariatur.
       </p>
     </>
   ),
