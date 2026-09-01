@@ -1,0 +1,189 @@
+import { SITE_TITLE } from "@/config/constants";
+import { navLinks } from "@/config/navigation";
+
+export const metadata = {
+  title: `Guidance & Methods - ${navLinks.renewablesVisualizer.label} - ${SITE_TITLE}`,
+};
+
+# Renewables Visualizer: Guidance & Methods
+
+## What is a resource drought?
+
+A solar resource drought refers to periods of daytime cloudiness which result
+in a decrease in the solar radiation used by solar panels to produce
+photovoltaic energy. A wind resource drought refers to periods of still or
+calm winds which result in a decrease in the generated wind power. Under
+guidance from Rinaldi et al., 2021, both are defined using the following
+procedure:
+
+1. Calculate the 30-year (centered around the 0.8 °C global warming level)
+   average generation potential at each grid cell for each day of the year.
+   This average daily quantity is referred to as the **reference production**.
+2. If any day's total generation potential is less than 50% of the reference
+   production for that day of the year, it is flagged as a resource drought
+   day.
+3. All resource drought days are summed over each month.
+
+## How global warming levels are used here
+
+When a CMIP6 warming level is selected, the 30-year period is defined such
+that it is centered on the year in which that warming level was reached, and
+includes 15 years prior to 14 years after it. Since each model reaches that
+warming level at a different year, the multi-model mean shown here only shows
+a **synthetic time index** of -15 to +14 years.
+
+In other words, if Model A is estimated to hit 1.75° warming in 2040 and Model
+B is estimated to hit 1.75° in 2055, then the multi-model mean will illustrate
+the overlay of the center year and the surrounding window. The figure below
+shows an example of this, where the two models are overlayed at that center
+point (2040 and 2055) with a range before and afterwards.
+
+<WarmingLevelTimeIndex />
+
+<Callout title="Important note">
+
+While the x-axis corresponds to years, this plot should not be interpreted as
+a time series. Instead, individual years are shown here to display
+interannual variability.
+
+</Callout>
+
+## Additional information
+
+The following resources have more information on climate data and global
+warming levels:
+
+- [Guidance on Using Climate Data in Decision-Making](https://analytics.cal-adapt.org/scientific-guidance/general-climate-guidance/using-climate-projections.html)
+- [Understanding Climate Futures Through the Lens of Global Warming Levels](https://analytics.cal-adapt.org/scientific-guidance/global-warming-levels.html)
+
+## Data availability
+
+Generation potential was not simulated at all grid points in the domain due to
+land use or land cover restrictions. Relevant land use exclusions are
+summarized in the [land use exclusions](#land-use-exclusions) table below.
+
+<hr />
+
+## Methods
+
+### Solar resource drought
+
+<Specs>
+<Spec label="Simulations">
+
+This tool shows a multi-model mean of the following simulations under the
+CMIP6 historical and SSP3-7.0 emissions scenarios: `EC-Earth3`,
+`MPI-ESM1-2-HR`, `MIROC6`, and `TaiESM1`.
+
+</Spec>
+<Spec label="Generation profiles">
+
+Hourly photovoltaic energy generation potential profiles were simulated with
+the National Renewable Energy Laboratory's (NREL)
+[PVWattsv8](https://developer.nrel.gov/docs/solar/pvwatts/v8/) software.
+
+</Spec>
+<Spec label="System design">
+
+For most design characteristics, information from configuration files found
+in [NREL's Renewable Energy Potential (ReV) GitHub repo](https://github.com/NREL/reV)
+were utilized. Other design characteristics (array type and capacity) are
+informed by an NREL benchmark report.
+
+</Spec>
+</Specs>
+
+| Parameter             | Utility (front-of-meter)             | Distributed (behind-the-meter)           |
+| --------------------- | ------------------------------------ | ---------------------------------------- |
+| Description           | Typical utility-company installation | Typical residential rooftop installation |
+| Array type            | Single-axis tracking                 | Fixed rooftop mount                      |
+| Installation capacity | 100 MW                               | 10 kW                                    |
+| Tilt                  | None — single-axis tracking          | 20°                                      |
+
+Shared by both installation types: azimuth 180° (south-facing), no losses
+except snow (snow loss enabled), 96% inverter efficiency, 40% ground cover
+ratio, standard module type.
+
+### Wind resource drought
+
+<Specs>
+<Spec label="Simulations">
+
+This tool shows a multi-model mean of the following simulations under the
+CMIP6 historical and SSP3-7.0 emissions scenarios: `EC-Earth3`,
+`MPI-ESM1-2-HR`, `MIROC6`, and `TaiESM1`.
+
+</Spec>
+<Spec label="Generation profiles">
+
+Hourly wind energy generation potential profiles were simulated with the
+National Renewable Energy Laboratory's (NREL) Windpower software.
+
+</Spec>
+<Spec label="Turbine design">
+
+Turbine power curves from
+[NREL's Renewable Energy Potential (ReV) GitHub repo](https://github.com/NREL/reV)
+were utilized.
+
+</Spec>
+</Specs>
+
+| Parameter          | Onshore | Offshore |
+| ------------------ | ------- | -------- |
+| Nameplate capacity | 3 MW    | 8 MW     |
+| Hub height         | 100 m   | 120 m    |
+| Rotor diameter     | 127.5 m | 180 m    |
+
+Shared turbine characteristics: turbine spacing is 8× rotor diameter in the x
+and y directions, with every other row offset by ½ spacing. Max coefficient of
+power: 0.474457866.
+
+The following figures show the power curves and farm layouts for both the
+onshore and offshore wind power modules.
+
+<TurbinePowerCurve />
+<WindFarmLayout />
+
+### Land use exclusions
+
+The following tables summarize the relevant land use exclusions for the
+PVWattsv8 and Windpower simulations under each installation type. In other
+words, if a grid cell meets any of these criteria, it was excluded from the
+indicated simulations.
+
+**Solar**
+
+| Restriction                                                                  | Utility PV | Distributed PV |
+| ---------------------------------------------------------------------------- | ---------- | -------------- |
+| Federal and state protected lands                                            | ✓          | ✓              |
+| Slope > 20%                                                                  | ✓          |                |
+| High intensity urban (row houses, apartment buildings, commercial buildings) | ✓          |                |
+| Medium intensity urban (single family homes)                                 |            |                |
+| Open water                                                                   | ✓          | ✓              |
+
+**Wind**
+
+| Restriction                                                                  | Onshore | Offshore |
+| ---------------------------------------------------------------------------- | ------- | -------- |
+| Federal and state protected lands                                            | ✓       | ✓        |
+| Slope > 20%                                                                  | ✓       | ✓        |
+| High intensity urban (row houses, apartment buildings, commercial buildings) | ✓       | ✓        |
+| Medium intensity urban (single family homes)                                 | ✓       | ✓        |
+| Open water                                                                   | ✓       |          |
+
+Geospatial data sources used to build the exclusion masks:
+
+- **Federal and state protected lands** — [Protected Areas Database of the United States (PAD-US) 3.0 (ver. 2.0, March 2023)](https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download)
+- **Slope > 20%** — [LandFire, Version 2.2.0, Slope Percent Rise](https://www.landfire.gov/version_download.php)
+- **High/medium intensity urban** — [NLCD land cover](https://www.mrlc.gov/data?f%5B0%5D=category%3ALand%20Cover&f%5B1%5D=region%3Aconus&f%5B2%5D=year%3A2021)
+- **Open water** — masked with the WRF domain's land-sea mask
+
+**Exclusion datasets**
+
+- The geospatial files (`.gpkg` format) which were used to create the land
+  use/cover exclusion masks can be found at the following S3 URI:
+  `s3://wfclimres/era/resource_data/land_use_restrictions/`
+- The gridded datasets with the binary land use/cover restriction masks are
+  also available:
+  `s3://wfclimres/era/resource_data/{domain}/static_files/coord_ds_{domain}_all_restrictions.zarr`
