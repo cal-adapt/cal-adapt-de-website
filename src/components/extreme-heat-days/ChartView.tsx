@@ -6,6 +6,7 @@ import Alert from "@/components/common/ui/Alert";
 import Button from "@/components/common/ui/Button";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import type { ExtremeHeatSeriesStatus } from "@/hooks/use-extreme-heat-series";
+import { resolveYAxisMax } from "@/lib/extreme-heat-days/axis";
 import { formatThresholdLabel } from "@/lib/extreme-heat-days/format";
 import { getHeatMetric } from "@/lib/extreme-heat-days/options";
 import { type ExtremeHeatSeries, hasRenderableSeries } from "@/lib/extreme-heat-days/series";
@@ -85,8 +86,7 @@ export default function ChartView({
             locationLabel={locationLabel}
             title={title}
             yAxisLabel={metric.yAxisLabel}
-            yAxisMax={metric.yAxisMax}
-            yAxisTickStep={metric.yAxisTickStep}
+            yAxisMax={resolveYAxisMax(series.median)}
             accessibleNoun={metric.accessibleNoun}
             tempExtremum={tempExtremum}
             valueUnit={metric.valueUnit}
