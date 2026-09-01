@@ -14,7 +14,7 @@ export interface PageLayoutProps {
 }
 
 /**
- * Shared page chrome for any page under `/dashboard/*`: wraps children in the global
+ * Shared page layout for any page under `/dashboard/*`: wraps children in the global
  * `<Container>` (max-width, page padding) and renders an h1 tool title at the top.
  */
 export default function PageLayout({ title, children, className }: PageLayoutProps) {

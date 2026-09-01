@@ -3,11 +3,13 @@
 import { FormField, Select } from "@/components/common/form";
 import { featureFlags } from "@/config/feature-flags";
 import {
-  CLIMATE_VARIABLE_OPTIONS,
+  CLIMATE_VARIABLE_SELECT_OPTIONS,
   COUNTY_OPTIONS,
+  defaultThresholdFor,
   type ExtremeHeatDaysSelections,
+  getHeatMetric,
   INDICATOR_OPTIONS,
-  THRESHOLD_OPTIONS,
+  thresholdOptionsFor,
 } from "@/lib/extreme-heat-days/options";
 import { CONTROL_TOOLTIPS } from "@/lib/extreme-heat-days/tooltips";
 
@@ -30,16 +32,29 @@ export default function Controls({ selections, onChange, disabled = false }: Con
       >
         <Select
           value={selections.climateVariable}
-          onChange={(climateVariable) => onChange({ ...selections, climateVariable })}
-          options={CLIMATE_VARIABLE_OPTIONS}
+          onChange={(climateVariable) =>
+            // Reset threshold to the new metric's default; thresholds are
+            // metric-specific (max-temp vs. min-temp), so the previous value is
+            // typically invalid for the newly selected variable.
+            onChange({
+              ...selections,
+              climateVariable,
+              threshold: defaultThresholdFor(climateVariable),
+            })
+          }
+          options={CLIMATE_VARIABLE_SELECT_OPTIONS}
           disabled={disabled}
         />
       </FormField>
-      <FormField label="Threshold" hint={CONTROL_TOOLTIPS.threshold} hintVariant="tooltip">
+      <FormField
+        label="Threshold"
+        hint={getHeatMetric(selections.climateVariable).thresholdTooltip}
+        hintVariant="tooltip"
+      >
         <Select
           value={selections.threshold}
           onChange={(threshold) => onChange({ ...selections, threshold })}
-          options={THRESHOLD_OPTIONS}
+          options={thresholdOptionsFor(selections.climateVariable)}
           disabled={disabled}
         />
       </FormField>

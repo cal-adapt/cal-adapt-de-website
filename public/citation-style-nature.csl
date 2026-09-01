@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="sort-only" default-locale="en-GB">
+  <info>
+    <title>Nature</title>
+    <id>http://www.zotero.org/styles/nature</id>
+    <link href="http://www.zotero.org/styles/nature" rel="self"/>
+    <link href="https://www.nature.com/nature/for-authors/formatting-guide" rel="documentation"/>
+    <author>
+      <name>Michael Berkowitz</name>
+      <email>mberkowi@gmu.edu</email>
+    </author>
+    <contributor>
+      <name>Patrick O'Brien</name>
+      <email>citationstyler@gmail.com</email>
+    </contributor>
+    <category citation-format="numeric"/>
+    <category field="science"/>
+    <category field="generic-base"/>
+    <issn>0028-0836</issn>
+    <eissn>1476-4687</eissn>
+    <updated>2025-09-10T18:26:21+00:00</updated>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
+  </info>
+  <macro name="title">
+    <choose>
+      <if variable="container-title">
+        <text variable="title"/>
+      </if>
+      <else>
+        <text variable="title" font-style="italic"/>
+      </else>
+    </choose>
+  </macro>
+  <macro name="author">
+    <names variable="author">
+      <name sort-separator=", " delimiter=", " delimiter-precedes-last="always" and="symbol" initialize-with=". " name-as-sort-order="all"/>
+      <et-al font-style="italic"/>
+    </names>
+  </macro>
+  <macro name="editor">
+    <names variable="editor">
+      <name delimiter=", " delimiter-precedes-last="always" and="symbol" initialize-with=". " name-as-sort-order="first"/>
+      <label form="short" prefix=" (" suffix=".)" text-case="capitalize-first"/>
+    </names>
+  </macro>
+  <macro name="year-parens">
+    <choose>
+      <if variable="issued">
+        <date variable="issued" prefix="(" suffix=").">
+          <date-part name="year"/>
+        </date>
+      </if>
+      <else>
+        <text term="no date" form="short" prefix="(" suffix=")."/>
+      </else>
+    </choose>
+  </macro>
+  <macro name="container-title">
+    <choose>
+      <if type="article-journal">
+        <text variable="container-title" font-style="italic" form="short"/>
+      </if>
+      <else>
+        <text variable="container-title" font-style="italic"/>
+      </else>
+    </choose>
+  </macro>
+  <macro name="pages-parens">
+    <choose>
+      <if variable="page">
+        <group prefix="(" suffix=")">
+          <label variable="page" form="short" suffix=". "/>
+          <text variable="page"/>
+        </group>
+      </if>
+    </choose>
+  </macro>
+  <macro name="doi-url">
+    <choose>
+      <if variable="DOI">
+        <text variable="DOI" prefix="https://doi.org/"/>
+      </if>
+      <else-if variable="URL">
+        <text variable="URL"/>
+      </else-if>
+    </choose>
+  </macro>
+  <citation collapse="citation-number">
+    <sort>
+      <key variable="citation-number"/>
+    </sort>
+    <layout vertical-align="sup" delimiter=",">
+      <text variable="citation-number"/>
+    </layout>
+  </citation>
+  <bibliography et-al-min="21" et-al-use-first="19" et-al-use-last="true" second-field-align="flush" entry-spacing="0" line-spacing="2">
+    <layout suffix=".">
+      <text variable="citation-number" suffix="."/>
+      <choose>
+        <if type="article-journal">
+          <group delimiter=" ">
+            <text macro="author" suffix="."/>
+            <text macro="year-parens"/>
+            <text macro="title" suffix="."/>
+            <group delimiter=", ">
+              <text macro="container-title"/>
+              <group>
+                <text variable="volume" font-style="italic"/>
+                <text variable="issue" prefix="(" suffix=")"/>
+              </group>
+              <text variable="page"/>
+            </group>
+            <text macro="doi-url"/>
+          </group>
+        </if>
+        <else-if type="chapter paper-conference" match="any">
+          <group delimiter=" ">
+            <text macro="author" suffix="."/>
+            <text macro="year-parens"/>
+            <text macro="title" suffix="."/>
+            <group delimiter=" ">
+              <text term="in"/>
+              <text macro="editor"/>
+              <group delimiter=" ">
+                <text macro="container-title"/>
+                <text macro="pages-parens"/>
+              </group>
+            </group>
+            <text variable="publisher" suffix="."/>
+            <text macro="doi-url"/>
+          </group>
+        </else-if>
+        <else>
+          <group delimiter=" ">
+            <text macro="author" suffix="."/>
+            <text macro="year-parens"/>
+            <text macro="title" suffix="."/>
+            <text variable="publisher" suffix="."/>
+            <text macro="doi-url"/>
+          </group>
+        </else>
+      </choose>
+    </layout>
+  </bibliography>
+</style>

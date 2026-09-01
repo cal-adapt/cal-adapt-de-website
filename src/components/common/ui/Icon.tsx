@@ -7,7 +7,9 @@ import {
   CircleAlert,
   CircleHelp,
   Download,
+  Flame,
   FlaskConical,
+  HeartPulse,
   Info,
   type LucideProps,
   Mail,
@@ -15,6 +17,7 @@ import {
   Trash2,
   Undo2,
   X,
+  Zap,
 } from "lucide-react";
 import type { SVGProps } from "react";
 
@@ -55,6 +58,9 @@ const LUCIDE_ICON_COMPONENTS = {
   experiment: FlaskConical,
   feedback: MessageSquareText,
   mail: Mail,
+  heartPulse: HeartPulse,
+  flame: Flame,
+  bolt: Zap,
 };
 
 export type IconVariant = keyof typeof ICON_COMPONENTS | keyof typeof LUCIDE_ICON_COMPONENTS;

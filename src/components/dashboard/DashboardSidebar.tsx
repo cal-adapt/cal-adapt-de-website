@@ -1,11 +1,14 @@
+import { type ReactNode, Suspense } from "react";
+
 import clsx from "clsx";
-import type { ReactNode } from "react";
 
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
 import { hasNavChildren, type NavLink, navLinks } from "@/config/navigation";
 import { normalizePath } from "@/utils/url";
+
+import SidebarSubNav, { SubNavLinks } from "./SidebarSubNav";
 
 import styles from "./DashboardSidebar.module.scss";
 
@@ -96,25 +99,13 @@ export default function DashboardSidebar({
                 </Button>
 
                 {showSubNav && hasNavChildren(item.link) && (
-                  <div className={styles.subNav}>
-                    {item.link.children.map((child) => {
-                      const childSelected = activePath === normalizePath(child.href);
-
-                      return (
-                        <Link
-                          key={child.id}
-                          href={child.href}
-                          className={clsx(
-                            styles.subNavLink,
-                            childSelected && styles.subNavSelected
-                          )}
-                          aria-current={childSelected ? "page" : undefined}
-                        >
-                          {child.label}
-                        </Link>
-                      );
-                    })}
-                  </div>
+                  <Suspense
+                    fallback={
+                      <SubNavLinks links={item.link.children} activePath={activePath} query="" />
+                    }
+                  >
+                    <SidebarSubNav links={item.link.children} activePath={activePath} />
+                  </Suspense>
                 )}
               </div>
             );

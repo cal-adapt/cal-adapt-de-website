@@ -52,7 +52,7 @@ export const navLinks = {
   },
   extremeHeatDays: {
     id: "extreme-heat-days",
-    label: "Extreme Heat Days",
+    label: "Extreme Heat",
     href: "/dashboard/extreme-heat-days",
     featureFlag: "__FF_EXTREME_HEAT_DAYS__",
     children: [
@@ -60,11 +60,6 @@ export const navLinks = {
         id: "extreme-heat-days-dashboard",
         label: "Dashboard",
         href: "/dashboard/extreme-heat-days",
-      },
-      {
-        id: "extreme-heat-days-methods",
-        label: "Methods",
-        href: "/dashboard/extreme-heat-days/methods",
       },
       {
         id: "extreme-heat-days-guidance",

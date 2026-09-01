@@ -1,0 +1,11 @@
+@use "@/styles/abstracts" as *;
+
+// Shares its formatting (see src/styles/abstracts/_citations.scss) with the
+// citation superscripts rehype-citation renders on MDX pages.
+.citation {
+  @extend %citation-sup;
+}
+
+.link {
+  @extend %citation-link;
+}

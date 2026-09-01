@@ -1,0 +1,42 @@
+@use "@/styles/abstracts" as *;
+
+.step {
+  margin-top: spacer(9);
+
+  &:first-of-type {
+    margin-top: spacer(7);
+  }
+
+  // Higher specificity than MdxContent's global `.content h3` rule, which
+  // would otherwise silently win whenever these values diverge from it.
+  .title {
+    display: flex;
+    align-items: baseline;
+    gap: spacer(2);
+    margin: 0 0 spacer(3);
+    color: color(black);
+    font-size: 2rem;
+    font-weight: font-weight(bold);
+    line-height: 1.25;
+  }
+}
+
+.tag {
+  flex-shrink: 0;
+  color: var(--tag-color, #{color(grey-4)});
+  font-family: font-family(label);
+  font-size: 2rem;
+  font-weight: font-weight(bold);
+  letter-spacing: 0;
+}
+
+.body {
+  min-width: 0;
+
+  // Body copy inside a Step still comes from markdown (p, ul, etc.), which
+  // MdxContent's global article rules already style — only the heading needs
+  // a local reset since it's rendered here rather than as a markdown `###`.
+  :global(.content) & > :first-child {
+    margin-top: 0;
+  }
+}

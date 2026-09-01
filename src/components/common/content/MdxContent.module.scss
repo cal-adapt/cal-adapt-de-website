@@ -2,6 +2,7 @@
 
 .content {
   width: 100%;
+  min-width: 0;
   max-width: max-w(content);
   color: color(black);
   font-family: font-family(base);
@@ -21,11 +22,12 @@
     line-height: 1.25;
     font-weight: font-weight(bold);
     text-wrap: balance;
+    scroll-margin-top: spacer(6);
   }
 
   h1 {
-    font-size: 3.2rem;
-    letter-spacing: -0.02em;
+    font-size: 3.6rem;
+    letter-spacing: -0.03em;
   }
 
   h2 {
@@ -155,18 +157,32 @@
     }
   }
 
-  // Bibliography rendered by rehype-citation (citeproc `csl-bib-body`).
+  // Numbered bibliography rendered by rehype-citation (citeproc `csl-bib-body`).
+  // Shares its formatting (see src/styles/abstracts/_citations.scss) with
+  // hand-authored reference lists like ExtremeHeatDays.module.scss's.
   :global(.csl-bib-body) {
-    margin: spacer(4) 0 0;
-    @include type-item(body);
-    font-size: 1.4rem;
-    line-height: 1.5;
+    @extend %citation-list;
   }
 
   :global(.csl-entry) {
-    margin-bottom: spacer(3);
-    padding-left: spacer(5);
-    text-indent: calc(-1 * #{spacer(5)});
-    color: color(grey-5);
+    @extend %citation-entry;
+  }
+
+  :global(.csl-left-margin) {
+    @extend %citation-number;
+  }
+
+  :global(.csl-right-inline) {
+    @extend %citation-text;
+  }
+
+  // In-text citations, rendered as `<sup><a>`. The base reset flattens `sup`
+  // to `vertical-align: baseline`, so restore the raised numeral locally.
+  :global(sup) {
+    @extend %citation-sup;
+  }
+
+  :global(sup a[href^="#bib-"]) {
+    @extend %citation-link;
   }
 }

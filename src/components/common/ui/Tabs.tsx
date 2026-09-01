@@ -4,6 +4,8 @@ import { type KeyboardEvent, useRef } from "react";
 
 import clsx from "clsx";
 
+import Badge from "./Badge";
+
 import styles from "./Tabs.module.scss";
 
 export interface TabItem<T extends string> {
@@ -17,6 +19,10 @@ export interface TabItem<T extends string> {
   /** DOM id of the panel this tab controls; wired to the button's
    *  `aria-controls`. */
   panelId: string;
+  /* Disabled tabs are skipped by keyboard navigation. */
+  disabled?: boolean;
+  /** Short note rendered as an always-visible badge on the tab */
+  hint?: string;
 }
 
 export interface TabsProps<T extends string> {
@@ -41,27 +47,39 @@ export default function Tabs<T extends string>({ value, onChange, tabs, label }:
     buttonsRef.current[next]?.focus();
   };
 
+  /** Nearest selectable tab starting at `from` and stepping by `dir`, wrapping
+   *  around the ends. Returns `null` when every tab is disabled. */
+  const enabledTabFrom = (from: number, dir: 1 | -1): TabItem<T> | null => {
+    for (let i = 1; i <= tabs.length; i++) {
+      const candidate = tabs[(from + dir * i + tabs.length * i) % tabs.length];
+      if (!candidate.disabled) {
+        return candidate;
+      }
+    }
+    return null;
+  };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>, index: number) => {
-    const last = tabs.length - 1;
+    let next: TabItem<T> | null = null;
     switch (e.key) {
       case "ArrowRight":
-        e.preventDefault();
-        focusTab(tabs[index === last ? 0 : index + 1].value);
-        return;
+        next = enabledTabFrom(index, 1);
+        break;
       case "ArrowLeft":
-        e.preventDefault();
-        focusTab(tabs[index === 0 ? last : index - 1].value);
-        return;
+        next = enabledTabFrom(index, -1);
+        break;
       case "Home":
-        e.preventDefault();
-        focusTab(tabs[0].value);
-        return;
+        next = enabledTabFrom(-1, 1);
+        break;
       case "End":
-        e.preventDefault();
-        focusTab(tabs[last].value);
-        return;
+        next = enabledTabFrom(tabs.length, -1);
+        break;
       default:
         return;
+    }
+    e.preventDefault();
+    if (next) {
+      focusTab(next.value);
     }
   };
 
@@ -79,13 +97,27 @@ export default function Tabs<T extends string>({ value, onChange, tabs, label }:
             type="button"
             role="tab"
             aria-selected={selected}
-            aria-controls={tab.panelId}
+            aria-controls={tab.disabled ? undefined : tab.panelId}
+            aria-disabled={tab.disabled || undefined}
             tabIndex={selected ? 0 : -1}
-            className={clsx(styles.tab, selected && styles.tabSelected)}
-            onClick={() => onChange(tab.value)}
+            className={clsx(
+              styles.tab,
+              selected && styles.tabSelected,
+              tab.disabled && styles.tabDisabled
+            )}
+            onClick={() => {
+              if (!tab.disabled) {
+                onChange(tab.value);
+              }
+            }}
             onKeyDown={(e) => handleKeyDown(e, index)}
           >
             {tab.label}
+            {tab.hint ? (
+              <Badge variant="blue-subtle" size="sm" className={styles.tabHint}>
+                {tab.hint}
+              </Badge>
+            ) : null}
           </button>
         );
       })}

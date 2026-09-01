@@ -18,7 +18,7 @@
   cursor: pointer;
   border-bottom: 3px solid transparent;
 
-  &:hover:not(.tabSelected) {
+  &:hover:not(.tabSelected):not(.tabDisabled) {
     color: color(black);
   }
 }
@@ -27,4 +27,18 @@
   color: color(black);
   border-bottom-color: color(black);
   font-weight: 600;
+}
+
+.tabDisabled {
+  color: color(grey-3);
+  cursor: not-allowed;
+}
+
+.tabHint {
+  margin-left: spacer(2);
+  vertical-align: middle;
+}
+
+.tabDisabled .tabHint {
+  opacity: 0.55;
 }
