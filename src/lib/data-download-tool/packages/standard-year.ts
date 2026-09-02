@@ -392,6 +392,8 @@ export const standardYearPackage: PackageAdapter = {
     title: "Standard year",
     listDescription: "Standard Met Year profiles at stations (8760 hourly, CSV).",
   },
+  methodsUrl:
+    "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/standard-year.html",
   messages: {
     skipped:
       "Select at least one location, GWL (or year), variables, and percentiles on the previous step to fetch files.",
