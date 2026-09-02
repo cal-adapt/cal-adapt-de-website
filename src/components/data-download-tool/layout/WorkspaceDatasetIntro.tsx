@@ -25,7 +25,7 @@ export default function WorkspaceDatasetIntro({ workspace }: WorkspaceDatasetInt
     <div className={styles.root}>
       <p className={styles.copy}>{description}</p>
       <p className={styles.methodsLine}>
-        To find more information about the dataset and methods, visit the documentation page{" "}
+        To find more information about this dataset and methods, visit the documentation page{" "}
         <Link href={methodsUrl}>here</Link>.
       </p>
     </div>

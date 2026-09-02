@@ -149,11 +149,15 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
       <div className={styles.pageTop}>
         <p className={styles.toolIntro}>
           Use this tool to download a subset of the Cal-Adapt data catalog. To browse the full
-          catalog, or download datasets not listed here, visit{" "}
-          <Link href="https://analytics.cal-adapt.org/data-tools/access-methods.html">
-            this page
+          catalog, visit the{" "}
+          <Link href="https://analytics.cal-adapt.org/data-tools/data-catalog.html">
+            Analytics Engine Data Catalog
           </Link>
-          .
+          . To access the data in other ways, visit the{" "}
+          <Link href="https://analytics.cal-adapt.org/data-tools/access-methods.html">
+            Data Access Methods page
+          </Link>{" "}
+          for more options.
         </p>
       </div>
 
