@@ -1,3 +1,5 @@
+import { type ReadableSearchParams, readEnumParam } from "@/utils/search-params";
+
 import {
   CLIMATE_VARIABLE_OPTIONS,
   DEFAULT_SELECTIONS,
@@ -9,24 +11,6 @@ import {
   locationOptionsFor,
   SPATIAL_AGGREGATION_OPTIONS,
 } from "./options";
-
-interface ReadableSearchParams {
-  get(key: string): string | null;
-}
-
-/**
- * Read a query param and validate it against a set of allowed values, falling
- * back to `fallback` when the param is missing or not in the set.
- */
-function readEnumParam<T extends string>(
-  params: ReadableSearchParams,
-  key: string,
-  allowed: readonly T[],
-  fallback: T
-): T {
-  const raw = params.get(key);
-  return raw !== null && (allowed as readonly string[]).includes(raw) ? (raw as T) : fallback;
-}
 
 /**
  * Serialize a record of string-valued fields to query params, omitting any
