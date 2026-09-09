@@ -20,24 +20,10 @@ import Controls from "./Controls";
 
 import styles from "./HddCdd.module.scss";
 
+// TODO: copy pending -- placeholder left intentionally blank
 const CHART_INFO = (
   <>
-    <p>
-      The line chart shows the annual total for the selected metric (HDD or CDD) at the selected
-      location, from 1981 through 2099. The gray line and shaded band show the historical period
-      through 2014; the colored line and band show the SSP3-7.0 projection from 2015 onward.
-    </p>
-    <p>
-      The solid line is the mean across the 4 climate models used in this tool. The shaded band
-      around it shows the full range between the lowest and highest model value for that year — a
-      wider band means the models disagree more about that year&apos;s value. Use the legend below
-      the chart to toggle the historical and projected series on and off.
-    </p>
-    <p>
-      A rising CDD trend generally indicates growing cooling demand as the climate warms; a falling
-      HDD trend generally indicates easing heating demand. The rate and timing of these trends vary
-      by location.
-    </p>
+    <p>TEXT HERE</p>
   </>
 );
 
@@ -77,22 +63,11 @@ export default function HddCdd() {
     <PageLayout title="Heating/Cooling Degree Days">
       <BetaFeedbackAlert />
 
-      <div className={styles.intro}>
-        <p className={styles.introCopy}>
-          Heating degree days (HDD) and cooling degree days (CDD) measure how much outdoor
-          temperature departs from a 65°F baseline, and are the standard way the energy sector
-          estimates heating and cooling demand. The threshold is fixed at 65°F for this initial
-          release.
-        </p>
-        <p className={styles.introCopy}>
-          As California&apos;s climate changes, cooling demand is generally expected to rise and
-          heating demand to ease, though the pace differs by location. Tracking these trends over
-          time helps identify where electricity demand from heating and cooling is shifting fastest.
-        </p>
-      </div>
+      {/* TODO: copy pending -- placeholder left intentionally blank */}
 
       <div className={styles.workspace}>
         <div className={styles.viewArea}>
+          <p className={styles.introCopy}>TEXT HERE</p>
           <div className={styles.chartActions}>
             <Button
               type="button"

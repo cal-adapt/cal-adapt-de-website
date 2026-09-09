@@ -9,121 +9,51 @@ export const metadata = {
 
 ## What are heating and cooling degree days?
 
-Heating degree days (HDD) and cooling degree days (CDD) measure how much and
-for how long outdoor air temperature is below or above a reference
-temperature, called the base temperature. They are the standard way the
-energy sector estimates how much heating or cooling a building will need on a
-given day: colder days accumulate more HDD, and hotter days accumulate more
-CDD. Summed over a year, HDD and CDD track how climate change is expected to
-shift electricity and gas demand for heating and cooling across California.
-
 ## Why is the threshold fixed at 65°F?
-
-65°F is the conventional base temperature used across the energy industry for
-degree-day calculations — it approximates the outdoor temperature at which a
-typical building needs neither heating nor cooling. This tool uses a single
-fixed 65°F threshold for both HDD and CDD. A configurable threshold may be
-added in a future iteration.
 
 ## Why do these trends matter?
 
-As the climate warms, heating demand is generally expected to fall and
-cooling demand to rise, but the timing and magnitude differ by location.
-Tracking HDD and CDD over time helps identify which parts of the state will
-see the fastest growth in electricity demand from cooling, and where heating
-demand is easing — both of which shape utility planning, rate design, and
-grid reliability.
-
 ## What is the SSP3-7.0 scenario?
-
-The chart shows a continuous timeseries from 1981 through 2099: historical
-conditions through 2014, followed by a projection under the SSP3-7.0
-scenario from 2015 onward. SSPs (Shared Socioeconomic Pathways) are a set of
-standardized future scenarios used across climate science to represent
-different trajectories of greenhouse gas emissions[@ipcc-allen-special-report-2022].
-SSP3-7.0 represents a moderate-to-high emissions pathway. Additional
-scenarios (e.g. SSP2-4.5, SSP5-8.5) may be added in future iterations.
 
 ## What are some impacts of changing heating and cooling demand?
 
 <StatGrid>
-<Stat icon="bolt" label="Record electricity demand during heat waves">
-
-During the September 2022 heat wave, California's grid set an all-time
-electricity demand record of roughly 52,000 megawatts, driven largely by
-cooling load. The state narrowly avoided widespread rolling blackouts only
-through emergency conservation appeals, demand response, and reliance on
-natural gas and imported power[@eia-ca-consumers-heatwave-2022].
+<Stat icon="bolt" label="">
 
 </Stat>
 </StatGrid>
 
 ## Limitations
 
-HDD and CDD are calculated from air temperature alone. They do not account
-for humidity, building insulation and design, occupancy patterns, or
-electrification of heating and cooling — all of which also shape real-world
-energy demand. A single statewide 65°F threshold may not reflect local
-building stock or climate norms in every region.
-
 <hr />
 
 ## Methods
-
-The sections above describe what HDD and CDD mean and how to use them. The
-steps below describe exactly how those numbers were calculated, from raw
-climate model output to the values shown in the tool.
 
 ### Input data
 
 <Specs>
 <Spec label="Variable">
 
-Daily average air temperature (t2)
-
 </Spec>
 <Spec label="Spatial resolution">
 
-3 kilometer gridscale resolution
-
 </Spec>
 <Spec label="Data products">
-
-Ensemble of 4 bias-adjusted climate model simulations, dynamically
-downscaled using the WRF model for the state of California:
-`EC-Earth3-r1i1p1f1`, `MPI-ESM1-2-HR-r3i1p1f1`, `TaiESM1-r1i1p1f1`,
-`MIROC6-r1i1p1f1`, under the SSP3-7.0 scenario, 1981-2100.
 
 </Spec>
 </Specs>
 
 <Step n={1} totalSteps={5} title="Data retrieval">
 
-Using Cal-Adapt's open source Python library `climakitae`, daily average air
-temperature was retrieved for each of the 4 bias-adjusted WRF models for the
-full 1981-2100 SSP3-7.0 period.
-
 </Step>
 
 <Step n={2} totalSteps={5} title="Compute HDD and CDD">
-
-For each day and each simulation, HDD65 and CDD65 were computed from daily
-average temperature using a fixed 65°F threshold, via `climakitae`'s built-in
-`compute_hdd_cdd` function.
 
 </Step>
 
 <Step n={3} totalSteps={5} title="Annual sums">
 
-Daily HDD and CDD were trimmed to complete calendar years only, then summed
-within each year to produce one HDD and one CDD total per year, per
-simulation.
-
 <Callout title="Plain language example">
-
-If a location accumulates 5 heating degree days on a cold day and 0 on a mild
-day, HDD for the year is the sum of the daily values across all 365 (or 366)
-days in that year.
 
 </Callout>
 
@@ -131,25 +61,12 @@ days in that year.
 
 <Step n={4} totalSteps={5} title="Spatial aggregation">
 
-The gridded annual HDD/CDD data was aggregated by spatial unit (e.g. county,
-watershed, forecast zone, or electric balancing area) by taking the
-**median** of all grid cells within the boundary, for each simulation and
-year.
-
 </Step>
 
 <Step n={5} totalSteps={5} title="Simulation aggregation">
-
-Finally, for each region and year, the data was aggregated across the 4
-simulations by taking the **mean**, **minimum**, and **maximum** across
-models. This produces the multi-model mean line and min/max range shown in
-the chart. A mean/min/max convention (rather than percentiles) is used here
-because there are only 4 simulations available.
 
 </Step>
 
 <hr />
 
 ## References
-
-[^ref]
