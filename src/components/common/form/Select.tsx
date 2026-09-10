@@ -23,6 +23,7 @@ export interface SelectOption {
   label: string;
   disabled?: boolean;
   hint?: string;
+  description?: string;
 }
 
 export interface SelectProps {
@@ -164,12 +165,19 @@ const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
                       close();
                     }}
                   >
-                    <span className={styles.optionText}>{opt.label}</span>
-                    {opt.hint ? (
-                      <Badge variant="blue-subtle" size="sm">
-                        {opt.hint}
-                      </Badge>
-                    ) : null}
+                    <span className={styles.optionCopy}>
+                      <span className={styles.optionHead}>
+                        <span className={styles.optionText}>{opt.label}</span>
+                        {opt.hint ? (
+                          <Badge variant="blue-subtle" size="sm">
+                            {opt.hint}
+                          </Badge>
+                        ) : null}
+                      </span>
+                      {opt.description ? (
+                        <span className={styles.optionDescription}>{opt.description}</span>
+                      ) : null}
+                    </span>
                     {isSelected ? (
                       <Check className={styles.optionCheck} size={16} strokeWidth={2} aria-hidden />
                     ) : null}

@@ -6,6 +6,7 @@ import Alert from "@/components/common/ui/Alert";
 import Button from "@/components/common/ui/Button";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import type { ExtremeHeatSeriesStatus } from "@/hooks/use-extreme-heat-series";
+import { resolveYAxisMax } from "@/lib/extreme-heat-days/axis";
 import { formatThresholdLabel } from "@/lib/extreme-heat-days/format";
 import { getHeatMetric } from "@/lib/extreme-heat-days/options";
 import { type ExtremeHeatSeries, hasRenderableSeries } from "@/lib/extreme-heat-days/series";
@@ -17,7 +18,7 @@ import styles from "./ChartView.module.scss";
 export interface ChartViewProps {
   /**  Owned by the parent so the chart and table views are consistently labeled. */
   title: string;
-  /** Loaded series for the current county. `null` while loading/erroring/idle. */
+  /** Loaded series for the current location. `null` while loading/erroring/idle. */
   series: ExtremeHeatSeries | null;
   status: ExtremeHeatSeriesStatus;
   errorMessage: string | null;
@@ -27,10 +28,7 @@ export interface ChartViewProps {
   climateVariable: string;
   /** Current threshold selection; used for labels and no-data copy. */
   threshold: string;
-  /** County label for accessible chart description; falls back to `series.county`
-   *  if present, but kept as a prop so loading/empty states can still name the
-   *  selection. */
-  county: string;
+  locationLabel: string;
   /** DOM id for ARIA tab/panel pairing. */
   id: string;
   /** Tab id this panel is labeled by (for `aria-labelledby`). */
@@ -48,7 +46,7 @@ export default function ChartView({
   onRetry,
   climateVariable,
   threshold,
-  county,
+  locationLabel,
   id,
   labelledBy,
   chartContainerRef,
@@ -69,7 +67,6 @@ export default function ChartView({
   const showSourceCitation = status === "success" && hasRenderableData;
 
   const thresholdLabel = formatThresholdLabel(threshold);
-  const countyLabel = series?.county || county;
   const tempExtremum = metric.tempStat === "t2max" ? "maximum" : "minimum";
 
   return (
@@ -86,11 +83,10 @@ export default function ChartView({
             globalWarmingLevels={series.globalWarmingLevels}
             values={series.median}
             thresholdLabel={thresholdLabel}
-            county={countyLabel}
+            locationLabel={locationLabel}
             title={title}
             yAxisLabel={metric.yAxisLabel}
-            yAxisMax={metric.yAxisMax}
-            yAxisTickStep={metric.yAxisTickStep}
+            yAxisMax={resolveYAxisMax(series.median)}
             accessibleNoun={metric.accessibleNoun}
             tempExtremum={tempExtremum}
             valueUnit={metric.valueUnit}
@@ -112,15 +108,15 @@ export default function ChartView({
             </Button>
           }
         >
-          We couldn&apos;t load {metric.accessibleNoun} data for {countyLabel} County. Check your
+          We couldn&apos;t load {metric.accessibleNoun} data for {locationLabel}. Check your
           connection and try again.
         </Alert>
       )}
 
       {showNoDataAlert && (
         <Alert severity="info" ariaLabel="No data available">
-          No {metric.accessibleNoun} data is available for {countyLabel} County at {thresholdLabel}.
-          Try a different county or threshold.
+          No {metric.accessibleNoun} data is available for {locationLabel} at {thresholdLabel}. Try
+          a different location or threshold.
         </Alert>
       )}
 
