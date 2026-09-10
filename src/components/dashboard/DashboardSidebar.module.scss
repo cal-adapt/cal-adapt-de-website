@@ -4,7 +4,8 @@
   @include flex(column, $justify-content: space-between);
   background: #fff;
   border-right: 1px solid color(grey-2);
-  height: 100dvh;
+  height: 100%;
+  min-height: 0;
   position: sticky;
   top: 0;
   overflow-y: auto;
