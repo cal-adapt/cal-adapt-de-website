@@ -4,14 +4,21 @@ import { FormField, Select } from "@/components/common/form";
 import { featureFlags } from "@/config/feature-flags";
 import {
   CLIMATE_VARIABLE_SELECT_OPTIONS,
-  COUNTY_OPTIONS,
+  defaultLocationFor,
   defaultThresholdFor,
+  defaultThresholdForKind,
   type ExtremeHeatDaysSelections,
   getHeatMetric,
   INDICATOR_OPTIONS,
-  thresholdOptionsFor,
+  isAllowedThreshold,
+  locationOptionsFor,
+  SPATIAL_AGGREGATION_OPTIONS,
+  THRESHOLD_KIND_OPTIONS,
+  thresholdKindFor,
 } from "@/lib/extreme-heat-days/options";
 import { CONTROL_TOOLTIPS } from "@/lib/extreme-heat-days/tooltips";
+
+import ThresholdInput from "./ThresholdInput";
 
 import styles from "./Controls.module.scss";
 
@@ -23,6 +30,8 @@ export interface ControlsProps {
 }
 
 export default function Controls({ selections, onChange, disabled = false }: ControlsProps) {
+  const thresholdKind = thresholdKindFor(selections.threshold);
+
   return (
     <div className={styles.root}>
       <FormField
@@ -33,16 +42,31 @@ export default function Controls({ selections, onChange, disabled = false }: Con
         <Select
           value={selections.climateVariable}
           onChange={(climateVariable) =>
-            // Reset threshold to the new metric's default; thresholds are
-            // metric-specific (max-temp vs. min-temp), so the previous value is
-            // typically invalid for the newly selected variable.
             onChange({
               ...selections,
               climateVariable,
-              threshold: defaultThresholdFor(climateVariable),
+              threshold: isAllowedThreshold(selections.threshold)
+                ? selections.threshold
+                : defaultThresholdFor(climateVariable),
             })
           }
           options={CLIMATE_VARIABLE_SELECT_OPTIONS}
+          disabled={disabled}
+        />
+      </FormField>
+      <FormField label="Threshold Type" hint={CONTROL_TOOLTIPS.thresholdType} hintVariant="tooltip">
+        <Select
+          value={thresholdKind}
+          onChange={(kind) =>
+            onChange({
+              ...selections,
+              threshold: defaultThresholdForKind(
+                selections.climateVariable,
+                kind === "relative" ? "relative" : "absolute"
+              ),
+            })
+          }
+          options={THRESHOLD_KIND_OPTIONS}
           disabled={disabled}
         />
       </FormField>
@@ -51,10 +75,10 @@ export default function Controls({ selections, onChange, disabled = false }: Con
         hint={getHeatMetric(selections.climateVariable).thresholdTooltip}
         hintVariant="tooltip"
       >
-        <Select
+        <ThresholdInput
+          kind={thresholdKind}
           value={selections.threshold}
           onChange={(threshold) => onChange({ ...selections, threshold })}
-          options={thresholdOptionsFor(selections.climateVariable)}
           disabled={disabled}
         />
       </FormField>
@@ -68,11 +92,29 @@ export default function Controls({ selections, onChange, disabled = false }: Con
           />
         </FormField>
       )}
-      <FormField label="County" hint={CONTROL_TOOLTIPS.county} hintVariant="tooltip">
+      <FormField
+        label="Spatial aggregation"
+        hint={CONTROL_TOOLTIPS.spatialAggregation}
+        hintVariant="tooltip"
+      >
         <Select
-          value={selections.county}
-          onChange={(county) => onChange({ ...selections, county })}
-          options={COUNTY_OPTIONS}
+          value={selections.spatialAggregation}
+          onChange={(spatialAggregation) =>
+            onChange({
+              ...selections,
+              spatialAggregation,
+              location: defaultLocationFor(spatialAggregation),
+            })
+          }
+          options={SPATIAL_AGGREGATION_OPTIONS}
+          disabled={disabled}
+        />
+      </FormField>
+      <FormField label="Location">
+        <Select
+          value={selections.location}
+          onChange={(location) => onChange({ ...selections, location })}
+          options={locationOptionsFor(selections.spatialAggregation)}
           disabled={disabled}
         />
       </FormField>

@@ -16,7 +16,8 @@ const SELECTIONS: ExtremeHeatDaysSelections = {
   climateVariable: "extreme-heat-days",
   threshold: "100F",
   indicator: "frequency",
-  county: "Sacramento",
+  spatialAggregation: "ca_counties",
+  location: "Sacramento",
 };
 
 describe("colorForGlobalWarmingLevel", () => {
@@ -31,16 +32,32 @@ describe("colorForGlobalWarmingLevel", () => {
 });
 
 describe("formatViewTitle", () => {
-  it("includes the selected county", () => {
+  it("includes the selected county with its ' County' suffix", () => {
     expect(formatViewTitle(SELECTIONS)).toBe(
-      "Extreme Heat Frequency by Global Warming Level: Sacramento County"
+      "Extreme Heat Frequency by Global Warming Level: Sacramento County (100°F)"
     );
   });
 
   it("reflects the warm-nights metric label", () => {
     expect(formatViewTitle({ ...SELECTIONS, climateVariable: "warm-nights" })).toBe(
-      "Warm Nights Frequency by Global Warming Level: Sacramento County"
+      "Warm Nights Frequency by Global Warming Level: Sacramento County (100°F)"
     );
+  });
+
+  it("includes a percentile threshold in the title", () => {
+    expect(formatViewTitle({ ...SELECTIONS, threshold: "98pctl" })).toBe(
+      "Extreme Heat Frequency by Global Warming Level: Sacramento County (98th percentile)"
+    );
+  });
+
+  it("uses the raw location name for non-county aggregations", () => {
+    expect(
+      formatViewTitle({
+        ...SELECTIONS,
+        spatialAggregation: "forecast_zones",
+        location: "Greater Bay Area",
+      })
+    ).toBe("Extreme Heat Frequency by Global Warming Level: Greater Bay Area (100°F)");
   });
 });
 
@@ -74,6 +91,8 @@ describe("formatThresholdLabel", () => {
     expect(formatThresholdLabel("100F")).toBe("100°F");
     expect(formatThresholdLabel("105F")).toBe("105°F");
     expect(formatThresholdLabel("80F")).toBe("80°F");
+    expect(formatThresholdLabel("98pctl")).toBe("98th percentile");
+    expect(formatThresholdLabel("75pctl")).toBe("75th percentile");
   });
 
   it("passes through an unknown threshold unchanged", () => {
@@ -96,7 +115,7 @@ describe("formatChartExportFilename", () => {
     );
   });
 
-  it("falls back to 'unknown' when the county slug is empty", () => {
+  it("falls back to 'unknown' when the location slug is empty", () => {
     const date = new Date(2026, 0, 15);
     expect(formatChartExportFilename("extreme-heat-days", "", date)).toBe(
       "extreme-heat-days_unknown_2026-01-15.png"

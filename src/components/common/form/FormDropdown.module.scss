@@ -82,7 +82,7 @@ $label-padding: spacer(3) spacer(4);
   margin: 0;
   padding: 0;
   list-style: none;
-  max-height: var(--form-dropdown-max-height, 33rem);
+  max-height: var(--form-dropdown-max-height, 48rem);
   overflow-y: auto;
   border: 1px solid color(grey-2);
   border-radius: rounded(1);
@@ -136,17 +136,42 @@ $label-padding: spacer(3) spacer(4);
   }
 }
 
+.optionCopy {
+  @include flex(column, flex-start, stretch, spacer(1));
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.optionHead {
+  @include flex(row, flex-start, center, spacer(2), nowrap);
+  min-width: 0;
+}
+
 .optionText {
   flex: 1 1 auto;
   min-width: 0;
 }
 
+.optionDescription {
+  @include type-item(small);
+  font-weight: font-weight(regular);
+  color: color(grey-4);
+}
+
 // Single-select only: plain checkmark (no box) for the current value
+.optionLabel:has(.optionDescription) {
+  align-items: flex-start;
+}
+
 .optionCheck {
   flex-shrink: 0;
   margin-left: auto;
   color: color(black);
   line-height: 0;
+
+  .optionLabel:has(.optionDescription) & {
+    margin-top: 0.2em;
+  }
 
   :global(svg) {
     stroke: currentColor;
