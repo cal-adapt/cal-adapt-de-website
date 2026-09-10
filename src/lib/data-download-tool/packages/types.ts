@@ -98,6 +98,8 @@ export interface PackageAdapter {
 
   rail: PackageRailInfo;
   messages: PackageMessages;
+  /** Link to the methods / scientific documentation page for this dataset. */
+  methodsUrl: string;
 
   /** Build the Customize step configuration from STAC inputs. */
   buildCustomizeForm(

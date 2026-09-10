@@ -147,14 +147,18 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
   return (
     <PageLayout title="Data Download Tool">
       <div className={styles.pageTop}>
-        {/* TODO: Add tool intro copy here */}
-        <Alert severity="info">
-          Looking for the full LOCA2 scientific data at daily resolution for the entire state of
-          California?{" "}
-          <Link href="https://analytics.cal-adapt.org/data/access/">
-            Click here for the how-to-guide
+        <p className={styles.toolIntro}>
+          Use this tool to download a subset of the Cal-Adapt data catalog. To browse the full
+          catalog, visit the{" "}
+          <Link href="https://analytics.cal-adapt.org/data-tools/data-catalog.html">
+            Analytics Engine Data Catalog
           </Link>
-        </Alert>
+          . To access the data in other ways, visit the{" "}
+          <Link href="https://analytics.cal-adapt.org/data-tools/access-methods.html">
+            Data Access Methods page
+          </Link>{" "}
+          for more options.
+        </p>
       </div>
 
       <WorkspaceLayout packageRail={<PackageRail activePackageId={workspace.catalogPackageId} />}>
