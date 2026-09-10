@@ -48,16 +48,16 @@ export default function HddCdd() {
   const isLoading = seriesResult.status === "loading";
 
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
-  const canExportChart = hasRenderableSeries(seriesResult.data, selections.metric);
+  const canExportChart = hasRenderableSeries(seriesResult.data, selections.climateVariable);
   const handleExportChart = useCallback(() => {
     const svg = chartContainerRef.current?.querySelector<SVGSVGElement>("svg");
     if (!svg) return;
-    exportSvgAsPng(svg, formatChartExportFilename(selections.metric, locationLabel)).catch(
+    exportSvgAsPng(svg, formatChartExportFilename(selections.climateVariable, locationLabel)).catch(
       (error) => {
         console.error("[hdd-cdd] chart export failed:", error);
       }
     );
-  }, [selections.metric, locationLabel]);
+  }, [selections.climateVariable, locationLabel]);
 
   return (
     <PageLayout title="Heating/Cooling Degree Days">
@@ -91,7 +91,7 @@ export default function HddCdd() {
             status={seriesResult.status}
             errorMessage={seriesResult.errorMessage}
             onRetry={seriesResult.retry}
-            metric={selections.metric}
+            climateVariable={selections.climateVariable}
             locationLabel={locationLabel}
             scenarioLabel={SSP370.label}
             scenarioColor={SSP370.color}

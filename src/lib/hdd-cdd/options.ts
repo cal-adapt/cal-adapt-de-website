@@ -8,14 +8,14 @@ import type { SelectOption } from "@/components/common/form";
 export interface HddCddSelections {
   /** "hdd" or "cdd" — which metric's mean/min/max columns to plot. Does not
    *  affect the STAC/CSV fetch: both metrics live in the same region CSV. */
-  metric: string;
+  climateVariable: string;
   /** STAC `boundary` id, e.g. "ca_counties". */
   spatialAggregation: string;
   location: string;
 }
 
 export interface MetricConfig {
-  /** `metric` select value + URL `metric` param. */
+  /** `climateVariable` select value + URL `variable` param. */
   value: string;
   label: string;
   /** Dropdown label. */
@@ -31,7 +31,7 @@ export interface MetricConfig {
 const HDD_METRIC: MetricConfig = {
   value: "hdd",
   label: "HDD",
-  dropdownLabel: "HDD (Heating Degree Days)",
+  dropdownLabel: "Heating Degree Days",
   yAxisLabel: "Heating Degree Days (65°F)",
   accessibleNoun: "heating degree days",
   longLabel: "Heating Degree Days (65°F)",
@@ -40,13 +40,13 @@ const HDD_METRIC: MetricConfig = {
 const CDD_METRIC: MetricConfig = {
   value: "cdd",
   label: "CDD",
-  dropdownLabel: "CDD (Cooling Degree Days)",
+  dropdownLabel: "Cooling Degree Days",
   yAxisLabel: "Cooling Degree Days (65°F)",
   accessibleNoun: "cooling degree days",
   longLabel: "Cooling Degree Days (65°F)",
 };
 
-/** Metric registry keyed by `metric` value. Order drives dropdown order. */
+/** Metric registry keyed by `climateVariable` value. Order drives dropdown order. */
 export const METRICS: Readonly<Record<string, MetricConfig>> = {
   [CDD_METRIC.value]: CDD_METRIC,
   [HDD_METRIC.value]: HDD_METRIC,
@@ -55,14 +55,16 @@ export const METRICS: Readonly<Record<string, MetricConfig>> = {
 // CDD is the confirmed default at first page load (per MVP requirements).
 const DEFAULT_METRIC = CDD_METRIC;
 
-export function getMetric(metric: string): MetricConfig {
-  return METRICS[metric] ?? DEFAULT_METRIC;
+export function getMetric(climateVariable: string): MetricConfig {
+  return METRICS[climateVariable] ?? DEFAULT_METRIC;
 }
 
-export const METRIC_OPTIONS: readonly SelectOption[] = Object.values(METRICS).map((metric) => ({
-  value: metric.value,
-  label: metric.dropdownLabel,
-}));
+export const CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = Object.values(METRICS).map(
+  (metric) => ({
+    value: metric.value,
+    label: metric.dropdownLabel,
+  })
+);
 
 /** Scenario metadata for the (currently single) available SSP. */
 export interface ScenarioConfig {
@@ -415,7 +417,7 @@ export const SPATIAL_AGGREGATION_OPTIONS: readonly SelectOption[] = Object.value
 }));
 
 export const DEFAULT_SELECTIONS: HddCddSelections = {
-  metric: DEFAULT_METRIC.value,
+  climateVariable: DEFAULT_METRIC.value,
   spatialAggregation: DEFAULT_AGGREGATION.value,
   location: DEFAULT_AGGREGATION.defaultLocation,
 };

@@ -2,10 +2,10 @@
 
 import { FormField, Select } from "@/components/common/form";
 import {
+  CLIMATE_VARIABLE_OPTIONS,
   defaultLocationFor,
   type HddCddSelections,
   locationOptionsFor,
-  METRIC_OPTIONS,
   SPATIAL_AGGREGATION_OPTIONS,
 } from "@/lib/hdd-cdd/options";
 import { CONTROL_TOOLTIPS } from "@/lib/hdd-cdd/tooltips";
@@ -22,11 +22,15 @@ export interface ControlsProps {
 export default function Controls({ selections, onChange, disabled = false }: ControlsProps) {
   return (
     <div className={styles.root}>
-      <FormField label="Metric" hint={CONTROL_TOOLTIPS.metric} hintVariant="tooltip">
+      <FormField
+        label="Climate variable"
+        hint={CONTROL_TOOLTIPS.climateVariable}
+        hintVariant="tooltip"
+      >
         <Select
-          value={selections.metric}
-          onChange={(metric) => onChange({ ...selections, metric })}
-          options={METRIC_OPTIONS}
+          value={selections.climateVariable}
+          onChange={(climateVariable) => onChange({ ...selections, climateVariable })}
+          options={CLIMATE_VARIABLE_OPTIONS}
           disabled={disabled}
         />
       </FormField>

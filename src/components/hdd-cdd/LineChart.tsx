@@ -95,7 +95,7 @@ const bisectYear = bisector<HddCddYearRow, number>((d) => d.year).left;
 
 export interface LineChartProps {
   rows: HddCddYearRow[];
-  metric: string;
+  climateVariable: string;
   locationLabel: string;
   title: string;
   scenarioLabel: string;
@@ -104,7 +104,7 @@ export interface LineChartProps {
 
 export default function LineChart({
   rows,
-  metric,
+  climateVariable,
   locationLabel,
   title,
   scenarioLabel,
@@ -119,10 +119,10 @@ export default function LineChart({
   const toggleVisibility = (key: keyof LegendVisibility) =>
     setVisibility((v) => ({ ...v, [key]: !v[key] }));
 
-  const metricConfig = getMetric(metric);
-  const meanKey = metric === "hdd" ? "hddMean" : "cddMean";
-  const minKey = metric === "hdd" ? "hddMin" : "cddMin";
-  const maxKey = metric === "hdd" ? "hddMax" : "cddMax";
+  const metricConfig = getMetric(climateVariable);
+  const meanKey = climateVariable === "hdd" ? "hddMean" : "cddMean";
+  const minKey = climateVariable === "hdd" ? "hddMin" : "cddMin";
+  const maxKey = climateVariable === "hdd" ? "hddMax" : "cddMax";
 
   const historical = useMemo(() => historicalRows(rows), [rows]);
   const scenario = useMemo(() => scenarioRows(rows), [rows]);

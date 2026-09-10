@@ -7,7 +7,7 @@ import { getMetric, type HddCddSelections, regionLabelFor } from "./options";
 export const HISTORICAL_COLOR = "#8a8f98";
 
 export function formatViewTitle(selections: HddCddSelections): string {
-  const metric = getMetric(selections.metric);
+  const metric = getMetric(selections.climateVariable);
   return `Annual ${metric.longLabel} Timeseries: ${regionLabelFor(selections)}`;
 }
 
@@ -20,14 +20,14 @@ export function formatDegreeDays(value: number): string {
 
 /**
  * File name used when the user downloads the chart as a PNG. Pattern:
- * `<metric>_<location-slug>_<YYYY-MM-DD>.png` (e.g. `cdd_sacramento-county_2026-09-08.png`).
+ * `<climateVariable>_<location-slug>_<YYYY-MM-DD>.png` (e.g. `cdd_sacramento-county_2026-09-08.png`).
  */
 export function formatChartExportFilename(
-  metric: string,
+  climateVariable: string,
   location: string,
   date: Date = new Date()
 ): string {
   const locationSlug = toKebabCase(location) || "unknown";
   const dateSlug = formatLocalIsoDate(date);
-  return `${metric}_${locationSlug}_${dateSlug}.png`;
+  return `${climateVariable}_${locationSlug}_${dateSlug}.png`;
 }

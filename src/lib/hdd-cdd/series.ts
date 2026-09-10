@@ -68,35 +68,36 @@ export function scenarioRows(rows: HddCddYearRow[]): HddCddYearRow[] {
   return rows.filter((r) => r.year > LAST_HISTORICAL_YEAR);
 }
 
-function hasFiniteValue(rows: HddCddYearRow[], metric: string): boolean {
-  const meanKey: keyof HddCddYearRow = metric === "hdd" ? "hddMean" : "cddMean";
+function hasFiniteValue(rows: HddCddYearRow[], climateVariable: string): boolean {
+  const meanKey: keyof HddCddYearRow = climateVariable === "hdd" ? "hddMean" : "cddMean";
   return rows.some((r) => Number.isFinite(r[meanKey]));
 }
 
-/** True when the historical segment has at least one finite value for `metric`. */
-export function hasHistoricalData(series: HddCddSeries | null, metric: string): boolean {
+/** True when the historical segment has at least one finite value for `climateVariable`. */
+export function hasHistoricalData(series: HddCddSeries | null, climateVariable: string): boolean {
   if (!series) return false;
-  return hasFiniteValue(historicalRows(series.rows), metric);
+  return hasFiniteValue(historicalRows(series.rows), climateVariable);
 }
 
-/** True when the SSP3-7.0 segment has at least one finite value for `metric`. */
-export function hasScenarioData(series: HddCddSeries | null, metric: string): boolean {
+/** True when the SSP3-7.0 segment has at least one finite value for `climateVariable`. */
+export function hasScenarioData(series: HddCddSeries | null, climateVariable: string): boolean {
   if (!series) return false;
-  return hasFiniteValue(scenarioRows(series.rows), metric);
+  return hasFiniteValue(scenarioRows(series.rows), climateVariable);
 }
 
 /**
  * True when `series` has enough data to plot anything: a non-null series and
- * at least one finite value (historical or SSP) for `metric`.
+ * at least one finite value (historical or SSP) for `climateVariable`.
  */
-export function hasRenderableSeries(series: HddCddSeries | null, metric: string): boolean {
+export function hasRenderableSeries(series: HddCddSeries | null, climateVariable: string): boolean {
   if (!series || series.rows.length === 0) return false;
-  return hasHistoricalData(series, metric) || hasScenarioData(series, metric);
+  return hasHistoricalData(series, climateVariable) || hasScenarioData(series, climateVariable);
 }
 
 /** Build STAC `/search` filters for the current selections. `boundary` alone
- *  resolves to exactly one item; metric and SSP selection don't affect the
- *  fetch since both metrics and the only available scenario live in one CSV. */
+ *  resolves to exactly one item; climate variable and SSP selection don't
+ *  affect the fetch since both metrics and the only available scenario live
+ *  in one CSV. */
 export function buildSearchFilters(selections: HddCddSelections): ItemSearchFilters {
   return {
     collectionFilter: `collection='${HDD_CDD_STAC_COLLECTION_ID}'`,

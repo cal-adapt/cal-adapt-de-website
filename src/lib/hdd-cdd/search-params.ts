@@ -1,26 +1,26 @@
 import { type ReadableSearchParams, readEnumParam } from "@/utils/search-params";
 
 import {
+  CLIMATE_VARIABLE_OPTIONS,
   DEFAULT_SELECTIONS,
   defaultLocationFor,
   type HddCddSelections,
   locationOptionsFor,
-  METRIC_OPTIONS,
   SPATIAL_AGGREGATION_OPTIONS,
 } from "./options";
 
 const PARAM_KEYS = {
-  metric: "metric",
+  climateVariable: "variable",
   spatialAggregation: "aggregation",
   location: "location",
 } as const satisfies Record<keyof HddCddSelections, string>;
 
 export function selectionsFromSearchParams(params: ReadableSearchParams): HddCddSelections {
-  const metric = readEnumParam(
+  const climateVariable = readEnumParam(
     params,
-    PARAM_KEYS.metric,
-    METRIC_OPTIONS.map((option) => option.value),
-    DEFAULT_SELECTIONS.metric
+    PARAM_KEYS.climateVariable,
+    CLIMATE_VARIABLE_OPTIONS.map((option) => option.value),
+    DEFAULT_SELECTIONS.climateVariable
   );
   const spatialAggregation = readEnumParam(
     params,
@@ -35,13 +35,13 @@ export function selectionsFromSearchParams(params: ReadableSearchParams): HddCdd
     defaultLocationFor(spatialAggregation)
   );
 
-  return { metric, spatialAggregation, location };
+  return { climateVariable, spatialAggregation, location };
 }
 
 export function selectionsToSearchParams(selections: HddCddSelections): URLSearchParams {
   const params = new URLSearchParams();
-  if (selections.metric !== DEFAULT_SELECTIONS.metric) {
-    params.set(PARAM_KEYS.metric, selections.metric);
+  if (selections.climateVariable !== DEFAULT_SELECTIONS.climateVariable) {
+    params.set(PARAM_KEYS.climateVariable, selections.climateVariable);
   }
   if (selections.spatialAggregation !== DEFAULT_SELECTIONS.spatialAggregation) {
     params.set(PARAM_KEYS.spatialAggregation, selections.spatialAggregation);

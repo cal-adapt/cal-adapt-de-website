@@ -26,7 +26,7 @@ export interface ChartViewProps {
   errorMessage: string | null;
   /** Re-trigger the data fetch; wired to the error-state "Retry" button. */
   onRetry: () => void;
-  metric: string;
+  climateVariable: string;
   locationLabel: string;
   scenarioLabel: string;
   scenarioColor: string;
@@ -41,7 +41,7 @@ export default function ChartView({
   status,
   errorMessage,
   onRetry,
-  metric,
+  climateVariable,
   locationLabel,
   scenarioLabel,
   scenarioColor,
@@ -55,8 +55,8 @@ export default function ChartView({
     }
   }, [status, errorMessage]);
 
-  const metricConfig = getMetric(metric);
-  const hasRenderableData = hasRenderableSeries(series, metric);
+  const metricConfig = getMetric(climateVariable);
+  const hasRenderableData = hasRenderableSeries(series, climateVariable);
 
   const showErrorAlert = status === "error";
   const showNoDataAlert = status === "success" && !hasRenderableData;
@@ -65,7 +65,7 @@ export default function ChartView({
   const showPartialWarning =
     status === "success" &&
     hasRenderableData &&
-    hasHistoricalData(series, metric) !== hasScenarioData(series, metric);
+    hasHistoricalData(series, climateVariable) !== hasScenarioData(series, climateVariable);
 
   return (
     <section className={styles.root} aria-label={title} aria-busy={isLoading}>
@@ -73,7 +73,7 @@ export default function ChartView({
         {hasRenderableData && series && (
           <LineChart
             rows={series.rows}
-            metric={metric}
+            climateVariable={climateVariable}
             locationLabel={locationLabel}
             title={title}
             scenarioLabel={scenarioLabel}
@@ -110,7 +110,7 @@ export default function ChartView({
 
       {showPartialWarning && (
         <Alert severity="warning" ariaLabel="Incomplete scenario coverage">
-          {hasScenarioData(series, metric)
+          {hasScenarioData(series, climateVariable)
             ? `Historical data is unavailable for ${locationLabel}; showing the ${scenarioLabel} projection only.`
             : `${scenarioLabel} projection data is unavailable for ${locationLabel}; showing historical data only.`}
         </Alert>
