@@ -10,7 +10,7 @@ import Icon from "@/components/common/ui/Icon";
 import PageLayout from "@/components/dashboard/PageLayout";
 import { useHddCddSeries } from "@/hooks/use-hdd-cdd-series";
 import { formatChartExportFilename, formatViewTitle } from "@/lib/hdd-cdd/format";
-import { type HddCddSelections, regionLabelFor, SSP370 } from "@/lib/hdd-cdd/options";
+import { getMetric, type HddCddSelections, regionLabelFor, SSP370 } from "@/lib/hdd-cdd/options";
 import { selectionsFromSearchParams, selectionsToSearchParams } from "@/lib/hdd-cdd/search-params";
 import { hasRenderableSeries } from "@/lib/hdd-cdd/series";
 import { exportSvgAsPng } from "@/utils/export-chart";
@@ -94,7 +94,7 @@ export default function HddCdd() {
             climateVariable={selections.climateVariable}
             locationLabel={locationLabel}
             scenarioLabel={SSP370.label}
-            scenarioColor={SSP370.color}
+            scenarioColor={getMetric(selections.climateVariable).color}
             chartContainerRef={chartContainerRef}
           />
         </div>

@@ -26,6 +26,8 @@ export interface MetricConfig {
   accessibleNoun: string;
   /** Full name + threshold, e.g. "Heating Degree Days (65°F)". Used in the chart title. */
   longLabel: string;
+  /** Chart line/envelope/legend color for this metric's scenario series. */
+  color: string;
 }
 
 const HDD_METRIC: MetricConfig = {
@@ -35,6 +37,7 @@ const HDD_METRIC: MetricConfig = {
   yAxisLabel: "Heating Degree Days (65°F)",
   accessibleNoun: "heating degree days",
   longLabel: "Heating Degree Days (65°F)",
+  color: "#c0392b",
 };
 
 const CDD_METRIC: MetricConfig = {
@@ -44,6 +47,7 @@ const CDD_METRIC: MetricConfig = {
   yAxisLabel: "Cooling Degree Days (65°F)",
   accessibleNoun: "cooling degree days",
   longLabel: "Cooling Degree Days (65°F)",
+  color: "#007dec",
 };
 
 /** Metric registry keyed by `climateVariable` value. Order drives dropdown order. */
@@ -70,7 +74,6 @@ export const CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = Object.values(M
 export interface ScenarioConfig {
   value: string;
   label: string;
-  color: string;
 }
 
 // Full UI scope includes SSP245/SSP370/SSP585; current data availability is
@@ -78,7 +81,6 @@ export interface ScenarioConfig {
 export const SSP370: ScenarioConfig = {
   value: "ssp370",
   label: "SSP3-7.0",
-  color: "#c0392b",
 };
 
 /**
