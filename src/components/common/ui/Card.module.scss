@@ -6,7 +6,9 @@
 .card {
   @include focus-ring;
   @include transition(all);
-  @include flex(column, center, center, spacer(5));
+  display: grid;
+  grid-template-rows: spacer(13) auto auto 1fr auto;
+  justify-items: center;
   height: 450px;
   width: 400px;
   background-size: cover;
@@ -15,7 +17,7 @@
   border-radius: rounded(4);
   background-color: rgba(0, 0, 0, 0.2);
   background-blend-mode: overlay;
-  padding: 0 spacer(7);
+  padding: 0 spacer(7) spacer(7);
   cursor: pointer;
   text-decoration: none;
 
@@ -36,13 +38,24 @@
     }
   }
 
+  // Row 1 (the fixed-height spacer(13) track above) pins the title to the
+  // same offset from the top on every card. Row 4 (1fr) absorbs whatever
+  // vertical space the description doesn't use, which pins the arrow to
+  // the same offset from the bottom on every card — both independent of
+  // how many lines the description wraps to.
   .title {
-    margin-top: spacer(13);
+    grid-row: 2;
     text-transform: uppercase;
   }
 
   .description {
+    grid-row: 3;
     @include type-item(body-2);
-    margin-bottom: spacer(5);
+    margin-top: spacer(5);
+  }
+
+  .arrow {
+    grid-row: 5;
+    margin-bottom: spacer(12);
   }
 }
