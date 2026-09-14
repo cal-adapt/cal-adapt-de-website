@@ -12,7 +12,7 @@ import { getStringWidth, Text } from "@visx/text";
 
 import { bisector } from "d3";
 
-import { resolveYAxisMax } from "@/lib/hdd-cdd/axis";
+import { resolveYAxisMax, resolveYAxisMin } from "@/lib/hdd-cdd/axis";
 import { formatDegreeDays, HISTORICAL_COLOR } from "@/lib/hdd-cdd/format";
 import { getMetric } from "@/lib/hdd-cdd/options";
 import {
@@ -235,19 +235,19 @@ export default function LineChart({
   const allValues = useMemo(() => {
     const values: number[] = [];
     for (const r of rows) {
-      values.push(r[maxKey], r[meanKey]);
+      values.push(r[minKey], r[meanKey], r[maxKey]);
     }
     if (historicalMeanBaseline !== null) {
       values.push(historicalMeanBaseline);
     }
     return values;
-  }, [rows, maxKey, meanKey, historicalMeanBaseline]);
+  }, [rows, minKey, meanKey, maxKey, historicalMeanBaseline]);
 
   const { xScale, yScale } = useMemo(() => {
     return {
       xScale: scaleLinear<number>({ domain: [minYear, maxYear], range: [0, plotWidth] }),
       yScale: scaleLinear<number>({
-        domain: [0, resolveYAxisMax(allValues)],
+        domain: [resolveYAxisMin(allValues), resolveYAxisMax(allValues)],
         range: [plotHeight, 0],
       }),
     };
