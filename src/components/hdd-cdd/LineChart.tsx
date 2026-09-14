@@ -125,7 +125,14 @@ export default function LineChart({
   const maxKey = climateVariable === "hdd" ? "hddMax" : "cddMax";
 
   const historical = useMemo(() => historicalRows(rows), [rows]);
-  const scenario = useMemo(() => scenarioRows(rows), [rows]);
+  // Prepend the last historical row so the scenario band/line starts at the
+  // same point where the historical one ends, instead of a visual break
+  // between LAST_HISTORICAL_YEAR and LAST_HISTORICAL_YEAR + 1.
+  const scenario = useMemo(() => {
+    const scenarioOnly = scenarioRows(rows);
+    const lastHistorical = historical[historical.length - 1];
+    return lastHistorical ? [lastHistorical, ...scenarioOnly] : scenarioOnly;
+  }, [rows, historical]);
 
   const { minYear, maxYear } = useMemo(() => {
     if (rows.length === 0) return { minYear: 1981, maxYear: 2099 };
