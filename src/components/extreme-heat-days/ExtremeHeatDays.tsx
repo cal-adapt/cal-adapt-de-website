@@ -83,7 +83,7 @@ const CHART_REFERENCES = [
 ];
 
 // Manually bump date when the tool is meaningfully updated
-const LAST_UPDATED_ISO = "2026-08-13";
+const LAST_UPDATED_ISO = "2026-09-01";
 
 const INTRO_COPY_BY_VARIABLE: Record<string, ReactNode> = {
   "extreme-heat-days": (
