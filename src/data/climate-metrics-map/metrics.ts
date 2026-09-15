@@ -33,15 +33,6 @@ export type Metric = {
 
 const EXTREME_HEAT_TOOL_BASE = "s3://cadcat/wrf/extreme-heat-tool/multimodel_gridded";
 
-// eh_days/warm_nights ship as multi-model quantiles (median/q25/q75) rather
-// than mean/min/max, so the map layer and popup use median as the central
-// estimate and the 25th-75th percentile spread as the range.
-const ENSEMBLE_QUANTILE_LABELS: StatLabels = {
-  min: "25th percentile*",
-  mean: "Median*",
-  max: "75th percentile*",
-};
-
 export const metrics: Metric[] = [
   {
     id: 0,
@@ -49,8 +40,11 @@ export const metrics: Metric[] = [
     slug: "extreme-heat",
     abs: {
       mean: `${EXTREME_HEAT_TOOL_BASE}/eh_days/mm4median/ssp370/gwl/t2max_ge99pctl/d03`,
-      min_path: `${EXTREME_HEAT_TOOL_BASE}/eh_days/mm4q25/ssp370/gwl/t2max_ge99pctl/d03`,
-      max_path: `${EXTREME_HEAT_TOOL_BASE}/eh_days/mm4q75/ssp370/gwl/t2max_ge99pctl/d03`,
+      // mm4q25/mm4q75 are missing the Lambert_Conformal CRS coordinate upstream
+      // (cal-adapt-data-gen bug, quantile() drops it) so point queries 404 against
+      // them; use true min/max here until that's fixed and the data regenerated.
+      min_path: `${EXTREME_HEAT_TOOL_BASE}/eh_days/mm4min/ssp370/gwl/t2max_ge99pctl/d03`,
+      max_path: `${EXTREME_HEAT_TOOL_BASE}/eh_days/mm4max/ssp370/gwl/t2max_ge99pctl/d03`,
       description:
         "Median number of days per year with maximum temperature above the local 99th-percentile threshold (# of days)",
       short_desc:
@@ -61,8 +55,8 @@ export const metrics: Metric[] = [
     },
     del: {
       mean: `${EXTREME_HEAT_TOOL_BASE}/eh_days/mm4median/ssp370/gwl_delta/t2max_ge99pctl/d03`,
-      min_path: `${EXTREME_HEAT_TOOL_BASE}/eh_days/mm4q25/ssp370/gwl_delta/t2max_ge99pctl/d03`,
-      max_path: `${EXTREME_HEAT_TOOL_BASE}/eh_days/mm4q75/ssp370/gwl_delta/t2max_ge99pctl/d03`,
+      min_path: `${EXTREME_HEAT_TOOL_BASE}/eh_days/mm4min/ssp370/gwl_delta/t2max_ge99pctl/d03`,
+      max_path: `${EXTREME_HEAT_TOOL_BASE}/eh_days/mm4max/ssp370/gwl_delta/t2max_ge99pctl/d03`,
       description:
         "Median change in number of extreme heat days relative to a 0.8°C world (# of days)",
       short_desc:
@@ -71,7 +65,6 @@ export const metrics: Metric[] = [
       rescale: "0,70",
       colormap: "Reds",
     },
-    statLabels: ENSEMBLE_QUANTILE_LABELS,
   },
   {
     id: 1,
@@ -132,8 +125,11 @@ export const metrics: Metric[] = [
     slug: "warm-nights",
     abs: {
       mean: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4median/ssp370/gwl/t2min_ge99pctl/d03`,
-      min_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4q25/ssp370/gwl/t2min_ge99pctl/d03`,
-      max_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4q75/ssp370/gwl/t2min_ge99pctl/d03`,
+      // mm4q25/mm4q75 are missing the Lambert_Conformal CRS coordinate upstream
+      // (cal-adapt-data-gen bug, quantile() drops it) so point queries 404 against
+      // them; use true min/max here until that's fixed and the data regenerated.
+      min_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4min/ssp370/gwl/t2min_ge99pctl/d03`,
+      max_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4max/ssp370/gwl/t2min_ge99pctl/d03`,
       description:
         "Median number of nights per year with minimum temperature above the local 99th-percentile threshold (# of nights)",
       short_desc:
@@ -144,8 +140,8 @@ export const metrics: Metric[] = [
     },
     del: {
       mean: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4median/ssp370/gwl_delta/t2min_ge99pctl/d03`,
-      min_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4q25/ssp370/gwl_delta/t2min_ge99pctl/d03`,
-      max_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4q75/ssp370/gwl_delta/t2min_ge99pctl/d03`,
+      min_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4min/ssp370/gwl_delta/t2min_ge99pctl/d03`,
+      max_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4max/ssp370/gwl_delta/t2min_ge99pctl/d03`,
       description: "Median change in number of warm nights relative to a 0.8°C world (# of nights)",
       short_desc:
         "Change in how many nights during the year are expected to stay very warm compared to the past (# of nights)",
@@ -153,6 +149,5 @@ export const metrics: Metric[] = [
       rescale: "0,75",
       colormap: "plasma",
     },
-    statLabels: ENSEMBLE_QUANTILE_LABELS,
   },
 ];
