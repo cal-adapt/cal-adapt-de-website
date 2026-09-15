@@ -9,6 +9,7 @@ import Specs from "@/components/common/content/Specs";
 import Stat from "@/components/common/content/Stat";
 import StatGrid from "@/components/common/content/StatGrid";
 import Step from "@/components/common/content/Step";
+import CitationBox from "@/components/common/ui/CitationBox";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
@@ -21,6 +22,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     Step,
     Callout,
+    CitationBox,
     Stat,
     StatGrid,
     Specs,
