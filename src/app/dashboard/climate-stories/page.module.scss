@@ -1,0 +1,18 @@
+@use "@/styles/abstracts" as *;
+
+.intro {
+  @include type-item(body);
+  margin: 0;
+  max-width: max-w(content);
+  color: color(grey-5);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: spacer(5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+}

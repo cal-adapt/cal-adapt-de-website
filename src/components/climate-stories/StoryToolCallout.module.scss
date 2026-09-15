@@ -1,0 +1,31 @@
+@use "@/styles/abstracts" as *;
+
+.callout {
+  @include flex(column, flex-start, stretch, spacer(3));
+  scroll-margin-top: spacer(6);
+  padding: spacer(5);
+  border: 1px solid color(black);
+}
+
+.kicker {
+  @include type-item(label);
+  margin: 0;
+  color: color(grey-4);
+}
+
+.title {
+  @include type-item(heading-6);
+  margin: 0;
+  color: color(black);
+}
+
+.body {
+  @include type-item(body);
+  margin: 0;
+  color: color(black);
+}
+
+.actions {
+  @include flex(row, flex-start, center, spacer(3));
+  flex-wrap: wrap;
+}
