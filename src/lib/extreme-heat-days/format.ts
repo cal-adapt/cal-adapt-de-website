@@ -4,6 +4,7 @@ import { toKebabCase } from "@/utils/string";
 import {
   type ExtremeHeatDaysSelections,
   getHeatMetric,
+  HEAT_METRICS,
   isAllowedThreshold,
   parseThresholdNumber,
   regionLabelFor,
@@ -53,7 +54,10 @@ export function formatDaysPerYear(value: number): string {
 }
 
 export function formatThresholdLabel(threshold: string): string {
-  if (!isAllowedThreshold(threshold)) return threshold;
+  const known = Object.values(HEAT_METRICS).some((metric) =>
+    isAllowedThreshold(threshold, metric.value)
+  );
+  if (!known) return threshold;
   const n = parseThresholdNumber(threshold);
   if (n == null) return threshold;
   return threshold.endsWith("pctl") ? `${n}th percentile` : `${n}°F`;

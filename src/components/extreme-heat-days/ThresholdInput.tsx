@@ -15,6 +15,7 @@ import styles from "./ThresholdInput.module.scss";
 export interface ThresholdInputProps {
   id?: string;
   kind: ThresholdKind;
+  climateVariable: string;
   value: string;
   onChange: (threshold: string) => void;
   disabled?: boolean;
@@ -31,6 +32,7 @@ function clamp(value: number, min: number, max: number): number {
 export default function ThresholdInput({
   id,
   kind,
+  climateVariable,
   value,
   onChange,
   disabled = false,
@@ -38,7 +40,7 @@ export default function ThresholdInput({
   "aria-invalid": ariaInvalid,
   "aria-required": ariaRequired,
 }: ThresholdInputProps) {
-  const { min, max } = thresholdRangeFor(kind);
+  const { min, max } = thresholdRangeFor(kind, climateVariable);
   const numeric = parseThresholdNumber(value) ?? min;
   const [draft, setDraft] = useState(numeric);
 

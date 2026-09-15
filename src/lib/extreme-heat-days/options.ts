@@ -35,6 +35,9 @@ export interface HeatMetricConfig {
   tempStat: "t2max" | "t2min";
   /** Default absolute threshold token for this metric, e.g. "100F". */
   defaultThreshold: string;
+  /** Inclusive absolute (°F) slider bounds for this metric. */
+  absoluteMinF: number;
+  absoluteMaxF: number;
   /** Chart y-axis label. */
   yAxisLabel: string;
   /** Metric label used inside the chart title, e.g. "Warm Nights". */
@@ -55,6 +58,8 @@ const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   label: "Extreme Heat Days",
   tempStat: "t2max",
   defaultThreshold: "100F",
+  absoluteMinF: 80,
+  absoluteMaxF: 135,
   yAxisLabel: "Number of Extreme Heat Days per Year",
   titleLabel: "Extreme Heat",
   accessibleNoun: "extreme heat days",
@@ -69,6 +74,8 @@ const WARM_NIGHTS_METRIC: HeatMetricConfig = {
   label: "Warm Nights",
   tempStat: "t2min",
   defaultThreshold: "70F",
+  absoluteMinF: 65,
+  absoluteMaxF: 135,
   yAxisLabel: "Number of Warm Nights per Year",
   titleLabel: "Warm Nights",
   accessibleNoun: "warm nights",
@@ -97,9 +104,7 @@ export const THRESHOLD_KIND_OPTIONS: readonly SelectOption[] = [
   { value: "relative", label: "Relative" },
 ];
 
-export const ABSOLUTE_THRESHOLD_MIN_F = 50;
-export const ABSOLUTE_THRESHOLD_MAX_F = 135;
-export const RELATIVE_THRESHOLD_MIN_PCTL = 75;
+export const RELATIVE_THRESHOLD_MIN_PCTL = 90;
 export const RELATIVE_THRESHOLD_MAX_PCTL = 99;
 
 const DEFAULT_RELATIVE_THRESHOLD = "98pctl";
@@ -108,10 +113,15 @@ export function thresholdKindFor(threshold: string): ThresholdKind {
   return threshold.endsWith("pctl") ? "relative" : "absolute";
 }
 
-export function thresholdRangeFor(kind: ThresholdKind): { min: number; max: number } {
+export function thresholdRangeFor(
+  kind: ThresholdKind,
+  climateVariable: string
+): { min: number; max: number } {
   switch (kind) {
-    case "absolute":
-      return { min: ABSOLUTE_THRESHOLD_MIN_F, max: ABSOLUTE_THRESHOLD_MAX_F };
+    case "absolute": {
+      const metric = getHeatMetric(climateVariable);
+      return { min: metric.absoluteMinF, max: metric.absoluteMaxF };
+    }
     case "relative":
       return { min: RELATIVE_THRESHOLD_MIN_PCTL, max: RELATIVE_THRESHOLD_MAX_PCTL };
     default: {
@@ -141,7 +151,7 @@ export function thresholdTokenFor(kind: ThresholdKind, value: number): string {
   }
 }
 
-export function isAllowedThreshold(threshold: string): boolean {
+export function isAllowedThreshold(threshold: string, climateVariable: string): boolean {
   const kind: ThresholdKind | null = threshold.endsWith("pctl")
     ? "relative"
     : threshold.endsWith("F")
@@ -150,7 +160,7 @@ export function isAllowedThreshold(threshold: string): boolean {
   if (kind == null) return false;
   const n = parseThresholdNumber(threshold);
   if (n == null) return false;
-  const { min, max } = thresholdRangeFor(kind);
+  const { min, max } = thresholdRangeFor(kind, climateVariable);
   if (n < min || n > max) return false;
   return thresholdTokenFor(kind, n) === threshold;
 }

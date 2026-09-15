@@ -49,9 +49,9 @@ describe("thresholdNameFor", () => {
       thresholdNameFor({
         ...DEFAULT_SELECTIONS,
         climateVariable: "warm-nights",
-        threshold: "75pctl",
+        threshold: "90pctl",
       })
-    ).toBe("t2min_ge75pctl");
+    ).toBe("t2min_ge90pctl");
   });
 });
 

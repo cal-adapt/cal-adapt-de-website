@@ -90,9 +90,10 @@ describe("formatThresholdLabel", () => {
   it("maps known threshold values to their display label across metrics", () => {
     expect(formatThresholdLabel("100F")).toBe("100°F");
     expect(formatThresholdLabel("105F")).toBe("105°F");
-    expect(formatThresholdLabel("80F")).toBe("80°F");
+    expect(formatThresholdLabel("70F")).toBe("70°F");
+    expect(formatThresholdLabel("65F")).toBe("65°F");
     expect(formatThresholdLabel("98pctl")).toBe("98th percentile");
-    expect(formatThresholdLabel("75pctl")).toBe("75th percentile");
+    expect(formatThresholdLabel("90pctl")).toBe("90th percentile");
   });
 
   it("passes through an unknown threshold unchanged", () => {
