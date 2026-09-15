@@ -17,6 +17,18 @@ import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 
 import styles from "./MapPopup.module.scss";
 
+type StatLabels = {
+  min: string;
+  mean: string;
+  max: string;
+};
+
+const DEFAULT_STAT_LABELS: StatLabels = {
+  min: "Min*",
+  mean: "Mean*",
+  max: "Max*",
+};
+
 type MapPopupProps = {
   longitude: number;
   latitude: number;
@@ -24,6 +36,7 @@ type MapPopupProps = {
   min: number | null;
   max: number | null;
   title: string;
+  statLabels?: StatLabels;
   isPopupLoading: boolean;
   onClose: () => void;
   isDataValid: boolean;
@@ -36,6 +49,7 @@ export default function MapPopup({
   min,
   max,
   title,
+  statLabels = DEFAULT_STAT_LABELS,
   isPopupLoading,
   onClose,
   isDataValid,
@@ -78,19 +92,19 @@ export default function MapPopup({
               {min != null && (
                 <div className={styles.value}>
                   <Typography variant="h5">{formattedMin}</Typography>
-                  <Typography variant="body2">Min*</Typography>
+                  <Typography variant="body2">{statLabels.min}</Typography>
                 </div>
               )}
               {min != null && (
                 <div className={styles.value}>
                   <Typography variant="h4">{formattedValue}</Typography>
-                  <Typography variant="body2">Mean*</Typography>
+                  <Typography variant="body2">{statLabels.mean}</Typography>
                 </div>
               )}
               {max != null && (
                 <div className={styles.value}>
                   <Typography variant="h5">{formattedMax}</Typography>
-                  <Typography variant="body2">Max*</Typography>
+                  <Typography variant="body2">{statLabels.max}</Typography>
                 </div>
               )}
             </div>
