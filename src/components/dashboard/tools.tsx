@@ -2,6 +2,7 @@ import { type ReactNode } from "react";
 
 import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import ThermostatOutlinedIcon from "@mui/icons-material/ThermostatOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
 
@@ -62,4 +63,17 @@ export const dashboardTools: readonly DashboardTool[] = navGroups.tools.links.ma
 export function getDashboardToolByNavId(id: string | null): DashboardTool | undefined {
   if (id == null) return undefined;
   return dashboardTools.find((t) => t.navLink.id === id);
+}
+
+export function getDashboardSidebarItems(): { link: NavLink; icon: ReactNode }[] {
+  return [
+    ...navGroups.stories.links.map((link) => ({
+      link,
+      icon: <MenuBookOutlinedIcon />,
+    })),
+    ...dashboardTools.map((tool) => ({
+      link: tool.navLink,
+      icon: tool.sidebarIcon,
+    })),
+  ];
 }
