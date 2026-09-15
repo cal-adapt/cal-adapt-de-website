@@ -27,8 +27,68 @@ const WIDTH = 640;
 const ROW_HEIGHT = 90;
 const MARGIN = { top: 24, left: 90, right: 24 };
 const TRACK_WIDTH = WIDTH - MARGIN.left - MARGIN.right;
-const HEIGHT = MARGIN.top + MODELS.length * ROW_HEIGHT + 120;
 const BAND_HEIGHT = 22;
+// vertical drop from the window's edges to where the bracket bends inward,
+// before angling down to the merge point
+const BRACKET_BEND_OFFSET = 26;
+const MERGE_LINE_LENGTH = 64;
+// gaps below the last model row for the merge lines, the synthetic time
+// index axis, and the calendar-year axis below that, in order
+const SYNTHETIC_AXIS_GAP = 24;
+const CALENDAR_AXIS_GAP = 96;
+// extra room below the model rows for the merge lines and the two axes
+const HEIGHT = MARGIN.top + MODELS.length * ROW_HEIGHT + 180;
+
+type AxisTick = { x: number; label: string };
+
+/** A horizontal tick axis with a left-side title — used for both the
+ * synthetic time index and calendar year axes below the model rows. */
+function TimeAxis({
+  offsetY,
+  title,
+  ticks,
+  activeIndex,
+}: {
+  offsetY: number;
+  title: string[];
+  ticks: AxisTick[];
+  activeIndex?: number;
+}) {
+  return (
+    <g transform={`translate(0, ${offsetY})`} aria-hidden="true">
+      <text className={styles.rowLabel} x={0} y={45}>
+        {title.map((line, i) => (
+          <tspan key={line} x={0} dy={i === 0 ? 0 : "1.1em"}>
+            {line}
+          </tspan>
+        ))}
+      </text>
+      <line
+        className={styles.track}
+        x1={MARGIN.left}
+        x2={MARGIN.left + TRACK_WIDTH}
+        y1={40}
+        y2={40}
+      />
+      {ticks.map((tick, i) => {
+        const isActive = i === activeIndex;
+        return (
+          <g key={tick.label}>
+            <circle
+              className={isActive ? styles.tickTarget : styles.tick}
+              cx={tick.x}
+              cy={40}
+              r={isActive ? 5 : 3}
+            />
+            <text className={styles.yearLabel} x={tick.x} y={62} textAnchor="middle">
+              {tick.label}
+            </text>
+          </g>
+        );
+      })}
+    </g>
+  );
+}
 
 /** Two models reaching the same warming level in different years, aligned to
  * one synthetic time index — see "Time Frame" in the guidance text. */
@@ -98,17 +158,6 @@ export default function WarmingLevelTimeIndex() {
                     >
                       {level.toFixed(2)}°
                     </text>
-                    {rowIndex === MODELS.length - 1 && (
-                      <text
-                        className={styles.yearLabel}
-                        x={x}
-                        y={y + 26}
-                        textAnchor="middle"
-                        aria-hidden="true"
-                      >
-                        {model.years[i]}
-                      </text>
-                    )}
                   </g>
                 );
               })}
@@ -117,7 +166,7 @@ export default function WarmingLevelTimeIndex() {
                   carrying the highlighted range down to the merge point. */}
               <path
                 className={styles.bracket}
-                d={`M${bandStartX},${y + BAND_HEIGHT / 2} L${bandStartX},${y + 26} L${targetX},${bracketBottom} L${bandEndX},${y + 26} L${bandEndX},${y + BAND_HEIGHT / 2}`}
+                d={`M${bandStartX},${y + BAND_HEIGHT / 2} L${bandStartX},${y + BRACKET_BEND_OFFSET} L${targetX},${bracketBottom} L${bandEndX},${y + BRACKET_BEND_OFFSET} L${bandEndX},${y + BAND_HEIGHT / 2}`}
                 fill="none"
                 aria-hidden="true"
               />
@@ -135,51 +184,32 @@ export default function WarmingLevelTimeIndex() {
               x1={targetX}
               x2={zeroX}
               y1={bracketBottom}
-              y2={bracketBottom + 64}
+              y2={bracketBottom + MERGE_LINE_LENGTH}
               aria-hidden="true"
             />
           );
         })}
 
-        <g transform={`translate(0, ${bracketBottom + 24})`}>
-          <line
-            className={styles.track}
-            x1={MARGIN.left}
-            x2={MARGIN.left + TRACK_WIDTH}
-            y1={40}
-            y2={40}
-            aria-hidden="true"
-          />
-          {[-15, -10, -5, 0, 5, 10, 14].map((index) => {
-            const x = MARGIN.left + ((index + 15) / 29) * TRACK_WIDTH;
-            return (
-              <g key={index}>
-                <circle
-                  className={index === 0 ? styles.tickTarget : styles.tick}
-                  cx={x}
-                  cy={40}
-                  r={index === 0 ? 5 : 3}
-                  aria-hidden="true"
-                />
-                <text
-                  className={styles.yearLabel}
-                  x={x}
-                  y={62}
-                  textAnchor="middle"
-                  aria-hidden="true"
-                >
-                  {index > 0 ? `+${index}` : index}
-                </text>
-              </g>
-            );
-          })}
-          <text className={styles.rowLabel} x={0} y={45} aria-hidden="true">
-            Synthetic
-            <tspan x={0} dy="1.1em">
-              time index
-            </tspan>
-          </text>
-        </g>
+        <TimeAxis
+          offsetY={bracketBottom + SYNTHETIC_AXIS_GAP}
+          title={["Synthetic", "time index"]}
+          activeIndex={3}
+          ticks={[-15, -10, -5, 0, 5, 10, 14].map((index) => ({
+            x: MARGIN.left + ((index + 15) / 29) * TRACK_WIDTH,
+            label: index > 0 ? `+${index}` : String(index),
+          }))}
+        />
+
+        {/* Calendar years are identical across models — both MODELS entries
+            share the same `years` array, so either can drive this axis. */}
+        <TimeAxis
+          offsetY={bracketBottom + CALENDAR_AXIS_GAP}
+          title={["Calendar year"]}
+          ticks={MODELS[0].years.map((year, i) => ({
+            x: MARGIN.left + i * (TRACK_WIDTH / (MODELS[0].levels.length - 1)),
+            label: String(year),
+          }))}
+        />
       </svg>
     </figure>
   );
