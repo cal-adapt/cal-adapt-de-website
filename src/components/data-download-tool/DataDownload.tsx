@@ -8,6 +8,7 @@ import Alert from "@/components/common/ui/Alert";
 import Button from "@/components/common/ui/Button";
 import Link from "@/components/common/ui/Link";
 import PageLayout from "@/components/dashboard/PageLayout";
+import { navLinks } from "@/config/navigation";
 import { useStacDownloadSearch, type UseStacDownloadSearchResult } from "@/hooks";
 import { analytics } from "@/lib/analytics";
 import {
@@ -145,7 +146,7 @@ export default function DataDownload({ workspace }: DataDownloadProps) {
   const stepHeading = workspace.datasetTitle.trim() || "Data download";
 
   return (
-    <PageLayout title="Data Download Tool">
+    <PageLayout title="Data Download Tool" citationTitle={navLinks.dataDownload.label}>
       <div className={styles.pageTop}>
         <p className={styles.toolIntro}>
           Use this tool to download a subset of the Cal-Adapt data catalog. To browse the full

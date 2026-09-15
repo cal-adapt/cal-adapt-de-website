@@ -28,6 +28,7 @@ import PageLayout from "@/components/dashboard/PageLayout";
 import SidePanel from "@/components/dashboard/SidePanel";
 import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
 import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
+import { navLinks } from "@/config/navigation";
 import { useInstallationParams } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
 import { useRes } from "@/context/ResContext";
@@ -348,7 +349,7 @@ export default function RenewablesViz() {
   }, []);
 
   return (
-    <PageLayout title="Renewables Visualizer">
+    <PageLayout title="Renewables Visualizer" citationTitle={navLinks.renewablesVisualizer.label}>
       <Box className={styles.intro} style={{ maxWidth: "860px" }}>
         <Typography variant="body1" aria-label="Description of the tool">
           This tool shows when there are likely to be significant reductions in solar or wind energy

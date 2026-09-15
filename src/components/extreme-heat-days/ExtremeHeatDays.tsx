@@ -174,6 +174,7 @@ export default function ExtremeHeatDays() {
           </Badge>
         </>
       }
+      citationTitle={navLinks.extremeHeatDays.label}
     >
       <Alert severity="info" className={styles.betaAlert} ariaLabel="Beta notice">
         Suggestions for improvements, questions, and general comments are all welcome. Fill out the
