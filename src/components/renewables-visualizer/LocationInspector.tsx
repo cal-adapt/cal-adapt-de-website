@@ -11,11 +11,12 @@
 
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -23,9 +24,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
 
-import { ModeDefinition, RenewableMode, formatDatasetValue } from "@/data/renewables-visualizer/dataset-adapter";
+import {
+  GWL_LEVELS,
+  ModeDefinition,
+  MONTH_LABELS,
+  RenewableMode,
+} from "@/data/renewables-visualizer/dataset-adapter";
+
+import { BASELINE_GWL_INDEX, fetchPointResponse, monthlySeriesForGwl } from "./point-data";
 
 import styles from "./LocationInspector.module.scss";
 
@@ -39,6 +46,8 @@ interface LocationInspectorProps {
   gwlIndex: number;
 }
 
+type MonthlyRow = { month: string; baseline: number; future: number };
+
 export default function LocationInspector({
   location,
   locationName,
@@ -49,21 +58,49 @@ export default function LocationInspector({
   const [lng, lat] = location;
   const dataset = modeDefinition.defaultDataset;
 
-  // Mock data for demonstration
-  const monthlyData = [
-    { month: "Jan", baseline: 25, future: 22 },
-    { month: "Feb", baseline: 28, future: 25 },
-    { month: "Mar", baseline: 35, future: 32 },
-    { month: "Apr", baseline: 42, future: 40 },
-    { month: "May", baseline: 48, future: 45 },
-    { month: "Jun", baseline: 52, future: 48 },
-    { month: "Jul", baseline: 55, future: 50 },
-    { month: "Aug", baseline: 54, future: 49 },
-    { month: "Sep", baseline: 50, future: 45 },
-    { month: "Oct", baseline: 42, future: 38 },
-    { month: "Nov", baseline: 32, future: 29 },
-    { month: "Dec", baseline: 24, future: 21 },
-  ];
+  const [monthlyData, setMonthlyData] = useState<MonthlyRow[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPointData() {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetchPointResponse(dataset, lng, lat);
+
+        if (cancelled) return;
+
+        const baselineSeries = monthlySeriesForGwl(response, BASELINE_GWL_INDEX);
+        const futureSeries = monthlySeriesForGwl(response, gwlIndex);
+
+        setMonthlyData(
+          MONTH_LABELS.map((month, i) => ({
+            month,
+            baseline: Math.round(baselineSeries[i] * 10) / 10,
+            future: Math.round(futureSeries[i] * 10) / 10,
+          }))
+        );
+      } catch (err) {
+        if (!cancelled) {
+          console.error("Failed to load point data:", err);
+          setError("Unable to load data for this location.");
+          setMonthlyData([]);
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    }
+
+    loadPointData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [lng, lat, dataset, gwlIndex]);
 
   const handleExportCSV = () => {
     const headers = ["Month", "Baseline", "Future"];
@@ -113,36 +150,52 @@ export default function LocationInspector({
         <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
           Monthly Data ({dataset.units})
         </Typography>
-        <TableContainer sx={{ maxHeight: 300 }}>
-          <Table size="small">
-            <TableHead>
-              <TableRow sx={{ bgcolor: "action.hover" }}>
-                <TableCell>Month</TableCell>
-                <TableCell align="right">Baseline</TableCell>
-                <TableCell align="right">Future</TableCell>
-                <TableCell align="right">Change</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {monthlyData.map((row) => (
-                <TableRow key={row.month}>
-                  <TableCell variant="head">{row.month}</TableCell>
-                  <TableCell align="right">{row.baseline}</TableCell>
-                  <TableCell align="right">{row.future}</TableCell>
-                  <TableCell
-                    align="right"
-                    sx={{
-                      color: row.future < row.baseline ? "error.main" : "success.main",
-                    }}
-                  >
-                    {row.future - row.baseline > 0 ? "+" : ""}
-                    {row.future - row.baseline}
-                  </TableCell>
+        <Typography variant="caption" color="textSecondary" sx={{ display: "block", mb: 1 }}>
+          Baseline ({GWL_LEVELS[BASELINE_GWL_INDEX]}°C) vs. selected GWL (
+          {GWL_LEVELS[gwlIndex] ?? GWL_LEVELS[BASELINE_GWL_INDEX]}°C), averaged across years
+        </Typography>
+        {isLoading && (
+          <Typography variant="body2" color="textSecondary">
+            Loading data…
+          </Typography>
+        )}
+        {error && !isLoading && (
+          <Typography variant="body2" color="error">
+            {error}
+          </Typography>
+        )}
+        {!isLoading && !error && (
+          <TableContainer sx={{ maxHeight: 300 }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ bgcolor: "action.hover" }}>
+                  <TableCell>Month</TableCell>
+                  <TableCell align="right">Baseline</TableCell>
+                  <TableCell align="right">Future</TableCell>
+                  <TableCell align="right">Change</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {monthlyData.map((row) => (
+                  <TableRow key={row.month}>
+                    <TableCell variant="head">{row.month}</TableCell>
+                    <TableCell align="right">{row.baseline}</TableCell>
+                    <TableCell align="right">{row.future}</TableCell>
+                    <TableCell
+                      align="right"
+                      sx={{
+                        color: row.future < row.baseline ? "error.main" : "success.main",
+                      }}
+                    >
+                      {row.future - row.baseline > 0 ? "+" : ""}
+                      {Math.round((row.future - row.baseline) * 10) / 10}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Box>
 
       <Divider />

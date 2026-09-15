@@ -4,7 +4,7 @@
  * Provides a typed abstraction over S3/Zarr renewable energy datasets.
  * Maps user-facing selections (mode, resource, installation, scenario) to:
  * - S3/Zarr asset URLs
- * - Catile variable names  
+ * - Catile variable names
  * - Tile rescale ranges
  * - Units and labels
  * - Metadata
@@ -18,6 +18,24 @@ export type ResourceType = "solar" | "wind";
 export type Installation = "utility" | "distributed" | "onshore" | "offshore";
 export type Scenario = "historical" | "ssp370";
 export type Grid = "d02" | "d03";
+
+/** GWL values (°C) present in the `gwl` dimension of these datasets, in index order. */
+export const GWL_LEVELS = [0.8, 1.5, 2.0, 2.5, 3.0] as const;
+
+export const MONTH_LABELS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+] as const;
 
 export interface RenewableDatasetConfig {
   id: string;

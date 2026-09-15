@@ -1,0 +1,8 @@
+// Pushes Mapbox's top-right control corner (used by the search geocoder)
+// down below our custom "clear selection / compare toggle" toolbar row,
+// which is rendered as a sibling overlay at the very top of the map.
+.mapRoot {
+  :global(.mapboxgl-ctrl-top-right) {
+    margin-top: 56px;
+  }
+}

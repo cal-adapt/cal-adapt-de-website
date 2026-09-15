@@ -40,17 +40,7 @@ export default function GeocoderControl(props: GeocoderControlProps) {
       ctrl.on("loading", noop);
       ctrl.on("results", noop);
       ctrl.on("result", (evt) => {
-        // props.onResult(evt);
-
-        const { result } = evt;
-        const location =
-          result &&
-          (result.center || (result.geometry?.type === "Point" && result.geometry.coordinates));
-        // if (location && props.marker) {
-        //   setMarker(<Marker {...props.marker} longitude={location[0]} latitude={location[1]} />);
-        // } else {
-        //   setMarker(null);
-        // }
+        props.onResult?.(evt);
       });
       ctrl.on("error", noop);
       return ctrl;

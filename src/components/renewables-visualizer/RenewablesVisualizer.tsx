@@ -20,13 +20,16 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 
 import PageLayout from "@/components/dashboard/PageLayout";
-import { RENEWABLE_MODES, RenewableMode, getMode } from "@/data/renewables-visualizer/dataset-adapter";
+import {
+  getMode,
+  RENEWABLE_MODES,
+  RenewableMode,
+} from "@/data/renewables-visualizer/dataset-adapter";
 
 import ModeSelector from "./ModeSelector";
 import RenewablesMapContainer from "./RenewablesMapContainer";
 
 import styles from "./RenewablesVisualizer.module.scss";
-
 
 type Coordinates = [number, number]; // [lng, lat]
 
@@ -49,6 +52,13 @@ export default function RenewablesVisualizer() {
   // Inspector panel visibility (auto-open on desktop, user-controlled on mobile)
   const [inspectorOpen, setInspectorOpen] = useState(false);
 
+  // Compare mode: pick two locations and see how they differ from each other
+  const [compareMode, setCompareMode] = useState(false);
+  const [locationA, setLocationA] = useState<Coordinates | null>(null);
+  const [locationNameA, setLocationNameA] = useState<string | null>(null);
+  const [locationB, setLocationB] = useState<Coordinates | null>(null);
+  const [locationNameB, setLocationNameB] = useState<string | null>(null);
+
   const handleModeChange = (newMode: RenewableMode) => {
     setSelectedMode(newMode);
     // Clear selection when switching modes
@@ -65,6 +75,51 @@ export default function RenewablesVisualizer() {
 
   const handleCloseInspector = () => {
     setInspectorOpen(false);
+  };
+
+  const handleClearSelection = () => {
+    setSelectedLocation(null);
+    setSelectedLocationName(null);
+    setInspectorOpen(false);
+  };
+
+  const handleClearCompare = () => {
+    setLocationA(null);
+    setLocationNameA(null);
+    setLocationB(null);
+    setLocationNameB(null);
+  };
+
+  const handleCompareToggle = (enabled: boolean) => {
+    setCompareMode(enabled);
+    if (enabled) {
+      // Carry over an existing single selection as Location A instead of
+      // discarding it, so users don't lose their place when switching modes.
+      if (selectedLocation) {
+        setLocationA(selectedLocation);
+        setLocationNameA(selectedLocationName);
+      }
+      setSelectedLocation(null);
+      setSelectedLocationName(null);
+      setInspectorOpen(false);
+    } else {
+      handleClearCompare();
+    }
+  };
+
+  const handleCompareLocationSelect = (location: Coordinates, name?: string) => {
+    const label = name || `${location[1].toFixed(2)}, ${location[0].toFixed(2)}`;
+    // Fill A first, then B; once both are set, further picks replace B so A stays anchored.
+    if (!locationA) {
+      setLocationA(location);
+      setLocationNameA(label);
+    } else if (!locationB) {
+      setLocationB(location);
+      setLocationNameB(label);
+    } else {
+      setLocationB(location);
+      setLocationNameB(label);
+    }
   };
 
   return (
@@ -105,12 +160,21 @@ export default function RenewablesVisualizer() {
             onLocationSelect={handleLocationSelect}
             inspectorOpen={inspectorOpen}
             onCloseInspector={handleCloseInspector}
+            onClearSelection={handleClearSelection}
             gwlIndex={gwlIndex}
             onGwlChange={setGwlIndex}
             isLoading={isLoadingMap}
             onLoadingChange={setIsLoadingMap}
             error={mapError}
             onErrorChange={setMapError}
+            compareMode={compareMode}
+            onCompareToggle={handleCompareToggle}
+            locationA={locationA}
+            locationNameA={locationNameA}
+            locationB={locationB}
+            locationNameB={locationNameB}
+            onCompareLocationSelect={handleCompareLocationSelect}
+            onClearCompare={handleClearCompare}
           />
         </Box>
       </Box>

@@ -20,10 +20,10 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Unstable_Grid2";
+import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Unstable_Grid2";
 
-import HtmlTooltip from "@/components/common/ui/HtmlTooltip";
 import { ModeDefinition, RenewableMode } from "@/data/renewables-visualizer/dataset-adapter";
 
 import styles from "./ModeSelector.module.scss";
@@ -66,14 +66,11 @@ export default function ModeSelector({ selectedMode, onModeChange, modes }: Mode
                       <Typography variant="subtitle1" component="span">
                         {modeDefinition.label}
                       </Typography>
-                      <HtmlTooltip
-                        title={modeDefinition.helpText}
-                        placement="top"
-                        arrow
-                        sx={{ cursor: "help" }}
-                      >
-                        <InfoOutlinedIcon sx={{ fontSize: "1.2rem", color: "action.active" }} />
-                      </HtmlTooltip>
+                      <Tooltip title={modeDefinition.helpText} placement="top" arrow>
+                        <InfoOutlinedIcon
+                          sx={{ fontSize: "1.2rem", color: "action.active", cursor: "help" }}
+                        />
+                      </Tooltip>
                     </Box>
                   }
                   sx={{ pb: 1 }}
