@@ -1,11 +1,7 @@
 @use "functions" as *;
 @use "mixins" as *;
 
-// Shared citation formatting, extended by both the MDX-rendered bibliography
-// (rehype-citation's csl-* classes — see MdxContent.module.scss) and
-// hand-authored reference lists (see ExtremeHeatDays.module.scss), so the two
-// can never drift apart. Also covers the inline superscript marker, extended
-// by both MdxContent's global `sup` rule and the `Citation` component.
+// Shared citation formatting for rehype-citation CSL markup and hand-authored lists.
 
 %citation-sup {
   font-size: 0.7em;

@@ -1,0 +1,33 @@
+@use "@/styles/abstracts" as *;
+
+.section {
+  scroll-margin-top: spacer(6);
+}
+
+.heading {
+  @include type-item(heading-5);
+  margin: 0;
+  color: color(black);
+}
+
+.bibliography {
+  :global(.csl-bib-body) {
+    @extend %citation-list;
+  }
+
+  :global(.csl-entry) {
+    @extend %citation-entry;
+  }
+
+  :global(.csl-left-margin) {
+    @extend %citation-number;
+  }
+
+  :global(.csl-right-inline) {
+    @extend %citation-text;
+
+    a {
+      @extend %citation-link;
+    }
+  }
+}
