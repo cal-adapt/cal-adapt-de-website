@@ -74,35 +74,6 @@ export const metrics: Metric[] = [
     statLabels: ENSEMBLE_QUANTILE_LABELS,
   },
   {
-    id: 3,
-    title: "Warm Nights",
-    slug: "warm-nights",
-    abs: {
-      mean: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4median/ssp370/gwl/t2min_ge99pctl/d03`,
-      min_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4q25/ssp370/gwl/t2min_ge99pctl/d03`,
-      max_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4q75/ssp370/gwl/t2min_ge99pctl/d03`,
-      description:
-        "Median number of nights per year with minimum temperature above the local 99th-percentile threshold (# of nights)",
-      short_desc:
-        "How many nights during the year are expected to stay very warm compared to the past (# of nights)",
-      variable: "t2min_ge99pctl",
-      rescale: "0,75",
-      colormap: "plasma",
-    },
-    del: {
-      mean: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4median/ssp370/gwl_delta/t2min_ge99pctl/d03`,
-      min_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4q25/ssp370/gwl_delta/t2min_ge99pctl/d03`,
-      max_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4q75/ssp370/gwl_delta/t2min_ge99pctl/d03`,
-      description: "Median change in number of warm nights relative to a 0.8°C world (# of nights)",
-      short_desc:
-        "Change in how many nights during the year are expected to stay very warm compared to the past (# of nights)",
-      variable: "t2min_ge99pctl",
-      rescale: "0,75",
-      colormap: "plasma",
-    },
-    statLabels: ENSEMBLE_QUANTILE_LABELS,
-  },
-  {
     id: 1,
     title: "Extreme Precipitation",
     slug: "extreme-precipitation",
@@ -154,5 +125,34 @@ export const metrics: Metric[] = [
       rescale: "-2,2",
       colormap: "PuOr_r",
     },
+  },
+  {
+    id: 3,
+    title: "Warm Nights",
+    slug: "warm-nights",
+    abs: {
+      mean: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4median/ssp370/gwl/t2min_ge99pctl/d03`,
+      min_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4q25/ssp370/gwl/t2min_ge99pctl/d03`,
+      max_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4q75/ssp370/gwl/t2min_ge99pctl/d03`,
+      description:
+        "Median number of nights per year with minimum temperature above the local 99th-percentile threshold (# of nights)",
+      short_desc:
+        "How many nights during the year are expected to stay very warm compared to the past (# of nights)",
+      variable: "t2min_ge99pctl",
+      rescale: "0,75",
+      colormap: "plasma",
+    },
+    del: {
+      mean: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4median/ssp370/gwl_delta/t2min_ge99pctl/d03`,
+      min_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4q25/ssp370/gwl_delta/t2min_ge99pctl/d03`,
+      max_path: `${EXTREME_HEAT_TOOL_BASE}/warm_nights/mm4q75/ssp370/gwl_delta/t2min_ge99pctl/d03`,
+      description: "Median change in number of warm nights relative to a 0.8°C world (# of nights)",
+      short_desc:
+        "Change in how many nights during the year are expected to stay very warm compared to the past (# of nights)",
+      variable: "t2min_ge99pctl",
+      rescale: "0,75",
+      colormap: "plasma",
+    },
+    statLabels: ENSEMBLE_QUANTILE_LABELS,
   },
 ];
