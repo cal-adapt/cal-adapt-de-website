@@ -28,4 +28,12 @@ export const tooltips: Tooltip[] = [
     long_text: "The resource of interest. Either Solar / Wind",
     short_text: "The resource of interest. Either Solar / Wind",
   },
+  {
+    id: 3,
+    title: "Projections Type",
+    long_text:
+      "Absolute shows the expected value at the selected warming level. Delta shows the change from the historical baseline (0.8°C).",
+    short_text:
+      "Absolute shows the expected value at the selected warming level. Delta shows the change from the historical baseline (0.8°C).",
+  },
 ];

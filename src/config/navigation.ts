@@ -44,6 +44,18 @@ export const navLinks = {
     id: "climate-metrics-map",
     label: "Climate Metrics Map",
     href: "/dashboard/climate-metrics-map",
+    children: [
+      {
+        id: "climate-metrics-map-dashboard",
+        label: "Dashboard",
+        href: "/dashboard/climate-metrics-map",
+      },
+      {
+        id: "climate-metrics-map-guidance",
+        label: "Guidance",
+        href: "/dashboard/climate-metrics-map/guidance",
+      },
+    ],
   },
   dataDownload: {
     id: "data-download-tool",
@@ -72,6 +84,18 @@ export const navLinks = {
     id: "renewables-visualizer",
     label: "Renewables Visualizer",
     href: "/dashboard/renewables-visualizer",
+    children: [
+      {
+        id: "renewables-visualizer-dashboard",
+        label: "Dashboard",
+        href: "/dashboard/renewables-visualizer",
+      },
+      {
+        id: "renewables-visualizer-guidance",
+        label: "Guidance",
+        href: "/dashboard/renewables-visualizer/guidance",
+      },
+    ],
   },
   fourthAssessment: {
     id: "fourth-assessment",
