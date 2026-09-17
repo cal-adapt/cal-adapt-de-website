@@ -13,9 +13,9 @@ import styles from "./DashboardSidebar.module.scss";
 interface SidebarSubNavProps {
   links: readonly NavLink[];
   activePath: string | null;
+  persistQuery?: boolean;
 }
 
-/** `query` (e.g. "?variable=warm-nights") is appended to each link */
 export function SubNavLinks({ links, activePath, query }: SidebarSubNavProps & { query: string }) {
   return (
     <div className={styles.subNav}>
@@ -37,12 +37,14 @@ export function SubNavLinks({ links, activePath, query }: SidebarSubNavProps & {
   );
 }
 
-/**
- * Sub-navigation for the active tool. Child links carry the current query string
- * so URL-encoded tool selections persist through sub-page navigation.
- */
-export default function SidebarSubNav({ links, activePath }: SidebarSubNavProps) {
+/** Appends the current query string to child hrefs unless `persistQuery` is false. */
+export default function SidebarSubNav({
+  links,
+  activePath,
+  persistQuery = true,
+}: SidebarSubNavProps) {
   const search = useSearchParams().toString();
+  const query = persistQuery && search ? `?${search}` : "";
 
-  return <SubNavLinks links={links} activePath={activePath} query={search ? `?${search}` : ""} />;
+  return <SubNavLinks links={links} activePath={activePath} query={query} />;
 }

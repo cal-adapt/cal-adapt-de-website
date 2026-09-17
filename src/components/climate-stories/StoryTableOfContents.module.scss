@@ -1,0 +1,28 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  @include flex(column, flex-start, stretch, spacer(3));
+}
+
+.label {
+  @include type-item(label);
+  margin: 0;
+  color: color(grey-4);
+}
+
+.list {
+  @include flex(column, flex-start, stretch, spacer(2));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  a {
+    @include type-item(body);
+    color: color(blue-4);
+    text-decoration: none;
+
+    &:hover {
+      color: color(blue-5);
+    }
+  }
+}
