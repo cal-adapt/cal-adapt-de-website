@@ -63,11 +63,12 @@ export default function HddCdd() {
     <PageLayout title="Heating/Cooling Degree Days">
       <BetaFeedbackAlert />
 
-      {/* TODO: copy pending -- placeholder left intentionally blank */}
+      <div className={styles.intro}>
+        <p className={styles.introCopy}>TEXT HERE</p>
+      </div>
 
       <div className={styles.workspace}>
         <div className={styles.viewArea}>
-          <p className={styles.introCopy}>TEXT HERE</p>
           <div className={styles.chartActions}>
             <Button
               type="button"

@@ -4,7 +4,6 @@
   @include flex(column, flex-start, stretch, spacer(3));
   width: 100%;
   max-width: max-w(global);
-  margin-bottom: spacer(6);
 }
 
 .introCopy {
