@@ -204,7 +204,7 @@ export default function WarmingLevelTimeIndex() {
             share the same `years` array, so either can drive this axis. */}
         <TimeAxis
           offsetY={bracketBottom + CALENDAR_AXIS_GAP}
-          title={["Calendar year"]}
+          title={["Calendar", "year"]}
           ticks={MODELS[0].years.map((year, i) => ({
             x: MARGIN.left + i * (TRACK_WIDTH / (MODELS[0].levels.length - 1)),
             label: String(year),
