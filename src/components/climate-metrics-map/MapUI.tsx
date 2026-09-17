@@ -114,6 +114,9 @@ export default function MapUI({
   const id = "help-popover";
   const labelledBy = "help-popover-title";
 
+  const selectedMetric = metrics.find((m) => m.id === metricSelected);
+  const hasDelta = Boolean(selectedMetric?.del);
+
   useEffect(() => {
     // Auto-open help popover on load
     const timeout = setTimeout(() => {
@@ -183,7 +186,7 @@ export default function MapUI({
                       centered
                     >
                       <Tab value="abs" label="Absolute" />
-                      <Tab value="del" label="Delta" />
+                      <Tab value="del" label="Delta" disabled={!hasDelta} />
                     </Tabs>
                   </Box>
                 </div>
