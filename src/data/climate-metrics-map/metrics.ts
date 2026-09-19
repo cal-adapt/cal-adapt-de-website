@@ -139,7 +139,7 @@ export const metrics: Metric[] = [
       short_desc:
         "How many nights during the year are expected to stay very warm compared to the past (# of nights)",
       variable: "t2min_ge99pctl",
-      rescale: "0,75",
+      rescale: "0,70",
       colormap: "plasma",
     },
     del: {
@@ -150,7 +150,7 @@ export const metrics: Metric[] = [
       short_desc:
         "Change in how many nights during the year are expected to stay very warm compared to the past (# of nights)",
       variable: "t2min_ge99pctl",
-      rescale: "0,75",
+      rescale: "0,70",
       colormap: "plasma",
     },
     statLabels: ENSEMBLE_QUANTILE_LABELS,
