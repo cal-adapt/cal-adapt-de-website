@@ -32,6 +32,7 @@ export type Metric = {
 };
 
 const EXTREME_HEAT_BASE = "s3://cadcat/wrf/extreme-heat-tool/multimodel_gridded";
+const CDD_HDD_BASE = "s3://cadcat/wrf/hdd-cdd-tool/multimodel_gridded";
 
 // eh_days/warm_nights ship as multi-model quantiles (median/q25/q75) rather
 // than mean/min/max, so the map layer and popup use median as the central
