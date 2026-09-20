@@ -140,7 +140,7 @@ export const metrics: Metric[] = [
         "How many nights during the year are expected to stay very warm compared to the past (# of nights)",
       variable: "t2min_ge99pctl",
       rescale: "0,70",
-      colormap: "plasma",
+      colormap: "Purples",
     },
     del: {
       mean: `${EXTREME_HEAT_BASE}/warm_nights/mm4median/ssp370/gwl_delta/t2min_ge99pctl/d03`,
@@ -151,7 +151,7 @@ export const metrics: Metric[] = [
         "Change in how many nights during the year are expected to stay very warm compared to the past (# of nights)",
       variable: "t2min_ge99pctl",
       rescale: "0,70",
-      colormap: "plasma",
+      colormap: "Purples",
     },
     statLabels: ENSEMBLE_QUANTILE_LABELS,
   },
