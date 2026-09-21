@@ -60,14 +60,17 @@ describe("selectionsFromSearchParams", () => {
   });
 
   it("validates the threshold against the selected metric's options", () => {
-    const warmNights = new URLSearchParams("variable=warm-nights&threshold=80F");
+    const warmNights = new URLSearchParams("variable=warm-nights&threshold=70F");
     expect(selectionsFromSearchParams(warmNights)).toMatchObject({
       climateVariable: "warm-nights",
-      threshold: "80F",
+      threshold: "70F",
     });
 
     const relative = new URLSearchParams("variable=extreme-heat-days&threshold=98pctl");
     expect(selectionsFromSearchParams(relative).threshold).toBe("98pctl");
+
+    const heatDaysLow = new URLSearchParams("variable=extreme-heat-days&threshold=70F");
+    expect(selectionsFromSearchParams(heatDaysLow).threshold).toBe("100F");
 
     const heatDays = new URLSearchParams("variable=extreme-heat-days&threshold=40F");
     expect(selectionsFromSearchParams(heatDays).threshold).toBe("100F");

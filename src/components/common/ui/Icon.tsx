@@ -1,11 +1,13 @@
 import clsx from "clsx";
 import {
   AlertTriangle,
+  Check,
   CheckCircle2,
   ChevronsLeft,
   ChevronsRight,
   CircleAlert,
   CircleHelp,
+  Copy,
   Download,
   Flame,
   FlaskConical,
@@ -61,6 +63,8 @@ const LUCIDE_ICON_COMPONENTS = {
   heartPulse: HeartPulse,
   flame: Flame,
   bolt: Zap,
+  copy: Copy,
+  check: Check,
 };
 
 export type IconVariant = keyof typeof ICON_COMPONENTS | keyof typeof LUCIDE_ICON_COMPONENTS;

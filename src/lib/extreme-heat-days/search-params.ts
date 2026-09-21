@@ -75,7 +75,7 @@ export function selectionsFromSearchParams(
   );
   const rawThreshold = params.get(PARAM_KEYS.threshold);
   const threshold =
-    rawThreshold !== null && isAllowedThreshold(rawThreshold)
+    rawThreshold !== null && isAllowedThreshold(rawThreshold, climateVariable)
       ? rawThreshold
       : defaultThresholdFor(climateVariable);
   const indicator = readField(
