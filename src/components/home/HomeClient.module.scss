@@ -6,6 +6,17 @@
   background-color: white;
 }
 
+.intro {
+  text-align: center;
+  margin: 0 auto;
+  max-width: max-w(content);
+  padding-inline: spacer(7);
+
+  @include breakpoint(large) {
+    padding-inline: 0;
+  }
+}
+
 .cards {
   @include flex(row, center, stretch, spacer(7));
   margin-top: spacer(10);

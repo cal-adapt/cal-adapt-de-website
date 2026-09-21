@@ -271,6 +271,8 @@ export const xmyPersistPackage: PackageAdapter = {
     title: "Extreme Year (Persistence)",
     listDescription: "Sustained extreme climate profiles at stations, by percentile.",
   },
+  methodsUrl:
+    "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/extreme-met-year.html",
   messages: {
     skipped:
       "Select at least one location, GWL, model, and percentile on the previous step to fetch files.",

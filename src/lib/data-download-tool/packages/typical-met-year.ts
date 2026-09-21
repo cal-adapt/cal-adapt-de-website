@@ -304,6 +304,8 @@ export const typicalMetYearPackage: PackageAdapter = {
     title: "Typical meteorological year",
     listDescription: "Representative year climate profiles for analysis.",
   },
+  methodsUrl:
+    "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/typical-met-year.html",
   messages: {
     skipped: "Select at least one location, GWL, and model on the previous step to fetch files.",
     empty: "No files matched your selections. Try broadening location, GWL, or model choices.",

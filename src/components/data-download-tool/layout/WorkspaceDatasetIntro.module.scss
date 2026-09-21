@@ -10,3 +10,9 @@
   color: color(black);
   @include type-item(body);
 }
+
+.methodsLine {
+  margin: spacer(7) 0 0;
+  color: color(black);
+  @include type-item(body);
+}

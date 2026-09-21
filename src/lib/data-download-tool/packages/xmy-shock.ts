@@ -272,6 +272,8 @@ export const xmyShockPackage: PackageAdapter = {
     title: "Extreme Year (Shock)",
     listDescription: "Short-duration hot and cold shock climate profiles at stations.",
   },
+  methodsUrl:
+    "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/extreme-met-year.html",
   messages: {
     skipped:
       "Select at least one location, GWL, model, and shock type on the previous step to fetch files.",

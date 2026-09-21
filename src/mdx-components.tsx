@@ -12,6 +12,7 @@ import Step from "@/components/common/content/Step";
 import TurbinePowerCurve from "@/components/common/content/TurbinePowerCurve";
 import WarmingLevelTimeIndex from "@/components/common/content/WarmingLevelTimeIndex";
 import WindFarmLayout from "@/components/common/content/WindFarmLayout";
+import CitationBox from "@/components/common/ui/CitationBox";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
@@ -24,6 +25,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     Step,
     Callout,
+    CitationBox,
     Stat,
     StatGrid,
     Specs,

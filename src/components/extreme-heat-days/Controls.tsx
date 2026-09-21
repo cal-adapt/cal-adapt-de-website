@@ -45,7 +45,7 @@ export default function Controls({ selections, onChange, disabled = false }: Con
             onChange({
               ...selections,
               climateVariable,
-              threshold: isAllowedThreshold(selections.threshold)
+              threshold: isAllowedThreshold(selections.threshold, climateVariable)
                 ? selections.threshold
                 : defaultThresholdFor(climateVariable),
             })
@@ -77,6 +77,7 @@ export default function Controls({ selections, onChange, disabled = false }: Con
       >
         <ThresholdInput
           kind={thresholdKind}
+          climateVariable={selections.climateVariable}
           value={selections.threshold}
           onChange={(threshold) => onChange({ ...selections, threshold })}
           disabled={disabled}
