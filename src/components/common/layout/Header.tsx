@@ -8,10 +8,14 @@ import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+import clsx from "clsx";
 
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
+import { mediaQueries } from "@/config/breakpoints";
 import { isNavGroup, navGroups, type NavItem, type NavLink, navLinks } from "@/config/navigation";
 import { analytics } from "@/lib/analytics";
 import { isExternalUrl } from "@/utils/url";
@@ -29,6 +33,13 @@ const navItems = {
 };
 
 const mobileNavItems: NavLink[] = [navLinks.fourthAssessment, navLinks.guidance, navLinks.data];
+
+/** On phones, Tools scrolls to the homepage warning instead of opening a dashboard. */
+const toolsHomeLink: NavLink = {
+  id: "tools-home",
+  label: navGroups.tools.label,
+  href: "/#tools",
+};
 
 function trackLinkClick(label: string, href: string) {
   if (isExternalUrl(href)) {
@@ -73,8 +84,8 @@ function HeaderNavGroup({ item }: { item: NavItem & { links: NavLink[] } }) {
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        transformOrigin={{ vertical: "top", horizontal: "left" }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
         disableScrollLock
       >
         {item.links.map((link) => (
@@ -103,8 +114,36 @@ function HeaderNavItem({ item }: { item: NavItem }) {
   return <HeaderNavLink item={item} />;
 }
 
+function MobileMenuLink({
+  item,
+  onSelect,
+  nested = false,
+}: {
+  item: NavLink;
+  onSelect: () => void;
+  nested?: boolean;
+}) {
+  return (
+    <MenuItem
+      className={clsx(styles.menuItem, nested && styles.menuItemNested)}
+      onClick={() => {
+        trackLinkClick(item.label, item.href);
+        onSelect();
+      }}
+      component="a"
+      href={item.href}
+      target={item.external ? "_blank" : undefined}
+      rel={item.external ? "noopener noreferrer" : undefined}
+    >
+      {item.label}
+    </MenuItem>
+  );
+}
+
 function MobileNav() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const isSmall = useMediaQuery(mediaQueries.max.small);
+  const items: NavItem[] = [...mobileNavItems, isSmall ? toolsHomeLink : navGroups.tools];
 
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -136,21 +175,19 @@ function MobileNav() {
         onClose={handleClose}
         keepMounted
       >
-        {mobileNavItems.map((item) => (
-          <MenuItem
-            key={item.id}
-            className={styles.menuItem}
-            onClick={() => {
-              trackLinkClick(item.label, item.href);
-              handleClose();
-            }}
-            component="a"
-            href={item.href}
-            target={item.external ? "_blank" : undefined}
-          >
-            {item.label}
-          </MenuItem>
-        ))}
+        {items.flatMap((item) => {
+          if (isNavGroup(item)) {
+            return [
+              <MenuItem key={item.id} className={styles.menuGroupLabel} disabled>
+                {item.label}
+              </MenuItem>,
+              ...item.links.map((link) => (
+                <MobileMenuLink key={link.id} item={link} nested onSelect={handleClose} />
+              )),
+            ];
+          }
+          return <MobileMenuLink key={item.id} item={item} onSelect={handleClose} />;
+        })}
       </Menu>
     </div>
   );
@@ -161,6 +198,9 @@ export default function Header() {
     <header className={styles.header}>
       <nav className={styles.nav}>
         <MobileNav />
+        <div className={styles.tabletTools}>
+          <HeaderNavItem item={navGroups.tools} />
+        </div>
         <div className={styles.desktop}>
           <div className={styles.left}>
             {navItems.left.map((item) => (

@@ -34,6 +34,7 @@ export default function HomeClient() {
   }, []);
 
   const isMobile = useMediaQuery(mediaQueries.max.large);
+  const isSmall = useMediaQuery(mediaQueries.max.small);
 
   const carouselsStyle = isMobile
     ? {
@@ -136,7 +137,7 @@ export default function HomeClient() {
           </h3>
           <h4 style={{ marginBottom: "20px" }}>Climate Insights for Everyone</h4>
           <Alert
-            className={clsx({ "hidden no-height": !isMobile })}
+            className={clsx({ "hidden no-height": !isSmall })}
             severity="warning"
             style={{ marginBottom: 26 }}
           >

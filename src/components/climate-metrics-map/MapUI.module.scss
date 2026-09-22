@@ -3,16 +3,21 @@
 .mapUI {
   z-index: z(2);
   position: absolute;
-  width: calc(100% - 275px); // account for left drawer (sync with LeftDrawerContext)
+  width: 100%;
   height: auto;
-  padding: spacer(3) spacer(7);
+  padding: spacer(3) spacer(4);
   pointer-events: none;
   max-width: 100%;
   overflow: hidden;
 
+  @include breakpoint(large) {
+    padding: spacer(3) spacer(7);
+  }
+
   .parameterSelection {
     @include flex(column, $gap: spacer(4));
     width: 280px;
+    max-width: 100%;
     pointer-events: auto;
 
     .container {
@@ -28,6 +33,10 @@
 
   .helpButton {
     pointer-events: auto;
-    margin-right: 0 !important;
+    margin-right: spacer(2) !important;
+
+    @include breakpoint(large) {
+      margin-right: 50px !important;
+    }
   }
 }
