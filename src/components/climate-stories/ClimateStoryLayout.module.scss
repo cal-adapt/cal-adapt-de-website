@@ -1,0 +1,92 @@
+@use "@/styles/abstracts" as *;
+
+.page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "header"
+    "intro"
+    "toc"
+    "body"
+    "citation";
+  gap: spacer(8);
+  align-items: start;
+  width: 100%;
+
+  @include breakpoint(large) {
+    grid-template-columns: minmax(0, 1fr) 240px;
+    grid-template-areas:
+      "header toc"
+      "intro toc"
+      "body toc"
+      "citation toc";
+  }
+}
+
+.header {
+  @include flex(column, flex-start, stretch, spacer(3));
+  grid-area: header;
+}
+
+.title {
+  @include type-item(heading-3);
+  margin: 0;
+  color: color(black);
+}
+
+.lede {
+  @include type-item(body);
+  margin: 0;
+  color: color(grey-4);
+}
+
+.meta {
+  @include type-item(small);
+  margin: 0;
+  color: color(grey-4);
+}
+
+.intro {
+  @include flex(column, flex-start, stretch, spacer(2));
+  grid-area: intro;
+  padding: spacer(4);
+  background: color(grey-1);
+  border: 1px solid color(grey-2);
+}
+
+.introKicker {
+  @include type-item(label);
+  margin: 0;
+  color: color(grey-4);
+}
+
+.introBody {
+  @include type-item(body);
+  margin: 0;
+  color: color(black);
+}
+
+.body {
+  @include flex(column, flex-start, stretch, spacer(8));
+  grid-area: body;
+  min-width: 0;
+}
+
+.citation {
+  grid-area: citation;
+}
+
+.toc {
+  grid-area: toc;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  padding: spacer(4);
+  border: 1px solid color(grey-2);
+
+  @include breakpoint(large) {
+    position: sticky;
+    top: spacer(8);
+    align-self: start;
+  }
+}
