@@ -55,13 +55,7 @@ export default function HomeClient() {
     <div className={styles.homeClient}>
       <Container spacing="section">
         <div>
-          <p
-            style={{
-              textAlign: "center",
-              padding: isMobile ? "0 30px" : "0 20vw",
-              margin: "0 auto",
-            }}
-          >
+          <p className={styles.intro}>
             The new Cal-Adapt has been revamped to offer a more modern and intuitive experience for
             exploring peer-reviewed <strong>5th Assessment</strong> climate data. Our platform
             provides interactive visualizations, downloadable datasets, the Analytics Engine and the

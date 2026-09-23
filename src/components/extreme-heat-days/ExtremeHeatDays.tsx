@@ -8,6 +8,7 @@ import Alert from "@/components/common/ui/Alert";
 import Badge from "@/components/common/ui/Badge";
 import Button from "@/components/common/ui/Button";
 import Citation from "@/components/common/ui/Citation";
+import CitationBox from "@/components/common/ui/CitationBox";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
 import Tabs, { type TabItem } from "@/components/common/ui/Tabs";
@@ -83,7 +84,7 @@ const CHART_REFERENCES = [
 ];
 
 // Manually bump date when the tool is meaningfully updated
-const LAST_UPDATED_ISO = "2026-08-13";
+const LAST_UPDATED_ISO = "2026-09-01";
 
 const INTRO_COPY_BY_VARIABLE: Record<string, ReactNode> = {
   "extreme-heat-days": (
@@ -265,6 +266,7 @@ export default function ExtremeHeatDays() {
       )}
 
       <footer className={styles.pageFooter}>
+        <CitationBox title={navLinks.extremeHeatDays.label} bordered={false} />
         <p className={styles.lastUpdated}>
           Last updated:{" "}
           <time dateTime={LAST_UPDATED_ISO}>{formatIsoDateLong(LAST_UPDATED_ISO)}</time>

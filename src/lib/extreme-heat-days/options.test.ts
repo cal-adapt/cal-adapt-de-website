@@ -21,26 +21,34 @@ describe("threshold helpers", () => {
     expect(parseThresholdNumber("nope")).toBeNull();
   });
 
-  it("builds tokens and rejects values outside the STAC ranges", () => {
+  it("builds tokens and rejects values outside the metric's allowed ranges", () => {
     expect(thresholdTokenFor("absolute", 100)).toBe("100F");
     expect(thresholdTokenFor("relative", 98)).toBe("98pctl");
-    expect(isAllowedThreshold("50F")).toBe(true);
-    expect(isAllowedThreshold("135F")).toBe(true);
-    expect(isAllowedThreshold("49F")).toBe(false);
-    expect(isAllowedThreshold("136F")).toBe(false);
-    expect(isAllowedThreshold("75pctl")).toBe(true);
-    expect(isAllowedThreshold("99pctl")).toBe(true);
-    expect(isAllowedThreshold("74pctl")).toBe(false);
-    expect(isAllowedThreshold("100pctl")).toBe(false);
+    expect(isAllowedThreshold("80F", "extreme-heat-days")).toBe(true);
+    expect(isAllowedThreshold("135F", "extreme-heat-days")).toBe(true);
+    expect(isAllowedThreshold("79F", "extreme-heat-days")).toBe(false);
+    expect(isAllowedThreshold("70F", "extreme-heat-days")).toBe(false);
+    expect(isAllowedThreshold("136F", "extreme-heat-days")).toBe(false);
+    expect(isAllowedThreshold("65F", "warm-nights")).toBe(true);
+    expect(isAllowedThreshold("70F", "warm-nights")).toBe(true);
+    expect(isAllowedThreshold("64F", "warm-nights")).toBe(false);
+    expect(isAllowedThreshold("90pctl", "extreme-heat-days")).toBe(true);
+    expect(isAllowedThreshold("99pctl", "warm-nights")).toBe(true);
+    expect(isAllowedThreshold("89pctl", "extreme-heat-days")).toBe(false);
+    expect(isAllowedThreshold("100pctl", "warm-nights")).toBe(false);
   });
 
-  it("exposes the absolute and relative numeric ranges", () => {
-    expect(thresholdRangeFor("absolute")).toEqual({ min: 50, max: 135 });
-    expect(thresholdRangeFor("relative")).toEqual({ min: 75, max: 99 });
+  it("exposes absolute ranges per metric and a shared relative range", () => {
+    expect(thresholdRangeFor("absolute", "extreme-heat-days")).toEqual({ min: 80, max: 135 });
+    expect(thresholdRangeFor("absolute", "warm-nights")).toEqual({ min: 65, max: 135 });
+    expect(thresholdRangeFor("relative", "extreme-heat-days")).toEqual({ min: 90, max: 99 });
+    expect(thresholdRangeFor("relative", "warm-nights")).toEqual({ min: 90, max: 99 });
   });
 
   it("defaults relative thresholding to the 98th percentile", () => {
     expect(defaultThresholdForKind("extreme-heat-days", "relative")).toBe("98pctl");
+    expect(defaultThresholdForKind("warm-nights", "relative")).toBe("98pctl");
+    expect(defaultThresholdForKind("extreme-heat-days", "absolute")).toBe("100F");
     expect(defaultThresholdForKind("warm-nights", "absolute")).toBe("70F");
   });
 });

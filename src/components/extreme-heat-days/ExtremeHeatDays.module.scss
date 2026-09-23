@@ -82,6 +82,9 @@
 .pageFooter {
   width: 100%;
   max-width: max-w(global);
+  display: flex;
+  flex-direction: column;
+  gap: spacer(4);
   padding-top: spacer(4);
   border-top: 1px solid color(grey-2);
 }
