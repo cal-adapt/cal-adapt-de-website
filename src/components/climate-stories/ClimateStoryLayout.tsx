@@ -2,17 +2,18 @@ import type { ReactNode } from "react";
 
 import type { ClimateStory } from "@/config/climate-stories";
 
-import StoryTableOfContents, { type StoryHeading } from "./StoryTableOfContents";
+import { STORY_REFERENCES_SECTION } from "./StoryReferences";
+import StoryTableOfContents, { type StorySection } from "./StoryTableOfContents";
 
 import styles from "./ClimateStoryLayout.module.scss";
 
 interface ClimateStoryLayoutProps {
   story: ClimateStory;
-  headings: readonly StoryHeading[];
+  sections: readonly StorySection[];
   children: ReactNode;
 }
 
-export default function ClimateStoryLayout({ story, headings, children }: ClimateStoryLayoutProps) {
+export default function ClimateStoryLayout({ story, sections, children }: ClimateStoryLayoutProps) {
   return (
     <article className={styles.page}>
       <header className={styles.header}>
@@ -26,7 +27,10 @@ export default function ClimateStoryLayout({ story, headings, children }: Climat
         <p className={styles.introBody}>{story.intro}</p>
       </aside>
 
-      <StoryTableOfContents headings={headings} className={styles.toc} />
+      <StoryTableOfContents
+        sections={[...sections, STORY_REFERENCES_SECTION]}
+        className={styles.toc}
+      />
 
       <div className={styles.body}>{children}</div>
     </article>

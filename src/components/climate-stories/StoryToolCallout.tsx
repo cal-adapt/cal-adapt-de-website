@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 import Button from "@/components/common/ui/Button";
 
 import styles from "./StoryToolCallout.module.scss";
@@ -8,7 +10,6 @@ interface StoryToolCalloutLink {
 }
 
 interface StoryToolCalloutProps {
-  id?: string;
   title: string;
   body: string;
   primary: StoryToolCalloutLink;
@@ -16,16 +17,15 @@ interface StoryToolCalloutProps {
 }
 
 export default function StoryToolCallout({
-  id = "tool-callout",
   title,
   body,
   primary,
   secondary,
 }: StoryToolCalloutProps) {
-  const headingId = `${id}-heading`;
+  const headingId = useId();
 
   return (
-    <aside id={id} className={styles.callout} aria-labelledby={headingId}>
+    <aside className={styles.callout} aria-labelledby={headingId}>
       <p className={styles.kicker}>Callout</p>
       <p id={headingId} className={styles.title}>
         {title}

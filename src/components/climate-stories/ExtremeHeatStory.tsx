@@ -7,7 +7,7 @@ import StoryBlock from "./StoryBlock";
 import StoryCitation from "./StoryCitation";
 import StoryDocument from "./StoryDocument";
 import StoryFigure from "./StoryFigure";
-import { STORY_REFERENCES_HEADING } from "./StoryReferences";
+import type { StorySection } from "./StoryTableOfContents";
 import StoryToolCallout from "./StoryToolCallout";
 
 const FPO_FIGURE = { label: "[FPO: Figure]", source: "Lorem ipsum" } as const;
@@ -47,7 +47,7 @@ const ROBUST_PLANNING = {
   title: "Using Cal-Adapt for robust climate planning",
 } as const;
 
-const SECTIONS = [
+export const extremeHeatSections = [
   MORE_FREQUENT_DAYS,
   BREAKING_RECORDS,
   HEAT_WAVES,
@@ -55,12 +55,7 @@ const SECTIONS = [
   HEAT_SEASON,
   ELECTRICITY_DEMAND,
   ROBUST_PLANNING,
-] as const;
-
-export const extremeHeatHeadings = [
-  ...SECTIONS.map((section) => ({ id: section.id, label: section.title })),
-  STORY_REFERENCES_HEADING,
-];
+] as const satisfies readonly StorySection[];
 
 interface ExtremeHeatStoryProps {
   story: ClimateStory;

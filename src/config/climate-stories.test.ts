@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { CLIMATE_STORIES_HREF, climateStories, getClimateStory } from "./climate-stories";
+import {
+  CLIMATE_STORIES_HREF,
+  climateStories,
+  climateStoryCatalog,
+  getClimateStory,
+} from "./climate-stories";
 import { navLinks } from "./navigation";
 
 const TOOL_IDS = new Set([
@@ -23,14 +28,28 @@ describe("getClimateStory", () => {
   it("returns undefined for an unknown slug", () => {
     expect(getClimateStory("unknown")).toBeUndefined();
   });
+
+  it("does not resolve coming-soon stories", () => {
+    expect(getClimateStory("precipitation")).toBeUndefined();
+  });
+});
+
+describe("climateStoryCatalog", () => {
+  it("uses unique slugs and ids across published and coming-soon stories", () => {
+    const slugs = climateStoryCatalog.map((story) => story.slug);
+    const ids = climateStoryCatalog.map((story) => story.id);
+    expect(new Set(slugs).size).toBe(slugs.length);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
 });
 
 describe("climateStories", () => {
-  it("uses unique slugs and hrefs derived from slug", () => {
-    const slugs = climateStories.map((story) => story.slug);
-    const hrefs = climateStories.map((story) => story.href);
-    expect(new Set(slugs).size).toBe(slugs.length);
-    expect(new Set(hrefs).size).toBe(hrefs.length);
+  it("contains only published stories, in catalog order", () => {
+    const published = climateStoryCatalog.filter((story) => story.status === "published");
+    expect(climateStories).toEqual(published);
+  });
+
+  it("derives href from slug", () => {
     for (const story of climateStories) {
       expect(story.href).toBe(`${CLIMATE_STORIES_HREF}/${story.slug}`);
     }

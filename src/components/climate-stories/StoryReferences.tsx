@@ -1,11 +1,13 @@
 import { formatBibliography } from "@/lib/citations/bibliography";
 
+import type { StorySection } from "./StoryTableOfContents";
+
 import styles from "./StoryReferences.module.scss";
 
-export const STORY_REFERENCES_HEADING = {
+export const STORY_REFERENCES_SECTION = {
   id: "references",
-  label: "References",
-} as const;
+  title: "References",
+} as const satisfies StorySection;
 
 interface StoryReferencesProps {
   id?: string;
@@ -13,7 +15,7 @@ interface StoryReferencesProps {
 }
 
 export default async function StoryReferences({
-  id = STORY_REFERENCES_HEADING.id,
+  id = STORY_REFERENCES_SECTION.id,
   citationKeys,
 }: StoryReferencesProps) {
   const headingId = `${id}-heading`;
@@ -22,7 +24,7 @@ export default async function StoryReferences({
   return (
     <section id={id} className={styles.section} aria-labelledby={headingId}>
       <h2 id={headingId} className={styles.heading}>
-        {STORY_REFERENCES_HEADING.label}
+        {STORY_REFERENCES_SECTION.title}
       </h2>
       <div className={styles.bibliography} dangerouslySetInnerHTML={{ __html: bibliography }} />
     </section>
