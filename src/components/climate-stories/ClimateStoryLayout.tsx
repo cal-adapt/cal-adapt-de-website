@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import CitationBox from "@/components/common/ui/CitationBox";
 import type { ClimateStory } from "@/config/climate-stories";
 
 import { STORY_REFERENCES_SECTION } from "./StoryReferences";
@@ -33,6 +34,8 @@ export default function ClimateStoryLayout({ story, sections, children }: Climat
       />
 
       <div className={styles.body}>{children}</div>
+
+      <CitationBox title={story.title} className={styles.citation} />
     </article>
   );
 }

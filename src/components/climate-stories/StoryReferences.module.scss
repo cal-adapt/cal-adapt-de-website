@@ -25,6 +25,7 @@
 
   :global(.csl-right-inline) {
     @extend %citation-text;
+    overflow-wrap: anywhere;
 
     a {
       @extend %citation-link;
