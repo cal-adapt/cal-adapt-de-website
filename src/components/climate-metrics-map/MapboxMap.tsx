@@ -125,7 +125,8 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
 
     // Derived state
     const currentVariableData: Metric = metrics[metricSelected];
-    const paths = currentVariableData[`${valueType}`] as {
+    // Some metrics don't have a "del" (delta) product yet — fall back to "abs".
+    const paths = (currentVariableData[valueType] ?? currentVariableData.abs) as {
       colormap: string;
       mean: string;
       min_path?: string;
@@ -521,10 +522,11 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
                   key={clickCoords.key} // force rerender
                   longitude={clickCoords.lng}
                   latitude={clickCoords.lat}
-                  min={popupInfo?.min || 0}
-                  max={popupInfo?.max || 0}
-                  value={popupInfo?.value || 0}
+                  min={popupInfo?.min ?? null}
+                  max={popupInfo?.max ?? null}
+                  value={popupInfo?.value ?? null}
                   title={paths.short_desc}
+                  statLabels={currentVariableData.statLabels}
                   isPopupLoading={isPopupLoading}
                   isDataValid={isDataValid}
                   onClose={() => {
