@@ -75,8 +75,8 @@
   }
 }
 
-// Section headers toggle their links open/closed; a folded section's header is bold.
-.nav .sectionHeaderCollapsed {
+// Section headers toggle their links open/closed; an expanded section's header is bold.
+.nav .sectionHeaderExpanded {
   font-weight: font-weight(bold);
 }
 

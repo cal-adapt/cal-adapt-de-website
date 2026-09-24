@@ -118,7 +118,7 @@ export default function DashboardSidebar({
             return (
               <div key={section.id} className={styles.section}>
                 <Button
-                  className={clsx(styles.navButton, !expanded && styles.sectionHeaderCollapsed)}
+                  className={clsx(styles.navButton, expanded && styles.sectionHeaderExpanded)}
                   variant="tertiary"
                   onClick={() => setSectionExpanded(section.id, !expanded)}
                   ariaLabel={`${expanded ? "Collapse" : "Expand"} ${section.label}`}
