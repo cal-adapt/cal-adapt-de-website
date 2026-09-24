@@ -57,7 +57,7 @@ export const metrics: Metric[] = [
       short_desc:
         "How many days during the year are expected to be very hot compared to the past (# of days)",
       variable: "t2max_ge99pctl",
-      rescale: "0,70",
+      rescale: "0,50",
       colormap: "Reds",
     },
     del: {
@@ -69,7 +69,7 @@ export const metrics: Metric[] = [
       short_desc:
         "Change in how many days during the year are expected to be very hot compared to the past (# of days)",
       variable: "t2max_ge99pctl",
-      rescale: "0,70",
+      rescale: "0,50",
       colormap: "Reds",
     },
     statLabels: ENSEMBLE_QUANTILE_LABELS,
@@ -140,7 +140,7 @@ export const metrics: Metric[] = [
       short_desc:
         "How many nights during the year are expected to stay very warm compared to the past (# of nights)",
       variable: "t2min_ge99pctl",
-      rescale: "0,70",
+      rescale: "0,50",
       colormap: "Purples",
     },
     del: {
@@ -151,7 +151,7 @@ export const metrics: Metric[] = [
       short_desc:
         "Change in how many nights during the year are expected to stay very warm compared to the past (# of nights)",
       variable: "t2min_ge99pctl",
-      rescale: "0,70",
+      rescale: "0,50",
       colormap: "Purples",
     },
     statLabels: ENSEMBLE_QUANTILE_LABELS,

@@ -32,7 +32,7 @@ const DEFAULT_STAT_LABELS: StatLabels = {
 type MapPopupProps = {
   longitude: number;
   latitude: number;
-  value: number;
+  value: number | null;
   min: number | null;
   max: number | null;
   title: string;
@@ -55,7 +55,7 @@ export default function MapPopup({
   isDataValid,
 }: MapPopupProps) {
   const formattedMin = useMemo(() => min?.toFixed(2), [min]);
-  const formattedValue = useMemo(() => value.toFixed(2), [value]);
+  const formattedValue = useMemo(() => value?.toFixed(2), [value]);
   const formattedMax = useMemo(() => max?.toFixed(2), [max]);
 
   return (
@@ -95,7 +95,7 @@ export default function MapPopup({
                   <Typography variant="body2">{statLabels.min}</Typography>
                 </div>
               )}
-              {min != null && (
+              {value != null && (
                 <div className={styles.value}>
                   <Typography variant="h4">{formattedValue}</Typography>
                   <Typography variant="body2">{statLabels.mean}</Typography>

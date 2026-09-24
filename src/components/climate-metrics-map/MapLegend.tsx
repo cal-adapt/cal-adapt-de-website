@@ -57,12 +57,13 @@ export default function MapLegend({ colormap, min, max, title }: MapLegendProps)
     .range([LABEL_MARGIN, LABEL_MARGIN + boundsWidth])
     .domain([min, max]);
 
-  // Tick intervals of 50
+  // Tick step scales with the range so wide-ranging metrics (e.g. HDD/CDD,
+  // in the thousands) don't cram dozens of ticks into one legend bar.
   let tickValues: number[];
   const valueRange = max - min;
 
   if (min >= 0 && valueRange >= 100) {
-    const step = 50;
+    const step = d3.tickStep(min, max, 8);
     const start = Math.ceil(min / step) * step;
     const values: number[] = [];
     for (let v = start; v <= max; v += step) {
