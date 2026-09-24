@@ -55,23 +55,42 @@ export const navLinks = {
     label: "Extreme Heat",
     href: "/dashboard/extreme-heat-days",
     featureFlag: "__FF_EXTREME_HEAT_DAYS__",
-    children: [
-      {
-        id: "extreme-heat-days-dashboard",
-        label: "Dashboard",
-        href: "/dashboard/extreme-heat-days",
-      },
-      {
-        id: "extreme-heat-days-guidance",
-        label: "Guidance",
-        href: "/dashboard/extreme-heat-days/guidance",
-      },
-    ],
   },
   renewablesVisualizer: {
     id: "renewables-visualizer",
     label: "Renewables Visualizer",
     href: "/dashboard/renewables-visualizer",
+  },
+  electricityAssetPlanning: {
+    id: "electricity-asset-planning",
+    label: "Electricity Asset Planning Tool",
+    href: "/dashboard/electricity-asset-planning",
+  },
+  extremeHeatStory: {
+    id: "extreme-heat-story",
+    label: "Extreme Heat",
+    href: "/dashboard/climate-stories/extreme-heat",
+  },
+  extremePrecipitationStory: {
+    id: "extreme-precipitation-story",
+    label: "Extreme Precipitation",
+    href: "/dashboard/climate-stories/extreme-precipitation",
+  },
+  glossary: {
+    id: "glossary",
+    label: "Glossary",
+    href: "/dashboard/guidance/glossary",
+  },
+  dataMethods: {
+    id: "data-methods",
+    label: "Data Methods",
+    href: "/dashboard/guidance/data-methods",
+  },
+  analyticsEngineGuidance: {
+    id: "analytics-engine-guidance",
+    label: "More Guidance",
+    href: "https://analytics.cal-adapt.org/guidance/",
+    external: true,
   },
   fourthAssessment: {
     id: "fourth-assessment",

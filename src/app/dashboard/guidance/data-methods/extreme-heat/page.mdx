@@ -1,9 +1,12 @@
+import BackLink from "@/components/common/ui/BackLink";
 import { SITE_TITLE } from "@/config/constants";
 import { navLinks } from "@/config/navigation";
 
 export const metadata = {
-  title: `Guidance & Methods - ${navLinks.extremeHeatDays.label} - ${SITE_TITLE}`,
+  title: `Extreme Heat Days & Warm Nights - ${navLinks.dataMethods.label} - ${SITE_TITLE}`,
 };
+
+<BackLink href={navLinks.dataMethods.href} label={navLinks.dataMethods.label} />
 
 # Extreme Heat Days: Guidance & Methods
 

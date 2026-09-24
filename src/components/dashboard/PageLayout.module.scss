@@ -10,6 +10,16 @@
     color: css-var("color-black");
   }
 
+  .betaBadge {
+    vertical-align: 33%;
+    margin-left: spacer(3);
+  }
+
+  .betaAlert {
+    width: 100%;
+    max-width: max-w(global);
+  }
+
   .inner {
     @include flex(column, flex-start, stretch, spacer(8));
     width: 100%;

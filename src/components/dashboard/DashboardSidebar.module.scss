@@ -67,9 +67,48 @@
   }
 }
 
+.section {
+  @include flex(column, flex-start, stretch, $gap: spacer(2));
+
+  & + & {
+    margin-top: spacer(4);
+  }
+}
+
+// Section headers toggle their links open/closed; a folded section's header is bold.
+.nav .sectionHeaderCollapsed {
+  font-weight: font-weight(bold);
+}
+
+.sectionLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.sectionChevron {
+  @include transition("transform");
+
+  &.collapsed {
+    transform: rotate(-90deg);
+  }
+}
+
+.sectionLinks {
+  @include flex(column, flex-start, stretch, $gap: spacer(2));
+
+  &[hidden] {
+    display: none;
+  }
+}
+
 .navGroup {
   @include flex(column, flex-start, stretch, $gap: spacer(2));
   width: 100%;
+
+  // Indent item labels to line up with the section header text (past its icon).
+  .navButton {
+    padding-left: calc(#{spacer(4)} + 24px + #{spacer(2)});
+  }
 }
 
 .subNav {

@@ -8,29 +8,31 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import ErrorView from "@/components/common/layout/ErrorView";
 import Button from "@/components/common/ui/Button";
 import DashboardAppBar from "@/components/dashboard/DashboardAppBar";
-import DashboardSidebar, {
-  type DashboardSidebarNavItem,
-} from "@/components/dashboard/DashboardSidebar";
-import { dashboardTools } from "@/components/dashboard/tools";
+import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
+import {
+  dashboardSidebarLinks,
+  dashboardSidebarSections,
+} from "@/components/dashboard/sidebarSections";
 import { mediaQueries } from "@/config/breakpoints";
 import { hasNavChildren, type NavLink, navLinks } from "@/config/navigation";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
-import { extractSegment, normalizePath } from "@/utils/url";
+import { normalizePath } from "@/utils/url";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-const SIDEBAR_ITEMS: DashboardSidebarNavItem[] = dashboardTools.map((tool) => ({
-  link: tool.navLink,
-  icon: tool.sidebarIcon,
-}));
-
-/** Resolve the active tool's nav link from the current `/dashboard/:tool` segment. */
-function getPageLink(selectedPage: string | null): NavLink {
-  const match = SIDEBAR_ITEMS.find((item) => item.link.id === selectedPage);
-  return match?.link ?? navLinks.home;
+/** Resolve the active sidebar link: the one whose href is the longest prefix of the path. */
+function getPageLink(pathname: string): NavLink {
+  const current = normalizePath(pathname);
+  const match = dashboardSidebarLinks
+    .filter((link) => {
+      const href = normalizePath(link.href);
+      return current === href || current.startsWith(`${href}/`);
+    })
+    .sort((a, b) => b.href.length - a.href.length)[0];
+  return match ?? navLinks.home;
 }
 
 /** Resolve the active nested page (e.g. "Methods") under the current tool, if any. */
@@ -45,10 +47,9 @@ function getSubPageLink(pageLink: NavLink, pathname: string): NavLink | undefine
 export default function Layout({ children }: LayoutProps) {
   const { open, toggleLeftDrawer } = useLeftDrawer();
   const pathname = usePathname();
-  const selectedPage: string | null = extractSegment(pathname, "dashboard/", "/");
   const isMobile = useMediaQuery(mediaQueries.max.small);
 
-  const pageLink = getPageLink(selectedPage);
+  const pageLink = getPageLink(pathname);
   const subPageLink = getSubPageLink(pageLink, pathname);
 
   if (isMobile) {
@@ -80,7 +81,7 @@ export default function Layout({ children }: LayoutProps) {
           open={open}
           onToggleOpen={toggleLeftDrawer}
           activeHref={pathname}
-          items={SIDEBAR_ITEMS}
+          sections={dashboardSidebarSections}
         />
 
         <div

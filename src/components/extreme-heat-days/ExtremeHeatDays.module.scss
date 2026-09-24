@@ -1,15 +1,5 @@
 @use "@/styles/abstracts" as *;
 
-.betaBadge {
-  vertical-align: 33%;
-  margin-left: spacer(3);
-}
-
-.betaAlert {
-  width: 100%;
-  max-width: max-w(global);
-}
-
 .intro {
   @include flex(column, flex-start, stretch, spacer(3));
   width: 100%;

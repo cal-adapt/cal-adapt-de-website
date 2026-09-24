@@ -349,7 +349,7 @@ export default function RenewablesViz() {
   }, []);
 
   return (
-    <PageLayout title={navLinks.renewablesVisualizer.label}>
+    <PageLayout title={navLinks.renewablesVisualizer.label} beta>
       <Box className={styles.intro} style={{ maxWidth: "860px" }}>
         <Typography variant="body1" aria-label="Description of the tool">
           This tool shows when there are likely to be significant reductions in solar or wind energy

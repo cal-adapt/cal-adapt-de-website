@@ -4,19 +4,14 @@ import { type ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import InterpretSection from "@/components/common/content/InterpretSection";
-import Alert from "@/components/common/ui/Alert";
-import Badge from "@/components/common/ui/Badge";
 import Button from "@/components/common/ui/Button";
 import Citation from "@/components/common/ui/Citation";
 import CitationBox from "@/components/common/ui/CitationBox";
 import Icon from "@/components/common/ui/Icon";
-import Link from "@/components/common/ui/Link";
 import Tabs, { type TabItem } from "@/components/common/ui/Tabs";
 import PageLayout from "@/components/dashboard/PageLayout";
-import { FEEDBACK_URL } from "@/config/constants";
 import { navLinks } from "@/config/navigation";
 import { useExtremeHeatSeries } from "@/hooks/use-extreme-heat-series";
-import { analytics } from "@/lib/analytics";
 import { exportSvgAsPng } from "@/lib/extreme-heat-days/export-chart";
 import { formatChartExportFilename, formatViewTitle } from "@/lib/extreme-heat-days/format";
 import { type ExtremeHeatDaysSelections, regionLabelFor } from "@/lib/extreme-heat-days/options";
@@ -166,28 +161,8 @@ export default function ExtremeHeatDays() {
   }, [selections.climateVariable, exportLocationLabel]);
 
   return (
-    <PageLayout
-      title={
-        <>
-          {navLinks.extremeHeatDays.label}
-          <Badge variant="blue" size="lg" className={styles.betaBadge}>
-            Beta
-          </Badge>
-        </>
-      }
-    >
-      <Alert severity="info" className={styles.betaAlert} ariaLabel="Beta notice">
-        Suggestions for improvements, questions, and general comments are all welcome. Fill out the
-        feedback form{" "}
-        <Link
-          href={FEEDBACK_URL}
-          onClick={() => analytics.trackExternalLink(FEEDBACK_URL, "feedback survey")}
-        >
-          here
-        </Link>
-        .
-      </Alert>
-
+    // This page renders its own CitationBox below, so skip PageLayout's.
+    <PageLayout title={navLinks.extremeHeatDays.label} citationTitle={false} beta>
       <div className={styles.intro}>{INTRO_COPY_BY_VARIABLE[selections.climateVariable]}</div>
 
       <div className={styles.workspace}>
