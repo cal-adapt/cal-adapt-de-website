@@ -20,10 +20,18 @@ import Controls from "./Controls";
 
 import styles from "./HddCdd.module.scss";
 
-// TODO: copy pending -- placeholder left intentionally blank
 const CHART_INFO = (
   <>
-    <p>TEXT HERE</p>
+    <p>
+      This time series chart shows how annual cooling degree days (CDD) or heating degree days
+      (HDD), calculated from climate model simulations, are projected to change through the
+      twenty-first century, based on the location selected.
+    </p>
+    <p>
+      Looking from left to right, the axis shows time increasing from 1980 to 2100. The shaded area
+      shows the range in values modeled for each year to visualize the uncertainty in these HDD/CDD
+      estimates.
+    </p>
   </>
 );
 
@@ -64,7 +72,19 @@ export default function HddCdd() {
       <BetaFeedbackAlert />
 
       <div className={styles.intro}>
-        <p className={styles.introCopy}>TEXT HERE</p>
+        <p className={styles.introCopy}>
+          Heating Degree Days (HDDs) and Cooling Degree Days (CDDs) are measures of the average
+          daily temperature departure from a 65°F threshold. These metrics are used to translate
+          outdoor temperatures into estimated energy demand. HDDs quantify how much and how long
+          outdoor temperatures fall below 65°F, reflecting demand for indoor heating. CDDs quantify
+          how much and how long outdoor temperatures exceed 65°F, reflecting demand for indoor
+          cooling.
+        </p>
+        <p className={styles.introCopy}>
+          Cooling is a major driver of peak electricity demand in California, so looking at
+          projected HDD and CDD values can help energy utilities understand how peak demand will
+          change in the future.
+        </p>
       </div>
 
       <div className={styles.workspace}>
