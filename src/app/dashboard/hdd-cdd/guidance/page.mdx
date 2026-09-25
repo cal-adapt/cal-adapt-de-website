@@ -5,25 +5,21 @@ export const metadata = {
   title: `Guidance & Methods - ${navLinks.hddCdd.label} - ${SITE_TITLE}`,
 };
 
-# HDD/CDD: Guidance & Methods
+# Cooling and Heating Degree Days: Guidance & Methods
 
-## What are heating and cooling degree days?
+## What are cooling degree days and heating degree days?
 
-## Why is the threshold fixed at 65°F?
+Cooling degree days (CDDs) measure how much and for how long outdoor temperatures exceed a specific threshold, indicating the need for indoor cooling. The threshold of 65 °F is used to approximate the point at which cooling becomes necessary.
 
-## Why do these trends matter?
+Heating degree days (HDDs) quantify how much and for how long outdoor temperatures fall below a specific threshold, reflecting demand for indoor heating. The threshold of 65 °F is used to approximate the point at which heating becomes necessary.
 
-## What is the SSP3-7.0 scenario?
+## How are cooling degree days and heating degree days used in energy sector planning?
 
-## What are some impacts of changing heating and cooling demand?
+Cooling degree days are used widely across the energy sector to help translate outdoor temperature into estimated energy demand[@auffhammerMeasuring2014; @thomRational1954]. The use of air conditioning on hot days is one of the largest drivers of electricity usage across the state, and CDDs provide a simple metric to estimate how this demand may grow with temperature increases under global warming.
 
-<StatGrid>
-<Stat icon="bolt" label="">
+As more indoor heating moves from gas to electric, heating degree days play an increasingly important role in estimating how changes in winter temperatures will impact electricity demand.
 
-</Stat>
-</StatGrid>
-
-## Limitations
+Within California, many utilities and the California Energy Commission use CDDs and HDDs computed from climate projections as inputs to their electricity demand forecasts[@cec-2025-demand-side-modeling].
 
 <hr />
 
@@ -34,39 +30,57 @@ export const metadata = {
 <Specs>
 <Spec label="Variable">
 
+Average daily air temperature
+
 </Spec>
 <Spec label="Spatial resolution">
+
+3 kilometer gridscale resolution
 
 </Spec>
 <Spec label="Data products">
 
+Ensemble of 4 bias-adjusted climate model simulations, dynamically downscaled using the WRF model for the state of California: `EC-Earth3-r1i1p1f1`, `MPI-ESM1-2-HR-r3i1p1f1`, `TaiESM1-r1i1p1f1`, `MIROC6-r1i1p1f1`.
+
 </Spec>
 </Specs>
 
-<Step n={1} totalSteps={5} title="Data retrieval">
+<Step n={1} totalSteps={4} title="Data retrieval and preprocessing">
+
+Using Cal-Adapt's open source Python library `climakitae`, input data was retrieved. Climate model simulations were retrieved for the modeled historical period (1981-2014) and the future period under the SSP3-7.0 scenario (2015-2100).
 
 </Step>
 
-<Step n={2} totalSteps={5} title="Compute HDD and CDD">
+<Step n={2} totalSteps={4} title="Compute CDD/HDD values">
 
-</Step>
+Cooling degree days (CDDs) are calculated by subtracting the cooling threshold value (65 °F) from each day's average temperature, producing a measurement of how many degrees each day's temperature exceeds the threshold by. Days with an average temperature below the threshold are counted as zero. The resulting daily values are summed annually to produce annual cooling degree days, and seasonally to produce seasonal cooling degree days.
 
-<Step n={3} totalSteps={5} title="Annual sums">
+Heating degree days are calculated in a similar way by measuring how many degrees each day's average temperature falls below the heating threshold (65 °F). Days with an average temperature above the threshold are counted as zero. The resulting values are summed annually to produce annual heating degree days, and seasonally to produce seasonal heating degree days.
 
 <Callout title="Plain language example">
+
+A day with an average daily temperature of 75 °F has a CDD value of (75 °F - 65 °F) = 10. This day is above the heating threshold, so it has an HDD value of 0.
+
+A day with an average daily temperature of 50 °F has an HDD value of (65 °F - 50 °F) = 15. This day is below the cooling threshold, so it has a CDD value of 0.
 
 </Callout>
 
 </Step>
 
-<Step n={4} totalSteps={5} title="Spatial aggregation">
+<Step n={3} totalSteps={4} title="Spatial aggregation">
+
+The gridded data is aggregated by spatial unit (e.g. county, city, etc) by taking a **median** of all the grid cells within the boundary. A median is used to capture the typical value of CDD/HDD within the area of interest without introducing bias from any anomalous grid cells.
 
 </Step>
 
-<Step n={5} totalSteps={5} title="Simulation aggregation">
+<Step n={4} totalSteps={4} title="Model mean and range">
+
+For each year of spatially aggregated data, the mean, minimum, and maximum values are taken across the four dynamically downscaled WRF simulations. The multi-model mean is used to plot the timeseries for CDD and HDD, with a shaded area indicating the range between the minimum and maximum model values.
 
 </Step>
 
 <hr />
 
 ## References
+
+[^ref]
