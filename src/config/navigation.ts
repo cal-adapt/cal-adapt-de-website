@@ -68,6 +68,24 @@ export const navLinks = {
       },
     ],
   },
+  hddCdd: {
+    id: "hdd-cdd",
+    label: "Heating/Cooling Degree Days",
+    href: "/dashboard/hdd-cdd",
+    featureFlag: "__FF_HDD_CDD__",
+    children: [
+      {
+        id: "hdd-cdd-dashboard",
+        label: "Dashboard",
+        href: "/dashboard/hdd-cdd",
+      },
+      {
+        id: "hdd-cdd-guidance",
+        label: "Guidance",
+        href: "/dashboard/hdd-cdd/guidance",
+      },
+    ],
+  },
   renewablesVisualizer: {
     id: "renewables-visualizer",
     label: "Renewables Visualizer",
@@ -117,6 +135,7 @@ export const navGroups = {
       navLinks.climateMetricsMap,
       navLinks.dataDownload,
       navLinks.extremeHeatDays,
+      navLinks.hddCdd,
       navLinks.renewablesVisualizer,
     ].filter(isNavLinkEnabled),
   },

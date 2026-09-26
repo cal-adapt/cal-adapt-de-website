@@ -1,0 +1,35 @@
+@use "@/styles/abstracts" as *;
+
+.intro {
+  @include flex(column, flex-start, stretch, spacer(3));
+  width: 100%;
+  max-width: max-w(global);
+}
+
+.introCopy {
+  margin: 0;
+  color: color(black);
+  @include type-item(body);
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: spacer(8);
+  width: 100%;
+  align-items: start;
+}
+
+.viewArea {
+  @include flex(column, flex-start, stretch, spacer(7));
+  min-width: 0;
+}
+
+.chartActions {
+  @include flex(row, flex-end, center);
+  width: 100%;
+}
+
+.controlsArea {
+  width: 100%;
+}
