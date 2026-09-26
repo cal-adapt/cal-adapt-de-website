@@ -4,6 +4,7 @@ import { useCallback, useMemo, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import BetaFeedbackAlert from "@/components/common/content/BetaFeedbackAlert";
+import Callout from "@/components/common/content/Callout";
 import InterpretSection from "@/components/common/content/InterpretSection";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
@@ -32,6 +33,14 @@ const CHART_INFO = (
       shows the range in values modeled for each year to visualize the uncertainty in these HDD/CDD
       estimates.
     </p>
+    <Callout title="Example interpretation">
+      <p>
+        In a selected region, the average number of CDDs per year is 1,400 historically, and it
+        increases to around 2,000 CDDs per year on average in 2040-2060. This is roughly a 40%
+        increase in CDDs and shows how rising temperatures can be linked to greater demand for
+        electricity to meet indoor cooling needs.
+      </p>
+    </Callout>
   </>
 );
 
