@@ -28,6 +28,22 @@
     }
   }
 
+  .tabletTools {
+    display: none;
+    position: absolute;
+    top: 50%;
+    right: spacer(4);
+    transform: translateY(-50%);
+
+    @include breakpoint(small) {
+      display: block;
+    }
+
+    @include breakpoint(medium) {
+      display: none;
+    }
+  }
+
   .desktop {
     @include flex(row, center, center);
     width: 100%;
@@ -93,4 +109,14 @@
 
 .menuItem {
   font-size: 0.9em !important;
+}
+
+.menuItemNested {
+  padding-left: spacer(7) !important;
+}
+
+.menuGroupLabel {
+  font-size: 0.9em !important;
+  opacity: 1 !important;
+  font-weight: font-weight(bold);
 }

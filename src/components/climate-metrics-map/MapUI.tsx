@@ -21,8 +21,10 @@ import Select from "@mui/material/Select";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import HtmlTooltip from "@/components/common/ui/HtmlTooltip";
+import { mediaQueries } from "@/config/breakpoints";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import type { Metric } from "@/data/climate-metrics-map/metrics";
 import { tooltips } from "@/data/tooltips";
@@ -78,6 +80,7 @@ export default function MapUI({
   metrics,
 }: MapUIProps) {
   const { open, drawerWidth } = useLeftDrawer();
+  const isDesktop = useMediaQuery(mediaQueries.min.large);
   const [helpAnchorEl, setHelpAnchorEl] = useState<HTMLButtonElement | null>(null);
   const helpButtonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -115,15 +118,16 @@ export default function MapUI({
   const labelledBy = "help-popover-title";
 
   useEffect(() => {
-    // Auto-open help popover on load
+    if (!isDesktop) return;
+
     const timeout = setTimeout(() => {
       if (helpButtonRef.current) {
         setHelpAnchorEl(helpButtonRef.current);
       }
-    }, 1000); // delay in milliseconds (e.g., 1000ms = 1 second)
+    }, 1000);
 
-    return () => clearTimeout(timeout); // cleanup on unmount
-  }, []);
+    return () => clearTimeout(timeout);
+  }, [isDesktop]);
 
   // Load query params into state
   useEffect(() => {
@@ -168,7 +172,7 @@ export default function MapUI({
       <Box sx={{ height: "80vh", display: "flex", flexDirection: "column" }}>
         <Grid container direction="column" sx={{ height: "100%" }}>
           <Grid container spacing={2}>
-            <Grid item xs={3}>
+            <Grid item xs="auto">
               <div className={styles.parameterSelection}>
                 <div className={styles.valueType}>
                   <Box
@@ -280,7 +284,7 @@ export default function MapUI({
               <Fab
                 className={styles.helpButton}
                 color="secondary"
-                sx={{ float: "right", mr: "50px" }}
+                sx={{ float: "right" }}
                 aria-label="Open help dialog"
                 aria-controls={helpOpen ? id : undefined}
                 aria-expanded={helpOpen}
@@ -308,9 +312,11 @@ export default function MapUI({
                 }}
                 sx={{
                   "& .MuiPaper-root": {
-                    width: "400px", // Set width
-                    height: "500px", // Set height
+                    width: "min(400px, calc(100vw - 32px))",
+                    height: "auto",
+                    maxHeight: "min(500px, calc(100dvh - 120px))",
                     padding: "30px",
+                    overflow: "auto",
                   },
                 }}
               >

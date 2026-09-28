@@ -37,6 +37,7 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
   const [thumbTop, setThumbTop] = useState("0px");
   const trackRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery(mediaQueries.max.large);
+  const isSmall = useMediaQuery(mediaQueries.max.small);
 
   const scrollToItem = (index: number) => {
     const el = listRef.current?.children[index] as HTMLElement;
@@ -88,6 +89,17 @@ export default function ToolCarousel({ data }: ToolCarouselProps) {
                       <h6>{item.title}</h6>
                       <p>{item.description}</p>
                     </div>
+                    {!isSmall && (
+                      <Button
+                        className={styles.linkButton}
+                        href={item.link}
+                        openInNewTab
+                        variant="floating"
+                        ariaLabel={`Open ${item.title} in new tab`}
+                      >
+                        <ArrowForwardOutlinedIcon aria-hidden="true" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>

@@ -24,29 +24,50 @@
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "controls"
+    "view";
   gap: spacer(8);
   width: 100%;
   align-items: start;
+
+  @include breakpoint(large) {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    grid-template-areas: "view controls";
+  }
 }
 
 .viewArea {
   @include flex(column, flex-start, stretch, spacer(7));
+  grid-area: view;
   min-width: 0;
 }
 
 .tabsRow {
-  @include flex(row, space-between, flex-end, spacer(4));
+  @include flex(column, flex-start, stretch, spacer(3));
   width: 100%;
+  min-width: 0;
   border-bottom: 1px solid color(grey-2);
+
+  @include breakpoint(large) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: spacer(4);
+  }
 }
 
 .tabsRowActions {
+  align-self: flex-end;
   padding-bottom: spacer(2);
 }
 
 .controlsArea {
+  grid-area: controls;
   width: 100%;
+  min-width: 0;
 }
 
 .referencesTitle {
