@@ -1,0 +1,6 @@
+@use "@/styles/abstracts" as *;
+
+.alert {
+  width: 100%;
+  max-width: max-w(global);
+}

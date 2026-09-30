@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
 
 import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
+import ElectricBoltOutlinedIcon from "@mui/icons-material/ElectricBoltOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import ThermostatOutlinedIcon from "@mui/icons-material/ThermostatOutlined";
@@ -45,6 +46,9 @@ const TOOL_UI_BY_ID: Record<DashboardToolNavLinkId, DashboardToolUi> = {
   },
   "extreme-heat-days": {
     sidebarIcon: <ThermostatOutlinedIcon />,
+  },
+  "hdd-cdd": {
+    sidebarIcon: <ElectricBoltOutlinedIcon />,
   },
   "renewables-visualizer": {
     sidebarIcon: <WbSunnyOutlinedIcon />,

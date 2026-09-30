@@ -1,0 +1,7 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  @include flex(column, flex-start, stretch, spacer(4));
+  width: 100%;
+  padding-block: spacer(2);
+}
