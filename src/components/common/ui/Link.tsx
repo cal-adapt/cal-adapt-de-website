@@ -14,12 +14,21 @@ export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
 
 export default function Link({ href, children, className, openInNewTab, ...props }: LinkProps) {
   const isExternal = href && isExternalUrl(href);
+  const isHashLink = href && href.startsWith("#");
   const shouldOpenInNewTab = openInNewTab || isExternal;
   const linkClasses = clsx(styles.link, className);
 
   if (shouldOpenInNewTab) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer" className={linkClasses} {...props}>
+        {children}
+      </a>
+    );
+  }
+
+  if (isHashLink) {
+    return (
+      <a href={href} className={linkClasses} {...props}>
         {children}
       </a>
     );

@@ -1,0 +1,73 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  position: relative;
+  display: inline;
+}
+
+.trigger {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: color(blue-4);
+  cursor: help;
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.18em;
+  border-radius: rounded(1);
+
+  &:hover,
+  &:focus-visible {
+    color: color(blue-5);
+  }
+
+  @include focus-ring;
+}
+
+.popover {
+  @include flex(column, flex-start, stretch, spacer(2));
+  position: absolute;
+  z-index: z(10);
+  left: 0;
+  top: calc(100% + #{spacer(3)});
+  width: max-content;
+  max-width: 32rem;
+  padding: spacer(4);
+  border: 1px solid color(grey-2);
+  background: color(white);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  color: color(black);
+  text-align: start;
+  pointer-events: auto;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -#{spacer(3)};
+    height: #{spacer(3)};
+  }
+}
+
+.kicker {
+  display: block;
+  @include type-item(label);
+  color: color(grey-4);
+}
+
+.term {
+  display: block;
+  @include type-item(body);
+  font-weight: font-weight(semibold);
+}
+
+.definition {
+  display: block;
+  @include type-item(small);
+  font-weight: font-weight(regular);
+  color: color(grey-5);
+}
