@@ -259,7 +259,9 @@ export default function LineChart({
     if (rows.length === 0) return;
     const svgRect = event.currentTarget.getBoundingClientRect();
     const localX = event.clientX - svgRect.left;
-    const year = xScale.invert(localX);
+    // Round to the nearest whole year so the hover snaps to the closest point
+    // rather than always the next one to the right.
+    const year = Math.round(xScale.invert(localX));
     const index = bisectYear(rows, year);
     const row = rows[Math.min(Math.max(index, 0), rows.length - 1)];
     if (!row) return;
