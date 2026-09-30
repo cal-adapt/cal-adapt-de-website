@@ -2,7 +2,8 @@
 
 .sidepanel {
   padding: spacer(7);
-  width: 500px;
+  box-sizing: border-box;
+  width: min(500px, 100vw);
 
   .package-contents {
     padding-top: spacer(5);

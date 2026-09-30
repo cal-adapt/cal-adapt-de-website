@@ -31,7 +31,7 @@
   padding: spacer(7);
 }
 
-@include breakpoint(medium) {
+@include breakpoint(large) {
   .workspace {
     flex-direction: row;
     align-items: stretch;
