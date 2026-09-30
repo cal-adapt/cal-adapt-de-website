@@ -6,9 +6,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import BetaFeedbackAlert from "@/components/common/content/BetaFeedbackAlert";
 import Callout from "@/components/common/content/Callout";
 import InterpretSection from "@/components/common/content/InterpretSection";
+import Badge from "@/components/common/ui/Badge";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import PageLayout from "@/components/dashboard/PageLayout";
+import { navLinks } from "@/config/navigation";
 import { useHddCddSeries } from "@/hooks/use-hdd-cdd-series";
 import { formatChartExportFilename, formatViewTitle } from "@/lib/hdd-cdd/format";
 import { getMetric, type HddCddSelections, regionLabelFor, SSP370 } from "@/lib/hdd-cdd/options";
@@ -26,12 +28,9 @@ const CHART_INFO = (
     <p>
       This time series chart shows how annual cooling degree days (CDD) or heating degree days
       (HDD), calculated from climate model simulations, are projected to change through the
-      twenty-first century, based on the location selected.
-    </p>
-    <p>
-      Looking from left to right, the axis shows time increasing from 1980 to 2100. The shaded area
-      shows the range in values modeled for each year to visualize the uncertainty in these HDD/CDD
-      estimates.
+      twenty-first century, based on the location selected. Looking from left to right, the axis
+      shows time increasing from 1981 to 2099. The shaded area shows the range in values modeled for
+      each year to visualize the uncertainty in these HDD/CDD estimates.
     </p>
     <Callout title="Example interpretation">
       <p>
@@ -77,17 +76,26 @@ export default function HddCdd() {
   }, [selections.climateVariable, locationLabel]);
 
   return (
-    <PageLayout title="Heating/Cooling Degree Days">
+    <PageLayout
+      title={
+        <>
+          {navLinks.hddCdd.label}
+          <Badge variant="blue" size="lg" className={styles.betaBadge}>
+            Beta
+          </Badge>
+        </>
+      }
+    >
       <BetaFeedbackAlert />
 
       <div className={styles.intro}>
         <p className={styles.introCopy}>
           Heating Degree Days (HDDs) and Cooling Degree Days (CDDs) are measures of the average
           daily temperature departure from a 65°F threshold. These metrics are used to translate
-          outdoor temperatures into estimated energy demand. HDDs quantify how much and how long
-          outdoor temperatures fall below 65°F, reflecting demand for indoor heating. CDDs quantify
-          how much and how long outdoor temperatures exceed 65°F, reflecting demand for indoor
-          cooling.
+          outdoor temperatures into estimated energy demand from indoor heating and cooling. HDDs
+          quantify how much and how long outdoor temperatures fall below 65°F, reflecting demand for
+          indoor heating. CDDs quantify how much and how long outdoor temperatures exceed 65°F,
+          reflecting demand for indoor cooling.
         </p>
         <p className={styles.introCopy}>
           Cooling is a major driver of peak electricity demand in California, so looking at

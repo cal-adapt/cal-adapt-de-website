@@ -70,7 +70,7 @@ export const navLinks = {
   },
   hddCdd: {
     id: "hdd-cdd",
-    label: "Heating/Cooling Degree Days",
+    label: "Heating & Cooling Degree Days",
     href: "/dashboard/hdd-cdd",
     featureFlag: "__FF_HDD_CDD__",
     children: [
