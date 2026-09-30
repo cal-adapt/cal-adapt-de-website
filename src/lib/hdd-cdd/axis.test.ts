@@ -1,0 +1,43 @@
+import { describe, expect, it } from "vitest";
+
+import { resolveYAxisMax, resolveYAxisMin, Y_AXIS_FALLBACK_MAX } from "./axis";
+
+describe("resolveYAxisMax", () => {
+  it("adds 10% headroom above the max of the given values", () => {
+    expect(resolveYAxisMax([10, 45.5, 30])).toBeCloseTo(50.05);
+  });
+
+  it("ignores non-finite values", () => {
+    expect(resolveYAxisMax([NaN, 20, Infinity, -Infinity, 35])).toBeCloseTo(38.5);
+  });
+
+  it("falls back to Y_AXIS_FALLBACK_MAX when the max is zero or negative", () => {
+    expect(resolveYAxisMax([-10, -5])).toBe(Y_AXIS_FALLBACK_MAX);
+    expect(resolveYAxisMax([0])).toBe(Y_AXIS_FALLBACK_MAX);
+  });
+
+  it("falls back to Y_AXIS_FALLBACK_MAX when there are no finite values", () => {
+    expect(resolveYAxisMax([])).toBe(Y_AXIS_FALLBACK_MAX);
+    expect(resolveYAxisMax([NaN, Infinity])).toBe(Y_AXIS_FALLBACK_MAX);
+  });
+});
+
+describe("resolveYAxisMin", () => {
+  it("subtracts 10% headroom below the min of the given values", () => {
+    expect(resolveYAxisMin([30, 45.5, 10])).toBeCloseTo(9);
+  });
+
+  it("ignores non-finite values", () => {
+    expect(resolveYAxisMin([NaN, 20, Infinity, -Infinity, 35])).toBeCloseTo(18);
+  });
+
+  it("floors at zero instead of going negative", () => {
+    expect(resolveYAxisMin([-10, -5])).toBe(0);
+    expect(resolveYAxisMin([0])).toBe(0);
+  });
+
+  it("returns zero when there are no finite values", () => {
+    expect(resolveYAxisMin([])).toBe(0);
+    expect(resolveYAxisMin([NaN, Infinity])).toBe(0);
+  });
+});
