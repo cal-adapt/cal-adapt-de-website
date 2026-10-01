@@ -1,6 +1,8 @@
 import type { ClimateStory } from "@/config/climate-stories";
 import { navLinks } from "@/config/navigation";
 
+import { extremeHeatSelections, extremeHeatToolHref } from "./figures/extreme-heat-selections";
+import ExtremeHeatChart from "./figures/ExtremeHeatChart";
 import GlossaryTerm from "./GlossaryTerm";
 import { relatedToolLink } from "./related-tool";
 import StoryBlock from "./StoryBlock";
@@ -11,6 +13,8 @@ import type { StorySection } from "./StoryTableOfContents";
 import StoryToolCallout from "./StoryToolCallout";
 
 const FPO_FIGURE = { label: "[FPO: Figure]", source: "Lorem ipsum" } as const;
+
+const IMPERIAL_100F = extremeHeatSelections({ location: "Imperial", threshold: "100F" });
 
 const MORE_FREQUENT_DAYS = {
   id: "more-frequent-days",
@@ -94,14 +98,16 @@ export default function ExtremeHeatStory({ story }: ExtremeHeatStoryProps) {
           residing within these coastal regions were not designed and have not adapted for frequent
           high temperatures.
         </p>
-        <StoryFigure {...FPO_FIGURE} />
+        <StoryFigure>
+          <ExtremeHeatChart selections={IMPERIAL_100F} />
+        </StoryFigure>
       </StoryBlock>
 
       <StoryToolCallout
         title={`Explore this in the ${relatedTool.label} tool`}
         body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac eros felis. Duis id commodo dolor. Vestibulum ex velit, egestas ut quam eget, placerat hendrerit orci. Suspendisse ut elit leo. Nunc vel sem id est accumsan imperdiet sit amet a nulla."
         primary={{
-          href: relatedTool.href,
+          href: extremeHeatToolHref(relatedTool.href, IMPERIAL_100F),
           label: `Explore the ${relatedTool.label} tool`,
         }}
         secondary={{

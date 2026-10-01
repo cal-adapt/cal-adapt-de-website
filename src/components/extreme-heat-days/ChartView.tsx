@@ -30,9 +30,9 @@ export interface ChartViewProps {
   threshold: string;
   locationLabel: string;
   /** DOM id for ARIA tab/panel pairing. */
-  id: string;
-  /** Tab id this panel is labeled by (for `aria-labelledby`). */
-  labelledBy: string;
+  id?: string;
+  /** Tab id this panel is labeled by. Renders as a `tabpanel` only when set. */
+  labelledBy?: string;
   /** Attached to the chart container div so the parent's Download button can
    *  locate the SVG via a single `querySelector("svg")`. */
   chartContainerRef?: RefObject<HTMLDivElement | null>;
@@ -73,7 +73,7 @@ export default function ChartView({
     <section
       id={id}
       className={styles.root}
-      role="tabpanel"
+      role={labelledBy ? "tabpanel" : undefined}
       aria-labelledby={labelledBy}
       aria-busy={isLoading}
     >
