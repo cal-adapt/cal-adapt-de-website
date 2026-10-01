@@ -11,7 +11,7 @@ import DashboardAppBar from "@/components/dashboard/DashboardAppBar";
 import DashboardSidebar, {
   type DashboardSidebarNavItem,
 } from "@/components/dashboard/DashboardSidebar";
-import { dashboardTools } from "@/components/dashboard/tools";
+import { getDashboardSidebarItems } from "@/components/dashboard/tools";
 import { mediaQueries } from "@/config/breakpoints";
 import { hasNavChildren, type NavLink, navLinks } from "@/config/navigation";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
@@ -22,18 +22,15 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-const SIDEBAR_ITEMS: DashboardSidebarNavItem[] = dashboardTools.map((tool) => ({
-  link: tool.navLink,
-  icon: tool.sidebarIcon,
-}));
+const SIDEBAR_ITEMS: DashboardSidebarNavItem[] = getDashboardSidebarItems();
 
-/** Resolve the active tool's nav link from the current `/dashboard/:tool` segment. */
+/** Resolve the active sidebar item from the current `/dashboard/:segment` path. */
 function getPageLink(selectedPage: string | null): NavLink {
   const match = SIDEBAR_ITEMS.find((item) => item.link.id === selectedPage);
   return match?.link ?? navLinks.home;
 }
 
-/** Resolve the active nested page (e.g. "Methods") under the current tool, if any. */
+/** Resolve the active nested page (e.g. "Methods") under the current item, if any. */
 function getSubPageLink(pageLink: NavLink, pathname: string): NavLink | undefined {
   if (!hasNavChildren(pageLink)) return undefined;
   const current = normalizePath(pathname);

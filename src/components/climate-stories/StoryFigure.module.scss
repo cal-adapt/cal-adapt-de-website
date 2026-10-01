@@ -1,0 +1,35 @@
+@use "@/styles/abstracts" as *;
+
+.figure {
+  @include flex(column, flex-start, stretch, spacer(2));
+  margin: 0;
+  min-width: 0;
+}
+
+.placeholder {
+  @include flex(column, center, center);
+  min-height: 240px;
+  background: color(grey-1);
+  border: 1px solid color(grey-2);
+}
+
+.placeholderLabel {
+  @include type-item(small);
+  color: color(grey-4);
+  text-align: center;
+  padding: spacer(3);
+}
+
+.caption {
+  @include flex(column, flex-start, stretch, spacer(1));
+  @include type-item(small);
+  color: color(grey-4);
+
+  a {
+    color: color(blue-4);
+
+    &:hover {
+      color: color(blue-5);
+    }
+  }
+}

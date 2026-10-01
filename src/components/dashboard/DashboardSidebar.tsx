@@ -57,16 +57,19 @@ export default function DashboardSidebar({
         <nav className={styles.nav} aria-label="Dashboard navigation">
           {items.map((item) => {
             const activePath = activeHref ? normalizePath(activeHref) : null;
-            const toolPath = normalizePath(item.link.href);
-            const toolActive =
-              !!activePath && (activePath === toolPath || activePath.startsWith(`${toolPath}/`));
-            const showSubNav = open && hasNavChildren(item.link) && toolActive;
+            const itemPath = normalizePath(item.link.href);
+            const itemActive =
+              !!activePath && (activePath === itemPath || activePath.startsWith(`${itemPath}/`));
+            const showSubNav =
+              open &&
+              hasNavChildren(item.link) &&
+              (itemActive || item.link.alwaysShowChildren === true);
 
             if (!open) {
               return (
                 <Button
                   key={item.link.id}
-                  className={clsx(styles.iconButton, toolActive && styles.selected)}
+                  className={clsx(styles.iconButton, itemActive && styles.selected)}
                   variant="tertiary"
                   href={item.link.href}
                   ariaLabel={item.link.label}
@@ -77,10 +80,10 @@ export default function DashboardSidebar({
               );
             }
 
-            // A tool with children shows the active child highlighted in its sub-nav,
+            // An item with children shows the active child highlighted in its sub-nav,
             // so the parent button only gets a subtle (bold) active treatment.
-            const parentSelected = toolActive && !hasNavChildren(item.link);
-            const parentActive = toolActive && hasNavChildren(item.link);
+            const parentSelected = itemActive && !hasNavChildren(item.link);
+            const parentActive = itemActive && hasNavChildren(item.link);
 
             return (
               <div key={item.link.id} className={styles.navGroup}>
@@ -104,7 +107,11 @@ export default function DashboardSidebar({
                       <SubNavLinks links={item.link.children} activePath={activePath} query="" />
                     }
                   >
-                    <SidebarSubNav links={item.link.children} activePath={activePath} />
+                    <SidebarSubNav
+                      links={item.link.children}
+                      activePath={activePath}
+                      persistQuery={item.link.persistQuery !== false}
+                    />
                   </Suspense>
                 )}
               </div>
