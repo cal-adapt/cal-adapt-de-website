@@ -1,3 +1,4 @@
+import { CLIMATE_STORIES_HREF, climateStories } from "@/config/climate-stories";
 import { FEEDBACK_URL } from "@/config/constants";
 import { featureFlags } from "@/config/feature-flags";
 
@@ -12,6 +13,13 @@ export interface NavLink {
   featureFlag?: FeatureFlagKey;
   /** Optional nested pages rendered as an indented sub-navigation group */
   children?: readonly NavLink[];
+  /** When true, child links stay visible even if this item is not the active route. */
+  alwaysShowChildren?: boolean;
+  /**
+   * When false, child hrefs omit the current URL query string.
+   * Defaults to true so tool subnavs keep chart/map selections.
+   */
+  persistQuery?: boolean;
 }
 
 export interface NavGroup {
@@ -40,6 +48,19 @@ export const navLinks = {
     label: "Home",
     href: "/",
   },
+  climateStories: {
+    id: "climate-stories",
+    label: "Climate Stories",
+    href: CLIMATE_STORIES_HREF,
+    featureFlag: "__FF_CLIMATE_STORIES__",
+    alwaysShowChildren: true,
+    persistQuery: false,
+    children: climateStories.map((story) => ({
+      id: story.id,
+      label: story.label ?? story.title,
+      href: story.href,
+    })),
+  },
   climateMetricsMap: {
     id: "climate-metrics-map",
     label: "Climate Metrics Map",
@@ -65,6 +86,24 @@ export const navLinks = {
         id: "extreme-heat-days-guidance",
         label: "Guidance",
         href: "/dashboard/extreme-heat-days/guidance",
+      },
+    ],
+  },
+  hddCdd: {
+    id: "hdd-cdd",
+    label: "Heating & Cooling Degree Days",
+    href: "/dashboard/hdd-cdd",
+    featureFlag: "__FF_HDD_CDD__",
+    children: [
+      {
+        id: "hdd-cdd-dashboard",
+        label: "Dashboard",
+        href: "/dashboard/hdd-cdd",
+      },
+      {
+        id: "hdd-cdd-guidance",
+        label: "Guidance",
+        href: "/dashboard/hdd-cdd/guidance",
       },
     ],
   },
@@ -110,6 +149,11 @@ export function isNavLinkEnabled(link: NavLink): boolean {
 }
 
 export const navGroups = {
+  stories: {
+    id: "stories",
+    label: "Climate Stories",
+    links: [navLinks.climateStories].filter(isNavLinkEnabled),
+  },
   tools: {
     id: "tools",
     label: "Tools",
@@ -117,6 +161,7 @@ export const navGroups = {
       navLinks.climateMetricsMap,
       navLinks.dataDownload,
       navLinks.extremeHeatDays,
+      navLinks.hddCdd,
       navLinks.renewablesVisualizer,
     ].filter(isNavLinkEnabled),
   },

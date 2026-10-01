@@ -1,0 +1,30 @@
+@use "@/styles/abstracts" as *;
+
+.block {
+  @include flex(column, flex-start, stretch, spacer(3));
+  scroll-margin-top: spacer(6);
+}
+
+.heading {
+  @include type-item(heading-5);
+  margin: 0;
+  color: color(black);
+}
+
+.body {
+  @include flex(column, flex-start, stretch, spacer(4));
+
+  p {
+    @include type-item(body);
+    margin: 0;
+    color: color(black);
+
+    a {
+      color: color(blue-4);
+
+      &:hover {
+        color: color(blue-5);
+      }
+    }
+  }
+}

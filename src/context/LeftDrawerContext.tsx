@@ -2,6 +2,10 @@
 
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+import { mediaQueries } from "@/config/breakpoints";
+
 const DRAWER_WIDTH = 275;
 
 type DrawerState = "open" | "closed";
@@ -15,16 +19,18 @@ type LeftDrawerContextType = {
 const LeftDrawerContext = createContext<LeftDrawerContextType | undefined>(undefined);
 
 export const LeftDrawerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [open, setOpen] = useState(true);
+  const isDesktop = useMediaQuery(mediaQueries.min.large, { defaultMatches: true });
+  const [userOpen, setUserOpen] = useState<boolean | null>(null);
+  const open = userOpen ?? isDesktop;
   const drawerWidth = DRAWER_WIDTH;
 
   const toggleLeftDrawer = (state?: DrawerState) => {
     if (state === "open") {
-      setOpen(true);
+      setUserOpen(true);
     } else if (state === "closed") {
-      setOpen(false);
+      setUserOpen(false);
     } else {
-      setOpen((prev) => !prev);
+      setUserOpen((prev) => !(prev ?? isDesktop));
     }
   };
 

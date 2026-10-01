@@ -1,3 +1,5 @@
+import { downloadFile } from "@/utils/file";
+
 export interface ExportSvgAsPngOptions {
   /** Pixel-density multiplier for the output PNG. 2 ≈ retina-quality. */
   pixelRatio?: number;
@@ -42,7 +44,8 @@ export async function exportSvgAsPng(
     ctx.drawImage(img, 0, 0, pngWidth, pngHeight);
 
     const pngBlob = await canvasToBlob(canvas, "image/png");
-    triggerDownload(pngBlob, filename);
+    const pngUrl = URL.createObjectURL(pngBlob);
+    downloadFile(pngUrl, filename);
   } finally {
     URL.revokeObjectURL(svgUrl);
   }
@@ -145,17 +148,4 @@ function canvasToBlob(canvas: HTMLCanvasElement, type: string): Promise<Blob> {
       else reject(new Error(`canvas.toBlob(${type}) returned null`));
     }, type);
   });
-}
-
-function triggerDownload(blob: Blob, filename: string): void {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.style.display = "none";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  // Give the browser a tick to start the download before revoking
-  setTimeout(() => URL.revokeObjectURL(url), 0);
 }

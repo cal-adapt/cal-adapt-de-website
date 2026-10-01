@@ -5,7 +5,7 @@ import { useEffect } from "react";
 const URL_PATTERN = /https?:\/\/\S+/;
 
 interface CitationLinksProps {
-  /** id of the article element to scan for bibliography entries */
+  /** id of the element to scan for bibliography entries */
   articleId: string;
 }
 

@@ -1,7 +1,7 @@
 @use "@/styles/abstracts" as *;
 
 .mapPopup {
-  max-width: 400px !important;
+  max-width: min(400px, calc(100vw - 32px)) !important;
 
   .values {
     @include flex(row, center, center, spacer(4));
