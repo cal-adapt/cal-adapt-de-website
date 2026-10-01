@@ -30,9 +30,7 @@ export default function ClimateMetricsMap() {
     async function fetchGwlData() {
       if (selectedMetricIndex < 0) return;
 
-      // Some metrics don't have a "del" (delta) product yet — fall back to "abs".
-      const variableConfig =
-        metrics[selectedMetricIndex][valueType] ?? metrics[selectedMetricIndex].abs;
+      const variableConfig = metrics[selectedMetricIndex][valueType];
 
       try {
         const gwlData = await calAdaptApi.map.getGwlInfo(
@@ -53,17 +51,6 @@ export default function ClimateMetricsMap() {
     fetchGwlData();
   }, [selectedMetricIndex, valueType]);
 
-  // When switching to a metric with no "del" product, reset to "abs" right
-  // where the metric changes (not reactively in an effect, to avoid
-  // cascading setState-in-effect renders).
-  const handleMetricSelected = (metricId: number) => {
-    setSelectedMetricIndex(metricId);
-    const selectedMetric = metrics.find((m) => m.id === metricId);
-    if (selectedMetric && !selectedMetric.del) {
-      setValueType("abs");
-    }
-  };
-
   return (
     <Grid
       container
@@ -80,7 +67,7 @@ export default function ClimateMetricsMap() {
         gwlSelected={selectedGwlIndex}
         setGwlSelected={setSelectedGwlIndex}
         metricSelected={selectedMetricIndex}
-        setMetricSelected={handleMetricSelected}
+        setMetricSelected={setSelectedMetricIndex}
         valueType={valueType}
         setValueType={setValueType}
       />

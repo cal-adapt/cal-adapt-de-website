@@ -126,8 +126,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
 
     // Derived state
     const currentVariableData: Metric = metrics[metricSelected];
-    // Some metrics don't have a "del" (delta) product yet — fall back to "abs".
-    const paths: MetricVariant = currentVariableData[valueType] ?? currentVariableData.abs;
+    const paths: MetricVariant = currentVariableData[valueType];
     const [rescaleMin, rescaleMax] = paths.rescale.split(",").map(Number);
 
     if (!currentVariableData) {

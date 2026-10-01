@@ -30,14 +30,11 @@ export type Metric = {
   title: string;
   slug: string;
   abs: MetricVariant;
-  // Not every metric has a precomputed delta (change-from-baseline) product yet.
-  // Omit this to hide the "Delta" tab for a metric.
-  del?: MetricVariant;
+  del: MetricVariant;
   statLabels?: StatLabels;
 };
 
 const EXTREME_HEAT_BASE = "s3://cadcat/wrf/extreme-heat-tool/multimodel_gridded";
-const CDD_HDD_BASE = "s3://cadcat/wrf/hdd-cdd-tool/multimodel_gridded";
 
 export const metrics: Metric[] = [
   {
