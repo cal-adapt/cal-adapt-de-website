@@ -38,6 +38,13 @@ export interface HeatMetricConfig {
   /** Inclusive absolute (°F) slider bounds for this metric. */
   absoluteMinF: number;
   absoluteMaxF: number;
+  /** Selectable relative (percentile) thresholds, ascending. A contiguous run
+   *  renders as a slider; a sparse set (e.g. 95/99) renders as a dropdown. */
+  relativePercentiles: readonly number[];
+  /** Default relative threshold token for this metric, e.g. "98pctl". */
+  defaultRelativeThreshold: string;
+  /** STAC collection holding this metric's boundary CSVs. */
+  collectionId: string;
   /** Chart y-axis label. */
   yAxisLabel: string;
   /** Metric label used inside the chart title, e.g. "Warm Nights". */
@@ -52,6 +59,15 @@ export interface HeatMetricConfig {
   exportFilenamePrefix: string;
 }
 
+/** STAC collection for the Extreme Heat Days and Warm Nights boundary CSVs. */
+export const EH_METRICS_STAC_COLLECTION_ID = "eh-metrics-mm-boundary-csv";
+
+function inclusiveRange(min: number, max: number): number[] {
+  return Array.from({ length: max - min + 1 }, (_, i) => min + i);
+}
+
+const PERCENTILES_90_TO_99 = inclusiveRange(90, 99);
+
 const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   value: "extreme-heat-days",
   variableId: "eh_days",
@@ -60,6 +76,9 @@ const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   defaultThreshold: "100F",
   absoluteMinF: 80,
   absoluteMaxF: 135,
+  relativePercentiles: PERCENTILES_90_TO_99,
+  defaultRelativeThreshold: "98pctl",
+  collectionId: EH_METRICS_STAC_COLLECTION_ID,
   yAxisLabel: "Number of Extreme Heat Days per Year",
   titleLabel: "Extreme Heat",
   accessibleNoun: "extreme heat days",
@@ -76,6 +95,9 @@ const WARM_NIGHTS_METRIC: HeatMetricConfig = {
   defaultThreshold: "70F",
   absoluteMinF: 65,
   absoluteMaxF: 135,
+  relativePercentiles: PERCENTILES_90_TO_99,
+  defaultRelativeThreshold: "98pctl",
+  collectionId: EH_METRICS_STAC_COLLECTION_ID,
   yAxisLabel: "Number of Warm Nights per Year",
   titleLabel: "Warm Nights",
   accessibleNoun: "warm nights",
@@ -104,31 +126,39 @@ export const THRESHOLD_KIND_OPTIONS: readonly SelectOption[] = [
   { value: "relative", label: "Relative" },
 ];
 
-export const RELATIVE_THRESHOLD_MIN_PCTL = 90;
-export const RELATIVE_THRESHOLD_MAX_PCTL = 99;
-
-const DEFAULT_RELATIVE_THRESHOLD = "98pctl";
-
 export function thresholdKindFor(threshold: string): ThresholdKind {
   return threshold.endsWith("pctl") ? "relative" : "absolute";
+}
+
+/** Every selectable threshold number for `kind` on this metric, ascending. */
+export function thresholdValuesFor(
+  kind: ThresholdKind,
+  climateVariable: string
+): readonly number[] {
+  const metric = getHeatMetric(climateVariable);
+  switch (kind) {
+    case "absolute":
+      return inclusiveRange(metric.absoluteMinF, metric.absoluteMaxF);
+    case "relative":
+      return metric.relativePercentiles;
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
 }
 
 export function thresholdRangeFor(
   kind: ThresholdKind,
   climateVariable: string
 ): { min: number; max: number } {
-  switch (kind) {
-    case "absolute": {
-      const metric = getHeatMetric(climateVariable);
-      return { min: metric.absoluteMinF, max: metric.absoluteMaxF };
-    }
-    case "relative":
-      return { min: RELATIVE_THRESHOLD_MIN_PCTL, max: RELATIVE_THRESHOLD_MAX_PCTL };
-    default: {
-      const _exhaustive: never = kind;
-      return _exhaustive;
-    }
-  }
+  const values = thresholdValuesFor(kind, climateVariable);
+  return { min: values[0], max: values[values.length - 1] };
+}
+
+/** True when the selectable values have no gaps, so a 1-step slider fits. */
+export function isContiguous(values: readonly number[]): boolean {
+  return values.every((value, i) => i === 0 || value === values[i - 1] + 1);
 }
 
 export function parseThresholdNumber(threshold: string): number | null {
@@ -160,8 +190,7 @@ export function isAllowedThreshold(threshold: string, climateVariable: string): 
   if (kind == null) return false;
   const n = parseThresholdNumber(threshold);
   if (n == null) return false;
-  const { min, max } = thresholdRangeFor(kind, climateVariable);
-  if (n < min || n > max) return false;
+  if (!thresholdValuesFor(kind, climateVariable).includes(n)) return false;
   return thresholdTokenFor(kind, n) === threshold;
 }
 
@@ -174,7 +203,7 @@ export function defaultThresholdForKind(climateVariable: string, kind: Threshold
     case "absolute":
       return defaultThresholdFor(climateVariable);
     case "relative":
-      return DEFAULT_RELATIVE_THRESHOLD;
+      return getHeatMetric(climateVariable).defaultRelativeThreshold;
     default: {
       const _exhaustive: never = kind;
       return _exhaustive;

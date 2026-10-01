@@ -2,11 +2,15 @@ import { describe, expect, it } from "vitest";
 
 import {
   defaultThresholdForKind,
+  EH_METRICS_STAC_COLLECTION_ID,
+  getHeatMetric,
   isAllowedThreshold,
+  isContiguous,
   parseThresholdNumber,
   thresholdKindFor,
   thresholdRangeFor,
   thresholdTokenFor,
+  thresholdValuesFor,
 } from "./options";
 
 describe("threshold helpers", () => {
@@ -50,5 +54,28 @@ describe("threshold helpers", () => {
     expect(defaultThresholdForKind("warm-nights", "relative")).toBe("98pctl");
     expect(defaultThresholdForKind("extreme-heat-days", "absolute")).toBe("100F");
     expect(defaultThresholdForKind("warm-nights", "absolute")).toBe("70F");
+  });
+});
+
+describe("per-metric threshold values", () => {
+  it("lists every selectable value for each kind", () => {
+    expect(thresholdValuesFor("relative", "extreme-heat-days")).toEqual([
+      90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
+    ]);
+    const absolute = thresholdValuesFor("absolute", "warm-nights");
+    expect(absolute[0]).toBe(65);
+    expect(absolute[absolute.length - 1]).toBe(135);
+    expect(absolute).toHaveLength(71);
+  });
+
+  it("detects gaps so sparse sets can use a dropdown", () => {
+    expect(isContiguous([90, 91, 92])).toBe(true);
+    expect(isContiguous([95, 99])).toBe(false);
+    expect(isContiguous([])).toBe(true);
+  });
+
+  it("points existing metrics at the eh-metrics collection", () => {
+    expect(getHeatMetric("extreme-heat-days").collectionId).toBe(EH_METRICS_STAC_COLLECTION_ID);
+    expect(getHeatMetric("warm-nights").collectionId).toBe(EH_METRICS_STAC_COLLECTION_ID);
   });
 });

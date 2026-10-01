@@ -5,10 +5,13 @@ import { STAC_API_BASE_URL } from "@/config/constants";
 import type { StacItem } from "@/lib/cal-adapt-api";
 import { server } from "@/testing/mocks/server";
 
-import { DEFAULT_SELECTIONS, type ExtremeHeatDaysSelections } from "./options";
+import {
+  DEFAULT_SELECTIONS,
+  EH_METRICS_STAC_COLLECTION_ID,
+  type ExtremeHeatDaysSelections,
+} from "./options";
 import {
   buildSearchFilters,
-  EXTREME_HEAT_STAC_COLLECTION_ID,
   type ExtremeHeatSeries,
   fetchExtremeHeatSeries,
   hasRenderableSeries,
@@ -76,7 +79,7 @@ describe("hasRenderableSeries", () => {
 describe("buildSearchFilters", () => {
   it("filters by collection, variable, boundary, and threshold_name", () => {
     expect(buildSearchFilters({ ...DEFAULT_SELECTIONS, location: "Fresno" })).toEqual({
-      collectionFilter: `collection='${EXTREME_HEAT_STAC_COLLECTION_ID}'`,
+      collectionFilter: `collection='${EH_METRICS_STAC_COLLECTION_ID}'`,
       variableFilter: "variable_id='eh_days'",
       boundaryFilter: "boundary='ca_counties'",
       thresholdNameFilter: "threshold_name='t2max_ge100F'",

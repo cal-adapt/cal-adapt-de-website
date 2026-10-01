@@ -27,13 +27,6 @@ import {
 } from "./options";
 
 /**
- * STAC collection id for the multi-metric, per-boundary CSV summaries. Items are
- * keyed by (variable_id × boundary × threshold_name); each item's `data` asset
- * is a directory prefix containing one CSV per region.
- */
-export const EXTREME_HEAT_STAC_COLLECTION_ID = "eh-metrics-mm-boundary-csv" as const;
-
-/**
  * Build the STAC `threshold_name` for the current selection, e.g.
  * `t2max_ge100F` (absolute) or `t2max_ge98pctl` (relative).
  */
@@ -90,7 +83,7 @@ export interface FetchSeriesOptions {
 export function buildSearchFilters(selections: ExtremeHeatDaysSelections): ItemSearchFilters {
   const metric = getHeatMetric(selections.climateVariable);
   return {
-    collectionFilter: `collection='${EXTREME_HEAT_STAC_COLLECTION_ID}'`,
+    collectionFilter: `collection='${metric.collectionId}'`,
     variableFilter: `variable_id='${metric.variableId}'`,
     boundaryFilter: `boundary='${selections.spatialAggregation}'`,
     thresholdNameFilter: `threshold_name='${thresholdNameFor(selections)}'`,
