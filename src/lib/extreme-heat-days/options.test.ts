@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import {
-  CLIMATE_VARIABLE_GROUPS,
+  CLIMATE_VARIABLE_DROPDOWN_ENTRIES,
   CLIMATE_VARIABLE_OPTIONS,
   CLIMATE_VARIABLE_SELECT_OPTIONS,
   defaultThresholdForKind,
@@ -109,26 +109,54 @@ describe("heat wave frequency thresholds", () => {
   });
 });
 
-describe("climate variable dropdown groups", () => {
-  it("puts every metric in exactly one group", () => {
-    const grouped = CLIMATE_VARIABLE_GROUPS.flatMap((group) => group.metrics.map((m) => m.value));
-    expect([...grouped].sort()).toEqual(Object.keys(HEAT_METRICS).sort());
+describe("climate variable dropdown", () => {
+  it("lists every metric exactly once", () => {
+    const metricValues = CLIMATE_VARIABLE_DROPDOWN_ENTRIES.filter(
+      (entry) => !("comingSoon" in entry)
+    ).map((entry) => entry.value);
+    expect([...metricValues].sort()).toEqual(Object.keys(HEAT_METRICS).sort());
   });
 
-  it("shows flag-off metrics as disabled 'Coming soon' entries under their heading", () => {
-    expect(CLIMATE_VARIABLE_SELECT_OPTIONS.map((group) => group.label)).toEqual([
-      "Extreme Heat Days",
-      "Warm Nights",
-      "Heat Waves",
-    ]);
-    const heatWaves = CLIMATE_VARIABLE_SELECT_OPTIONS.find((group) => group.label === "Heat Waves");
-    expect(heatWaves?.options).toEqual([
+  it("orders single hot days/nights before heat waves, with descriptions", () => {
+    expect(CLIMATE_VARIABLE_SELECT_OPTIONS).toEqual([
       {
+        value: "extreme-heat-days",
+        label: "Extreme Heat Days",
+        description: "Days per year above a daytime high temperature threshold",
+      },
+      {
+        value: "warm-nights",
+        label: "Warm Nights",
+        description: "Nights per year above an overnight low temperature threshold",
+      },
+      {
+        value: "extreme-heat-season",
+        label: "Extreme Heat Season",
+        description: "When in the year hot days tend to occur",
+        disabled: true,
+        hint: "Coming soon",
+      },
+      {
+        // Flag is off in this file, so it's shown as coming soon.
         value: "heat-wave-frequency",
         label: "Heat Wave Frequency",
+        description: "Heat waves per year lasting at least a set number of days",
+        disabled: true,
+        hint: "Coming soon",
+      },
+      {
+        value: "heat-wave-length",
+        label: "Heat Wave Length",
+        description: "How long heat waves typically last",
         disabled: true,
         hint: "Coming soon",
       },
     ]);
+  });
+
+  it("keeps coming-soon variables out of the selectable set", () => {
+    const values = CLIMATE_VARIABLE_OPTIONS.map((option) => option.value);
+    expect(values).not.toContain("extreme-heat-season");
+    expect(values).not.toContain("heat-wave-length");
   });
 });

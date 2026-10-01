@@ -1,6 +1,6 @@
 // Domain data for the Extreme Heat tool.
 
-import type { SelectOption, SelectOptionGroup } from "@/components/common/form";
+import type { SelectOption } from "@/components/common/form";
 import { type FeatureFlagKey, featureFlags } from "@/config/feature-flags";
 
 /**
@@ -41,6 +41,8 @@ export interface HeatMetricConfig {
   variableId: HeatVariableId;
   /** Dropdown + tool-copy label, e.g. "Warm Nights". */
   label: string;
+  /** One-line summary shown under the label in the climate variable dropdown. */
+  description: string;
   /** Temperature statistic used to build the STAC `threshold_name`. */
   tempStat: "t2max" | "t2min";
   /** Default absolute threshold token for this metric, e.g. "100F". */
@@ -94,6 +96,7 @@ const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   value: "extreme-heat-days",
   variableId: "eh_days",
   label: "Extreme Heat Days",
+  description: "Days per year above a daytime high temperature threshold",
   tempStat: "t2max",
   defaultThreshold: "100F",
   absoluteMinF: 80,
@@ -115,6 +118,7 @@ const WARM_NIGHTS_METRIC: HeatMetricConfig = {
   value: "warm-nights",
   variableId: "warm_nights",
   label: "Warm Nights",
+  description: "Nights per year above an overnight low temperature threshold",
   tempStat: "t2min",
   defaultThreshold: "70F",
   absoluteMinF: 65,
@@ -139,6 +143,7 @@ const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
   value: "heat-wave-frequency",
   variableId: "heat_wave_count",
   label: "Heat Wave Frequency",
+  description: "Heat waves per year lasting at least a set number of days",
   tempStat: "t2max",
   defaultThreshold: "110F",
   absoluteMinF: 85,
@@ -172,16 +177,41 @@ function isMetricEnabled(metric: HeatMetricConfig): boolean {
 const ENABLED_HEAT_METRICS: readonly HeatMetricConfig[] =
   Object.values(HEAT_METRICS).filter(isMetricEnabled);
 
-/** Section headings for the climate variable dropdown, in display order.
- *  Every metric in `HEAT_METRICS` should appear in exactly one group. */
-export const CLIMATE_VARIABLE_GROUPS: readonly {
+/** A variable listed in the dropdown before it's built; shown disabled. */
+interface ComingSoonVariable {
+  value: string;
   label: string;
-  metrics: readonly HeatMetricConfig[];
-}[] = [
-  { label: "Extreme Heat Days", metrics: [EXTREME_HEAT_DAYS_METRIC] },
-  { label: "Warm Nights", metrics: [WARM_NIGHTS_METRIC] },
-  { label: "Heat Waves", metrics: [HEAT_WAVE_FREQUENCY_METRIC] },
-];
+  description: string;
+  comingSoon: true;
+}
+
+/** Climate variable dropdown entries, in display order: single hot days and
+ *  nights first, then multi-day heat waves. Every metric in `HEAT_METRICS`
+ *  should appear exactly once. */
+export const CLIMATE_VARIABLE_DROPDOWN_ENTRIES: readonly (HeatMetricConfig | ComingSoonVariable)[] =
+  [
+    EXTREME_HEAT_DAYS_METRIC,
+    WARM_NIGHTS_METRIC,
+    {
+      value: "extreme-heat-season",
+      label: "Extreme Heat Season",
+      description: "When in the year hot days tend to occur",
+      comingSoon: true,
+    },
+    HEAT_WAVE_FREQUENCY_METRIC,
+    {
+      value: "heat-wave-length",
+      label: "Heat Wave Length",
+      description: "How long heat waves typically last",
+      comingSoon: true,
+    },
+  ];
+
+function isComingSoon(entry: HeatMetricConfig | ComingSoonVariable): entry is ComingSoonVariable {
+  return "comingSoon" in entry;
+}
+
+const COMING_SOON_HINT = "Coming soon";
 
 const DEFAULT_METRIC = EXTREME_HEAT_DAYS_METRIC;
 
@@ -287,17 +317,14 @@ export const CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = ENABLED_HEAT_ME
   (metric) => ({ value: metric.value, label: metric.label })
 );
 
-/** Grouped dropdown options. Metrics whose flag is off stay visible but
- *  disabled, marked "Coming soon". */
-export const CLIMATE_VARIABLE_SELECT_OPTIONS: readonly SelectOptionGroup[] =
-  CLIMATE_VARIABLE_GROUPS.map((group) => ({
-    label: group.label,
-    options: group.metrics.map((metric) =>
-      isMetricEnabled(metric)
-        ? { value: metric.value, label: metric.label }
-        : { value: metric.value, label: metric.label, disabled: true, hint: "Coming soon" }
-    ),
-  }));
+/** Dropdown options. Metrics whose flag is off, and variables not built yet,
+ *  stay visible but disabled, marked "Coming soon". */
+export const CLIMATE_VARIABLE_SELECT_OPTIONS: readonly SelectOption[] =
+  CLIMATE_VARIABLE_DROPDOWN_ENTRIES.map((entry) => {
+    const option = { value: entry.value, label: entry.label, description: entry.description };
+    const available = !isComingSoon(entry) && isMetricEnabled(entry);
+    return available ? option : { ...option, disabled: true, hint: COMING_SOON_HINT };
+  });
 
 /** Selectable minimum heat-wave durations, in days. */
 export const DURATION_DAYS: readonly number[] = inclusiveRange(3, 14);
