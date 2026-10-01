@@ -45,7 +45,7 @@ const CHART_VIEW_TABS: readonly TabItem<ViewMode>[] = [
 
 const CHART_TAB = CHART_VIEW_TABS[0];
 
-const CHART_INFO = (
+const GWL_BAR_CHART_INFO = (
   <>
     <p>
       The bar chart shows how the number of extreme heat days per year is projected to change as
@@ -59,6 +59,20 @@ const CHART_INFO = (
     </p>
   </>
 );
+
+const HEAT_WAVE_FREQUENCY_CHART_INFO = <p>TEXT HERE</p>;
+
+const CHART_INFO_BY_VARIABLE: Record<string, ReactNode> = {
+  "extreme-heat-days": GWL_BAR_CHART_INFO,
+  "warm-nights": GWL_BAR_CHART_INFO,
+  "heat-wave-frequency": HEAT_WAVE_FREQUENCY_CHART_INFO,
+};
+
+/** Variables whose page copy cites `CHART_REFERENCES`. */
+const VARIABLES_WITH_REFERENCES: ReadonlySet<string> = new Set([
+  "extreme-heat-days",
+  "warm-nights",
+]);
 
 const WHO_HEAT_HEALTH_URL =
   "https://www.who.int/news-room/fact-sheets/detail/climate-change-heat-and-health";
@@ -122,6 +136,7 @@ const INTRO_COPY_BY_VARIABLE: Record<string, ReactNode> = {
       </p>
     </>
   ),
+  "heat-wave-frequency": <p className={styles.introCopy}>TEXT HERE</p>,
 };
 
 export default function ExtremeHeatDays() {
@@ -175,7 +190,11 @@ export default function ExtremeHeatDays() {
     >
       <BetaFeedbackAlert />
 
-      <div className={styles.intro}>{INTRO_COPY_BY_VARIABLE[selections.climateVariable]}</div>
+      <div className={styles.intro}>
+        {/* Tool-level intro: stays the same for every variable */}
+        <p className={styles.introCopy}>TEXT HERE</p>
+        {INTRO_COPY_BY_VARIABLE[selections.climateVariable]}
+      </div>
 
       <div className={styles.workspace}>
         <div className={styles.viewArea}>
@@ -212,6 +231,7 @@ export default function ExtremeHeatDays() {
             onRetry={seriesResult.retry}
             climateVariable={selections.climateVariable}
             threshold={selections.threshold}
+            duration={selections.duration}
             locationLabel={locationLabel}
             chartContainerRef={chartContainerRef}
           />
@@ -227,29 +247,30 @@ export default function ExtremeHeatDays() {
 
       {view === "chart" && (
         <InterpretSection title="How to interpret this figure">
-          {CHART_INFO}
+          {CHART_INFO_BY_VARIABLE[selections.climateVariable]}
 
-          {CHART_REFERENCES.length > 0 && (
-            <>
-              <h3 className={styles.referencesTitle}>References</h3>
-              <ol className={styles.references}>
-                {CHART_REFERENCES.map((reference) => (
-                  <li key={reference.href} className={styles.referenceEntry}>
-                    <span className={styles.referenceNumber} aria-hidden="true">
-                      {reference.n}.
-                    </span>
-                    <span className={styles.referenceText}>
-                      {reference.text}{" "}
-                      <a href={reference.href} target="_blank" rel="noopener noreferrer">
-                        {reference.href}
-                      </a>
-                      .
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </>
-          )}
+          {VARIABLES_WITH_REFERENCES.has(selections.climateVariable) &&
+            CHART_REFERENCES.length > 0 && (
+              <>
+                <h3 className={styles.referencesTitle}>References</h3>
+                <ol className={styles.references}>
+                  {CHART_REFERENCES.map((reference) => (
+                    <li key={reference.href} className={styles.referenceEntry}>
+                      <span className={styles.referenceNumber} aria-hidden="true">
+                        {reference.n}.
+                      </span>
+                      <span className={styles.referenceText}>
+                        {reference.text}{" "}
+                        <a href={reference.href} target="_blank" rel="noopener noreferrer">
+                          {reference.href}
+                        </a>
+                        .
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </>
+            )}
         </InterpretSection>
       )}
 

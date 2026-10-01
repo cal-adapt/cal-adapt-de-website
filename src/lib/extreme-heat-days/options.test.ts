@@ -1,9 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
+  CLIMATE_VARIABLE_GROUPS,
+  CLIMATE_VARIABLE_OPTIONS,
+  CLIMATE_VARIABLE_SELECT_OPTIONS,
   defaultThresholdForKind,
   EH_METRICS_STAC_COLLECTION_ID,
   getHeatMetric,
+  HEAT_METRICS,
   isAllowedThreshold,
   isContiguous,
   parseThresholdNumber,
@@ -12,6 +16,11 @@ import {
   thresholdTokenFor,
   thresholdValuesFor,
 } from "./options";
+
+// Every flag off, as in production, so flag-gated metrics should be hidden.
+vi.mock("@/config/feature-flags", () => ({
+  featureFlags: new Proxy({}, { get: () => false }),
+}));
 
 describe("threshold helpers", () => {
   it("classifies F tokens as absolute and pctl tokens as relative", () => {
@@ -77,5 +86,49 @@ describe("per-metric threshold values", () => {
   it("points existing metrics at the eh-metrics collection", () => {
     expect(getHeatMetric("extreme-heat-days").collectionId).toBe(EH_METRICS_STAC_COLLECTION_ID);
     expect(getHeatMetric("warm-nights").collectionId).toBe(EH_METRICS_STAC_COLLECTION_ID);
+  });
+});
+
+describe("heat wave frequency thresholds", () => {
+  it("uses 85-115°F and only the 95th/99th percentiles", () => {
+    expect(thresholdRangeFor("absolute", "heat-wave-frequency")).toEqual({ min: 85, max: 115 });
+    expect(thresholdValuesFor("relative", "heat-wave-frequency")).toEqual([95, 99]);
+    expect(isAllowedThreshold("95pctl", "heat-wave-frequency")).toBe(true);
+    expect(isAllowedThreshold("98pctl", "heat-wave-frequency")).toBe(false);
+    expect(isAllowedThreshold("120F", "heat-wave-frequency")).toBe(false);
+  });
+
+  it("defaults to 110°F, or the 95th percentile for relative", () => {
+    expect(defaultThresholdForKind("heat-wave-frequency", "absolute")).toBe("110F");
+    expect(defaultThresholdForKind("heat-wave-frequency", "relative")).toBe("95pctl");
+  });
+
+  it("is unselectable while its feature flag is off", () => {
+    const values = CLIMATE_VARIABLE_OPTIONS.map((option) => option.value);
+    expect(values).not.toContain("heat-wave-frequency");
+  });
+});
+
+describe("climate variable dropdown groups", () => {
+  it("puts every metric in exactly one group", () => {
+    const grouped = CLIMATE_VARIABLE_GROUPS.flatMap((group) => group.metrics.map((m) => m.value));
+    expect([...grouped].sort()).toEqual(Object.keys(HEAT_METRICS).sort());
+  });
+
+  it("shows flag-off metrics as disabled 'Coming soon' entries under their heading", () => {
+    expect(CLIMATE_VARIABLE_SELECT_OPTIONS.map((group) => group.label)).toEqual([
+      "Extreme Heat Days",
+      "Warm Nights",
+      "Heat Waves",
+    ]);
+    const heatWaves = CLIMATE_VARIABLE_SELECT_OPTIONS.find((group) => group.label === "Heat Waves");
+    expect(heatWaves?.options).toEqual([
+      {
+        value: "heat-wave-frequency",
+        label: "Heat Wave Frequency",
+        disabled: true,
+        hint: "Coming soon",
+      },
+    ]);
   });
 });

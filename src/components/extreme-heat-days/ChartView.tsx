@@ -7,7 +7,7 @@ import Button from "@/components/common/ui/Button";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import type { ExtremeHeatSeriesStatus } from "@/hooks/use-extreme-heat-series";
 import { resolveYAxisMax } from "@/lib/extreme-heat-days/axis";
-import { formatThresholdLabel } from "@/lib/extreme-heat-days/format";
+import { formatDurationLabel, formatThresholdLabel } from "@/lib/extreme-heat-days/format";
 import { getHeatMetric } from "@/lib/extreme-heat-days/options";
 import { type ExtremeHeatSeries, hasRenderableSeries } from "@/lib/extreme-heat-days/series";
 
@@ -30,6 +30,8 @@ export interface ChartViewProps {
   climateVariable: string;
   /** Current threshold selection; used for labels and no-data copy. */
   threshold: string;
+  /** Current duration selection (days); only shown for metrics keyed by duration. */
+  duration: string;
   locationLabel: string;
   /** DOM id for ARIA tab/panel pairing. */
   id: string;
@@ -49,6 +51,7 @@ export default function ChartView({
   onRetry,
   climateVariable,
   threshold,
+  duration,
   locationLabel,
   id,
   labelledBy,
@@ -93,6 +96,7 @@ export default function ChartView({
             accessibleNoun={metric.accessibleNoun}
             tempExtremum={tempExtremum}
             valueUnit={metric.valueUnit}
+            durationLabel={metric.usesDuration ? formatDurationLabel(duration) : undefined}
           />
         )}
         {isLoading && (

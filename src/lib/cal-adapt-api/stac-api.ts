@@ -100,6 +100,7 @@ export type ItemSearchFilters = {
   boundaryFilter?: string;
   /** eh-metrics threshold — e.g. `threshold_name='t2max_ge100F'` */
   thresholdNameFilter?: string;
+  durationNameFilter?: string;
 };
 
 /** JSON Schema queryables document (`/collections/{id}/queryables`). */
@@ -158,6 +159,7 @@ export async function searchItems(
   if (filters.cmip6TableIdFilter) filterParts.push(filters.cmip6TableIdFilter);
   if (filters.boundaryFilter) filterParts.push(filters.boundaryFilter);
   if (filters.thresholdNameFilter) filterParts.push(filters.thresholdNameFilter);
+  if (filters.durationNameFilter) filterParts.push(filters.durationNameFilter);
 
   const filterStr = filterParts.join(" AND ");
 

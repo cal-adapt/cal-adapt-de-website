@@ -66,6 +66,8 @@ export interface BarChartProps {
   tempExtremum: string;
   /** Unit for bar values/tooltips */
   valueUnit: string;
+  /** Minimum heat-wave length (e.g. "5-day") for metrics keyed by duration. */
+  durationLabel?: string;
 }
 
 export default function BarChart({
@@ -79,6 +81,7 @@ export default function BarChart({
   accessibleNoun,
   tempExtremum,
   valueUnit,
+  durationLabel,
 }: BarChartProps) {
   const titleId = useId();
   const descId = useId();
@@ -110,7 +113,9 @@ export default function BarChart({
   const accessibleDescription =
     `Bar chart of ${accessibleNoun} per year for ${locationLabel} across ` +
     `global warming levels of ${globalWarmingLevels.map(formatGlobalWarmingLevel).join(", ")}, ` +
-    `where the daily ${tempExtremum} temperature reaches ${thresholdLabel} or higher. ` +
+    (durationLabel
+      ? `counting ${durationLabel} heat waves where the daily ${tempExtremum} temperature reaches ${thresholdLabel} or higher. `
+      : `where the daily ${tempExtremum} temperature reaches ${thresholdLabel} or higher. `) +
     `Values: ${globalWarmingLevels
       .map(
         (level, i) =>

@@ -1,6 +1,7 @@
 // Domain data for the Extreme Heat tool.
 
-import type { SelectOption } from "@/components/common/form";
+import type { SelectOption, SelectOptionGroup } from "@/components/common/form";
+import { type FeatureFlagKey, featureFlags } from "@/config/feature-flags";
 
 /**
  * User-controlled inputs that drive the Extreme Heat tool.
@@ -8,14 +9,23 @@ import type { SelectOption } from "@/components/common/form";
 export interface ExtremeHeatDaysSelections {
   climateVariable: string;
   threshold: string;
-  indicator: string;
+  /** Minimum heat-wave length in days, e.g. "5". Only used by metrics with
+   *  `usesDuration`; ignored (and kept out of the URL) for the others. */
+  duration: string;
   /** STAC `boundary` id, e.g. "ca_counties". */
   spatialAggregation: string;
   location: string;
 }
 
-/** STAC `variable_id`s supported by the `eh-metrics-mm-boundary-csv` collection. */
-export type HeatVariableId = "eh_days" | "warm_nights";
+/** STAC `variable_id`s of the heat metrics' boundary CSV collections. */
+export type HeatVariableId = "eh_days" | "warm_nights" | "heat_wave_count";
+
+/** Column names holding the plotted value and its range in a metric's CSVs. */
+export interface HeatCsvColumns {
+  median: string;
+  p10: string;
+  p90: string;
+}
 
 /**
  * Per-metric configuration. The tool hosts multiple structurally-identical
@@ -45,6 +55,12 @@ export interface HeatMetricConfig {
   defaultRelativeThreshold: string;
   /** STAC collection holding this metric's boundary CSVs. */
   collectionId: string;
+  /** CSV columns for the plotted value and range. */
+  csvColumns: HeatCsvColumns;
+  /** True when items/CSVs are also keyed by a minimum heat-wave duration. */
+  usesDuration: boolean;
+  /** Hides the metric (dropdown + URL) when this flag is off. */
+  featureFlag?: FeatureFlagKey;
   /** Chart y-axis label. */
   yAxisLabel: string;
   /** Metric label used inside the chart title, e.g. "Warm Nights". */
@@ -68,6 +84,12 @@ function inclusiveRange(min: number, max: number): number[] {
 
 const PERCENTILES_90_TO_99 = inclusiveRange(90, 99);
 
+const EH_METRICS_CSV_COLUMNS: HeatCsvColumns = {
+  median: "multimodel_median",
+  p10: "multimodel_p10",
+  p90: "multimodel_p90",
+};
+
 const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   value: "extreme-heat-days",
   variableId: "eh_days",
@@ -79,6 +101,8 @@ const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   relativePercentiles: PERCENTILES_90_TO_99,
   defaultRelativeThreshold: "98pctl",
   collectionId: EH_METRICS_STAC_COLLECTION_ID,
+  csvColumns: EH_METRICS_CSV_COLUMNS,
+  usesDuration: false,
   yAxisLabel: "Number of Extreme Heat Days per Year",
   titleLabel: "Extreme Heat",
   accessibleNoun: "extreme heat days",
@@ -98,6 +122,8 @@ const WARM_NIGHTS_METRIC: HeatMetricConfig = {
   relativePercentiles: PERCENTILES_90_TO_99,
   defaultRelativeThreshold: "98pctl",
   collectionId: EH_METRICS_STAC_COLLECTION_ID,
+  csvColumns: EH_METRICS_CSV_COLUMNS,
+  usesDuration: false,
   yAxisLabel: "Number of Warm Nights per Year",
   titleLabel: "Warm Nights",
   accessibleNoun: "warm nights",
@@ -106,11 +132,56 @@ const WARM_NIGHTS_METRIC: HeatMetricConfig = {
   exportFilenamePrefix: "warm-nights",
 };
 
+/** STAC collection for the heat wave frequency boundary CSVs. */
+export const HWF_METRICS_STAC_COLLECTION_ID = "hwf-metrics-mm-boundary-csv";
+
+const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
+  value: "heat-wave-frequency",
+  variableId: "heat_wave_count",
+  label: "Heat Wave Frequency",
+  tempStat: "t2max",
+  defaultThreshold: "110F",
+  absoluteMinF: 85,
+  absoluteMaxF: 115,
+  relativePercentiles: [95, 99],
+  defaultRelativeThreshold: "95pctl",
+  collectionId: HWF_METRICS_STAC_COLLECTION_ID,
+  csvColumns: { median: "median", p10: "p10", p90: "p90" },
+  usesDuration: true,
+  featureFlag: "__FF_HEAT_WAVE_FREQUENCY__",
+  yAxisLabel: "Number of Heat Waves per Year",
+  titleLabel: "Heat Wave",
+  accessibleNoun: "heat waves",
+  valueUnit: "heat waves",
+  thresholdTooltip: "TEXT HERE",
+  exportFilenamePrefix: "heat-wave-frequency",
+};
+
 /** Metric registry keyed by `climateVariable` value. Order drives dropdown order. */
 export const HEAT_METRICS: Readonly<Record<string, HeatMetricConfig>> = {
   [EXTREME_HEAT_DAYS_METRIC.value]: EXTREME_HEAT_DAYS_METRIC,
   [WARM_NIGHTS_METRIC.value]: WARM_NIGHTS_METRIC,
+  [HEAT_WAVE_FREQUENCY_METRIC.value]: HEAT_WAVE_FREQUENCY_METRIC,
 };
+
+function isMetricEnabled(metric: HeatMetricConfig): boolean {
+  return metric.featureFlag == null || featureFlags[metric.featureFlag];
+}
+
+/** Metrics whose feature flag (if any) is on — the ones users can select. */
+const ENABLED_HEAT_METRICS: readonly HeatMetricConfig[] =
+  Object.values(HEAT_METRICS).filter(isMetricEnabled);
+
+/** Section headings for the climate variable dropdown, in display order.
+ *  Every metric in `HEAT_METRICS` should appear in exactly one group. */
+export const CLIMATE_VARIABLE_GROUPS: readonly {
+  label: string;
+  metrics: readonly HeatMetricConfig[];
+}[] = [
+  { label: "Extreme Heat Days", metrics: [EXTREME_HEAT_DAYS_METRIC] },
+  { label: "Warm Nights", metrics: [WARM_NIGHTS_METRIC] },
+  { label: "Heat Waves", metrics: [HEAT_WAVE_FREQUENCY_METRIC] },
+];
 
 const DEFAULT_METRIC = EXTREME_HEAT_DAYS_METRIC;
 
@@ -211,24 +282,35 @@ export function defaultThresholdForKind(climateVariable: string, kind: Threshold
   }
 }
 
-export const CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = Object.values(HEAT_METRICS).map(
+/** Selectable climate variables, flat; used to validate the URL `variable`. */
+export const CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = ENABLED_HEAT_METRICS.map(
   (metric) => ({ value: metric.value, label: metric.label })
 );
 
-export const COMING_SOON_CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = [
-  { value: "heat-waves", label: "Heat Waves", disabled: true, hint: "Coming soon" },
-];
+/** Grouped dropdown options. Metrics whose flag is off stay visible but
+ *  disabled, marked "Coming soon". */
+export const CLIMATE_VARIABLE_SELECT_OPTIONS: readonly SelectOptionGroup[] =
+  CLIMATE_VARIABLE_GROUPS.map((group) => ({
+    label: group.label,
+    options: group.metrics.map((metric) =>
+      isMetricEnabled(metric)
+        ? { value: metric.value, label: metric.label }
+        : { value: metric.value, label: metric.label, disabled: true, hint: "Coming soon" }
+    ),
+  }));
+
+/** Selectable minimum heat-wave durations, in days. */
+export const DURATION_DAYS: readonly number[] = inclusiveRange(3, 14);
+
+export const DEFAULT_DURATION = "5";
+
+export const DURATION_OPTIONS: readonly SelectOption[] = DURATION_DAYS.map((days) => ({
+  value: String(days),
+  label: `${days} days`,
+}));
 
 /** All climate-variable options for the dropdown: selectable metrics followed by
  *  coming soon options. */
-export const CLIMATE_VARIABLE_SELECT_OPTIONS: readonly SelectOption[] = [
-  ...CLIMATE_VARIABLE_OPTIONS,
-  ...COMING_SOON_CLIMATE_VARIABLE_OPTIONS,
-];
-
-export const INDICATOR_OPTIONS: readonly SelectOption[] = [
-  { value: "frequency", label: "Frequency" },
-];
 
 /**
  * All 58 California counties in alphabetical order.
@@ -566,7 +648,7 @@ export const SPATIAL_AGGREGATION_OPTIONS: readonly SelectOption[] = Object.value
 export const DEFAULT_SELECTIONS: ExtremeHeatDaysSelections = {
   climateVariable: DEFAULT_METRIC.value,
   threshold: DEFAULT_METRIC.defaultThreshold,
-  indicator: "frequency",
+  duration: DEFAULT_DURATION,
   spatialAggregation: DEFAULT_AGGREGATION.value,
   location: DEFAULT_AGGREGATION.defaultLocation,
 };

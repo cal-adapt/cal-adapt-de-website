@@ -2,11 +2,13 @@ import { type ReadableSearchParams, readEnumParam } from "@/utils/search-params"
 
 import {
   CLIMATE_VARIABLE_OPTIONS,
+  DEFAULT_DURATION,
   DEFAULT_SELECTIONS,
   defaultLocationFor,
   defaultThresholdFor,
+  DURATION_OPTIONS,
   type ExtremeHeatDaysSelections,
-  INDICATOR_OPTIONS,
+  getHeatMetric,
   isAllowedThreshold,
   locationOptionsFor,
   SPATIAL_AGGREGATION_OPTIONS,
@@ -34,7 +36,7 @@ function toSearchParams<T extends Record<keyof T, string>>(
 const PARAM_KEYS = {
   climateVariable: "variable",
   threshold: "threshold",
-  indicator: "indicator",
+  duration: "duration",
   spatialAggregation: "aggregation",
   location: "location",
 } as const satisfies Record<keyof ExtremeHeatDaysSelections, string>;
@@ -62,11 +64,11 @@ export function selectionsFromSearchParams(
     rawThreshold !== null && isAllowedThreshold(rawThreshold, climateVariable)
       ? rawThreshold
       : defaultThresholdFor(climateVariable);
-  const indicator = readField(
+  const duration = readField(
     params,
-    "indicator",
-    INDICATOR_OPTIONS.map((option) => option.value),
-    DEFAULT_SELECTIONS.indicator
+    "duration",
+    DURATION_OPTIONS.map((option) => option.value),
+    DEFAULT_DURATION
   );
   const spatialAggregation = readField(
     params,
@@ -80,9 +82,14 @@ export function selectionsFromSearchParams(
     locationOptionsFor(spatialAggregation).map((option) => option.value),
     defaultLocationFor(spatialAggregation)
   );
-  return { climateVariable, threshold, indicator, spatialAggregation, location };
+  return { climateVariable, threshold, duration, spatialAggregation, location };
 }
 
 export function selectionsToSearchParams(selections: ExtremeHeatDaysSelections): URLSearchParams {
-  return toSearchParams(selections, DEFAULT_SELECTIONS, PARAM_KEYS);
+  // Duration only means something for metrics keyed by it; drop it elsewhere
+  // so it doesn't linger in the URL after switching variables.
+  const values = getHeatMetric(selections.climateVariable).usesDuration
+    ? selections
+    : { ...selections, duration: DEFAULT_SELECTIONS.duration };
+  return toSearchParams(values, DEFAULT_SELECTIONS, PARAM_KEYS);
 }

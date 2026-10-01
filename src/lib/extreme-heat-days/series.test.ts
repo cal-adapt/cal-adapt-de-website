@@ -9,9 +9,11 @@ import {
   DEFAULT_SELECTIONS,
   EH_METRICS_STAC_COLLECTION_ID,
   type ExtremeHeatDaysSelections,
+  HWF_METRICS_STAC_COLLECTION_ID,
 } from "./options";
 import {
   buildSearchFilters,
+  durationNameFor,
   type ExtremeHeatSeries,
   fetchExtremeHeatSeries,
   hasRenderableSeries,
@@ -378,5 +380,82 @@ describe("fetchExtremeHeatSeries", () => {
     await expect(
       fetchExtremeHeatSeries(SELECTIONS, { signal: controller.signal })
     ).rejects.toThrow();
+  });
+});
+
+describe("heat wave frequency", () => {
+  const HWF_SELECTIONS: ExtremeHeatDaysSelections = {
+    ...DEFAULT_SELECTIONS,
+    climateVariable: "heat-wave-frequency",
+    threshold: "110F",
+    duration: "5",
+    location: "Imperial",
+  };
+
+  beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
+  it("names the duration only for metrics keyed by it", () => {
+    expect(durationNameFor(HWF_SELECTIONS)).toBe("duration_5d");
+    expect(durationNameFor({ ...DEFAULT_SELECTIONS, duration: "5" })).toBeNull();
+  });
+
+  it("searches the hwf collection by variable, boundary, threshold, and duration", () => {
+    expect(buildSearchFilters(HWF_SELECTIONS)).toEqual({
+      collectionFilter: `collection='${HWF_METRICS_STAC_COLLECTION_ID}'`,
+      variableFilter: "variable_id='heat_wave_count'",
+      boundaryFilter: "boundary='ca_counties'",
+      thresholdNameFilter: "threshold_name='t2max_ge110F'",
+      durationNameFilter: "duration_name='duration_5d'",
+    });
+  });
+
+  it("re-fetches when only the duration changes", () => {
+    expect(searchFiltersKey(HWF_SELECTIONS)).not.toBe(
+      searchFiltersKey({ ...HWF_SELECTIONS, duration: "7" })
+    );
+  });
+
+  it("reads the duration-suffixed CSV and its median/p10/p90 columns", async () => {
+    const prefix =
+      "s3://cadcat/wrf/heat-wave-frequency/multimodel_per_boundary/ca_counties/gwl/csv/t2max_ge110F/duration_5d/";
+    const csvUrl =
+      "https://cadcat.s3.amazonaws.com/wrf/heat-wave-frequency/multimodel_per_boundary/ca_counties/gwl/csv/t2max_ge110F/duration_5d/Imperial_County_t2max_ge110F_5d.csv";
+    server.use(
+      http.get(`${STAC_API_BASE_URL}/search`, () =>
+        HttpResponse.json({
+          type: "FeatureCollection",
+          links: [],
+          features: [
+            {
+              type: "Feature",
+              id: "hwf-metrics-mm-boundary-csv-ca_counties-t2max_ge110F-duration_5d",
+              geometry: null,
+              links: [],
+              assets: { data: { href: prefix } },
+              properties: {},
+            },
+          ],
+        })
+      ),
+      http.get(csvUrl, () =>
+        HttpResponse.text(
+          [
+            "warming_level,median,median_change_signal,p10,p10_change_signal,p90,p90_change_signal,region_name",
+            "0.8,3.0,0.0,1.5,0.0,5.0,0.0,Imperial County",
+            "1.5,4.875,1.875,2.0,0.5,8.0,3.0,Imperial County",
+          ].join("\n")
+        )
+      )
+    );
+
+    const series = await fetchExtremeHeatSeries(HWF_SELECTIONS);
+
+    expect(series.variableId).toBe("heat_wave_count");
+    expect(series.sourceCsvUrl).toBe(csvUrl);
+    expect(series.median).toEqual([3.0, 4.875]);
+    expect(series.p10).toEqual([1.5, 2.0]);
+    expect(series.p90).toEqual([5.0, 8.0]);
   });
 });

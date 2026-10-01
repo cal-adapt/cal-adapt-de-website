@@ -15,7 +15,7 @@ import type { ExtremeHeatDaysSelections } from "./options";
 const SELECTIONS: ExtremeHeatDaysSelections = {
   climateVariable: "extreme-heat-days",
   threshold: "100F",
-  indicator: "frequency",
+  duration: "5",
   spatialAggregation: "ca_counties",
   location: "Sacramento",
 };
@@ -121,5 +121,19 @@ describe("formatChartExportFilename", () => {
     expect(formatChartExportFilename("extreme-heat-days", "", date)).toBe(
       "extreme-heat-days_unknown_2026-01-15.png"
     );
+  });
+});
+
+describe("formatViewTitle with duration", () => {
+  it("adds the duration for heat wave frequency", () => {
+    expect(
+      formatViewTitle({
+        ...SELECTIONS,
+        climateVariable: "heat-wave-frequency",
+        threshold: "110F",
+        duration: "5",
+        location: "Imperial",
+      })
+    ).toBe("Heat Wave Frequency by Global Warming Level: Imperial County (5-day, 110°F)");
   });
 });

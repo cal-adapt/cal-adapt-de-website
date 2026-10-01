@@ -1,7 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { DEFAULT_SELECTIONS, type ExtremeHeatDaysSelections } from "./options";
 import { selectionsFromSearchParams, selectionsToSearchParams } from "./search-params";
+
+// Enable every flag so flag-gated metrics (Heat Wave Frequency) are selectable.
+vi.mock("@/config/feature-flags", () => ({
+  featureFlags: new Proxy({}, { get: () => true }),
+}));
 
 describe("selectionsFromSearchParams", () => {
   it("returns the defaults for empty params", () => {
@@ -97,7 +102,6 @@ describe("selectionsToSearchParams", () => {
     expect(params.get("location")).toBe("Los Angeles");
     expect(params.get("threshold")).toBe("105F");
     expect(params.get("variable")).toBeNull();
-    expect(params.get("indicator")).toBeNull();
   });
 });
 
@@ -122,5 +126,38 @@ describe("round-trip", () => {
 
     const restored = selectionsFromSearchParams(selectionsToSearchParams(selections));
     expect(restored).toEqual(selections);
+  });
+});
+
+describe("duration", () => {
+  it("reads a valid duration for heat wave frequency", () => {
+    const params = new URLSearchParams("variable=heat-wave-frequency&threshold=110F&duration=7");
+    expect(selectionsFromSearchParams(params)).toMatchObject({
+      climateVariable: "heat-wave-frequency",
+      threshold: "110F",
+      duration: "7",
+    });
+  });
+
+  it("falls back to the default for an out-of-range duration", () => {
+    const params = new URLSearchParams("variable=heat-wave-frequency&duration=30");
+    expect(selectionsFromSearchParams(params).duration).toBe(DEFAULT_SELECTIONS.duration);
+  });
+
+  it("writes duration only for metrics keyed by it", () => {
+    const hwf: ExtremeHeatDaysSelections = {
+      ...DEFAULT_SELECTIONS,
+      climateVariable: "heat-wave-frequency",
+      threshold: "110F",
+      duration: "7",
+    };
+    expect(selectionsToSearchParams(hwf).get("duration")).toBe("7");
+    expect(
+      selectionsToSearchParams({
+        ...hwf,
+        climateVariable: "extreme-heat-days",
+        threshold: "100F",
+      }).has("duration")
+    ).toBe(false);
   });
 });

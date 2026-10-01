@@ -29,7 +29,15 @@ export function colorForGlobalWarmingLevel(value: number): string {
 
 export function formatViewTitle(selections: ExtremeHeatDaysSelections): string {
   const metric = getHeatMetric(selections.climateVariable);
-  return `${metric.titleLabel} Frequency by Global Warming Level: ${regionLabelFor(selections)} (${formatThresholdLabel(selections.threshold)})`;
+  const qualifier = metric.usesDuration
+    ? `${formatDurationLabel(selections.duration)}, ${formatThresholdLabel(selections.threshold)}`
+    : formatThresholdLabel(selections.threshold);
+  return `${metric.titleLabel} Frequency by Global Warming Level: ${regionLabelFor(selections)} (${qualifier})`;
+}
+
+/** e.g. "5" → "5-day". */
+export function formatDurationLabel(duration: string): string {
+  return `${duration}-day`;
 }
 
 export function formatGlobalWarmingLevel(value: number): string {

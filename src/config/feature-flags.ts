@@ -12,11 +12,13 @@ const flagDefinitions = {
   __FF_DEBUG__: [Env.Dev, Env.Stg],
   __FF_SITE_BANNER__: [Env.Dev, Env.Stg, Env.Prod],
   __FF_EXTREME_HEAT_DAYS__: [Env.Dev, Env.Stg],
-  __FF_EXTREME_HEAT_DAYS_INDICATOR__: [Env.Dev, Env.Stg],
   __FF_HDD_CDD__: [Env.Dev, Env.Stg],
+  __FF_HEAT_WAVE_FREQUENCY__: [Env.Dev, Env.Stg],
 } as const satisfies Record<string, readonly EnvValue[]>;
 
 type FlagKey = keyof typeof flagDefinitions;
+
+export type FeatureFlagKey = FlagKey;
 
 type FeatureFlags = { [K in FlagKey]: boolean };
 

@@ -35,6 +35,14 @@ export function thresholdNameFor(selections: ExtremeHeatDaysSelections): string 
   return `${metric.tempStat}_ge${selections.threshold}`;
 }
 
+/** STAC `duration_name` (e.g. `duration_5d`), or null for metrics without a
+ *  duration dimension. */
+export function durationNameFor(selections: ExtremeHeatDaysSelections): string | null {
+  return getHeatMetric(selections.climateVariable).usesDuration
+    ? `duration_${selections.duration}d`
+    : null;
+}
+
 /**
  * Chart-ready shape for one region + metric + threshold. The threshold is baked
  * into the fetched item, so unlike MVP 1.0 there is a single value series
@@ -78,29 +86,35 @@ export interface FetchSeriesOptions {
 
 /**
  * Build STAC `/search` filters for the current selections. The tuple
- * (variable_id, boundary, threshold_name) resolves to exactly one item.
+ * (variable_id, boundary, threshold_name[, duration_name]) resolves to exactly
+ * one item in the metric's collection.
  */
 export function buildSearchFilters(selections: ExtremeHeatDaysSelections): ItemSearchFilters {
   const metric = getHeatMetric(selections.climateVariable);
+  const durationName = durationNameFor(selections);
   return {
     collectionFilter: `collection='${metric.collectionId}'`,
     variableFilter: `variable_id='${metric.variableId}'`,
     boundaryFilter: `boundary='${selections.spatialAggregation}'`,
     thresholdNameFilter: `threshold_name='${thresholdNameFor(selections)}'`,
+    ...(durationName ? { durationNameFilter: `duration_name='${durationName}'` } : {}),
   };
 }
 
 /**
  * Stable cache key over the subset of selections that affect the API call.
  * Unlike MVP 1.0, threshold and climate variable are part of the fetch (they
- * select the STAC item/CSV), so all of them belong in the key.
+ * select the STAC item/CSV), so all of them belong in the key, along with the
+ * duration for metrics that use one.
  */
 export function searchFiltersKey(selections: ExtremeHeatDaysSelections): string {
   const metric = getHeatMetric(selections.climateVariable);
+  const durationName = durationNameFor(selections);
   return [
     metric.variableId,
     selections.spatialAggregation,
     thresholdNameFor(selections),
+    ...(durationName ? [durationName] : []),
     selections.location,
   ].join("|");
 }
@@ -157,7 +171,10 @@ function resolveRegionCsvUrl(
 
 function regionCsvFileName(selections: ExtremeHeatDaysSelections, thresholdName: string): string {
   const region = regionLabelFor(selections).replace(/\s+/g, "_");
-  return `${region}_${thresholdName}.csv`;
+  const durationSuffix = getHeatMetric(selections.climateVariable).usesDuration
+    ? `_${selections.duration}d`
+    : "";
+  return `${region}_${thresholdName}${durationSuffix}.csv`;
 }
 
 async function fetchCsvText(url: string, signal?: AbortSignal): Promise<string> {
@@ -182,6 +199,7 @@ function parseRegionCsv(
   thresholdName: string
 ): ExtremeHeatSeries {
   const rows = csvParse(text);
+  const columns = getHeatMetric(selections.climateVariable).csvColumns;
 
   // NOTE: The current CSVs repeat each warming level across several rows.
   // Group by warming level and average the values so we plot one point per level.
@@ -190,9 +208,9 @@ function parseRegionCsv(
     const globalWarmingLevel = Number(row.warming_level);
     if (!Number.isFinite(globalWarmingLevel)) continue;
     const acc = byLevel.get(globalWarmingLevel) ?? { median: [], p10: [], p90: [] };
-    acc.median.push(toNumber(row.multimodel_median));
-    acc.p10.push(toNumber(row.multimodel_p10));
-    acc.p90.push(toNumber(row.multimodel_p90));
+    acc.median.push(toNumber(row[columns.median]));
+    acc.p10.push(toNumber(row[columns.p10]));
+    acc.p90.push(toNumber(row[columns.p90]));
     byLevel.set(globalWarmingLevel, acc);
   }
 
