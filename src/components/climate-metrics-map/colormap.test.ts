@@ -1,13 +1,7 @@
 import * as d3 from "d3";
 import { describe, expect, it } from "vitest";
 
-import {
-  binColors,
-  binEdges,
-  buildColorScale,
-  buildIntervalColormap,
-  CUSTOM_COLORMAPS,
-} from "./colormap";
+import { binColors, binEdges, buildColorScale, buildColorTable, HEX_COLORMAPS } from "./colormap";
 
 describe("binEdges", () => {
   it("splits the range into equal-width bins", () => {
@@ -15,13 +9,13 @@ describe("binEdges", () => {
   });
 });
 
-describe("buildIntervalColormap", () => {
-  const intervals = JSON.parse(buildIntervalColormap("gist_heat_r", 0, 30, 6)) as [
+describe("buildColorTable", () => {
+  const intervals = JSON.parse(buildColorTable("gist_heat_r", 0, 30, 6)) as [
     [number, number],
     [number, number, number, number],
   ][];
 
-  it("has one interval per bin, open at both ends", () => {
+  it("has one row per bin, open at both ends", () => {
     expect(intervals).toHaveLength(6);
     expect(intervals[0][0][0]).toBeLessThan(-1e9);
     expect(intervals[0][0][1]).toBe(5);
@@ -37,11 +31,15 @@ describe("buildIntervalColormap", () => {
       expect(a).toBe(255);
     });
   });
+
+  it("defaults to fine smooth steps when no bins are given", () => {
+    expect(JSON.parse(buildColorTable("gist_heat_r", 0, 365))).toHaveLength(64);
+  });
 });
 
-describe("custom colormaps", () => {
+describe("hex-defined colormaps", () => {
   it("runs from the first anchor to the last", () => {
-    for (const [name, anchors] of Object.entries(CUSTOM_COLORMAPS)) {
+    for (const [name, anchors] of Object.entries(HEX_COLORMAPS)) {
       const scale = buildColorScale(name);
       expect(scale(0)).toBe(d3.rgb(anchors[0]).toString());
       expect(scale(1)).toBe(d3.rgb(anchors[anchors.length - 1]).toString());

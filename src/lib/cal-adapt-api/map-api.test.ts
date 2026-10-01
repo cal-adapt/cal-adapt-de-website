@@ -44,7 +44,7 @@ describe("map-api", () => {
   });
 
   describe("getTileJson", () => {
-    it("lowercases the colormap name and returns TileJSON", async () => {
+    it("sends the color table and returns TileJSON", async () => {
       const mockTileJson = {
         tiles: [`${MAP_API_BASE_URL}/tiles/1/{z}/{x}/{y}.png`],
         tileSize: 256,
@@ -58,46 +58,24 @@ describe("map-api", () => {
         })
       );
 
-      const result = await getTileJson({
-        url: "s3://bucket/key",
-        variable: "tasmax",
-        datetime: "1.5",
-        rescale: "0,1",
-        colormap: "Viridis",
-      });
-
-      expect(new URL(capturedUrl).searchParams.get("colormap_name")).toBe("viridis");
-      expect(result).toEqual(mockTileJson);
-    });
-
-    it("sends an intervals colormap instead of colormap_name and rescale", async () => {
-      let capturedUrl = "";
-      server.use(
-        http.get(`${MAP_API_BASE_URL}/WebMercatorQuad/tilejson.json`, ({ request }) => {
-          capturedUrl = request.url;
-          return HttpResponse.json({ tiles: [] });
-        })
-      );
-
-      const intervals = JSON.stringify([
+      const colorTable = JSON.stringify([
         [
           [0, 5],
           [255, 255, 255, 255],
         ],
       ]);
-      await getTileJson({
+      const result = await getTileJson({
         url: "s3://bucket/key",
-        variable: "t2max_ge99pctl",
+        variable: "tasmax",
         datetime: "1.5",
-        rescale: "0,30",
-        colormap: "gist_heat_r",
-        colormapIntervals: intervals,
+        colormap: colorTable,
       });
 
       const params = new URL(capturedUrl).searchParams;
-      expect(params.get("colormap")).toBe(intervals);
+      expect(params.get("colormap")).toBe(colorTable);
       expect(params.has("colormap_name")).toBe(false);
       expect(params.has("rescale")).toBe(false);
+      expect(result).toEqual(mockTileJson);
     });
 
     it("throws on non-2xx response", async () => {
@@ -113,8 +91,7 @@ describe("map-api", () => {
           url: "https://bucket/key",
           variable: "tasmax",
           datetime: "1.5",
-          rescale: "0,1",
-          colormap: "viridis",
+          colormap: "[]",
         })
       ).rejects.toThrow("Cal-Adapt Map API Error: 404");
     });

@@ -23,11 +23,8 @@ type TileJsonParams = {
   url: string;
   variable: string;
   datetime: string;
-  rescale: string;
+  /** Color table (TiTiler "intervals" colormap JSON) the tiles are painted with. */
   colormap: string;
-  /** TiTiler intervals colormap (JSON). When set, it replaces `colormap` and
-   *  `rescale`, since intervals are expressed in raw data units. */
-  colormapIntervals?: string;
 };
 
 type PointDataParams = {
@@ -85,9 +82,7 @@ export async function getTileJson(params: TileJsonParams): Promise<TileJson> {
     url: params.url,
     variable: params.variable,
     datetime: params.datetime,
-    ...(params.colormapIntervals
-      ? { colormap: params.colormapIntervals }
-      : { rescale: params.rescale, colormap_name: params.colormap.toLowerCase() }),
+    colormap: params.colormap,
   });
 }
 

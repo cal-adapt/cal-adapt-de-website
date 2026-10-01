@@ -27,7 +27,7 @@ import type { Metric, MetricVariant } from "@/data/climate-metrics-map/metrics";
 import { calAdaptApi, type TileJson } from "@/lib/cal-adapt-api";
 
 import type { ValueType } from "./ClimateMetricsMap";
-import { buildIntervalColormap } from "./colormap";
+import { buildColorTable } from "./colormap";
 import MapLegend from "./MapLegend";
 import MapPopup from "./MapPopup";
 
@@ -154,11 +154,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
             url: paths.mean,
             variable: currentVariable,
             datetime: String(currentGwl),
-            rescale: paths.rescale,
-            colormap: paths.colormap,
-            colormapIntervals: paths.bins
-              ? buildIntervalColormap(paths.colormap, rescaleMin, rescaleMax, paths.bins)
-              : undefined,
+            colormap: buildColorTable(paths.colormap, rescaleMin, rescaleMax, paths.bins),
           });
           setTileJson(data);
         } catch (error) {

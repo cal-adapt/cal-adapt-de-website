@@ -7,8 +7,8 @@ export type MetricVariant = {
   variable: string;
   rescale: string;
   colormap: string;
-  /** Show this layer as `bins` equal-width color steps across `rescale`
-   *  instead of a continuous gradient. */
+  /** Show this layer as `bins` visible color steps across `rescale`.
+   *  Without it, the layer is drawn as a smooth gradient. */
   bins?: number;
   /** Label legend ticks only at multiples of this value (e.g. every 6 days). */
   legendLabelStep?: number;

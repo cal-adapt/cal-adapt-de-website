@@ -1,16 +1,19 @@
-// Colormap helpers shared by the map legend and the tile requests, so a
-// stepped (binned) layer's tile colors match its legend exactly.
+// Map colors are decided here, in the browser: the same color table drives
+// both the tiles (sent to the tile server with each request) and the legend,
+// so they always match.
 
 import * as d3 from "d3";
 import * as d3Chromatic from "d3-scale-chromatic";
 
-/**
- * Cal-Adapt colormaps: anchor colors (light → dark) blended with the same
- * smooth B-spline as `gist_heat`. The tile server doesn't know these names,
- * so layers using them must set `bins` (their tiles are sent as intervals);
- * metrics.test.ts enforces this.
- */
-export const CUSTOM_COLORMAPS: Readonly<Record<string, readonly string[]>> = {
+// Steps for layers without `bins`: fine enough to look smooth, while keeping
+// tile URLs short.
+const SMOOTH_STEPS = 64;
+
+/** Palettes defined by hex anchors (light → dark), blended smoothly between
+ *  them. Any other colormap name is looked up in d3. */
+export const HEX_COLORMAPS: Readonly<Record<string, readonly string[]>> = {
+  // matplotlib's gist_heat_r (d3 doesn't include it)
+  gist_heat_r: ["#ffffff", "#ffff00", "#ff4000", "#800000", "#000000"],
   // gist_heat_r's light half (white → yellow → orange-red) with the dark half
   // shifted toward purple: same weight, different hue at high values.
   "cal-adapt-extreme-heat": ["#ffffff", "#ffff00", "#ff4000", "#7a1a78", "#140024"],
@@ -19,32 +22,22 @@ export const CUSTOM_COLORMAPS: Readonly<Record<string, readonly string[]>> = {
   "cal-adapt-warm-nights": ["#ffffff", "#ffc46a", "#ff5a52", "#c01f7e", "#33167a", "#070822"],
 };
 
-/** Interpolator for a `CUSTOM_COLORMAPS` name or a matplotlib-style colormap
- *  name (e.g. "gist_heat_r"), mapping t in [0, 1] to a CSS color. */
+/** Interpolator for a `HEX_COLORMAPS` name or a d3/matplotlib colormap name
+ *  (e.g. "magma_r"), mapping t in [0, 1] to a CSS color. */
 export function buildColorScale(colormap: string): (t: number) => string {
-  const anchors = CUSTOM_COLORMAPS[colormap];
+  const anchors = HEX_COLORMAPS[colormap];
   if (anchors) {
     const interpolate = d3.interpolateRgbBasis([...anchors]);
     return (t: number) => d3.rgb(interpolate(Math.min(1, Math.max(0, t)))).toString();
   }
 
   const colormapName = colormap.endsWith("_r") ? colormap.slice(0, -2) : colormap;
-
-  const gistHeatInterpolator = d3
-    .scaleSequential(
-      d3.interpolateRgbBasis(["#FFFFFF", "#FFFF00", "#FF4000", "#800000", "#000000"])
-    )
-    .domain([0, 1]);
-
-  if (colormapName === "gist_heat") {
-    return (t: number) => gistHeatInterpolator(t) ?? "#888";
-  }
-
   const interpolatorKey =
     `interpolate${colormapName.charAt(0).toUpperCase()}${colormapName.slice(1)}` as keyof typeof d3Chromatic;
   let interpolator =
     (d3Chromatic[interpolatorKey] as (t: number) => string) || d3.interpolateInferno;
 
+  // d3's PuOr already runs purple → orange, i.e. matplotlib's PuOr_r
   if (colormap.endsWith("_r") && colormap !== "PuOr_r") {
     const orig = interpolator;
     interpolator = (t: number) => orig(1 - t);
@@ -64,29 +57,34 @@ export function binColors(colormap: string, bins: number): string[] {
   return Array.from({ length: bins }, (_, i) => scale((i + 0.5) / bins));
 }
 
-// Open-ended outer bins so values beyond [min, max] still get the end colors.
-const OPEN_END = 1e12;
+// Stand-ins for -/+ infinity (the colormap is sent as JSON, which has no
+// Infinity), so the first and last steps also catch values outside the range.
+const BELOW_RANGE = -1e12;
+const ABOVE_RANGE = 1e12;
+
+/** "rgb(255, 128, 0)" → [255, 128, 0, 255] */
+function toRgba(color: string): [number, number, number, number] {
+  const { r, g, b } = d3.rgb(color);
+  return [Math.round(r), Math.round(g), Math.round(b), 255];
+}
 
 /**
- * TiTiler "intervals" colormap (JSON) that paints each of `bins` equal-width
- * ranges between `min` and `max` a single color, in raw data units — so the
- * tile request must not also send `rescale`.
+ * The color table sent to the tile server (its "intervals" colormap, as
+ * JSON): one `[[from, to], rgba]` row per step, e.g. `[[0, 2], ...]`,
+ * `[[2, 4], ...]` … for 2-day bins, in the data's own units.
  */
-export function buildIntervalColormap(
+export function buildColorTable(
   colormap: string,
   min: number,
   max: number,
-  bins: number
+  bins: number = SMOOTH_STEPS
 ): string {
   const edges = binEdges(min, max, bins);
-  const intervals = binColors(colormap, bins).map((color, i) => {
-    const lower = i === 0 ? -OPEN_END : edges[i];
-    const upper = i === bins - 1 ? OPEN_END : edges[i + 1];
-    const { r, g, b } = d3.rgb(color);
-    return [
-      [lower, upper],
-      [Math.round(r), Math.round(g), Math.round(b), 255],
-    ];
+  const rows = binColors(colormap, bins).map((color, i) => {
+    // First and last steps also catch values outside the range (e.g. > 30 days)
+    const from = i === 0 ? BELOW_RANGE : edges[i];
+    const to = i === bins - 1 ? ABOVE_RANGE : edges[i + 1];
+    return [[from, to], toRgba(color)];
   });
-  return JSON.stringify(intervals);
+  return JSON.stringify(rows);
 }
