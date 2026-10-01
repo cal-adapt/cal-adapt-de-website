@@ -70,6 +70,36 @@ describe("map-api", () => {
       expect(result).toEqual(mockTileJson);
     });
 
+    it("sends an intervals colormap instead of colormap_name and rescale", async () => {
+      let capturedUrl = "";
+      server.use(
+        http.get(`${MAP_API_BASE_URL}/WebMercatorQuad/tilejson.json`, ({ request }) => {
+          capturedUrl = request.url;
+          return HttpResponse.json({ tiles: [] });
+        })
+      );
+
+      const intervals = JSON.stringify([
+        [
+          [0, 5],
+          [255, 255, 255, 255],
+        ],
+      ]);
+      await getTileJson({
+        url: "s3://bucket/key",
+        variable: "t2max_ge99pctl",
+        datetime: "1.5",
+        rescale: "0,30",
+        colormap: "gist_heat_r",
+        colormapIntervals: intervals,
+      });
+
+      const params = new URL(capturedUrl).searchParams;
+      expect(params.get("colormap")).toBe(intervals);
+      expect(params.has("colormap_name")).toBe(false);
+      expect(params.has("rescale")).toBe(false);
+    });
+
     it("throws on non-2xx response", async () => {
       server.use(
         http.get(

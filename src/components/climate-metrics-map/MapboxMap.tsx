@@ -23,10 +23,11 @@ import {
 
 import GeocoderControl from "@/components/common/map/GeocoderControl";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
-import type { Metric } from "@/data/climate-metrics-map/metrics";
+import type { Metric, MetricVariant } from "@/data/climate-metrics-map/metrics";
 import { calAdaptApi, type TileJson } from "@/lib/cal-adapt-api";
 
 import type { ValueType } from "./ClimateMetricsMap";
+import { buildIntervalColormap } from "./colormap";
 import MapLegend from "./MapLegend";
 import MapPopup from "./MapPopup";
 
@@ -126,16 +127,8 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
     // Derived state
     const currentVariableData: Metric = metrics[metricSelected];
     // Some metrics don't have a "del" (delta) product yet — fall back to "abs".
-    const paths = (currentVariableData[valueType] ?? currentVariableData.abs) as {
-      colormap: string;
-      mean: string;
-      min_path?: string;
-      max_path?: string;
-      description: string;
-      short_desc: string;
-      variable: string;
-      rescale: string;
-    };
+    const paths: MetricVariant = currentVariableData[valueType] ?? currentVariableData.abs;
+    const [rescaleMin, rescaleMax] = paths.rescale.split(",").map(Number);
 
     if (!currentVariableData) {
       console.error("Invalid metric selected:", metricSelected);
@@ -164,6 +157,9 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
             datetime: String(currentGwl),
             rescale: paths.rescale,
             colormap: paths.colormap,
+            colormapIntervals: paths.bins
+              ? buildIntervalColormap(paths.colormap, rescaleMin, rescaleMax, paths.bins)
+              : undefined,
           });
           setTileJson(data);
         } catch (error) {
@@ -548,8 +544,10 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
             >
               <MapLegend
                 colormap={paths.colormap}
-                min={parseFloat(paths.rescale.split(",")[0])}
-                max={parseFloat(paths.rescale.split(",")[1])}
+                min={rescaleMin}
+                max={rescaleMax}
+                bins={paths.bins}
+                labelStep={paths.legendLabelStep}
                 title={paths.description}
               />
             </div>

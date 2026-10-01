@@ -1,4 +1,4 @@
-type MetricVariant = {
+export type MetricVariant = {
   mean: string;
   min_path?: string;
   max_path?: string;
@@ -7,6 +7,11 @@ type MetricVariant = {
   variable: string;
   rescale: string;
   colormap: string;
+  /** Show this layer as `bins` equal-width color steps across `rescale`
+   *  instead of a continuous gradient. */
+  bins?: number;
+  /** Label legend ticks only at multiples of this value (e.g. every 6 days). */
+  legendLabelStep?: number;
 };
 
 // Labels shown next to the min/mean/max values in the map click popup.
@@ -48,8 +53,10 @@ export const metrics: Metric[] = [
       short_desc:
         "How many days during the year are expected to be very hot compared to the past (# of days)",
       variable: "t2max_ge99pctl",
-      rescale: "0,50",
-      colormap: "Reds",
+      rescale: "0,30",
+      colormap: "cal-adapt-extreme-heat",
+      bins: 15,
+      legendLabelStep: 6,
     },
     del: {
       mean: `${EXTREME_HEAT_BASE}/eh_days/mm4mean/ssp370/gwl_delta/t2max_ge99pctl/d03`,
@@ -60,8 +67,10 @@ export const metrics: Metric[] = [
       short_desc:
         "Change in how many days during the year are expected to be very hot compared to the past (# of days)",
       variable: "t2max_ge99pctl",
-      rescale: "0,50",
-      colormap: "Reds",
+      rescale: "0,30",
+      colormap: "cal-adapt-extreme-heat",
+      bins: 15,
+      legendLabelStep: 6,
     },
   },
   {
@@ -130,8 +139,10 @@ export const metrics: Metric[] = [
       short_desc:
         "How many nights during the year are expected to stay very warm compared to the past (# of nights)",
       variable: "t2min_ge99pctl",
-      rescale: "0,50",
-      colormap: "Purples",
+      rescale: "0,30",
+      colormap: "cal-adapt-warm-nights",
+      bins: 15,
+      legendLabelStep: 6,
     },
     del: {
       mean: `${EXTREME_HEAT_BASE}/warm_nights/mm4mean/ssp370/gwl_delta/t2min_ge99pctl/d03`,
@@ -141,8 +152,10 @@ export const metrics: Metric[] = [
       short_desc:
         "Change in how many nights during the year are expected to stay very warm compared to the past (# of nights)",
       variable: "t2min_ge99pctl",
-      rescale: "0,50",
-      colormap: "Purples",
+      rescale: "0,30",
+      colormap: "cal-adapt-warm-nights",
+      bins: 15,
+      legendLabelStep: 6,
     },
   },
 ];
