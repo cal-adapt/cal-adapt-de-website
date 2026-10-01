@@ -78,6 +78,11 @@ export function hasRenderableSeries(series: ExtremeHeatSeries | null): boolean {
   return series.median.some((v) => Number.isFinite(v));
 }
 
+export interface FetchSeriesOptions {
+  /** Cancels the STAC search and CSV download (timeout or superseded request). */
+  signal?: AbortSignal;
+}
+
 /**
  * Build STAC `/search` filters for the current selections. The tuple
  * (variable_id, boundary, threshold_name) resolves to exactly one item.
@@ -109,9 +114,10 @@ export function searchFiltersKey(selections: ExtremeHeatDaysSelections): string 
 
 /** Run the STAC `/search` step in isolation. */
 export async function searchExtremeHeatItems(
-  selections: ExtremeHeatDaysSelections
+  selections: ExtremeHeatDaysSelections,
+  { signal }: FetchSeriesOptions = {}
 ): Promise<StacItemCollection> {
-  return calAdaptApi.stac.searchItems(buildSearchFilters(selections));
+  return calAdaptApi.stac.searchItems(buildSearchFilters(selections), { signal });
 }
 
 /**
@@ -119,10 +125,11 @@ export async function searchExtremeHeatItems(
  * any step fails so the calling hook can surface a single error state.
  */
 export async function fetchExtremeHeatSeries(
-  selections: ExtremeHeatDaysSelections
+  selections: ExtremeHeatDaysSelections,
+  { signal }: FetchSeriesOptions = {}
 ): Promise<ExtremeHeatSeries> {
   const thresholdName = thresholdNameFor(selections);
-  const items = await searchExtremeHeatItems(selections);
+  const items = await searchExtremeHeatItems(selections, { signal });
   const item = items.features[0];
   if (!item) {
     throw new Error(
@@ -131,7 +138,7 @@ export async function fetchExtremeHeatSeries(
   }
 
   const csvUrl = resolveRegionCsvUrl(item, selections, thresholdName);
-  const csvText = await fetchCsvText(csvUrl);
+  const csvText = await fetchCsvText(csvUrl, signal);
 
   return parseRegionCsv(csvText, item, csvUrl, selections, thresholdName);
 }
@@ -160,8 +167,8 @@ function regionCsvFileName(selections: ExtremeHeatDaysSelections, thresholdName:
   return `${region}_${thresholdName}.csv`;
 }
 
-async function fetchCsvText(url: string): Promise<string> {
-  const response = await fetch(url, { headers: { Accept: "text/csv" } });
+async function fetchCsvText(url: string, signal?: AbortSignal): Promise<string> {
+  const response = await fetch(url, { headers: { Accept: "text/csv" }, signal });
   if (!response.ok) {
     throw new Error(`CSV fetch failed (${response.status} ${response.statusText}): ${url}`);
   }

@@ -351,4 +351,29 @@ describe("fetchExtremeHeatSeries", () => {
 
     await expect(fetchExtremeHeatSeries(SELECTIONS)).rejects.toThrow("CSV fetch failed");
   });
+
+  it("rejects without searching when the signal is already aborted", async () => {
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(
+      fetchExtremeHeatSeries(SELECTIONS, { signal: controller.signal })
+    ).rejects.toThrow();
+  });
+
+  it("passes the signal through to the CSV download", async () => {
+    const controller = new AbortController();
+    // Abort as soon as the search responds, so only the CSV request sees it.
+    server.use(
+      http.get(`${STAC_API_BASE_URL}/search`, () => {
+        controller.abort();
+        return HttpResponse.json(featureCollection([makeItem()]));
+      })
+    );
+    mockCsv("warming_level,multimodel_median,multimodel_p10,multimodel_p90\n0.8,34.0,30.0,38.0");
+
+    await expect(
+      fetchExtremeHeatSeries(SELECTIONS, { signal: controller.signal })
+    ).rejects.toThrow();
+  });
 });

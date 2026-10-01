@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import type { HddCddSelections } from "@/lib/hdd-cdd/options";
 import { fetchHddCddSeries, type HddCddSeries, searchFiltersKey } from "@/lib/hdd-cdd/series";
+import { createTimeoutController } from "@/utils/fetch-timeout";
 
 export type HddCddSeriesStatus = "idle" | "loading" | "success" | "error";
 
@@ -10,6 +11,8 @@ interface FetchState {
   status: HddCddSeriesStatus;
   data: HddCddSeries | null;
   errorMessage: string | null;
+  /** True when the error was the request exceeding the data fetch timeout. */
+  timedOut: boolean;
 }
 
 export interface UseHddCddSeriesResult extends FetchState {
@@ -22,12 +25,13 @@ const initial: FetchState = {
   status: "idle",
   data: null,
   errorMessage: null,
+  timedOut: false,
 };
 
 /**
  * Fetch the parsed HDD/CDD series for the current selections, with a small
- * status state machine that handles cancellation, error capture, and re-fetch
- * semantics.
+ * status state machine that handles cancellation, a request timeout
+ * (`DATA_FETCH_TIMEOUT_MS`), error capture, and re-fetch semantics.
  *
  * Re-fetches whenever `searchFiltersKey(selections)` changes — spatial
  * aggregation and location select a different STAC item/CSV. Metric and
@@ -47,26 +51,36 @@ export function useHddCddSeries(selections: HddCddSelections): UseHddCddSeriesRe
 
   useEffect(() => {
     let cancelled = false;
+    // Cancels the request after DATA_FETCH_TIMEOUT_MS, or on cleanup when the
+    // selections change before it finishes.
+    const request = createTimeoutController();
 
-    setResult({ status: "loading", data: null, errorMessage: null });
+    setResult({ status: "loading", data: null, errorMessage: null, timedOut: false });
 
     (async () => {
       try {
-        const data = await fetchHddCddSeries(selections);
+        const data = await fetchHddCddSeries(selections, { signal: request.signal });
         if (cancelled) return;
-        setResult({ status: "success", data, errorMessage: null });
+        setResult({ status: "success", data, errorMessage: null, timedOut: false });
       } catch (error) {
         if (cancelled) return;
+        const timedOut = request.timedOut();
         setResult({
           status: "error",
           data: null,
-          errorMessage: error instanceof Error ? error.message : "Failed to fetch HDD/CDD series",
+          errorMessage: timedOut
+            ? "Request timed out"
+            : error instanceof Error
+              ? error.message
+              : "Failed to fetch HDD/CDD series",
+          timedOut,
         });
       }
     })();
 
     return () => {
       cancelled = true;
+      request.cancel();
     };
     // `selections` is intentionally omitted from deps; `filtersKey` derives
     // from the subset of selections that actually affects the API call

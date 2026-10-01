@@ -139,7 +139,10 @@ export async function getCollection(collectionId: string): Promise<StacCollectio
 /**
  * Search for items using CQL2 filters.
  */
-export async function searchItems(filters: ItemSearchFilters): Promise<StacItemCollection> {
+export async function searchItems(
+  filters: ItemSearchFilters,
+  { signal }: { signal?: AbortSignal } = {}
+): Promise<StacItemCollection> {
   const filterParts: string[] = [];
 
   if (filters.collectionFilter) filterParts.push(filters.collectionFilter);
@@ -164,6 +167,7 @@ export async function searchItems(filters: ItemSearchFilters): Promise<StacItemC
       ...(filterStr ? { filter: filterStr, filter_lang: "cql2-text" } : {}),
     },
     headers: { Accept: "application/geo+json" },
+    signal,
   });
   return assertOk<StacItemCollection>(res, API_NAME);
 }

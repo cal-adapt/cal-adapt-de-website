@@ -208,6 +208,7 @@ export default function ExtremeHeatDays() {
             series={seriesResult.data}
             status={seriesResult.status}
             errorMessage={seriesResult.errorMessage}
+            timedOut={seriesResult.timedOut}
             onRetry={seriesResult.retry}
             climateVariable={selections.climateVariable}
             threshold={selections.threshold}

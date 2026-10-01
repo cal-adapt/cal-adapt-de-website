@@ -22,6 +22,8 @@ export interface ChartViewProps {
   series: ExtremeHeatSeries | null;
   status: ExtremeHeatSeriesStatus;
   errorMessage: string | null;
+  /** True when the fetch was cancelled for exceeding the data fetch timeout. */
+  timedOut: boolean;
   /** Re-trigger the data fetch; wired to the error-state "Retry" button. */
   onRetry: () => void;
   /** Selected climate variable; drives metric-specific chart labels/copy. */
@@ -43,6 +45,7 @@ export default function ChartView({
   series,
   status,
   errorMessage,
+  timedOut,
   onRetry,
   climateVariable,
   threshold,
@@ -108,8 +111,9 @@ export default function ChartView({
             </Button>
           }
         >
-          We couldn&apos;t load {metric.accessibleNoun} data for {locationLabel}. Check your
-          connection and try again.
+          {timedOut
+            ? `Loading ${metric.accessibleNoun} data for ${locationLabel} is taking longer than expected. Try again.`
+            : `We couldn't load ${metric.accessibleNoun} data for ${locationLabel}. Check your connection and try again.`}
         </Alert>
       )}
 
