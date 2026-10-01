@@ -158,7 +158,7 @@ const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
   titleLabel: "Heat Wave",
   accessibleNoun: "heat waves",
   valueUnit: "heat waves",
-  thresholdTooltip: "TEXT HERE",
+  thresholdTooltip: "The daily maximum temperature a day must exceed to count toward a heat wave.",
   exportFilenamePrefix: "heat-wave-frequency",
 };
 
@@ -223,8 +223,16 @@ export function getHeatMetric(climateVariable: string): HeatMetricConfig {
 export type ThresholdKind = "absolute" | "relative";
 
 export const THRESHOLD_KIND_OPTIONS: readonly SelectOption[] = [
-  { value: "absolute", label: "Absolute" },
-  { value: "relative", label: "Relative" },
+  {
+    value: "absolute",
+    label: "Absolute",
+    description: "A fixed temperature, the same everywhere (e.g. 100°F)",
+  },
+  {
+    value: "relative",
+    label: "Relative",
+    description: "A local percentile, so the temperature varies by location",
+  },
 ];
 
 export function thresholdKindFor(threshold: string): ThresholdKind {

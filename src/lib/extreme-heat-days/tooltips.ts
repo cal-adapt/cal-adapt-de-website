@@ -8,7 +8,7 @@ export const CONTROL_TOOLTIPS: Omit<
 > & { thresholdType: string } = {
   climateVariable: "The type of climate data being displayed.",
   spatialAggregation: "Region over which the data is aggregated",
-  duration: "TEXT HERE",
+  duration: "The number of consecutive days above the threshold that counts as one heat wave.",
   thresholdType:
     "Relative uses a local temperature percentile (e.g. 98th) as the threshold, so it varies by location. Absolute uses a fixed temperature value applied everywhere.",
 };
