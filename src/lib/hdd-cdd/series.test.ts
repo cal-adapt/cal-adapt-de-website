@@ -290,4 +290,25 @@ describe("fetchHddCddSeries", () => {
 
     await expect(fetchHddCddSeries(SELECTIONS)).rejects.toThrow("CSV fetch failed");
   });
+
+  it("rejects without searching when the signal is already aborted", async () => {
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(fetchHddCddSeries(SELECTIONS, { signal: controller.signal })).rejects.toThrow();
+  });
+
+  it("passes the signal through to the CSV download", async () => {
+    const controller = new AbortController();
+    // Abort as soon as the search responds, so only the CSV request sees it.
+    server.use(
+      http.get(`${STAC_API_BASE_URL}/search`, () => {
+        controller.abort();
+        return HttpResponse.json(featureCollection([makeItem()]));
+      })
+    );
+    mockCsv("year,hdd_mean,hdd_min,hdd_max,cdd_mean,cdd_min,cdd_max\n2000,1,1,1,1,1,1");
+
+    await expect(fetchHddCddSeries(SELECTIONS, { signal: controller.signal })).rejects.toThrow();
+  });
 });

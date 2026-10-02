@@ -43,6 +43,13 @@
   font-weight: 600;
 }
 
+.chartSubtitle {
+  fill: color(grey-4);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  font-weight: 400;
+}
+
 .grid line {
   stroke: color(grey-2);
   stroke-width: 1;

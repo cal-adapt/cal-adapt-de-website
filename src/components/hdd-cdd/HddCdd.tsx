@@ -128,6 +128,7 @@ export default function HddCdd() {
             series={seriesResult.data}
             status={seriesResult.status}
             errorMessage={seriesResult.errorMessage}
+            timedOut={seriesResult.timedOut}
             onRetry={seriesResult.retry}
             climateVariable={selections.climateVariable}
             locationLabel={locationLabel}

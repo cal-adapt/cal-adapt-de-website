@@ -29,7 +29,24 @@ export function colorForGlobalWarmingLevel(value: number): string {
 
 export function formatViewTitle(selections: ExtremeHeatDaysSelections): string {
   const metric = getHeatMetric(selections.climateVariable);
-  return `${metric.titleLabel} Frequency by Global Warming Level: ${regionLabelFor(selections)} (${formatThresholdLabel(selections.threshold)})`;
+  return `${metric.label} by Global Warming Level: ${regionLabelFor(selections)}`;
+}
+
+/** Names the plotted statistic, threshold, and (for heat waves) duration,
+ *  e.g. "Median annual count of 5-day heat waves above 110°F". */
+export function formatViewSubtitle(selections: ExtremeHeatDaysSelections): string {
+  const metric = getHeatMetric(selections.climateVariable);
+  const noun = metric.usesDuration
+    ? `${formatDurationLabel(selections.duration)} ${metric.accessibleNoun}`
+    : metric.accessibleNoun;
+  const threshold = formatThresholdLabel(selections.threshold);
+  const thresholdPhrase = selections.threshold.endsWith("pctl") ? `the ${threshold}` : threshold;
+  return `Median annual count of ${noun} above ${thresholdPhrase}`;
+}
+
+/** e.g. "5" → "5-day". */
+export function formatDurationLabel(duration: string): string {
+  return `${duration}-day`;
 }
 
 export function formatGlobalWarmingLevel(value: number): string {
