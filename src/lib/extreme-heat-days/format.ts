@@ -32,8 +32,8 @@ export function formatViewTitle(selections: ExtremeHeatDaysSelections): string {
   return `${metric.label} by Global Warming Level: ${regionLabelFor(selections)}`;
 }
 
-/** Names the plotted statistic, threshold, and (for heat waves) duration,
- *  e.g. "Median annual count of 5-day heat waves above 110°F". */
+/** Names the plotted statistic, threshold, and (where used) duration, e.g.
+ *  "Median annual count of 5-day heat waves above 110°F". */
 export function formatViewSubtitle(selections: ExtremeHeatDaysSelections): string {
   const metric = getHeatMetric(selections.climateVariable);
   const noun = metric.usesDuration
@@ -41,7 +41,7 @@ export function formatViewSubtitle(selections: ExtremeHeatDaysSelections): strin
     : metric.accessibleNoun;
   const threshold = formatThresholdLabel(selections.threshold);
   const thresholdPhrase = selections.threshold.endsWith("pctl") ? `the ${threshold}` : threshold;
-  return `Median annual count of ${noun} above ${thresholdPhrase}`;
+  return `${metric.statisticLabel} of ${noun} above ${thresholdPhrase}`;
 }
 
 /** e.g. "5" → "5-day". */
