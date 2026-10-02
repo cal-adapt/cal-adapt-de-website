@@ -39,7 +39,7 @@ const EXTREME_HEAT_BASE = "s3://cadcat/wrf/extreme-heat-tool/multimodel_gridded"
 export const metrics: Metric[] = [
   {
     id: 0,
-    title: "Extreme Heat",
+    title: "Extreme Heat Days",
     slug: "extreme-heat",
     abs: {
       mean: `${EXTREME_HEAT_BASE}/eh_days/mm4mean/ssp370/gwl/t2max_ge99pctl/d03`,
