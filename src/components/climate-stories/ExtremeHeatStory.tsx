@@ -105,7 +105,6 @@ export default function ExtremeHeatStory() {
         primary={{
           href: storyToolHref("extreme-heat-days", IMPERIAL_100F),
           label: `Explore the ${EXTREME_HEAT_TOOL.label} tool`,
-          featureFlag: EXTREME_HEAT_TOOL.featureFlag,
         }}
         secondary={{
           href: navLinks.climateMetricsMap.href,
