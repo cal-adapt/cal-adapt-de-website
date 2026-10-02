@@ -153,7 +153,6 @@ const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
   collectionId: HWF_METRICS_STAC_COLLECTION_ID,
   csvColumns: { median: "median", p10: "p10", p90: "p90" },
   usesDuration: true,
-  featureFlag: "__FF_HEAT_WAVE_FREQUENCY__",
   yAxisLabel: "Number of Heat Waves per Year",
   titleLabel: "Heat Wave",
   accessibleNoun: "heat waves",

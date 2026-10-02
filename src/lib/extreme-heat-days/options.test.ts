@@ -103,9 +103,9 @@ describe("heat wave frequency thresholds", () => {
     expect(defaultThresholdForKind("heat-wave-frequency", "relative")).toBe("95pctl");
   });
 
-  it("is unselectable while its feature flag is off", () => {
+  it("is selectable wherever the tool is (no separate feature flag)", () => {
     const values = CLIMATE_VARIABLE_OPTIONS.map((option) => option.value);
-    expect(values).not.toContain("heat-wave-frequency");
+    expect(values).toContain("heat-wave-frequency");
   });
 });
 
@@ -137,12 +137,9 @@ describe("climate variable dropdown", () => {
         hint: "Coming soon",
       },
       {
-        // Flag is off in this file, so it's shown as coming soon.
         value: "heat-wave-frequency",
         label: "Heat Wave Frequency",
         description: "Heat waves per year lasting at least a set number of days",
-        disabled: true,
-        hint: "Coming soon",
       },
       {
         value: "heat-wave-length",
