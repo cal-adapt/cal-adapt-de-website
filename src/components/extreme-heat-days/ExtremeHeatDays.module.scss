@@ -70,13 +70,6 @@
   @include flex(column, flex-start, stretch, spacer(8));
   width: 100%;
 
-  h3 {
-    margin: spacer(5) 0 0;
-    color: color(black);
-    font-size: 1.8rem;
-    font-weight: font-weight(bold);
-  }
-
   // Numbered bibliography and in-text citations rendered by rehype-citation;
   // same formatting as the guidance pages (src/styles/abstracts/_citations.scss).
   :global(.csl-bib-body) {
