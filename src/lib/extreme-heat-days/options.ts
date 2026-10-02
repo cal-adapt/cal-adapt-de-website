@@ -229,11 +229,7 @@ export const DEFAULT_SELECTIONS: ExtremeHeatDaysSelections = {
   location: DEFAULT_SPATIAL_AGGREGATION.defaultLocation,
 };
 
-/**
- * Fill omitted fields from the defaults and reject values the tool doesn't
- * offer. Fixed selections (e.g. a chart embedded in a Climate Story) built with
- * this fail at module load instead of rendering a "no data" chart.
- */
+/** Like `selectionsFromSearchParams`, but throws on invalid values instead of falling back. */
 export function resolveSelections(
   overrides: Partial<ExtremeHeatDaysSelections>
 ): ExtremeHeatDaysSelections {

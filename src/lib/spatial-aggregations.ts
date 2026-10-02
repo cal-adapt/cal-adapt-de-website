@@ -1,9 +1,7 @@
-// California regions shared by the per-boundary CSV tools (Extreme Heat, HDD/CDD).
-// Names match S3 filename tokens (underscores → spaces) on the WRF d03 grid.
+// Region names match the S3 CSV filename tokens, with underscores as spaces.
 
 import type { SelectOption } from "@/components/common/form";
 
-/** Any selections object that identifies a region. */
 export interface RegionSelections {
   /** STAC `boundary` id, e.g. "ca_counties". */
   spatialAggregation: string;

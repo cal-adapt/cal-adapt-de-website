@@ -15,7 +15,7 @@ import { selectionsToSearchParams as hddCddSelectionsToSearchParams } from "@/li
 import ExtremeHeatChart from "./ExtremeHeatChart";
 import HddCddChart from "./HddCddChart";
 
-/** To embed a new tool's chart, add its selections type here and an entry in `storyToolCharts`. */
+/** Add a tool here and to `storyToolCharts` to make its chart usable in stories. */
 export interface StoryToolSelections {
   "extreme-heat-days": ExtremeHeatDaysSelections;
   "hdd-cdd": HddCddSelections;
@@ -25,9 +25,8 @@ export type StoryToolId = keyof StoryToolSelections;
 
 interface StoryToolChart<S> {
   navLink: NavLink;
-  /** Fills defaults and throws on values the tool doesn't offer. */
+  /** Throws on values the tool doesn't offer. */
   resolveSelections: (overrides: Partial<S>) => S;
-  /** Query string that opens the tool with the same selections. */
   toSearchParams: (selections: S) => URLSearchParams;
   Chart: ComponentType<{ selections: S }>;
 }
@@ -47,7 +46,7 @@ export const storyToolCharts: { [K in StoryToolId]: StoryToolChart<StoryToolSele
   },
 };
 
-/** Build at module level in a story so invalid selections fail the build. */
+/** Call at module level in a story so a bad selection breaks the build, not the page. */
 export function resolveStoryToolSelections<K extends StoryToolId>(
   tool: K,
   overrides: Partial<StoryToolSelections[K]> = {}

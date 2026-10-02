@@ -12,46 +12,33 @@ import styles from "./ChartFrame.module.scss";
 const DEFAULT_SOURCE =
   "Source: Cal-Adapt. Data: WRF Downscaled CMIP6 Climate Projections (UCLA), WRF Derived Products (Cal-Adapt).";
 
-/**
- * Props shared by every tool `ChartView` backed by a STAC series. Everything
- * the chart displays (title, labels, colors) is derived from `selections`
- * inside the view, so callers never re-derive it.
- */
+/** Tool chart views derive their title, labels, and colors from `selections`. */
 export interface StacChartViewProps<S, D> {
   selections: S;
   series: UseStacSeriesResult<D>;
-  /** Attached to the chart container so a Download button can find the SVG. */
   chartContainerRef?: RefObject<HTMLDivElement | null>;
-  /** DOM id for ARIA tab/panel pairing. */
   id?: string;
-  /** Tab id this panel is labeled by. */
   labelledBy?: string;
 }
 
 export interface ChartFrameProps {
   status: StacSeriesStatus;
-  /** True when the loaded series has enough data to plot `children`. */
+  /** When false, a successful load shows `noDataContent` instead of the chart. */
   hasData: boolean;
   errorMessage: string | null;
-  /** Re-trigger the data fetch; wired to the error-state "Retry" button. */
   onRetry: () => void;
   loadingLabel: string;
-  /** Shown on fetch failure. */
   errorContent: ReactNode;
-  /** Shown when the fetch succeeded but there is nothing to plot. */
   noDataContent: ReactNode;
-  /** Optional caveat shown alongside a plotted chart (e.g. partial coverage). */
+  /** Shown under the chart, e.g. for partial data coverage. */
   warningContent?: ReactNode;
   source?: string;
-  /** Attached to the chart container div so a Download button can locate the
-   *  SVG via a single `querySelector("svg")`. */
+  /** Chart downloads find the SVG with `querySelector("svg")` on this element. */
   chartContainerRef?: RefObject<HTMLDivElement | null>;
-  /** DOM id for ARIA tab/panel pairing. */
   id?: string;
-  /** Tab id this panel is labeled by. Renders as a `tabpanel` only when set. */
+  /** Tab id. When set, the frame renders as a `tabpanel`. */
   labelledBy?: string;
   ariaLabel?: string;
-  /** The chart; rendered only when `hasData`. */
   children: ReactNode;
 }
 
