@@ -190,11 +190,7 @@ export default function ExtremeHeatDays() {
     >
       <BetaFeedbackAlert />
 
-      <div className={styles.intro}>
-        {/* Tool-level intro: stays the same for every variable */}
-        <p className={styles.introCopy}>TEXT HERE</p>
-        {INTRO_COPY_BY_VARIABLE[selections.climateVariable]}
-      </div>
+      <div className={styles.intro}>{INTRO_COPY_BY_VARIABLE[selections.climateVariable]}</div>
 
       <div className={styles.workspace}>
         <div className={styles.viewArea}>
