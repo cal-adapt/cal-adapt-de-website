@@ -337,7 +337,7 @@ export const CLIMATE_VARIABLE_SELECT_OPTIONS: readonly SelectOption[] =
 /** Selectable minimum heat-wave durations, in days. */
 export const DURATION_DAYS: readonly number[] = inclusiveRange(3, 14);
 
-export const DEFAULT_DURATION = "5";
+export const DEFAULT_DURATION = "3";
 
 export const DURATION_OPTIONS: readonly SelectOption[] = DURATION_DAYS.map((days) => ({
   value: String(days),
