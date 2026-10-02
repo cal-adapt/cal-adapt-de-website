@@ -2,10 +2,8 @@ import { type ReadableSearchParams, readEnumParam } from "@/utils/search-params"
 
 import {
   CLIMATE_VARIABLE_OPTIONS,
-  DEFAULT_DURATION,
   DEFAULT_SELECTIONS,
-  defaultLocationFor,
-  defaultThresholdFor,
+  defaultSelectionsFor,
   DURATION_OPTIONS,
   type ExtremeHeatDaysSelections,
   getHeatMetric,
@@ -59,37 +57,39 @@ export function selectionsFromSearchParams(
     CLIMATE_VARIABLE_OPTIONS.map((option) => option.value),
     DEFAULT_SELECTIONS.climateVariable
   );
-  const rawThreshold = params.get(PARAM_KEYS.threshold);
-  const threshold =
-    rawThreshold !== null && isAllowedThreshold(rawThreshold, climateVariable)
-      ? rawThreshold
-      : defaultThresholdFor(climateVariable);
-  const duration = readField(
-    params,
-    "duration",
-    DURATION_OPTIONS.map((option) => option.value),
-    DEFAULT_DURATION
-  );
   const spatialAggregation = readField(
     params,
     "spatialAggregation",
     SPATIAL_AGGREGATION_OPTIONS.map((option) => option.value),
     DEFAULT_SELECTIONS.spatialAggregation
   );
+  const defaults = defaultSelectionsFor(climateVariable, spatialAggregation);
+  const rawThreshold = params.get(PARAM_KEYS.threshold);
+  const threshold =
+    rawThreshold !== null && isAllowedThreshold(rawThreshold, climateVariable)
+      ? rawThreshold
+      : defaults.threshold;
+  const duration = readField(
+    params,
+    "duration",
+    DURATION_OPTIONS.map((option) => option.value),
+    defaults.duration
+  );
   const location = readField(
     params,
     "location",
     locationOptionsFor(spatialAggregation).map((option) => option.value),
-    defaultLocationFor(spatialAggregation)
+    defaults.location
   );
   return { climateVariable, threshold, duration, spatialAggregation, location };
 }
 
 export function selectionsToSearchParams(selections: ExtremeHeatDaysSelections): URLSearchParams {
+  const defaults = defaultSelectionsFor(selections.climateVariable, selections.spatialAggregation);
   // Duration only means something for metrics keyed by it; drop it elsewhere
   // so it doesn't linger in the URL after switching variables.
   const values = getHeatMetric(selections.climateVariable).usesDuration
     ? selections
-    : { ...selections, duration: DEFAULT_SELECTIONS.duration };
-  return toSearchParams(values, DEFAULT_SELECTIONS, PARAM_KEYS);
+    : { ...selections, duration: defaults.duration };
+  return toSearchParams(values, defaults, PARAM_KEYS);
 }

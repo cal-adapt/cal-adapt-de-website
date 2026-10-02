@@ -658,3 +658,17 @@ export const DEFAULT_SELECTIONS: ExtremeHeatDaysSelections = {
   spatialAggregation: DEFAULT_AGGREGATION.value,
   location: DEFAULT_AGGREGATION.defaultLocation,
 };
+
+/** Defaults in the context of a chosen variable and aggregation, whose
+ *  threshold and location defaults differ. The URL reader falls back to these
+ *  and the writer omits fields equal to them, so the two always agree. */
+export function defaultSelectionsFor(
+  climateVariable: string,
+  spatialAggregation: string
+): ExtremeHeatDaysSelections {
+  return {
+    ...DEFAULT_SELECTIONS,
+    threshold: defaultThresholdFor(climateVariable),
+    location: defaultLocationFor(spatialAggregation),
+  };
+}
