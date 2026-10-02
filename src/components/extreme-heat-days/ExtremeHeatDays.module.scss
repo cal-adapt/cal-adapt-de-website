@@ -65,32 +65,46 @@
   min-width: 0;
 }
 
-.referencesTitle {
-  margin: spacer(5) 0 0;
-  color: color(black);
-  font-size: 1.8rem;
-  font-weight: font-weight(bold);
-}
+// Per-variable MDX copy ("About …" and "How to interpret …" sections).
+.variableCopy {
+  @include flex(column, flex-start, stretch, spacer(8));
+  width: 100%;
 
-// Numbered, hanging-indent bibliography — shares its formatting (see
-// src/styles/abstracts/_citations.scss) with the guidance page's
-// rehype-citation-rendered References section.
-.references {
-  @extend %citation-list;
-}
+  h3 {
+    margin: spacer(5) 0 0;
+    color: color(black);
+    font-size: 1.8rem;
+    font-weight: font-weight(bold);
+  }
 
-.referenceEntry {
-  @extend %citation-entry;
-}
+  // Numbered bibliography and in-text citations rendered by rehype-citation;
+  // same formatting as the guidance pages (src/styles/abstracts/_citations.scss).
+  :global(.csl-bib-body) {
+    @extend %citation-list;
+  }
 
-.referenceNumber {
-  @extend %citation-number;
-}
+  :global(.csl-entry) {
+    @extend %citation-entry;
+  }
 
-.referenceText {
-  @extend %citation-text;
+  :global(.csl-left-margin) {
+    @extend %citation-number;
+  }
 
-  a {
+  :global(.csl-right-inline) {
+    @extend %citation-text;
+    overflow-wrap: anywhere;
+
+    a {
+      @extend %citation-link;
+    }
+  }
+
+  :global(sup) {
+    @extend %citation-sup;
+  }
+
+  :global(sup a[href^="#bib-"]) {
     @extend %citation-link;
   }
 }
