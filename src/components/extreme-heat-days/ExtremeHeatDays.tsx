@@ -32,6 +32,7 @@ import { exportSvgAsPng } from "@/utils/export-chart";
 
 import ExtremeHeatDaysCopy from "./copy/extreme-heat-days.mdx";
 import HeatWaveFrequencyCopy from "./copy/heat-wave-frequency.mdx";
+import HeatWaveLengthCopy from "./copy/heat-wave-length.mdx";
 import WarmNightsCopy from "./copy/warm-nights.mdx";
 import ChartView from "./ChartView";
 import Controls from "./Controls";
@@ -60,6 +61,7 @@ const COPY_BY_VARIABLE: Record<string, MDXContent> = {
   "extreme-heat-days": ExtremeHeatDaysCopy,
   "warm-nights": WarmNightsCopy,
   "heat-wave-frequency": HeatWaveFrequencyCopy,
+  "heat-wave-length": HeatWaveLengthCopy,
 };
 
 // Render the copy inline: skip the site-wide MDX wrapper (page container + article).
@@ -171,7 +173,6 @@ export default function ExtremeHeatDays() {
             onRetry={seriesResult.retry}
             climateVariable={selections.climateVariable}
             threshold={selections.threshold}
-            duration={selections.duration}
             locationLabel={locationLabel}
             chartContainerRef={chartContainerRef}
           />

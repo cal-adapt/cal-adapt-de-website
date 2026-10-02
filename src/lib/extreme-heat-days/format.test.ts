@@ -56,6 +56,20 @@ describe("formatViewTitle", () => {
   });
 });
 
+describe("heat wave length title and subtitle", () => {
+  const HWL = { ...SELECTIONS, climateVariable: "heat-wave-length" };
+
+  it("titles the chart with the variable name", () => {
+    expect(formatViewTitle(HWL)).toBe(
+      "Heat Wave Length by Global Warming Level: Sacramento County"
+    );
+  });
+
+  it("names the length statistic without a duration", () => {
+    expect(formatViewSubtitle(HWL)).toBe("Median annual length of heat waves above 100°F");
+  });
+});
+
 describe("formatViewSubtitle", () => {
   it("names the statistic and an absolute threshold", () => {
     expect(formatViewSubtitle(SELECTIONS)).toBe(
