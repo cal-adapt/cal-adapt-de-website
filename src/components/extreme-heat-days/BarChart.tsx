@@ -22,7 +22,9 @@ import { toSentenceCase } from "@/utils/string";
 
 import styles from "./BarChart.module.scss";
 
-const TITLE_BAND = 52;
+const TITLE_BAND = 76;
+const TITLE_Y = 26;
+const SUBTITLE_Y = 54;
 const MARGIN = { top: 24, right: 24, bottom: 78, left: 86 } as const;
 
 const X_AXIS_LABEL = "Global Warming Level (°C)";
@@ -38,6 +40,11 @@ const X_TICK_OFFSET = 8;
 // Should match CSS variable `--font-family-sans-serif`
 const FONT_FAMILY = '"Inter", "Helvetica Neue", "Helvetica", "Arial", sans-serif';
 const titleMeasureStyle: CSSProperties = { fontFamily: FONT_FAMILY, fontSize: 18, fontWeight: 600 };
+const subtitleMeasureStyle: CSSProperties = {
+  fontFamily: FONT_FAMILY,
+  fontSize: 14,
+  fontWeight: 400,
+};
 const tickMeasureStyle: CSSProperties = { fontFamily: FONT_FAMILY, fontSize: 12, fontWeight: 500 };
 
 interface HoveredBar {
@@ -56,6 +63,8 @@ export interface BarChartProps {
   locationLabel: string;
   /** Rendered as SVG text to include in PNG exports. */
   title: string;
+  /** Rendered under the title (also exported), e.g. the threshold and duration. */
+  subtitle: string;
   /** Y-axis title */
   yAxisLabel: string;
   /** Y-axis domain max, already resolved by the caller (see resolveYAxisMax) */
@@ -76,6 +85,7 @@ export default function BarChart({
   thresholdLabel,
   locationLabel,
   title,
+  subtitle,
   yAxisLabel,
   yAxisMax,
   accessibleNoun,
@@ -145,7 +155,7 @@ export default function BarChart({
           <Text
             className={styles.chartTitle}
             x={width / 2}
-            y={TITLE_BAND / 2}
+            y={TITLE_Y}
             width={Math.max(0, width - 2 * TITLE_PADDING_X)}
             textAnchor="middle"
             verticalAnchor="middle"
@@ -153,6 +163,18 @@ export default function BarChart({
             aria-hidden="true"
           >
             {title}
+          </Text>
+          <Text
+            className={styles.chartSubtitle}
+            x={width / 2}
+            y={SUBTITLE_Y}
+            width={Math.max(0, width - 2 * TITLE_PADDING_X)}
+            textAnchor="middle"
+            verticalAnchor="middle"
+            style={subtitleMeasureStyle}
+            aria-hidden="true"
+          >
+            {subtitle}
           </Text>
 
           <Group left={MARGIN.left} top={TITLE_BAND + MARGIN.top}>

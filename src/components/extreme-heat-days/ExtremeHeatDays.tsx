@@ -15,7 +15,11 @@ import Tabs, { type TabItem } from "@/components/common/ui/Tabs";
 import PageLayout from "@/components/dashboard/PageLayout";
 import { navLinks } from "@/config/navigation";
 import { useExtremeHeatSeries } from "@/hooks/use-extreme-heat-series";
-import { formatChartExportFilename, formatViewTitle } from "@/lib/extreme-heat-days/format";
+import {
+  formatChartExportFilename,
+  formatViewSubtitle,
+  formatViewTitle,
+} from "@/lib/extreme-heat-days/format";
 import {
   type ExtremeHeatDaysSelections,
   getHeatMetric,
@@ -191,6 +195,7 @@ export default function ExtremeHeatDays() {
 
   const selections = useMemo(() => selectionsFromSearchParams(searchParams), [searchParams]);
   const viewTitle = formatViewTitle(selections);
+  const viewSubtitle = formatViewSubtitle(selections);
   const locationLabel = regionLabelFor(selections);
 
   const handleSelectionsChange = useCallback(
@@ -272,6 +277,7 @@ export default function ExtremeHeatDays() {
             id={CHART_TAB.panelId}
             labelledBy={CHART_TAB.tabId}
             title={viewTitle}
+            subtitle={viewSubtitle}
             series={seriesResult.data}
             status={seriesResult.status}
             errorMessage={seriesResult.errorMessage}

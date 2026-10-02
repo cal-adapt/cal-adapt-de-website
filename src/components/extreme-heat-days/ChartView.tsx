@@ -18,6 +18,7 @@ import styles from "./ChartView.module.scss";
 export interface ChartViewProps {
   /**  Owned by the parent so the chart and table views are consistently labeled. */
   title: string;
+  subtitle: string;
   /** Loaded series for the current location. `null` while loading/erroring/idle. */
   series: ExtremeHeatSeries | null;
   status: ExtremeHeatSeriesStatus;
@@ -44,6 +45,7 @@ export interface ChartViewProps {
 
 export default function ChartView({
   title,
+  subtitle,
   series,
   status,
   errorMessage,
@@ -91,6 +93,7 @@ export default function ChartView({
             thresholdLabel={thresholdLabel}
             locationLabel={locationLabel}
             title={title}
+            subtitle={subtitle}
             yAxisLabel={metric.yAxisLabel}
             yAxisMax={resolveYAxisMax(series.median)}
             accessibleNoun={metric.accessibleNoun}
