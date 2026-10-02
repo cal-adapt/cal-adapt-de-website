@@ -1,7 +1,6 @@
 // Domain data for the Extreme Heat tool.
 
 import type { SelectOption } from "@/components/common/form";
-import { type FeatureFlagKey, featureFlags } from "@/config/feature-flags";
 
 /**
  * User-controlled inputs that drive the Extreme Heat tool.
@@ -61,8 +60,6 @@ export interface HeatMetricConfig {
   csvColumns: HeatCsvColumns;
   /** True when items/CSVs are also keyed by a minimum heat-wave duration. */
   usesDuration: boolean;
-  /** Hides the metric (dropdown + URL) when this flag is off. */
-  featureFlag?: FeatureFlagKey;
   /** Chart y-axis label. */
   yAxisLabel: string;
   /** Metric label used inside the chart title, e.g. "Warm Nights". */
@@ -168,14 +165,6 @@ export const HEAT_METRICS: Readonly<Record<string, HeatMetricConfig>> = {
   [HEAT_WAVE_FREQUENCY_METRIC.value]: HEAT_WAVE_FREQUENCY_METRIC,
 };
 
-function isMetricEnabled(metric: HeatMetricConfig): boolean {
-  return metric.featureFlag == null || featureFlags[metric.featureFlag];
-}
-
-/** Metrics whose feature flag (if any) is on — the ones users can select. */
-const ENABLED_HEAT_METRICS: readonly HeatMetricConfig[] =
-  Object.values(HEAT_METRICS).filter(isMetricEnabled);
-
 /** A variable listed in the dropdown before it's built; shown disabled. */
 interface ComingSoonVariable {
   value: string;
@@ -256,14 +245,6 @@ export function thresholdValuesFor(
   }
 }
 
-export function thresholdRangeFor(
-  kind: ThresholdKind,
-  climateVariable: string
-): { min: number; max: number } {
-  const values = thresholdValuesFor(kind, climateVariable);
-  return { min: values[0], max: values[values.length - 1] };
-}
-
 /** True when the selectable values have no gaps, so a 1-step slider fits. */
 export function isContiguous(values: readonly number[]): boolean {
   return values.every((value, i) => i === 0 || value === values[i - 1] + 1);
@@ -319,22 +300,21 @@ export function defaultThresholdForKind(climateVariable: string, kind: Threshold
   }
 }
 
-/** Selectable climate variables, flat; used to validate the URL `variable`. */
-export const CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = ENABLED_HEAT_METRICS.map(
+/** Selectable climate variables; used to validate the URL `variable`. */
+export const CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = Object.values(HEAT_METRICS).map(
   (metric) => ({ value: metric.value, label: metric.label })
 );
 
-/** Dropdown options. Metrics whose flag is off, and variables not built yet,
- *  stay visible but disabled, marked "Coming soon". */
+/** Dropdown options. Variables not built yet stay visible but disabled,
+ *  marked "Coming soon". */
 export const CLIMATE_VARIABLE_SELECT_OPTIONS: readonly SelectOption[] =
   CLIMATE_VARIABLE_DROPDOWN_ENTRIES.map((entry) => {
     const option = { value: entry.value, label: entry.label, description: entry.description };
-    const available = !isComingSoon(entry) && isMetricEnabled(entry);
-    return available ? option : { ...option, disabled: true, hint: COMING_SOON_HINT };
+    return isComingSoon(entry) ? { ...option, disabled: true, hint: COMING_SOON_HINT } : option;
   });
 
 /** Selectable minimum heat-wave durations, in days. */
-export const DURATION_DAYS: readonly number[] = inclusiveRange(3, 14);
+const DURATION_DAYS: readonly number[] = inclusiveRange(3, 14);
 
 export const DEFAULT_DURATION = "3";
 
@@ -342,9 +322,6 @@ export const DURATION_OPTIONS: readonly SelectOption[] = DURATION_DAYS.map((days
   value: String(days),
   label: `${days} days`,
 }));
-
-/** All climate-variable options for the dropdown: selectable metrics followed by
- *  coming soon options. */
 
 /**
  * All 58 California counties in alphabetical order.

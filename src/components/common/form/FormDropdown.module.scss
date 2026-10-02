@@ -178,32 +178,3 @@ $label-padding: spacer(3) spacer(4);
     fill: none;
   }
 }
-
-// Grouped options (`SelectOptionGroup`): a non-selectable section heading
-// above each group's options.
-.group {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  & + & .groupHeader {
-    border-top: 1px solid color(grey-2);
-  }
-}
-
-.groupHeader {
-  @include type-item(label);
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  margin: 0;
-  padding: spacer(2) spacer(4);
-  background-color: color(grey-1);
-  color: color(grey-4);
-}
-
-.groupList {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}

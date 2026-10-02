@@ -26,29 +26,9 @@ export interface SelectOption {
   description?: string;
 }
 
-/** A labelled section of options, rendered under a non-selectable heading. */
-export interface SelectOptionGroup {
-  label: string;
-  options: readonly SelectOption[];
-}
-
-export type SelectOptions = readonly SelectOption[] | readonly SelectOptionGroup[];
-
-function isOptionGroup(item: SelectOption | SelectOptionGroup): item is SelectOptionGroup {
-  return Array.isArray((item as SelectOptionGroup).options);
-}
-
-function flattenOptions(options: SelectOptions): readonly SelectOption[] {
-  if (options.length === 0 || !isOptionGroup(options[0])) {
-    return options as readonly SelectOption[];
-  }
-  return (options as readonly SelectOptionGroup[]).flatMap((group) => group.options);
-}
-
 export interface SelectProps {
   id?: string;
-  /** Flat options, or groups of options shown under section headings. */
-  options: SelectOptions;
+  options: readonly SelectOption[];
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
@@ -83,10 +63,7 @@ const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
   const rootRef = useRef<HTMLDivElement>(null);
   const listboxId = useId();
 
-  const selected = useMemo(
-    () => flattenOptions(options).find((o) => o.value === value),
-    [options, value]
-  );
+  const selected = useMemo(() => options.find((o) => o.value === value), [options, value]);
 
   const close = useCallback(() => setOpen(false), []);
 
@@ -120,49 +97,6 @@ const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
     dropdownMaxHeight != null && dropdownMaxHeight !== ""
       ? { ["--form-dropdown-max-height" as string]: dropdownMaxHeight }
       : undefined;
-
-  const renderOption = (opt: SelectOption) => {
-    const isSelected = value === opt.value;
-    return (
-      <li
-        key={opt.value}
-        className={styles.option}
-        role="option"
-        aria-selected={isSelected}
-        title={opt.hint}
-      >
-        <button
-          type="button"
-          className={styles.optionLabel}
-          disabled={disabled || opt.disabled}
-          onClick={() => {
-            if (disabled || opt.disabled) {
-              return;
-            }
-            onChange(opt.value);
-            close();
-          }}
-        >
-          <span className={styles.optionCopy}>
-            <span className={styles.optionHead}>
-              <span className={styles.optionText}>{opt.label}</span>
-              {opt.hint ? (
-                <Badge variant="blue-subtle" size="sm">
-                  {opt.hint}
-                </Badge>
-              ) : null}
-            </span>
-            {opt.description ? (
-              <span className={styles.optionDescription}>{opt.description}</span>
-            ) : null}
-          </span>
-          {isSelected ? (
-            <Check className={styles.optionCheck} size={16} strokeWidth={2} aria-hidden />
-          ) : null}
-        </button>
-      </li>
-    );
-  };
 
   return (
     <div
@@ -209,18 +143,48 @@ const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
             role="listbox"
             aria-activedescendant={undefined}
           >
-            {options.length > 0 && isOptionGroup(options[0])
-              ? (options as readonly SelectOptionGroup[]).map((group) => (
-                  <li key={`group:${group.label}`} className={styles.group} role="presentation">
-                    <p className={styles.groupHeader} aria-hidden>
-                      {group.label}
-                    </p>
-                    <ul className={styles.groupList} role="group" aria-label={group.label}>
-                      {group.options.map(renderOption)}
-                    </ul>
-                  </li>
-                ))
-              : (options as readonly SelectOption[]).map(renderOption)}
+            {options.map((opt) => {
+              const isSelected = value === opt.value;
+              return (
+                <li
+                  key={opt.value}
+                  className={styles.option}
+                  role="option"
+                  aria-selected={isSelected}
+                  title={opt.hint}
+                >
+                  <button
+                    type="button"
+                    className={styles.optionLabel}
+                    disabled={disabled || opt.disabled}
+                    onClick={() => {
+                      if (disabled || opt.disabled) {
+                        return;
+                      }
+                      onChange(opt.value);
+                      close();
+                    }}
+                  >
+                    <span className={styles.optionCopy}>
+                      <span className={styles.optionHead}>
+                        <span className={styles.optionText}>{opt.label}</span>
+                        {opt.hint ? (
+                          <Badge variant="blue-subtle" size="sm">
+                            {opt.hint}
+                          </Badge>
+                        ) : null}
+                      </span>
+                      {opt.description ? (
+                        <span className={styles.optionDescription}>{opt.description}</span>
+                      ) : null}
+                    </span>
+                    {isSelected ? (
+                      <Check className={styles.optionCheck} size={16} strokeWidth={2} aria-hidden />
+                    ) : null}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         ) : null}
       </div>

@@ -1,9 +1,9 @@
 "use client";
 
-import { type ReactNode, useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import type { MDXComponents } from "mdx/types";
+import type { MDXComponents, MDXContent } from "mdx/types";
 
 import BetaFeedbackAlert from "@/components/common/content/BetaFeedbackAlert";
 import CitationLinks from "@/components/common/content/CitationLinks";
@@ -56,7 +56,7 @@ const CHART_TAB = CHART_VIEW_TABS[0];
 
 /** Per-variable "About" and "How to interpret" copy, authored in MDX so
  *  `[@key]` citations resolve against `public/references.bib` at build time. */
-const COPY_BY_VARIABLE: Record<string, (props: { components?: MDXComponents }) => ReactNode> = {
+const COPY_BY_VARIABLE: Record<string, MDXContent> = {
   "extreme-heat-days": ExtremeHeatDaysCopy,
   "warm-nights": WarmNightsCopy,
   "heat-wave-frequency": HeatWaveFrequencyCopy,

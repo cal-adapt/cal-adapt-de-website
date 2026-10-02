@@ -18,8 +18,6 @@ const flagDefinitions = {
 
 type FlagKey = keyof typeof flagDefinitions;
 
-export type FeatureFlagKey = FlagKey;
-
 type FeatureFlags = { [K in FlagKey]: boolean };
 
 /**

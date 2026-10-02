@@ -1,12 +1,7 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { DEFAULT_SELECTIONS, type ExtremeHeatDaysSelections } from "./options";
 import { selectionsFromSearchParams, selectionsToSearchParams } from "./search-params";
-
-// Enable every flag so flag-gated metrics (Heat Wave Frequency) are selectable.
-vi.mock("@/config/feature-flags", () => ({
-  featureFlags: new Proxy({}, { get: () => true }),
-}));
 
 describe("selectionsFromSearchParams", () => {
   it("returns the defaults for empty params", () => {

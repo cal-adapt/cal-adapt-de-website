@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import {
   CLIMATE_VARIABLE_DROPDOWN_ENTRIES,
@@ -12,15 +12,14 @@ import {
   isContiguous,
   parseThresholdNumber,
   thresholdKindFor,
-  thresholdRangeFor,
   thresholdTokenFor,
   thresholdValuesFor,
 } from "./options";
 
-// Every flag off, as in production, so flag-gated metrics should be hidden.
-vi.mock("@/config/feature-flags", () => ({
-  featureFlags: new Proxy({}, { get: () => false }),
-}));
+/** First and last value, e.g. a slider's min/max. */
+function rangeOf(values: readonly number[]): [number, number] {
+  return [values[0], values[values.length - 1]];
+}
 
 describe("threshold helpers", () => {
   it("classifies F tokens as absolute and pctl tokens as relative", () => {
@@ -52,10 +51,10 @@ describe("threshold helpers", () => {
   });
 
   it("exposes absolute ranges per metric and a shared relative range", () => {
-    expect(thresholdRangeFor("absolute", "extreme-heat-days")).toEqual({ min: 80, max: 135 });
-    expect(thresholdRangeFor("absolute", "warm-nights")).toEqual({ min: 65, max: 135 });
-    expect(thresholdRangeFor("relative", "extreme-heat-days")).toEqual({ min: 90, max: 99 });
-    expect(thresholdRangeFor("relative", "warm-nights")).toEqual({ min: 90, max: 99 });
+    expect(rangeOf(thresholdValuesFor("absolute", "extreme-heat-days"))).toEqual([80, 135]);
+    expect(rangeOf(thresholdValuesFor("absolute", "warm-nights"))).toEqual([65, 135]);
+    expect(rangeOf(thresholdValuesFor("relative", "extreme-heat-days"))).toEqual([90, 99]);
+    expect(rangeOf(thresholdValuesFor("relative", "warm-nights"))).toEqual([90, 99]);
   });
 
   it("defaults relative thresholding to the 98th percentile", () => {
@@ -91,7 +90,7 @@ describe("per-metric threshold values", () => {
 
 describe("heat wave frequency thresholds", () => {
   it("uses 85-115°F and only the 95th/99th percentiles", () => {
-    expect(thresholdRangeFor("absolute", "heat-wave-frequency")).toEqual({ min: 85, max: 115 });
+    expect(rangeOf(thresholdValuesFor("absolute", "heat-wave-frequency"))).toEqual([85, 115]);
     expect(thresholdValuesFor("relative", "heat-wave-frequency")).toEqual([95, 99]);
     expect(isAllowedThreshold("95pctl", "heat-wave-frequency")).toBe(true);
     expect(isAllowedThreshold("98pctl", "heat-wave-frequency")).toBe(false);
@@ -103,7 +102,7 @@ describe("heat wave frequency thresholds", () => {
     expect(defaultThresholdForKind("heat-wave-frequency", "relative")).toBe("95pctl");
   });
 
-  it("is selectable wherever the tool is (no separate feature flag)", () => {
+  it("is selectable", () => {
     const values = CLIMATE_VARIABLE_OPTIONS.map((option) => option.value);
     expect(values).toContain("heat-wave-frequency");
   });
