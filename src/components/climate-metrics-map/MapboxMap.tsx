@@ -147,6 +147,9 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
       };
     }, []);
 
+    // Depend on everything that goes into the request: absolute and delta layers
+    // can share a variable name, so `paths.mean` is what changes on a tab switch.
+    const colorTable = buildColorTable(paths.colormap, rescaleMin, rescaleMax, paths.bins);
     useEffect(() => {
       async function loadTileJson() {
         try {
@@ -154,7 +157,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
             url: paths.mean,
             variable: currentVariable,
             datetime: String(currentGwl),
-            colormap: buildColorTable(paths.colormap, rescaleMin, rescaleMax, paths.bins),
+            colormap: colorTable,
           });
           setTileJson(data);
         } catch (error) {
@@ -163,7 +166,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
       }
 
       loadTileJson();
-    }, [metricSelected, gwlSelected, currentVariable, currentVariableData, currentGwl]);
+    }, [paths.mean, currentVariable, currentGwl, colorTable]);
 
     useEffect(() => {
       if (mapRef.current) {
