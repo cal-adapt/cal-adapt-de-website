@@ -29,7 +29,7 @@ export function colorForGlobalWarmingLevel(value: number): string {
 
 export function formatViewTitle(selections: ExtremeHeatDaysSelections): string {
   const metric = getHeatMetric(selections.climateVariable);
-  return `${metric.titleLabel} Frequency by Global Warming Level: ${regionLabelFor(selections)}`;
+  return `${metric.label} by Global Warming Level: ${regionLabelFor(selections)}`;
 }
 
 /** Names the plotted statistic, threshold, and (for heat waves) duration,

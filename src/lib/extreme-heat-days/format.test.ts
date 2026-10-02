@@ -35,13 +35,13 @@ describe("colorForGlobalWarmingLevel", () => {
 describe("formatViewTitle", () => {
   it("includes the selected county with its ' County' suffix", () => {
     expect(formatViewTitle(SELECTIONS)).toBe(
-      "Extreme Heat Frequency by Global Warming Level: Sacramento County"
+      "Extreme Heat Days by Global Warming Level: Sacramento County"
     );
   });
 
   it("reflects the warm-nights metric label", () => {
     expect(formatViewTitle({ ...SELECTIONS, climateVariable: "warm-nights" })).toBe(
-      "Warm Nights Frequency by Global Warming Level: Sacramento County"
+      "Warm Nights by Global Warming Level: Sacramento County"
     );
   });
 
@@ -52,7 +52,7 @@ describe("formatViewTitle", () => {
         spatialAggregation: "forecast_zones",
         location: "Greater Bay Area",
       })
-    ).toBe("Extreme Heat Frequency by Global Warming Level: Greater Bay Area");
+    ).toBe("Extreme Heat Days by Global Warming Level: Greater Bay Area");
   });
 });
 

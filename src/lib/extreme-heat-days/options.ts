@@ -38,7 +38,7 @@ export interface HeatMetricConfig {
   value: string;
   /** STAC `variable_id`. */
   variableId: HeatVariableId;
-  /** Dropdown + tool-copy label, e.g. "Warm Nights". */
+  /** Dropdown label and chart title, e.g. "Warm Nights". */
   label: string;
   /** One-line summary shown under the label in the climate variable dropdown. */
   description: string;
@@ -62,8 +62,6 @@ export interface HeatMetricConfig {
   usesDuration: boolean;
   /** Chart y-axis label. */
   yAxisLabel: string;
-  /** Metric label used inside the chart title, e.g. "Warm Nights". */
-  titleLabel: string;
   /** Noun used in accessible chart text, e.g. "warm nights". */
   accessibleNoun: string;
   /** Unit shown on bar tooltips/values, e.g. "nights". */
@@ -104,7 +102,6 @@ const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   csvColumns: EH_METRICS_CSV_COLUMNS,
   usesDuration: false,
   yAxisLabel: "Number of Extreme Heat Days per Year",
-  titleLabel: "Extreme Heat",
   accessibleNoun: "extreme heat days",
   valueUnit: "days",
   thresholdTooltip: "The maximum temperature threshold used to determine an extreme heat day.",
@@ -126,7 +123,6 @@ const WARM_NIGHTS_METRIC: HeatMetricConfig = {
   csvColumns: EH_METRICS_CSV_COLUMNS,
   usesDuration: false,
   yAxisLabel: "Number of Warm Nights per Year",
-  titleLabel: "Warm Nights",
   accessibleNoun: "warm nights",
   valueUnit: "nights",
   thresholdTooltip: "The minimum overnight temperature threshold used to determine a warm night.",
@@ -151,7 +147,6 @@ const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
   csvColumns: { median: "median", p10: "p10", p90: "p90" },
   usesDuration: true,
   yAxisLabel: "Number of Heat Waves per Year",
-  titleLabel: "Heat Wave",
   accessibleNoun: "heat waves",
   valueUnit: "heat waves",
   thresholdTooltip: "The daily maximum temperature a day must exceed to count toward a heat wave.",
