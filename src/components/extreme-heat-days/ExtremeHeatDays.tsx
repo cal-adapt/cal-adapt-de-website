@@ -4,6 +4,7 @@ import { type ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import BetaFeedbackAlert from "@/components/common/content/BetaFeedbackAlert";
+import Callout from "@/components/common/content/Callout";
 import InterpretSection from "@/components/common/content/InterpretSection";
 import Badge from "@/components/common/ui/Badge";
 import Button from "@/components/common/ui/Button";
@@ -15,7 +16,11 @@ import PageLayout from "@/components/dashboard/PageLayout";
 import { navLinks } from "@/config/navigation";
 import { useExtremeHeatSeries } from "@/hooks/use-extreme-heat-series";
 import { formatChartExportFilename, formatViewTitle } from "@/lib/extreme-heat-days/format";
-import { type ExtremeHeatDaysSelections, regionLabelFor } from "@/lib/extreme-heat-days/options";
+import {
+  type ExtremeHeatDaysSelections,
+  getHeatMetric,
+  regionLabelFor,
+} from "@/lib/extreme-heat-days/options";
 import {
   selectionsFromSearchParams,
   selectionsToSearchParams,
@@ -60,7 +65,34 @@ const GWL_BAR_CHART_INFO = (
   </>
 );
 
-const HEAT_WAVE_FREQUENCY_CHART_INFO = <p>TEXT HERE</p>;
+const HEAT_WAVE_FREQUENCY_CHART_INFO = (
+  <>
+    <p>
+      The bar chart shows how the number of heat waves per year is projected to change as global
+      warming increases, based on the location and threshold selected. Each bar represents a
+      different global warming level (GWL).
+    </p>
+    <p>
+      Looking from left to right, the axis shows an increasing amount of global warming (today’s
+      conditions → 1.5°C warming → 2°C warming, etc.). The specific year that a given GWL will be
+      reached depends on future emissions and societal decisions.
+    </p>
+    <p>
+      There are two ways to select a temperature threshold. One is to choose an absolute threshold
+      in degrees Fahrenheit (e.g. 95°F). The other is to use a percentile, which sets a temperature
+      threshold that is hot relative to the historical baseline period. For example, a 99th
+      percentile extreme heat threshold represents 3-4 of the hottest days per year on average in
+      the historical period for that region.
+    </p>
+    <Callout title="Example interpretation">
+      <p>
+        A region that experiences 3 heat waves per year at present (GWL 0.8°C) could see that
+        increase to 7 heat waves per year by mid-century (GWL 2.0°C), more than doubling. This
+        change can mean more frequent power grid stress and higher risks of heat-related illness.
+      </p>
+    </Callout>
+  </>
+);
 
 const CHART_INFO_BY_VARIABLE: Record<string, ReactNode> = {
   "extreme-heat-days": GWL_BAR_CHART_INFO,
@@ -100,11 +132,11 @@ const LAST_UPDATED_ISO = "2026-09-01";
 const INTRO_COPY_BY_VARIABLE: Record<string, ReactNode> = {
   "extreme-heat-days": (
     <>
-      <p className={styles.introCopy}>
+      <p>
         A day in which the maximum temperature exceeds a defined threshold that poses a significant
         risk to human health, ecosystems, and infrastructure.
       </p>
-      <p className={styles.introCopy}>
+      <p>
         Extreme heat is the deadliest weather-related hazard in many parts of the world
         <Citation
           n={1}
@@ -119,7 +151,7 @@ const INTRO_COPY_BY_VARIABLE: Record<string, ReactNode> = {
   ),
   "warm-nights": (
     <>
-      <p className={styles.introCopy}>
+      <p>
         A night in which the minimum temperature exceeds a defined threshold. Extreme heat days
         accompanied by warm nights have been shown to increase risk of heat-related mortality, yield
         reduction in common crops, and strain the electrical grid
@@ -130,13 +162,26 @@ const INTRO_COPY_BY_VARIABLE: Record<string, ReactNode> = {
         />
         .
       </p>
-      <p className={styles.introCopy}>
+      <p>
         Tracking warm nights can inform how communities implement public safety announcements,
         emergency personnel, and manage their crops and electrical assets.
       </p>
     </>
   ),
-  "heat-wave-frequency": <p className={styles.introCopy}>TEXT HERE</p>,
+  "heat-wave-frequency": (
+    <>
+      <p>
+        A heat wave is defined here as a consecutive series of days in which the maximum temperature
+        exceeds a defined threshold that poses a significant risk to human health, ecosystems, and
+        infrastructure.
+      </p>
+      <p>
+        Heat waves can have adverse impacts on society and the environment, for example by adding
+        stress to the power grid or causing excess hospitalizations. Heat waves can have compounding
+        effects when occurring alongside other hazards such as wildfires.
+      </p>
+    </>
+  ),
 };
 
 export default function ExtremeHeatDays() {
@@ -190,7 +235,14 @@ export default function ExtremeHeatDays() {
     >
       <BetaFeedbackAlert />
 
-      <div className={styles.intro}>{INTRO_COPY_BY_VARIABLE[selections.climateVariable]}</div>
+      <div className={styles.intro}>
+        <p className={styles.introCopy}>
+          Explore how extreme heat in California is projected to change as the climate warms. Choose
+          a heat metric (extreme heat days, warm nights, or heat wave frequency), a temperature
+          threshold, and a location to see how often that heat is projected to occur each year at
+          different levels of global warming.
+        </p>
+      </div>
 
       <div className={styles.workspace}>
         <div className={styles.viewArea}>
@@ -240,6 +292,12 @@ export default function ExtremeHeatDays() {
           />
         </aside>
       </div>
+
+      <InterpretSection
+        title={`About ${getHeatMetric(selections.climateVariable).label.toLowerCase()}`}
+      >
+        {INTRO_COPY_BY_VARIABLE[selections.climateVariable]}
+      </InterpretSection>
 
       {view === "chart" && (
         <InterpretSection title="How to interpret this figure">
