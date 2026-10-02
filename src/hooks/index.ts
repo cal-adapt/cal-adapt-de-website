@@ -7,3 +7,4 @@ export {
   useStacDownloadSearch,
   type UseStacDownloadSearchResult,
 } from "./use-stac-download-search";
+export { type StacSeriesStatus, useStacSeries, type UseStacSeriesResult } from "./use-stac-series";
