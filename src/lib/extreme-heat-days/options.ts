@@ -1,6 +1,12 @@
 // Domain data for the Extreme Heat tool.
 
 import type { SelectOption } from "@/components/common/form";
+import {
+  DEFAULT_SPATIAL_AGGREGATION,
+  defaultLocationFor,
+  isKnownLocation,
+  isKnownSpatialAggregation,
+} from "@/lib/spatial-aggregations";
 
 /**
  * User-controlled inputs that drive the Extreme Heat tool.
@@ -201,343 +207,51 @@ export const INDICATOR_OPTIONS: readonly SelectOption[] = [
   { value: "frequency", label: "Frequency" },
 ];
 
-/**
- * All 58 California counties in alphabetical order.
- */
-const CALIFORNIA_COUNTY_NAMES: readonly string[] = [
-  "Alameda",
-  "Alpine",
-  "Amador",
-  "Butte",
-  "Calaveras",
-  "Colusa",
-  "Contra Costa",
-  "Del Norte",
-  "El Dorado",
-  "Fresno",
-  "Glenn",
-  "Humboldt",
-  "Imperial",
-  "Inyo",
-  "Kern",
-  "Kings",
-  "Lake",
-  "Lassen",
-  "Los Angeles",
-  "Madera",
-  "Marin",
-  "Mariposa",
-  "Mendocino",
-  "Merced",
-  "Modoc",
-  "Mono",
-  "Monterey",
-  "Napa",
-  "Nevada",
-  "Orange",
-  "Placer",
-  "Plumas",
-  "Riverside",
-  "Sacramento",
-  "San Benito",
-  "San Bernardino",
-  "San Diego",
-  "San Francisco",
-  "San Joaquin",
-  "San Luis Obispo",
-  "San Mateo",
-  "Santa Barbara",
-  "Santa Clara",
-  "Santa Cruz",
-  "Shasta",
-  "Sierra",
-  "Siskiyou",
-  "Solano",
-  "Sonoma",
-  "Stanislaus",
-  "Sutter",
-  "Tehama",
-  "Trinity",
-  "Tulare",
-  "Tuolumne",
-  "Ventura",
-  "Yolo",
-  "Yuba",
-];
-
-export const COUNTY_OPTIONS: readonly SelectOption[] = CALIFORNIA_COUNTY_NAMES.map((name) => ({
-  value: name,
-  label: name,
-}));
-
-/** One STAC `boundary` type and its selectable regions. */
-export interface SpatialAggregationConfig {
-  /** STAC `boundary` id, e.g. "ca_counties". */
-  value: string;
-  label: string;
-  description: string;
-  /** Appended to `location` for chart titles and CSV filenames, e.g. " County". */
-  regionSuffix: string;
-  locations: readonly SelectOption[];
-  defaultLocation: string;
-}
-
-const toLocationOptions = (names: readonly string[]): readonly SelectOption[] =>
-  names.map((name) => ({ value: name, label: name }));
-
-// Names match S3 filename tokens (underscores → spaces).
-const FORECAST_ZONE_NAMES: readonly string[] = [
-  "Big Creek East",
-  "Big Creek West",
-  "Burbank Glendale",
-  "Central Coast",
-  "Central Valley",
-  "Eastern",
-  "Greater Bay Area",
-  "Imperial Irrigation District",
-  "LADWP Coastal",
-  "LADWP Inland",
-  "LA Metro",
-  "North Coast",
-  "North Valley",
-  "Northeast",
-  "Rest of BANC Control Area",
-  "SDG&E",
-  "SMUD Service Territory",
-  "Southern Valley",
-  "Turlock Irrigation District",
-  "Valley Electric",
-];
-
-const ELECTRIC_BALANCING_AREA_NAMES: readonly string[] = [
-  "BANC",
-  "CALISO",
-  "IID",
-  "LADWP",
-  "NV Energy",
-  "PacificCorp West",
-  "TID",
-  "WALC",
-];
-
-// California HUC8 units in the eh-metrics `ca_watersheds` boundary (140 total)
-const WATERSHED_NAMES: readonly string[] = [
-  "Aliso-San Onofre",
-  "Antelope-Fremont Valleys",
-  "Applegate",
-  "Battle Creek",
-  "Big-Navarro-Garcia",
-  "Big Chico Creek-Sacramento River",
-  "Butte Creek",
-  "Butte",
-  "Calleguas",
-  "Carrizo Creek",
-  "Carrizo Plain",
-  "Central Coastal",
-  "Chetco",
-  "Clear Creek-Sacramento River",
-  "Cottonwood-Tijuana",
-  "Cottonwood Creek",
-  "Cow Creek",
-  "Coyote-Cuddeback Lakes",
-  "Coyote",
-  "Crowley Lake",
-  "Cuyama",
-  "Death Valley-Lower Amargosa",
-  "East Branch North Fork Feather",
-  "East Walker",
-  "Estrella",
-  "Eureka-Saline Valleys",
-  "Fish Lake-Soda Spring Valleys",
-  "Fresno River",
-  "Goose Lake",
-  "Gualala-Salmon",
-  "Havasu-Mohave Lakes",
-  "Honcut Headwaters-Lower Feather",
-  "Honey-Eagle Lakes",
-  "Illinois",
-  "Imperial Reservoir",
-  "Indian Wells-Searles Valleys",
-  "Ivanpah-Pahrump Valleys",
-  "Lake Tahoe",
-  "Los Angeles",
-  "Lost",
-  "Lower American",
-  "Lower Colorado",
-  "Lower Eel",
-  "Lower Klamath",
-  "Lower Pit",
-  "Lower Sacramento",
-  "Lower San Joaquin River",
-  "Mad-Redwood",
-  "Madeline Plains",
-  "Massacre Lake",
-  "Mattole",
-  "McCloud",
-  "Middle Fork Eel",
-  "Middle Fork Feather",
-  "Middle Kern-Upper Tehachapi-Grapevine",
-  "Middle San Joaquin-Lower Chowchilla",
-  "Mojave",
-  "Mono Lake",
-  "Monterey Bay",
-  "Newport Bay",
-  "North Fork American",
-  "North Fork Feather",
-  "Owens Lake",
-  "Pajaro",
-  "Panamint Valley",
-  "Panoche-San Luis Reservoir",
-  "Paynes Creek-Sacramento River",
-  "Piute Wash",
-  "Rock Creek-French Camp Slough",
-  "Russian",
-  "Sacramento-Stone Corral",
-  "Sacramento Headwaters",
-  "Salinas",
-  "Salmon",
-  "Salton Sea",
-  "San Antonio",
-  "San Diego",
-  "San Felipe Creek",
-  "San Francisco Bay",
-  "San Francisco Coastal South",
-  "San Gabriel",
-  "San Jacinto",
-  "San Joaquin Delta",
-  "San Luis Rey-Escondido",
-  "San Pablo Bay",
-  "San Pedro Channel Islands",
-  "Santa Ana",
-  "Santa Barbara Channel Islands",
-  "Santa Barbara Coastal",
-  "Santa Clara",
-  "Santa Margarita",
-  "Santa Maria",
-  "Santa Monica Bay",
-  "Santa Ynez",
-  "Scott",
-  "Seal Beach",
-  "Shasta",
-  "Smith",
-  "Smoke Creek Desert",
-  "South Fork American",
-  "South Fork Eel",
-  "South Fork Kern",
-  "South Fork Trinity",
-  "Southern Mojave",
-  "Suisun Bay",
-  "Surprise Valley",
-  "Thomes Creek-Sacramento River",
-  "Tomales-Drake Bays",
-  "Trinity",
-  "Truckee",
-  "Tulare Lake Bed",
-  "Upper Amargosa",
-  "Upper Bear",
-  "Upper Cache",
-  "Upper Calaveras California",
-  "Upper Carson",
-  "Upper Coon-Upper Auburn",
-  "Upper Cosumnes",
-  "Upper Deer-Upper White",
-  "Upper Dry",
-  "Upper Eel",
-  "Upper Kaweah",
-  "Upper Kern",
-  "Upper King",
-  "Upper Klamath",
-  "Upper Merced",
-  "Upper Mokelumne",
-  "Upper Pit",
-  "Upper Poso",
-  "Upper Putah",
-  "Upper San Joaquin",
-  "Upper Stanislaus",
-  "Upper Stony",
-  "Upper Tule",
-  "Upper Tuolumne",
-  "Upper Yuba",
-  "Ventura",
-  "Warner Lakes",
-  "West Walker",
-  "Whitewater River",
-];
-
-const COUNTY_AGGREGATION: SpatialAggregationConfig = {
-  value: "ca_counties",
-  label: "County",
-  description: "Local government administrative boundary",
-  regionSuffix: " County",
-  locations: COUNTY_OPTIONS,
-  defaultLocation: "Sacramento",
-};
-
-const WATERSHEDS_AGGREGATION: SpatialAggregationConfig = {
-  value: "ca_watersheds",
-  label: "Watersheds",
-  description: "Land area draining to a common water body",
-  regionSuffix: "",
-  locations: toLocationOptions(WATERSHED_NAMES),
-  defaultLocation: "Lower Sacramento",
-};
-
-const FORECAST_ZONES_AGGREGATION: SpatialAggregationConfig = {
-  value: "forecast_zones",
-  label: "Electricity Forecast Zones",
-  description: "Region used for electricity demand planning",
-  regionSuffix: "",
-  locations: toLocationOptions(FORECAST_ZONE_NAMES),
-  defaultLocation: "Greater Bay Area",
-};
-
-const ELECTRIC_BALANCING_AGGREGATION: SpatialAggregationConfig = {
-  value: "electric_balancing_areas",
-  label: "Electric Balancing Areas",
-  description: "Grid region managed by a single electricity operator",
-  regionSuffix: "",
-  locations: toLocationOptions(ELECTRIC_BALANCING_AREA_NAMES),
-  defaultLocation: "CALISO",
-};
-
-/** Keyed by STAC `boundary`. Insertion order is the dropdown order. */
-export const SPATIAL_AGGREGATIONS: Readonly<Record<string, SpatialAggregationConfig>> = {
-  [COUNTY_AGGREGATION.value]: COUNTY_AGGREGATION,
-  [WATERSHEDS_AGGREGATION.value]: WATERSHEDS_AGGREGATION,
-  [FORECAST_ZONES_AGGREGATION.value]: FORECAST_ZONES_AGGREGATION,
-  [ELECTRIC_BALANCING_AGGREGATION.value]: ELECTRIC_BALANCING_AGGREGATION,
-};
-
-const DEFAULT_AGGREGATION = COUNTY_AGGREGATION;
-
-export function getSpatialAggregation(value: string): SpatialAggregationConfig {
-  return SPATIAL_AGGREGATIONS[value] ?? DEFAULT_AGGREGATION;
-}
-
-export function locationOptionsFor(spatialAggregation: string): readonly SelectOption[] {
-  return getSpatialAggregation(spatialAggregation).locations;
-}
-
-export function defaultLocationFor(spatialAggregation: string): string {
-  return getSpatialAggregation(spatialAggregation).defaultLocation;
-}
-
-export function regionLabelFor(selections: ExtremeHeatDaysSelections): string {
-  return `${selections.location}${getSpatialAggregation(selections.spatialAggregation).regionSuffix}`;
-}
-
-export const SPATIAL_AGGREGATION_OPTIONS: readonly SelectOption[] = Object.values(
-  SPATIAL_AGGREGATIONS
-).map((aggregation) => ({
-  value: aggregation.value,
-  label: aggregation.label,
-  description: aggregation.description,
-}));
+export {
+  COUNTY_OPTIONS,
+  DEFAULT_SPATIAL_AGGREGATION,
+  defaultLocationFor,
+  getSpatialAggregation,
+  isKnownLocation,
+  isKnownSpatialAggregation,
+  locationOptionsFor,
+  regionLabelFor,
+  SPATIAL_AGGREGATION_OPTIONS,
+  SPATIAL_AGGREGATIONS,
+  type SpatialAggregationConfig,
+} from "@/lib/spatial-aggregations";
 
 export const DEFAULT_SELECTIONS: ExtremeHeatDaysSelections = {
   climateVariable: DEFAULT_METRIC.value,
   threshold: DEFAULT_METRIC.defaultThreshold,
   indicator: "frequency",
-  spatialAggregation: DEFAULT_AGGREGATION.value,
-  location: DEFAULT_AGGREGATION.defaultLocation,
+  spatialAggregation: DEFAULT_SPATIAL_AGGREGATION.value,
+  location: DEFAULT_SPATIAL_AGGREGATION.defaultLocation,
 };
+
+/** Like `selectionsFromSearchParams`, but throws on invalid values instead of falling back. */
+export function resolveSelections(
+  overrides: Partial<ExtremeHeatDaysSelections>
+): ExtremeHeatDaysSelections {
+  const climateVariable = overrides.climateVariable ?? DEFAULT_SELECTIONS.climateVariable;
+  if (!Object.hasOwn(HEAT_METRICS, climateVariable)) {
+    throw new Error(`Unknown extreme heat climate variable: "${climateVariable}"`);
+  }
+  const threshold = overrides.threshold ?? defaultThresholdFor(climateVariable);
+  if (!isAllowedThreshold(threshold, climateVariable)) {
+    throw new Error(`Threshold "${threshold}" is not allowed for "${climateVariable}"`);
+  }
+  const indicator = overrides.indicator ?? DEFAULT_SELECTIONS.indicator;
+  if (!INDICATOR_OPTIONS.some((option) => option.value === indicator)) {
+    throw new Error(`Unknown extreme heat indicator: "${indicator}"`);
+  }
+  const spatialAggregation = overrides.spatialAggregation ?? DEFAULT_SELECTIONS.spatialAggregation;
+  if (!isKnownSpatialAggregation(spatialAggregation)) {
+    throw new Error(`Unknown spatial aggregation: "${spatialAggregation}"`);
+  }
+  const location = overrides.location ?? defaultLocationFor(spatialAggregation);
+  if (!isKnownLocation(spatialAggregation, location)) {
+    throw new Error(`Location "${location}" is not available for "${spatialAggregation}"`);
+  }
+  return { climateVariable, threshold, indicator, spatialAggregation, location };
+}

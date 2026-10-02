@@ -13,14 +13,18 @@ import Icon from "@/components/common/ui/Icon";
 import Tabs, { type TabItem } from "@/components/common/ui/Tabs";
 import PageLayout from "@/components/dashboard/PageLayout";
 import { navLinks } from "@/config/navigation";
-import { useExtremeHeatSeries } from "@/hooks/use-extreme-heat-series";
-import { formatChartExportFilename, formatViewTitle } from "@/lib/extreme-heat-days/format";
-import { type ExtremeHeatDaysSelections, regionLabelFor } from "@/lib/extreme-heat-days/options";
+import { useStacSeries } from "@/hooks/use-stac-series";
+import { formatChartExportFilename } from "@/lib/extreme-heat-days/format";
+import type { ExtremeHeatDaysSelections } from "@/lib/extreme-heat-days/options";
 import {
   selectionsFromSearchParams,
   selectionsToSearchParams,
 } from "@/lib/extreme-heat-days/search-params";
-import { hasRenderableSeries } from "@/lib/extreme-heat-days/series";
+import {
+  fetchExtremeHeatSeries,
+  hasRenderableSeries,
+  searchFiltersKey,
+} from "@/lib/extreme-heat-days/series";
 import { formatIsoDateLong } from "@/utils/date";
 import { exportSvgAsPng } from "@/utils/export-chart";
 
@@ -130,8 +134,6 @@ export default function ExtremeHeatDays() {
   const searchParams = useSearchParams();
 
   const selections = useMemo(() => selectionsFromSearchParams(searchParams), [searchParams]);
-  const viewTitle = formatViewTitle(selections);
-  const locationLabel = regionLabelFor(selections);
 
   const handleSelectionsChange = useCallback(
     (next: ExtremeHeatDaysSelections) => {
@@ -143,7 +145,9 @@ export default function ExtremeHeatDays() {
 
   const [view, setView] = useState<ViewMode>("chart");
 
-  const seriesResult = useExtremeHeatSeries(selections);
+  const seriesResult = useStacSeries(searchFiltersKey(selections), () =>
+    fetchExtremeHeatSeries(selections)
+  );
   const isLoading = seriesResult.status === "loading";
 
   // Chart export plumbing; the button lives in the tabs row here but the
@@ -204,14 +208,8 @@ export default function ExtremeHeatDays() {
           <ChartView
             id={CHART_TAB.panelId}
             labelledBy={CHART_TAB.tabId}
-            title={viewTitle}
-            series={seriesResult.data}
-            status={seriesResult.status}
-            errorMessage={seriesResult.errorMessage}
-            onRetry={seriesResult.retry}
-            climateVariable={selections.climateVariable}
-            threshold={selections.threshold}
-            locationLabel={locationLabel}
+            selections={selections}
+            series={seriesResult}
             chartContainerRef={chartContainerRef}
           />
         </div>

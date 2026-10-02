@@ -1,13 +1,37 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  DEFAULT_SELECTIONS,
   defaultThresholdForKind,
   isAllowedThreshold,
   parseThresholdNumber,
+  resolveSelections,
   thresholdKindFor,
   thresholdRangeFor,
   thresholdTokenFor,
 } from "./options";
+
+describe("resolveSelections", () => {
+  it("fills unspecified fields from the tool defaults", () => {
+    expect(resolveSelections({ location: "Imperial", threshold: "100F" })).toEqual({
+      ...DEFAULT_SELECTIONS,
+      location: "Imperial",
+      threshold: "100F",
+    });
+  });
+
+  it("uses the metric's own default threshold when only the metric is set", () => {
+    expect(resolveSelections({ climateVariable: "warm-nights" }).threshold).toBe("70F");
+  });
+
+  it("rejects values the tool does not offer", () => {
+    expect(() => resolveSelections({ location: "Imperal" })).toThrow(/Imperal/);
+    expect(() => resolveSelections({ threshold: "200F" })).toThrow(/200F/);
+    expect(() => resolveSelections({ climateVariable: "humidity" })).toThrow(/humidity/);
+    expect(() => resolveSelections({ indicator: "intensity" })).toThrow(/intensity/);
+    expect(() => resolveSelections({ spatialAggregation: "zip_codes" })).toThrow(/zip_codes/);
+  });
+});
 
 describe("threshold helpers", () => {
   it("classifies F tokens as absolute and pctl tokens as relative", () => {

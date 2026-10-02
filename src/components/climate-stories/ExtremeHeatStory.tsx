@@ -1,8 +1,8 @@
-import type { ClimateStory } from "@/config/climate-stories";
 import { navLinks } from "@/config/navigation";
 
+import StoryToolFigure from "./figures/StoryToolFigure";
+import { resolveStoryToolSelections, storyToolCharts, storyToolHref } from "./figures/tool-charts";
 import GlossaryTerm from "./GlossaryTerm";
-import { relatedToolLink } from "./related-tool";
 import StoryBlock from "./StoryBlock";
 import StoryCitation from "./StoryCitation";
 import StoryDocument from "./StoryDocument";
@@ -11,6 +11,14 @@ import type { StorySection } from "./StoryTableOfContents";
 import StoryToolCallout from "./StoryToolCallout";
 
 const FPO_FIGURE = { label: "[FPO: Figure]", source: "Lorem ipsum" } as const;
+
+const IMPERIAL_100F = resolveStoryToolSelections("extreme-heat-days", {
+  location: "Imperial",
+  threshold: "100F",
+});
+const HDD_CDD_DEFAULT = resolveStoryToolSelections("hdd-cdd");
+
+const EXTREME_HEAT_TOOL = storyToolCharts["extreme-heat-days"].navLink;
 
 const MORE_FREQUENT_DAYS = {
   id: "more-frequent-days",
@@ -57,13 +65,7 @@ export const extremeHeatSections = [
   ROBUST_PLANNING,
 ] as const satisfies readonly StorySection[];
 
-interface ExtremeHeatStoryProps {
-  story: ClimateStory;
-}
-
-export default function ExtremeHeatStory({ story }: ExtremeHeatStoryProps) {
-  const relatedTool = relatedToolLink(story.relatedToolId);
-
+export default function ExtremeHeatStory() {
   return (
     <StoryDocument>
       <StoryBlock id={MORE_FREQUENT_DAYS.id} title={MORE_FREQUENT_DAYS.title}>
@@ -94,15 +96,15 @@ export default function ExtremeHeatStory({ story }: ExtremeHeatStoryProps) {
           residing within these coastal regions were not designed and have not adapted for frequent
           high temperatures.
         </p>
-        <StoryFigure {...FPO_FIGURE} />
+        <StoryToolFigure tool="extreme-heat-days" selections={IMPERIAL_100F} />
       </StoryBlock>
 
       <StoryToolCallout
-        title={`Explore this in the ${relatedTool.label} tool`}
+        title={`Explore this in the ${EXTREME_HEAT_TOOL.label} tool`}
         body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac eros felis. Duis id commodo dolor. Vestibulum ex velit, egestas ut quam eget, placerat hendrerit orci. Suspendisse ut elit leo. Nunc vel sem id est accumsan imperdiet sit amet a nulla."
         primary={{
-          href: relatedTool.href,
-          label: `Explore the ${relatedTool.label} tool`,
+          href: storyToolHref("extreme-heat-days", IMPERIAL_100F),
+          label: `Explore the ${EXTREME_HEAT_TOOL.label} tool`,
         }}
         secondary={{
           href: navLinks.climateMetricsMap.href,
@@ -203,7 +205,7 @@ export default function ExtremeHeatStory({ story }: ExtremeHeatStoryProps) {
           strongly driven by the hottest parts of the state. In [sample forecast region], CDDs are
           projected to increase by [Y] by mid century, and by [Z] by the end of the century.
         </p>
-        <StoryFigure {...FPO_FIGURE} />
+        <StoryToolFigure tool="hdd-cdd" selections={HDD_CDD_DEFAULT} />
       </StoryBlock>
 
       <StoryBlock id={ROBUST_PLANNING.id} title={ROBUST_PLANNING.title}>
