@@ -1,7 +1,6 @@
 "use client";
 
-import ChartFrame from "@/components/common/charts/ChartFrame";
-import type { StacChartViewProps } from "@/components/common/charts/withStacSeries";
+import ChartFrame, { type StacChartViewProps } from "@/components/common/charts/ChartFrame";
 import Alert from "@/components/common/ui/Alert";
 import { formatViewTitle } from "@/lib/hdd-cdd/format";
 import { getMetric, type HddCddSelections, regionLabelFor, SSP370 } from "@/lib/hdd-cdd/options";
@@ -18,10 +17,7 @@ export type ChartViewProps = StacChartViewProps<HddCddSelections, HddCddSeries>;
 
 export default function ChartView({
   selections,
-  series,
-  status,
-  errorMessage,
-  onRetry,
+  series: { data: series, status, errorMessage, retry },
   chartContainerRef,
   id,
   labelledBy,
@@ -48,7 +44,7 @@ export default function ChartView({
       status={status}
       hasData={hasRenderableSeries(series, climateVariable)}
       errorMessage={errorMessage}
-      onRetry={onRetry}
+      onRetry={retry}
       loadingLabel={`Loading ${metric.accessibleNoun} data`}
       errorContent={`We couldn't load ${metric.accessibleNoun} data for ${locationLabel}. Check your connection and try again.`}
       noDataContent={`No ${metric.accessibleNoun} data is available for ${locationLabel}. Try a different location.`}

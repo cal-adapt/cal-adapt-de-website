@@ -1,7 +1,6 @@
 "use client";
 
-import ChartFrame from "@/components/common/charts/ChartFrame";
-import type { StacChartViewProps } from "@/components/common/charts/withStacSeries";
+import ChartFrame, { type StacChartViewProps } from "@/components/common/charts/ChartFrame";
 import { resolveYAxisMax } from "@/lib/extreme-heat-days/axis";
 import { formatThresholdLabel, formatViewTitle } from "@/lib/extreme-heat-days/format";
 import {
@@ -17,10 +16,7 @@ export type ChartViewProps = StacChartViewProps<ExtremeHeatDaysSelections, Extre
 
 export default function ChartView({
   selections,
-  series,
-  status,
-  errorMessage,
-  onRetry,
+  series: { data: series, status, errorMessage, retry },
   chartContainerRef,
   id,
   labelledBy,
@@ -36,7 +32,7 @@ export default function ChartView({
       status={status}
       hasData={hasRenderableSeries(series)}
       errorMessage={errorMessage}
-      onRetry={onRetry}
+      onRetry={retry}
       loadingLabel={`Loading ${metric.accessibleNoun} data`}
       errorContent={`We couldn't load ${metric.accessibleNoun} data for ${locationLabel}. Check your connection and try again.`}
       noDataContent={`No ${metric.accessibleNoun} data is available for ${locationLabel} at ${thresholdLabel}. Try a different location or threshold.`}

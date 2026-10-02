@@ -126,10 +126,7 @@ export default function HddCdd() {
           </div>
           <ChartView
             selections={selections}
-            series={seriesResult.data}
-            status={seriesResult.status}
-            errorMessage={seriesResult.errorMessage}
-            onRetry={seriesResult.retry}
+            series={seriesResult}
             chartContainerRef={chartContainerRef}
           />
         </div>

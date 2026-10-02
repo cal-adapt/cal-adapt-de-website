@@ -5,12 +5,28 @@ import { type ReactNode, type RefObject, useEffect } from "react";
 import Alert from "@/components/common/ui/Alert";
 import Button from "@/components/common/ui/Button";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
-import type { StacSeriesStatus } from "@/hooks/use-stac-series";
+import type { StacSeriesStatus, UseStacSeriesResult } from "@/hooks/use-stac-series";
 
 import styles from "./ChartFrame.module.scss";
 
 const DEFAULT_SOURCE =
   "Source: Cal-Adapt. Data: WRF Downscaled CMIP6 Climate Projections (UCLA), WRF Derived Products (Cal-Adapt).";
+
+/**
+ * Props shared by every tool `ChartView` backed by a STAC series. Everything
+ * the chart displays (title, labels, colors) is derived from `selections`
+ * inside the view, so callers never re-derive it.
+ */
+export interface StacChartViewProps<S, D> {
+  selections: S;
+  series: UseStacSeriesResult<D>;
+  /** Attached to the chart container so a Download button can find the SVG. */
+  chartContainerRef?: RefObject<HTMLDivElement | null>;
+  /** DOM id for ARIA tab/panel pairing. */
+  id?: string;
+  /** Tab id this panel is labeled by. */
+  labelledBy?: string;
+}
 
 export interface ChartFrameProps {
   status: StacSeriesStatus;
