@@ -5,7 +5,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import QuestionMarkOutlinedIcon from "@mui/icons-material/QuestionMarkOutlined";
@@ -85,15 +85,13 @@ export default function MapUI({
   const helpButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const fullWidthUIItem = open ? `100%` : `calc(100% - ${drawerWidth} - 72px)`;
-  const handleValueTypeChange = (event: React.SyntheticEvent, newValue: ValueType) => {
+  const handleValueTypeChange = (_event: React.SyntheticEvent, newValue: ValueType) => {
     setValueType(newValue);
   };
 
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const handleMetricChange = (event: any) => {
-    console.log("handleMetricChange");
     const newMetricId = event.target.value as number;
     setMetricSelected(newMetricId);
 

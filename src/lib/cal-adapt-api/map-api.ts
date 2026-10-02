@@ -23,7 +23,7 @@ type TileJsonParams = {
   url: string;
   variable: string;
   datetime: string;
-  rescale: string;
+  /** Color table (TiTiler "intervals" colormap JSON) the tiles are painted with. */
   colormap: string;
 };
 
@@ -37,7 +37,7 @@ type PointDataParams = {
   gwlIndex: number;
 };
 
-type InfoWithGwl = { dimensions?: { gwl?: { data?: number[] } } };
+type InfoWithGwl = { dimensions?: Record<string, { data?: number[] } | undefined> };
 type PointResponse = { data?: number[] };
 
 async function fetchMapApi<T>(path: string, query: Record<string, string>): Promise<T> {
@@ -56,12 +56,22 @@ async function fetchMapApi<T>(path: string, query: Record<string, string>): Prom
   return (await response.json()) as T;
 }
 
+// Datasets from older pipelines name this dimension "gwl"; newer pipelines
+// (e.g. the extreme-heat-tool outputs) name it "warming_level". Accept either.
+const GWL_DIMENSION_NAMES = ["gwl", "warming_level"] as const;
+
 /**
  * Get Global Warming Levels (GWL) list for a dataset
  */
 export async function getGwlInfo(url: string, variable: string): Promise<number[]> {
   const data = await fetchMapApi<InfoWithGwl>("/info", { url, variable });
-  return data.dimensions?.gwl?.data ?? [];
+  for (const dimensionName of GWL_DIMENSION_NAMES) {
+    const values = data.dimensions?.[dimensionName]?.data;
+    if (values && values.length > 0) {
+      return values;
+    }
+  }
+  return [];
 }
 
 /**
@@ -72,8 +82,7 @@ export async function getTileJson(params: TileJsonParams): Promise<TileJson> {
     url: params.url,
     variable: params.variable,
     datetime: params.datetime,
-    rescale: params.rescale,
-    colormap_name: params.colormap.toLowerCase(),
+    colormap: params.colormap,
   });
 }
 
