@@ -23,10 +23,11 @@ import {
 
 import GeocoderControl from "@/components/common/map/GeocoderControl";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
-import type { Metric } from "@/data/climate-metrics-map/metrics";
+import type { Metric, MetricVariant } from "@/data/climate-metrics-map/metrics";
 import { calAdaptApi, type TileJson } from "@/lib/cal-adapt-api";
 
 import type { ValueType } from "./ClimateMetricsMap";
+import { buildColorTable } from "./colormap";
 import MapLegend from "./MapLegend";
 import MapPopup from "./MapPopup";
 
@@ -125,16 +126,8 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
 
     // Derived state
     const currentVariableData: Metric = metrics[metricSelected];
-    const paths = currentVariableData[`${valueType}`] as {
-      colormap: string;
-      mean: string;
-      min_path?: string;
-      max_path?: string;
-      description: string;
-      short_desc: string;
-      variable: string;
-      rescale: string;
-    };
+    const paths: MetricVariant = currentVariableData[valueType];
+    const [rescaleMin, rescaleMax] = paths.rescale.split(",").map(Number);
 
     if (!currentVariableData) {
       console.error("Invalid metric selected:", metricSelected);
@@ -154,6 +147,9 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
       };
     }, []);
 
+    // Depend on everything that goes into the request: absolute and delta layers
+    // can share a variable name, so `paths.mean` is what changes on a tab switch.
+    const colorTable = buildColorTable(paths.colormap, rescaleMin, rescaleMax, paths.bins);
     useEffect(() => {
       async function loadTileJson() {
         try {
@@ -161,8 +157,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
             url: paths.mean,
             variable: currentVariable,
             datetime: String(currentGwl),
-            rescale: paths.rescale,
-            colormap: paths.colormap,
+            colormap: colorTable,
           });
           setTileJson(data);
         } catch (error) {
@@ -171,7 +166,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
       }
 
       loadTileJson();
-    }, [metricSelected, gwlSelected, currentVariable, currentVariableData, currentGwl]);
+    }, [paths.mean, currentVariable, currentGwl, colorTable]);
 
     useEffect(() => {
       if (mapRef.current) {
@@ -521,10 +516,11 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
                   key={clickCoords.key} // force rerender
                   longitude={clickCoords.lng}
                   latitude={clickCoords.lat}
-                  min={popupInfo?.min || 0}
-                  max={popupInfo?.max || 0}
-                  value={popupInfo?.value || 0}
+                  min={popupInfo?.min ?? null}
+                  max={popupInfo?.max ?? null}
+                  value={popupInfo?.value ?? null}
                   title={paths.short_desc}
+                  statLabels={currentVariableData.statLabels}
                   isPopupLoading={isPopupLoading}
                   isDataValid={isDataValid}
                   onClose={() => {
@@ -546,8 +542,10 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
             >
               <MapLegend
                 colormap={paths.colormap}
-                min={parseFloat(paths.rescale.split(",")[0])}
-                max={parseFloat(paths.rescale.split(",")[1])}
+                min={rescaleMin}
+                max={rescaleMax}
+                bins={paths.bins}
+                labelStep={paths.legendLabelStep}
                 title={paths.description}
               />
             </div>
