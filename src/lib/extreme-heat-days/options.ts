@@ -49,8 +49,8 @@ export interface HeatMetricConfig {
   /** Inclusive absolute (°F) slider bounds for this metric. */
   absoluteMinF: number;
   absoluteMaxF: number;
-  /** Selectable relative (percentile) thresholds, ascending. A contiguous run
-   *  renders as a slider; a sparse set (e.g. 95/99) renders as a dropdown. */
+  /** Selectable relative (percentile) thresholds: a contiguous ascending run,
+   *  rendered as a slider. */
   relativePercentiles: readonly number[];
   /** Default relative threshold token for this metric, e.g. "98pctl". */
   defaultRelativeThreshold: string;
@@ -151,7 +151,7 @@ const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
   defaultThreshold: "110F",
   absoluteMinF: 85,
   absoluteMaxF: 115,
-  relativePercentiles: [95, 99],
+  relativePercentiles: PERCENTILES_90_TO_99,
   defaultRelativeThreshold: "95pctl",
   collectionId: HWF_METRICS_STAC_COLLECTION_ID,
   csvColumns: HEAT_WAVE_CSV_COLUMNS,
@@ -176,7 +176,7 @@ const HEAT_WAVE_LENGTH_METRIC: HeatMetricConfig = {
   defaultThreshold: "100F",
   absoluteMinF: 85,
   absoluteMaxF: 115,
-  relativePercentiles: [95, 99],
+  relativePercentiles: PERCENTILES_90_TO_99,
   defaultRelativeThreshold: "95pctl",
   collectionId: HWL_METRICS_STAC_COLLECTION_ID,
   csvColumns: HEAT_WAVE_CSV_COLUMNS,
@@ -270,11 +270,6 @@ export function thresholdValuesFor(
       return _exhaustive;
     }
   }
-}
-
-/** True when the selectable values have no gaps, so a 1-step slider fits. */
-export function isContiguous(values: readonly number[]): boolean {
-  return values.every((value, i) => i === 0 || value === values[i - 1] + 1);
 }
 
 export function parseThresholdNumber(threshold: string): number | null {

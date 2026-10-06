@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import { Select } from "@/components/common/form";
 import { formatThresholdLabel } from "@/lib/extreme-heat-days/format";
 import {
-  isContiguous,
   parseThresholdNumber,
   type ThresholdKind,
   thresholdTokenFor,
@@ -43,26 +41,6 @@ export default function ThresholdInput({
   "aria-required": ariaRequired,
 }: ThresholdInputProps) {
   const values = thresholdValuesFor(kind, climateVariable);
-
-  // A sparse set (e.g. only the 95th and 99th percentiles) can't be a 1-step
-  // slider without landing on unavailable values, so offer a dropdown instead.
-  if (!isContiguous(values)) {
-    return (
-      <Select
-        id={id}
-        value={value}
-        onChange={onChange}
-        options={values.map((n) => {
-          const token = thresholdTokenFor(kind, n);
-          return { value: token, label: formatThresholdLabel(token) };
-        })}
-        disabled={disabled}
-        aria-describedby={ariaDescribedBy}
-        aria-invalid={ariaInvalid}
-        aria-required={ariaRequired}
-      />
-    );
-  }
 
   return (
     <ThresholdSlider
@@ -162,7 +140,9 @@ function ThresholdSlider({
 }
 
 function tickValues(min: number, max: number): number[] {
-  const step = 5;
+  // A short range (e.g. percentiles 90-99) gets a tick per value; ticks every 5
+  // would land on only 90 and 95 and look lopsided.
+  const step = max - min <= 10 ? 1 : 5;
   const ticks: number[] = [];
   const start = Math.ceil(min / step) * step;
   for (let tick = start; tick <= max; tick += step) {

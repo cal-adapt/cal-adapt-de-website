@@ -10,7 +10,6 @@ import {
   HEAT_METRICS,
   HWL_METRICS_STAC_COLLECTION_ID,
   isAllowedThreshold,
-  isContiguous,
   parseThresholdNumber,
   thresholdKindFor,
   thresholdTokenFor,
@@ -77,10 +76,11 @@ describe("per-metric threshold values", () => {
     expect(absolute).toHaveLength(71);
   });
 
-  it("detects gaps so sparse sets can use a dropdown", () => {
-    expect(isContiguous([90, 91, 92])).toBe(true);
-    expect(isContiguous([95, 99])).toBe(false);
-    expect(isContiguous([])).toBe(true);
+  it("offers the same percentiles on every variable so a selection carries across", () => {
+    for (const metric of Object.values(HEAT_METRICS)) {
+      expect(rangeOf(thresholdValuesFor("relative", metric.value))).toEqual([90, 99]);
+      expect(thresholdValuesFor("relative", metric.value)).toHaveLength(10);
+    }
   });
 
   it("points existing metrics at the eh-metrics collection", () => {
@@ -90,11 +90,11 @@ describe("per-metric threshold values", () => {
 });
 
 describe("heat wave frequency thresholds", () => {
-  it("uses 85-115°F and only the 95th/99th percentiles", () => {
+  it("uses 85-115°F and the 90th-99th percentiles", () => {
     expect(rangeOf(thresholdValuesFor("absolute", "heat-wave-frequency"))).toEqual([85, 115]);
-    expect(thresholdValuesFor("relative", "heat-wave-frequency")).toEqual([95, 99]);
-    expect(isAllowedThreshold("95pctl", "heat-wave-frequency")).toBe(true);
-    expect(isAllowedThreshold("98pctl", "heat-wave-frequency")).toBe(false);
+    expect(isAllowedThreshold("90pctl", "heat-wave-frequency")).toBe(true);
+    expect(isAllowedThreshold("98pctl", "heat-wave-frequency")).toBe(true);
+    expect(isAllowedThreshold("89pctl", "heat-wave-frequency")).toBe(false);
     expect(isAllowedThreshold("120F", "heat-wave-frequency")).toBe(false);
   });
 
@@ -110,10 +110,11 @@ describe("heat wave frequency thresholds", () => {
 });
 
 describe("heat wave length thresholds", () => {
-  it("uses 85-115°F and only the 95th/99th percentiles", () => {
+  it("uses 85-115°F and the 90th-99th percentiles", () => {
     expect(rangeOf(thresholdValuesFor("absolute", "heat-wave-length"))).toEqual([85, 115]);
-    expect(thresholdValuesFor("relative", "heat-wave-length")).toEqual([95, 99]);
-    expect(isAllowedThreshold("98pctl", "heat-wave-length")).toBe(false);
+    expect(isAllowedThreshold("90pctl", "heat-wave-length")).toBe(true);
+    expect(isAllowedThreshold("98pctl", "heat-wave-length")).toBe(true);
+    expect(isAllowedThreshold("89pctl", "heat-wave-length")).toBe(false);
   });
 
   it("defaults to 100°F, or the 95th percentile for relative", () => {
