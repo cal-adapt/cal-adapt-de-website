@@ -41,40 +41,8 @@ export default function ThresholdInput({
   "aria-required": ariaRequired,
 }: ThresholdInputProps) {
   const values = thresholdValuesFor(kind, climateVariable);
-
-  return (
-    <ThresholdSlider
-      id={id}
-      kind={kind}
-      min={values[0]}
-      max={values[values.length - 1]}
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
-      aria-describedby={ariaDescribedBy}
-      aria-invalid={ariaInvalid}
-      aria-required={ariaRequired}
-    />
-  );
-}
-
-interface ThresholdSliderProps extends Omit<ThresholdInputProps, "climateVariable" | "invalid"> {
-  min: number;
-  max: number;
-}
-
-function ThresholdSlider({
-  id,
-  kind,
-  min,
-  max,
-  value,
-  onChange,
-  disabled = false,
-  "aria-describedby": ariaDescribedBy,
-  "aria-invalid": ariaInvalid,
-  "aria-required": ariaRequired,
-}: ThresholdSliderProps) {
+  const min = values[0];
+  const max = values[values.length - 1];
   const numeric = parseThresholdNumber(value) ?? min;
   const [draft, setDraft] = useState(numeric);
 

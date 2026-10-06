@@ -27,11 +27,11 @@ export interface HeatCsvColumns {
 }
 
 /**
- * Per-metric configuration. The tool hosts multiple structurally-identical
- * climate variables (Extreme Heat Days, Warm Nights) that differ only in the
- * temperature statistic (`t2max` vs `t2min`), threshold set, and copy. Every
- * metric-specific value flows from this registry rather than being branched on
- * `climateVariable` throughout the app.
+ * Per-metric configuration. The tool hosts several climate variables (Extreme
+ * Heat Days, Warm Nights, Heat Wave Frequency, Heat Wave Length) that share one
+ * chart and set of controls and differ in their data source, thresholds, and
+ * copy. Every metric-specific value flows from this registry rather than being
+ * branched on `climateVariable` throughout the app.
  */
 export interface HeatMetricConfig {
   /** `climateVariable` select value + URL `variable` param. */
@@ -49,9 +49,6 @@ export interface HeatMetricConfig {
   /** Inclusive absolute (°F) slider bounds for this metric. */
   absoluteMinF: number;
   absoluteMaxF: number;
-  /** Selectable relative (percentile) thresholds: a contiguous ascending run,
-   *  rendered as a slider. */
-  relativePercentiles: readonly number[];
   /** Default relative threshold token for this metric, e.g. "98pctl". */
   defaultRelativeThreshold: string;
   /** STAC collection holding this metric's boundary CSVs. */
@@ -82,7 +79,9 @@ function inclusiveRange(min: number, max: number): number[] {
   return Array.from({ length: max - min + 1 }, (_, i) => min + i);
 }
 
-const PERCENTILES_90_TO_99 = inclusiveRange(90, 99);
+/** Selectable relative (percentile) thresholds, shared by every metric so a
+ *  percentile selection carries over when switching climate variable. */
+const RELATIVE_PERCENTILES: readonly number[] = inclusiveRange(90, 99);
 
 const EH_METRICS_CSV_COLUMNS: HeatCsvColumns = {
   median: "multimodel_median",
@@ -99,7 +98,6 @@ const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   defaultThreshold: "100F",
   absoluteMinF: 80,
   absoluteMaxF: 135,
-  relativePercentiles: PERCENTILES_90_TO_99,
   defaultRelativeThreshold: "98pctl",
   collectionId: EH_METRICS_STAC_COLLECTION_ID,
   csvColumns: EH_METRICS_CSV_COLUMNS,
@@ -121,7 +119,6 @@ const WARM_NIGHTS_METRIC: HeatMetricConfig = {
   defaultThreshold: "70F",
   absoluteMinF: 65,
   absoluteMaxF: 135,
-  relativePercentiles: PERCENTILES_90_TO_99,
   defaultRelativeThreshold: "98pctl",
   collectionId: EH_METRICS_STAC_COLLECTION_ID,
   csvColumns: EH_METRICS_CSV_COLUMNS,
@@ -151,7 +148,6 @@ const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
   defaultThreshold: "110F",
   absoluteMinF: 85,
   absoluteMaxF: 115,
-  relativePercentiles: PERCENTILES_90_TO_99,
   defaultRelativeThreshold: "95pctl",
   collectionId: HWF_METRICS_STAC_COLLECTION_ID,
   csvColumns: HEAT_WAVE_CSV_COLUMNS,
@@ -176,7 +172,6 @@ const HEAT_WAVE_LENGTH_METRIC: HeatMetricConfig = {
   defaultThreshold: "100F",
   absoluteMinF: 85,
   absoluteMaxF: 115,
-  relativePercentiles: PERCENTILES_90_TO_99,
   defaultRelativeThreshold: "95pctl",
   collectionId: HWL_METRICS_STAC_COLLECTION_ID,
   csvColumns: HEAT_WAVE_CSV_COLUMNS,
@@ -264,7 +259,7 @@ export function thresholdValuesFor(
     case "absolute":
       return inclusiveRange(metric.absoluteMinF, metric.absoluteMaxF);
     case "relative":
-      return metric.relativePercentiles;
+      return RELATIVE_PERCENTILES;
     default: {
       const _exhaustive: never = kind;
       return _exhaustive;
@@ -273,9 +268,8 @@ export function thresholdValuesFor(
 }
 
 export function parseThresholdNumber(threshold: string): number | null {
-  const match = /^(?<n>\d+)(?<unit>F|pctl)$/.exec(threshold);
-  if (!match?.groups) return null;
-  return Number(match.groups.n);
+  const match = /^(\d+)(?:F|pctl)$/.exec(threshold);
+  return match ? Number(match[1]) : null;
 }
 
 export function thresholdTokenFor(kind: ThresholdKind, value: number): string {
