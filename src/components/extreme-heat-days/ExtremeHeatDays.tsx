@@ -128,8 +128,9 @@ export default function ExtremeHeatDays() {
       <div className={styles.intro}>
         <p className={styles.introCopy}>
           Explore how extreme heat in California is projected to change as the climate warms. Choose
-          a heat metric, a temperature threshold, and a location to see how often that heat is
-          projected to occur each year at different levels of global warming.
+          a climate variable, a temperature threshold, and a location to see how often extreme heat
+          is projected to occur, or how long heat waves are projected to last, at different levels
+          of global warming.
         </p>
       </div>
 
