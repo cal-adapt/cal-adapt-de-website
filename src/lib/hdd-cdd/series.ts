@@ -94,6 +94,11 @@ export function hasRenderableSeries(series: HddCddSeries | null, climateVariable
   return hasHistoricalData(series, climateVariable) || hasScenarioData(series, climateVariable);
 }
 
+export interface FetchSeriesOptions {
+  /** Cancels the STAC search and CSV download (timeout or superseded request). */
+  signal?: AbortSignal;
+}
+
 /** Build STAC `/search` filters for the current selections. `boundary` alone
  *  resolves to exactly one item; climate variable and SSP selection don't
  *  affect the fetch since both metrics and the only available scenario live
@@ -115,16 +120,22 @@ export function searchFiltersKey(selections: HddCddSelections): string {
 }
 
 /** Run the STAC `/search` step in isolation. */
-export async function searchHddCddItems(selections: HddCddSelections): Promise<StacItemCollection> {
-  return calAdaptApi.stac.searchItems(buildSearchFilters(selections));
+export async function searchHddCddItems(
+  selections: HddCddSelections,
+  { signal }: FetchSeriesOptions = {}
+): Promise<StacItemCollection> {
+  return calAdaptApi.stac.searchItems(buildSearchFilters(selections), { signal });
 }
 
 /**
  * End-to-end fetch: STAC search → region CSV download → parsed series. Throws
  * if any step fails so the calling hook can surface a single error state.
  */
-export async function fetchHddCddSeries(selections: HddCddSelections): Promise<HddCddSeries> {
-  const items = await searchHddCddItems(selections);
+export async function fetchHddCddSeries(
+  selections: HddCddSelections,
+  { signal }: FetchSeriesOptions = {}
+): Promise<HddCddSeries> {
+  const items = await searchHddCddItems(selections, { signal });
   const item = items.features[0];
   if (!item) {
     throw new Error(
@@ -133,7 +144,7 @@ export async function fetchHddCddSeries(selections: HddCddSelections): Promise<H
   }
 
   const csvUrl = resolveRegionCsvUrl(item, selections);
-  const csvText = await fetchCsvText(csvUrl);
+  const csvText = await fetchCsvText(csvUrl, signal);
 
   return parseRegionCsv(csvText, item, csvUrl, selections);
 }
@@ -158,8 +169,8 @@ function regionCsvFileName(selections: HddCddSelections): string {
   return `${region}.csv`;
 }
 
-async function fetchCsvText(url: string): Promise<string> {
-  const response = await fetch(url, { headers: { Accept: "text/csv" } });
+async function fetchCsvText(url: string, signal?: AbortSignal): Promise<string> {
+  const response = await fetch(url, { headers: { Accept: "text/csv" }, signal });
   if (!response.ok) {
     throw new Error(`CSV fetch failed (${response.status} ${response.statusText}): ${url}`);
   }

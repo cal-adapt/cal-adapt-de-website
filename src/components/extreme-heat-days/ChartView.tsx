@@ -7,7 +7,7 @@ import Button from "@/components/common/ui/Button";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import type { ExtremeHeatSeriesStatus } from "@/hooks/use-extreme-heat-series";
 import { resolveYAxisMax } from "@/lib/extreme-heat-days/axis";
-import { formatThresholdLabel } from "@/lib/extreme-heat-days/format";
+import { formatDurationLabel, formatThresholdLabel } from "@/lib/extreme-heat-days/format";
 import { getHeatMetric } from "@/lib/extreme-heat-days/options";
 import { type ExtremeHeatSeries, hasRenderableSeries } from "@/lib/extreme-heat-days/series";
 
@@ -18,16 +18,21 @@ import styles from "./ChartView.module.scss";
 export interface ChartViewProps {
   /**  Owned by the parent so the chart and table views are consistently labeled. */
   title: string;
+  subtitle: string;
   /** Loaded series for the current location. `null` while loading/erroring/idle. */
   series: ExtremeHeatSeries | null;
   status: ExtremeHeatSeriesStatus;
   errorMessage: string | null;
+  /** True when the fetch was cancelled for exceeding the data fetch timeout. */
+  timedOut: boolean;
   /** Re-trigger the data fetch; wired to the error-state "Retry" button. */
   onRetry: () => void;
   /** Selected climate variable; drives metric-specific chart labels/copy. */
   climateVariable: string;
   /** Current threshold selection; used for labels and no-data copy. */
   threshold: string;
+  /** Current duration selection (days); only shown for metrics keyed by duration. */
+  duration: string;
   locationLabel: string;
   /** DOM id for ARIA tab/panel pairing. */
   id: string;
@@ -40,12 +45,15 @@ export interface ChartViewProps {
 
 export default function ChartView({
   title,
+  subtitle,
   series,
   status,
   errorMessage,
+  timedOut,
   onRetry,
   climateVariable,
   threshold,
+  duration,
   locationLabel,
   id,
   labelledBy,
@@ -85,11 +93,13 @@ export default function ChartView({
             thresholdLabel={thresholdLabel}
             locationLabel={locationLabel}
             title={title}
+            subtitle={subtitle}
             yAxisLabel={metric.yAxisLabel}
             yAxisMax={resolveYAxisMax(series.median)}
             accessibleNoun={metric.accessibleNoun}
             tempExtremum={tempExtremum}
             valueUnit={metric.valueUnit}
+            durationLabel={metric.usesDuration ? formatDurationLabel(duration) : undefined}
           />
         )}
         {isLoading && (
@@ -108,8 +118,9 @@ export default function ChartView({
             </Button>
           }
         >
-          We couldn&apos;t load {metric.accessibleNoun} data for {locationLabel}. Check your
-          connection and try again.
+          {timedOut
+            ? `Loading ${metric.accessibleNoun} data for ${locationLabel} is taking longer than expected. Try again.`
+            : `We couldn't load ${metric.accessibleNoun} data for ${locationLabel}. Check your connection and try again.`}
         </Alert>
       )}
 

@@ -24,6 +24,8 @@ export interface ChartViewProps {
   series: HddCddSeries | null;
   status: HddCddSeriesStatus;
   errorMessage: string | null;
+  /** True when the fetch was cancelled for exceeding the data fetch timeout. */
+  timedOut: boolean;
   /** Re-trigger the data fetch; wired to the error-state "Retry" button. */
   onRetry: () => void;
   climateVariable: string;
@@ -40,6 +42,7 @@ export default function ChartView({
   series,
   status,
   errorMessage,
+  timedOut,
   onRetry,
   climateVariable,
   locationLabel,
@@ -96,8 +99,9 @@ export default function ChartView({
             </Button>
           }
         >
-          We couldn&apos;t load {metricConfig.accessibleNoun} data for {locationLabel}. Check your
-          connection and try again.
+          {timedOut
+            ? `Loading ${metricConfig.accessibleNoun} data for ${locationLabel} is taking longer than expected. Try again.`
+            : `We couldn't load ${metricConfig.accessibleNoun} data for ${locationLabel}. Check your connection and try again.`}
         </Alert>
       )}
 

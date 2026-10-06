@@ -6,6 +6,7 @@ import {
   fetchExtremeHeatSeries,
   searchFiltersKey,
 } from "@/lib/extreme-heat-days/series";
+import { createTimeoutController } from "@/utils/fetch-timeout";
 
 export type ExtremeHeatSeriesStatus = "idle" | "loading" | "success" | "error";
 
@@ -14,6 +15,8 @@ interface FetchState {
   status: ExtremeHeatSeriesStatus;
   data: ExtremeHeatSeries | null;
   errorMessage: string | null;
+  /** True when the error was the request exceeding the data fetch timeout. */
+  timedOut: boolean;
 }
 
 export interface UseExtremeHeatSeriesResult extends FetchState {
@@ -26,12 +29,13 @@ const initial: FetchState = {
   status: "idle",
   data: null,
   errorMessage: null,
+  timedOut: false,
 };
 
 /**
  * Fetch the parsed extreme heat series for the current selections, with a
- * small status state machine that handles cancellation, error capture, and
- * re-fetch semantics.
+ * small status state machine that handles cancellation, a request timeout
+ * (`DATA_FETCH_TIMEOUT_MS`), error capture, and re-fetch semantics.
  *
  * Re-fetches whenever `searchFiltersKey(selections)` changes. In this collection
  * the climate variable, threshold, spatial aggregation, and location each select
@@ -51,27 +55,36 @@ export function useExtremeHeatSeries(
 
   useEffect(() => {
     let cancelled = false;
+    // Cancels the request after DATA_FETCH_TIMEOUT_MS, or on cleanup when the
+    // selections change before it finishes.
+    const request = createTimeoutController();
 
-    setResult({ status: "loading", data: null, errorMessage: null });
+    setResult({ status: "loading", data: null, errorMessage: null, timedOut: false });
 
     (async () => {
       try {
-        const data = await fetchExtremeHeatSeries(selections);
+        const data = await fetchExtremeHeatSeries(selections, { signal: request.signal });
         if (cancelled) return;
-        setResult({ status: "success", data, errorMessage: null });
+        setResult({ status: "success", data, errorMessage: null, timedOut: false });
       } catch (error) {
         if (cancelled) return;
+        const timedOut = request.timedOut();
         setResult({
           status: "error",
           data: null,
-          errorMessage:
-            error instanceof Error ? error.message : "Failed to fetch extreme heat series",
+          errorMessage: timedOut
+            ? "Request timed out"
+            : error instanceof Error
+              ? error.message
+              : "Failed to fetch extreme heat series",
+          timedOut,
         });
       }
     })();
 
     return () => {
       cancelled = true;
+      request.cancel();
     };
     // `selections` is intentionally omitted from deps; `filtersKey` derives
     // from the subset of selections that actually affects the API call (all of

@@ -27,19 +27,20 @@ import {
 } from "./options";
 
 /**
- * STAC collection id for the multi-metric, per-boundary CSV summaries. Items are
- * keyed by (variable_id × boundary × threshold_name); each item's `data` asset
- * is a directory prefix containing one CSV per region.
- */
-export const EXTREME_HEAT_STAC_COLLECTION_ID = "eh-metrics-mm-boundary-csv" as const;
-
-/**
  * Build the STAC `threshold_name` for the current selection, e.g.
  * `t2max_ge100F` (absolute) or `t2max_ge98pctl` (relative).
  */
 export function thresholdNameFor(selections: ExtremeHeatDaysSelections): string {
   const metric = getHeatMetric(selections.climateVariable);
   return `${metric.tempStat}_ge${selections.threshold}`;
+}
+
+/** STAC `duration_name` (e.g. `duration_5d`), or null for metrics without a
+ *  duration dimension. */
+export function durationNameFor(selections: ExtremeHeatDaysSelections): string | null {
+  return getHeatMetric(selections.climateVariable).usesDuration
+    ? `duration_${selections.duration}d`
+    : null;
 }
 
 /**
@@ -78,40 +79,52 @@ export function hasRenderableSeries(series: ExtremeHeatSeries | null): boolean {
   return series.median.some((v) => Number.isFinite(v));
 }
 
+export interface FetchSeriesOptions {
+  /** Cancels the STAC search and CSV download (timeout or superseded request). */
+  signal?: AbortSignal;
+}
+
 /**
  * Build STAC `/search` filters for the current selections. The tuple
- * (variable_id, boundary, threshold_name) resolves to exactly one item.
+ * (variable_id, boundary, threshold_name[, duration_name]) resolves to exactly
+ * one item in the metric's collection.
  */
 export function buildSearchFilters(selections: ExtremeHeatDaysSelections): ItemSearchFilters {
   const metric = getHeatMetric(selections.climateVariable);
+  const durationName = durationNameFor(selections);
   return {
-    collectionFilter: `collection='${EXTREME_HEAT_STAC_COLLECTION_ID}'`,
+    collectionFilter: `collection='${metric.collectionId}'`,
     variableFilter: `variable_id='${metric.variableId}'`,
     boundaryFilter: `boundary='${selections.spatialAggregation}'`,
     thresholdNameFilter: `threshold_name='${thresholdNameFor(selections)}'`,
+    ...(durationName ? { durationNameFilter: `duration_name='${durationName}'` } : {}),
   };
 }
 
 /**
  * Stable cache key over the subset of selections that affect the API call.
  * Unlike MVP 1.0, threshold and climate variable are part of the fetch (they
- * select the STAC item/CSV), so all of them belong in the key.
+ * select the STAC item/CSV), so all of them belong in the key, along with the
+ * duration for metrics that use one.
  */
 export function searchFiltersKey(selections: ExtremeHeatDaysSelections): string {
   const metric = getHeatMetric(selections.climateVariable);
+  const durationName = durationNameFor(selections);
   return [
     metric.variableId,
     selections.spatialAggregation,
     thresholdNameFor(selections),
+    ...(durationName ? [durationName] : []),
     selections.location,
   ].join("|");
 }
 
 /** Run the STAC `/search` step in isolation. */
 export async function searchExtremeHeatItems(
-  selections: ExtremeHeatDaysSelections
+  selections: ExtremeHeatDaysSelections,
+  { signal }: FetchSeriesOptions = {}
 ): Promise<StacItemCollection> {
-  return calAdaptApi.stac.searchItems(buildSearchFilters(selections));
+  return calAdaptApi.stac.searchItems(buildSearchFilters(selections), { signal });
 }
 
 /**
@@ -119,10 +132,11 @@ export async function searchExtremeHeatItems(
  * any step fails so the calling hook can surface a single error state.
  */
 export async function fetchExtremeHeatSeries(
-  selections: ExtremeHeatDaysSelections
+  selections: ExtremeHeatDaysSelections,
+  { signal }: FetchSeriesOptions = {}
 ): Promise<ExtremeHeatSeries> {
   const thresholdName = thresholdNameFor(selections);
-  const items = await searchExtremeHeatItems(selections);
+  const items = await searchExtremeHeatItems(selections, { signal });
   const item = items.features[0];
   if (!item) {
     throw new Error(
@@ -131,7 +145,7 @@ export async function fetchExtremeHeatSeries(
   }
 
   const csvUrl = resolveRegionCsvUrl(item, selections, thresholdName);
-  const csvText = await fetchCsvText(csvUrl);
+  const csvText = await fetchCsvText(csvUrl, signal);
 
   return parseRegionCsv(csvText, item, csvUrl, selections, thresholdName);
 }
@@ -157,11 +171,14 @@ function resolveRegionCsvUrl(
 
 function regionCsvFileName(selections: ExtremeHeatDaysSelections, thresholdName: string): string {
   const region = regionLabelFor(selections).replace(/\s+/g, "_");
-  return `${region}_${thresholdName}.csv`;
+  const durationSuffix = getHeatMetric(selections.climateVariable).usesDuration
+    ? `_${selections.duration}d`
+    : "";
+  return `${region}_${thresholdName}${durationSuffix}.csv`;
 }
 
-async function fetchCsvText(url: string): Promise<string> {
-  const response = await fetch(url, { headers: { Accept: "text/csv" } });
+async function fetchCsvText(url: string, signal?: AbortSignal): Promise<string> {
+  const response = await fetch(url, { headers: { Accept: "text/csv" }, signal });
   if (!response.ok) {
     throw new Error(`CSV fetch failed (${response.status} ${response.statusText}): ${url}`);
   }
@@ -182,6 +199,7 @@ function parseRegionCsv(
   thresholdName: string
 ): ExtremeHeatSeries {
   const rows = csvParse(text);
+  const columns = getHeatMetric(selections.climateVariable).csvColumns;
 
   // NOTE: The current CSVs repeat each warming level across several rows.
   // Group by warming level and average the values so we plot one point per level.
@@ -190,9 +208,9 @@ function parseRegionCsv(
     const globalWarmingLevel = Number(row.warming_level);
     if (!Number.isFinite(globalWarmingLevel)) continue;
     const acc = byLevel.get(globalWarmingLevel) ?? { median: [], p10: [], p90: [] };
-    acc.median.push(toNumber(row.multimodel_median));
-    acc.p10.push(toNumber(row.multimodel_p10));
-    acc.p90.push(toNumber(row.multimodel_p90));
+    acc.median.push(toNumber(row[columns.median]));
+    acc.p10.push(toNumber(row[columns.p10]));
+    acc.p90.push(toNumber(row[columns.p90]));
     byLevel.set(globalWarmingLevel, acc);
   }
 

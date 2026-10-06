@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 
+import { Select } from "@/components/common/form";
 import { formatThresholdLabel } from "@/lib/extreme-heat-days/format";
 import {
+  isContiguous,
   parseThresholdNumber,
   type ThresholdKind,
-  thresholdRangeFor,
   thresholdTokenFor,
+  thresholdValuesFor,
 } from "@/lib/extreme-heat-days/options";
 
 import styles from "./ThresholdInput.module.scss";
@@ -40,7 +42,61 @@ export default function ThresholdInput({
   "aria-invalid": ariaInvalid,
   "aria-required": ariaRequired,
 }: ThresholdInputProps) {
-  const { min, max } = thresholdRangeFor(kind, climateVariable);
+  const values = thresholdValuesFor(kind, climateVariable);
+
+  // A sparse set (e.g. only the 95th and 99th percentiles) can't be a 1-step
+  // slider without landing on unavailable values, so offer a dropdown instead.
+  if (!isContiguous(values)) {
+    return (
+      <Select
+        id={id}
+        value={value}
+        onChange={onChange}
+        options={values.map((n) => {
+          const token = thresholdTokenFor(kind, n);
+          return { value: token, label: formatThresholdLabel(token) };
+        })}
+        disabled={disabled}
+        aria-describedby={ariaDescribedBy}
+        aria-invalid={ariaInvalid}
+        aria-required={ariaRequired}
+      />
+    );
+  }
+
+  return (
+    <ThresholdSlider
+      id={id}
+      kind={kind}
+      min={values[0]}
+      max={values[values.length - 1]}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      aria-describedby={ariaDescribedBy}
+      aria-invalid={ariaInvalid}
+      aria-required={ariaRequired}
+    />
+  );
+}
+
+interface ThresholdSliderProps extends Omit<ThresholdInputProps, "climateVariable" | "invalid"> {
+  min: number;
+  max: number;
+}
+
+function ThresholdSlider({
+  id,
+  kind,
+  min,
+  max,
+  value,
+  onChange,
+  disabled = false,
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
+  "aria-required": ariaRequired,
+}: ThresholdSliderProps) {
   const numeric = parseThresholdNumber(value) ?? min;
   const [draft, setDraft] = useState(numeric);
 

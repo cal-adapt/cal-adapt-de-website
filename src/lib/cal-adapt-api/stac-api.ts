@@ -100,6 +100,7 @@ export type ItemSearchFilters = {
   boundaryFilter?: string;
   /** eh-metrics threshold — e.g. `threshold_name='t2max_ge100F'` */
   thresholdNameFilter?: string;
+  durationNameFilter?: string;
 };
 
 /** JSON Schema queryables document (`/collections/{id}/queryables`). */
@@ -139,7 +140,10 @@ export async function getCollection(collectionId: string): Promise<StacCollectio
 /**
  * Search for items using CQL2 filters.
  */
-export async function searchItems(filters: ItemSearchFilters): Promise<StacItemCollection> {
+export async function searchItems(
+  filters: ItemSearchFilters,
+  { signal }: { signal?: AbortSignal } = {}
+): Promise<StacItemCollection> {
   const filterParts: string[] = [];
 
   if (filters.collectionFilter) filterParts.push(filters.collectionFilter);
@@ -155,6 +159,7 @@ export async function searchItems(filters: ItemSearchFilters): Promise<StacItemC
   if (filters.cmip6TableIdFilter) filterParts.push(filters.cmip6TableIdFilter);
   if (filters.boundaryFilter) filterParts.push(filters.boundaryFilter);
   if (filters.thresholdNameFilter) filterParts.push(filters.thresholdNameFilter);
+  if (filters.durationNameFilter) filterParts.push(filters.durationNameFilter);
 
   const filterStr = filterParts.join(" AND ");
 
@@ -164,6 +169,7 @@ export async function searchItems(filters: ItemSearchFilters): Promise<StacItemC
       ...(filterStr ? { filter: filterStr, filter_lang: "cql2-text" } : {}),
     },
     headers: { Accept: "application/geo+json" },
+    signal,
   });
   return assertOk<StacItemCollection>(res, API_NAME);
 }

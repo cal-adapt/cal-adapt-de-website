@@ -8,6 +8,7 @@ import {
   formatGlobalWarmingLevel,
   formatGlobalWarmingLevelName,
   formatThresholdLabel,
+  formatViewSubtitle,
   formatViewTitle,
 } from "./format";
 import type { ExtremeHeatDaysSelections } from "./options";
@@ -15,7 +16,7 @@ import type { ExtremeHeatDaysSelections } from "./options";
 const SELECTIONS: ExtremeHeatDaysSelections = {
   climateVariable: "extreme-heat-days",
   threshold: "100F",
-  indicator: "frequency",
+  duration: "5",
   spatialAggregation: "ca_counties",
   location: "Sacramento",
 };
@@ -34,19 +35,13 @@ describe("colorForGlobalWarmingLevel", () => {
 describe("formatViewTitle", () => {
   it("includes the selected county with its ' County' suffix", () => {
     expect(formatViewTitle(SELECTIONS)).toBe(
-      "Extreme Heat Frequency by Global Warming Level: Sacramento County (100°F)"
+      "Extreme Heat Days by Global Warming Level: Sacramento County"
     );
   });
 
   it("reflects the warm-nights metric label", () => {
     expect(formatViewTitle({ ...SELECTIONS, climateVariable: "warm-nights" })).toBe(
-      "Warm Nights Frequency by Global Warming Level: Sacramento County (100°F)"
-    );
-  });
-
-  it("includes a percentile threshold in the title", () => {
-    expect(formatViewTitle({ ...SELECTIONS, threshold: "98pctl" })).toBe(
-      "Extreme Heat Frequency by Global Warming Level: Sacramento County (98th percentile)"
+      "Warm Nights by Global Warming Level: Sacramento County"
     );
   });
 
@@ -57,7 +52,31 @@ describe("formatViewTitle", () => {
         spatialAggregation: "forecast_zones",
         location: "Greater Bay Area",
       })
-    ).toBe("Extreme Heat Frequency by Global Warming Level: Greater Bay Area (100°F)");
+    ).toBe("Extreme Heat Days by Global Warming Level: Greater Bay Area");
+  });
+});
+
+describe("formatViewSubtitle", () => {
+  it("names the statistic and an absolute threshold", () => {
+    expect(formatViewSubtitle(SELECTIONS)).toBe(
+      "Median annual count of extreme heat days above 100°F"
+    );
+  });
+
+  it("names a percentile threshold", () => {
+    expect(formatViewSubtitle({ ...SELECTIONS, threshold: "98pctl" })).toBe(
+      "Median annual count of extreme heat days above the 98th percentile"
+    );
+  });
+
+  it("includes the duration for heat wave frequency", () => {
+    expect(
+      formatViewSubtitle({
+        ...SELECTIONS,
+        climateVariable: "heat-wave-frequency",
+        threshold: "110F",
+      })
+    ).toBe("Median annual count of 5-day heat waves above 110°F");
   });
 });
 
@@ -121,5 +140,19 @@ describe("formatChartExportFilename", () => {
     expect(formatChartExportFilename("extreme-heat-days", "", date)).toBe(
       "extreme-heat-days_unknown_2026-01-15.png"
     );
+  });
+});
+
+describe("formatViewTitle for heat wave frequency", () => {
+  it("leaves the duration to the subtitle", () => {
+    expect(
+      formatViewTitle({
+        ...SELECTIONS,
+        climateVariable: "heat-wave-frequency",
+        threshold: "110F",
+        duration: "5",
+        location: "Imperial",
+      })
+    ).toBe("Heat Wave Frequency by Global Warming Level: Imperial County");
   });
 });

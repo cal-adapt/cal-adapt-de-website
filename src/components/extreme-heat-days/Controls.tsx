@@ -1,15 +1,14 @@
 "use client";
 
 import { FormField, Select } from "@/components/common/form";
-import { featureFlags } from "@/config/feature-flags";
 import {
   CLIMATE_VARIABLE_SELECT_OPTIONS,
   defaultLocationFor,
   defaultThresholdFor,
   defaultThresholdForKind,
+  DURATION_OPTIONS,
   type ExtremeHeatDaysSelections,
   getHeatMetric,
-  INDICATOR_OPTIONS,
   isAllowedThreshold,
   locationOptionsFor,
   SPATIAL_AGGREGATION_OPTIONS,
@@ -83,12 +82,12 @@ export default function Controls({ selections, onChange, disabled = false }: Con
           disabled={disabled}
         />
       </FormField>
-      {featureFlags.__FF_EXTREME_HEAT_DAYS_INDICATOR__ && (
-        <FormField label="Indicator" hint={CONTROL_TOOLTIPS.indicator} hintVariant="tooltip">
+      {getHeatMetric(selections.climateVariable).usesDuration && (
+        <FormField label="Duration" hint={CONTROL_TOOLTIPS.duration} hintVariant="tooltip">
           <Select
-            value={selections.indicator}
-            onChange={(indicator) => onChange({ ...selections, indicator })}
-            options={INDICATOR_OPTIONS}
+            value={selections.duration}
+            onChange={(duration) => onChange({ ...selections, duration })}
+            options={DURATION_OPTIONS}
             disabled={disabled}
           />
         </FormField>
