@@ -104,17 +104,13 @@ export default function ExtremeHeatDays() {
   // SVG it exports is rendered by `ChartView`.
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
   const canExportChart = hasRenderableSeries(seriesResult.data);
-  const exportLocationLabel = seriesResult.data?.location || selections.location;
   const handleExportChart = useCallback(() => {
     const svg = chartContainerRef.current?.querySelector<SVGSVGElement>("svg");
     if (!svg) return;
-    exportSvgAsPng(
-      svg,
-      formatChartExportFilename(selections.climateVariable, exportLocationLabel)
-    ).catch((error) => {
+    exportSvgAsPng(svg, formatChartExportFilename(selections)).catch((error) => {
       console.error("[extreme-heat-days] chart export failed:", error);
     });
-  }, [selections.climateVariable, exportLocationLabel]);
+  }, [selections]);
 
   return (
     <PageLayout
