@@ -66,7 +66,7 @@ describe("heat wave length title and subtitle", () => {
   });
 
   it("names the length statistic without a duration", () => {
-    expect(formatViewSubtitle(HWL)).toBe("Median annual length of heat waves above 100°F");
+    expect(formatViewSubtitle(HWL)).toBe("Median annual mean length of heat waves above 100°F");
   });
 });
 
