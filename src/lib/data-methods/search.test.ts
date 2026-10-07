@@ -12,17 +12,14 @@ const ENTRIES: readonly DataMethodsEntry[] = [
   entry("extreme-heat-days", "Extreme Heat Days", {
     summary: "Days per year above a daytime high temperature threshold.",
     tags: ["Extreme heat"],
-    keywords: ["GWL", "maximum daily air temperature"],
   }),
   entry("warm-nights", "Warm Nights", {
     summary: "Nights per year above an overnight low temperature threshold.",
     tags: ["Extreme heat"],
-    keywords: ["GWL", "minimum daily air temperature"],
   }),
   entry("cooling-degree-days", "Cooling Degree Days", {
     summary: "How much daily average temperatures exceed 65 °F.",
     tags: ["Energy demand"],
-    keywords: ["CDD", "SSP3-7.0"],
   }),
 ];
 
@@ -40,16 +37,15 @@ describe("filterDataMethodsEntries", () => {
     expect(ids("warm NIGHTS")).toEqual(["warm-nights"]);
   });
 
-  it("matches the summary and keywords", () => {
+  it("matches the summary", () => {
     expect(ids("overnight")).toEqual(["warm-nights"]);
-    expect(ids("maximum")).toEqual(["extreme-heat-days"]);
-    expect(ids("ssp3")).toEqual(["cooling-degree-days"]);
-    expect(ids("gwl")).toEqual(["extreme-heat-days", "warm-nights"]);
+    expect(ids("daytime")).toEqual(["extreme-heat-days"]);
+    expect(ids("threshold")).toEqual(["extreme-heat-days", "warm-nights"]);
   });
 
   it("requires every term to match, in any order", () => {
     expect(ids("threshold nights")).toEqual(["warm-nights"]);
-    expect(ids("nights cdd")).toEqual([]);
+    expect(ids("nights 65")).toEqual([]);
   });
 
   it("returns nothing when no entry matches", () => {

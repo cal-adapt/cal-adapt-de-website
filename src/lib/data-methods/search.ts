@@ -6,7 +6,7 @@ function normalize(text: string): string {
 
 /**
  * Entries matching every whitespace-separated term in `query` (case-insensitive
- * substring match against the page name, summary, and keywords) and, when any
+ * substring match against the page name and summary) and, when any
  * `tags` are selected, carrying at least one of them.
  */
 export function filterDataMethodsEntries(
@@ -19,7 +19,7 @@ export function filterDataMethodsEntries(
   return entries.filter((entry) => {
     if (tags.length > 0 && !entry.tags.some((tag) => tags.includes(tag))) return false;
 
-    const text = normalize([entry.page.label, entry.summary, ...entry.keywords].join(" "));
+    const text = normalize(`${entry.page.label} ${entry.summary}`);
     return terms.every((term) => text.includes(term));
   });
 }
