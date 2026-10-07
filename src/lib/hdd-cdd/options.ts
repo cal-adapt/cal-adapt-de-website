@@ -1,6 +1,7 @@
 // Domain data for the HDD/CDD tool.
 
 import type { SelectOption } from "@/components/common/form";
+import { climateVariables } from "@/config/climate-variables";
 
 /**
  * User-controlled inputs that drive the HDD/CDD tool.
@@ -20,6 +21,8 @@ export interface MetricConfig {
   label: string;
   /** Dropdown label. */
   dropdownLabel: string;
+  /** One-line summary shown under the label in the climate variable dropdown. */
+  description: string;
   /** Chart y-axis label. */
   yAxisLabel: string;
   /** Noun used in accessible chart text and copy, e.g. "heating degree days". */
@@ -33,7 +36,8 @@ export interface MetricConfig {
 const HDD_METRIC: MetricConfig = {
   value: "hdd",
   label: "HDD",
-  dropdownLabel: "Heating Degree Days",
+  dropdownLabel: climateVariables["heating-degree-days"].label,
+  description: climateVariables["heating-degree-days"].description,
   yAxisLabel: "Heating Degree Days (65°F)",
   accessibleNoun: "heating degree days",
   longLabel: "Heating Degree Days (65°F)",
@@ -43,7 +47,8 @@ const HDD_METRIC: MetricConfig = {
 const CDD_METRIC: MetricConfig = {
   value: "cdd",
   label: "CDD",
-  dropdownLabel: "Cooling Degree Days",
+  dropdownLabel: climateVariables["cooling-degree-days"].label,
+  description: climateVariables["cooling-degree-days"].description,
   yAxisLabel: "Cooling Degree Days (65°F)",
   accessibleNoun: "cooling degree days",
   longLabel: "Cooling Degree Days (65°F)",
@@ -67,6 +72,7 @@ export const CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = Object.values(M
   (metric) => ({
     value: metric.value,
     label: metric.dropdownLabel,
+    description: metric.description,
   })
 );
 

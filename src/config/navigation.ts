@@ -1,4 +1,5 @@
 import { CLIMATE_STORIES_HREF, climateStories } from "@/config/climate-stories";
+import { climateVariables } from "@/config/climate-variables";
 import { FEEDBACK_URL } from "@/config/constants";
 import { featureFlags } from "@/config/feature-flags";
 
@@ -54,38 +55,38 @@ const DATA_METHODS_HREF = "/dashboard/data-methods";
 const dataMethodsPages = [
   {
     id: "data-methods-extreme-heat-days",
-    label: "Extreme Heat Days & Warm Nights",
+    label: climateVariables["extreme-heat-days-and-warm-nights"].label,
     href: `${DATA_METHODS_HREF}/extreme-heat-days`,
   },
   {
     id: "data-methods-extreme-heat-season",
-    label: "Extreme Heat Season",
+    label: climateVariables["extreme-heat-season"].label,
     href: `${DATA_METHODS_HREF}/extreme-heat-season`,
   },
   {
     id: "data-methods-extreme-precipitation",
-    label: "Extreme Precipitation",
+    label: climateVariables["extreme-precipitation"].label,
     href: `${DATA_METHODS_HREF}/extreme-precipitation`,
   },
   {
     id: "data-methods-fire-weather",
-    label: "Fire Weather",
+    label: climateVariables["fire-weather"].label,
     href: `${DATA_METHODS_HREF}/fire-weather`,
   },
   {
     id: "data-methods-heat-waves",
-    label: "Heat Waves",
+    label: climateVariables["heat-waves"].label,
     href: `${DATA_METHODS_HREF}/heat-waves`,
   },
   {
     id: "data-methods-hdd-cdd",
-    label: "Heating & Cooling Degree Days",
+    label: climateVariables["heating-and-cooling-degree-days"].label,
     href: `${DATA_METHODS_HREF}/hdd-cdd`,
     featureFlag: "__FF_HDD_CDD__",
   },
   {
     id: "data-methods-renewables",
-    label: "Solar & Wind Resource Droughts",
+    label: climateVariables["solar-and-wind-resource-droughts"].label,
     href: `${DATA_METHODS_HREF}/renewables`,
   },
 ] as const satisfies readonly NavLink[];

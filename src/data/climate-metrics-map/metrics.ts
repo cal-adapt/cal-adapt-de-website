@@ -1,3 +1,5 @@
+import { climateVariables } from "@/config/climate-variables";
+
 export type MetricVariant = {
   mean: string;
   min_path?: string;
@@ -28,6 +30,8 @@ type StatLabels = {
 export type Metric = {
   id: number;
   title: string;
+  /** One-line description shown under the title in the metric dropdown. */
+  summary: string;
   slug: string;
   abs: MetricVariant;
   del: MetricVariant;
@@ -39,7 +43,8 @@ const EXTREME_HEAT_BASE = "s3://cadcat/wrf/extreme-heat-tool/multimodel_gridded"
 export const metrics: Metric[] = [
   {
     id: 0,
-    title: "Extreme Heat Days",
+    title: climateVariables["extreme-heat-days"].label,
+    summary: climateVariables["extreme-heat-days"].description,
     slug: "extreme-heat",
     abs: {
       mean: `${EXTREME_HEAT_BASE}/eh_days/mm4mean/ssp370/gwl/t2max_ge99pctl/d03`,
@@ -72,7 +77,8 @@ export const metrics: Metric[] = [
   },
   {
     id: 1,
-    title: "Extreme Precipitation",
+    title: climateVariables["extreme-precipitation"].label,
+    summary: climateVariables["extreme-precipitation"].description,
     slug: "extreme-precipitation",
     abs: {
       mean: "s3://cadcat/wrf/climate-metrics-map/mm4mean/ssp370/gwl/R99p/d03",
@@ -98,7 +104,8 @@ export const metrics: Metric[] = [
   },
   {
     id: 2,
-    title: "Fire Weather",
+    title: climateVariables["fire-weather"].label,
+    summary: climateVariables["fire-weather"].description,
     slug: "fire-weather",
     abs: {
       mean: "s3://cadcat/wrf/climate-metrics-map/mm4mean/ssp370/gwl/ffwige50/d03",
@@ -125,7 +132,8 @@ export const metrics: Metric[] = [
   },
   {
     id: 3,
-    title: "Warm Nights",
+    title: climateVariables["warm-nights"].label,
+    summary: climateVariables["warm-nights"].description,
     slug: "warm-nights",
     abs: {
       mean: `${EXTREME_HEAT_BASE}/warm_nights/mm4mean/ssp370/gwl/t2min_ge99pctl/d03`,

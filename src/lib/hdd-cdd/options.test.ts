@@ -27,7 +27,7 @@ describe("getMetric", () => {
 
 describe("CLIMATE_VARIABLE_OPTIONS", () => {
   it("exposes both metrics with their dropdown labels", () => {
-    expect(CLIMATE_VARIABLE_OPTIONS).toEqual([
+    expect(CLIMATE_VARIABLE_OPTIONS.map(({ value, label }) => ({ value, label }))).toEqual([
       { value: "cdd", label: "Cooling Degree Days" },
       { value: "hdd", label: "Heating Degree Days" },
     ]);

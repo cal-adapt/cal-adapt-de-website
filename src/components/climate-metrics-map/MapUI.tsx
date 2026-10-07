@@ -70,6 +70,9 @@ const MenuProps: any = {
   variant: "menu",
 };
 
+// Metric options carry a description, so the menu is wider and isn't height-capped.
+const METRIC_MENU_PROPS = { ...MenuProps, PaperProps: { style: { width: 300 } } };
+
 export default function MapUI({
   valueType,
   setValueType,
@@ -258,12 +261,13 @@ export default function MapUI({
                         labelId="metric-label"
                         value={metricSelected}
                         onChange={handleMetricChange}
-                        MenuProps={MenuProps}
+                        renderValue={(id) => metrics.find((m) => m.id === id)?.title}
+                        MenuProps={METRIC_MENU_PROPS}
                         sx={{ mt: "15px", width: "220px" }}
                       >
                         {metrics.map((metric) => (
-                          <MenuItem key={metric.id} value={metric.id}>
-                            <ListItemText primary={metric.title} />
+                          <MenuItem key={metric.id} value={metric.id} sx={{ whiteSpace: "normal" }}>
+                            <ListItemText primary={metric.title} secondary={metric.summary} />
                           </MenuItem>
                         ))}
                       </Select>
