@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import Panel from "@/components/common/content/Panel";
 
 import styles from "./StoryTableOfContents.module.scss";
 
@@ -14,8 +14,7 @@ interface StoryTableOfContentsProps {
 
 export default function StoryTableOfContents({ sections, className }: StoryTableOfContentsProps) {
   return (
-    <nav className={clsx(styles.root, className)} aria-label="On this page">
-      <p className={styles.label}>Table of contents</p>
+    <Panel as="nav" eyebrow="Table of contents" className={className}>
       <ol className={styles.list}>
         {sections.map((section) => (
           <li key={section.id}>
@@ -23,6 +22,6 @@ export default function StoryTableOfContents({ sections, className }: StoryTable
           </li>
         ))}
       </ol>
-    </nav>
+    </Panel>
   );
 }
