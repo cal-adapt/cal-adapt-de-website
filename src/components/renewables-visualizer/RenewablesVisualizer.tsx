@@ -28,6 +28,7 @@ import PageLayout from "@/components/dashboard/PageLayout";
 import SidePanel from "@/components/dashboard/SidePanel";
 import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
 import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
+import { dataMethodsHref } from "@/config/data-methods";
 import { navLinks } from "@/config/navigation";
 import { useInstallationParams } from "@/context/InstallationParamsContext";
 import { usePhotoConfig } from "@/context/PhotoConfigContext";
@@ -39,6 +40,8 @@ import { calAdaptApi } from "@/lib/cal-adapt-api";
 import VizParamsForm from "./VisualizationParamsForm";
 
 import styles from "./RenewablesVisualizer.module.scss";
+
+const METHODS_HREF = dataMethodsHref("data-methods-renewables");
 
 const MAP_HEIGHT = 550;
 const HEATMAP_HEIGHT = 500;
@@ -358,14 +361,20 @@ export default function RenewablesViz() {
           representative 30-year period.{" "}
         </Typography>
         <Typography variant="body1">
-          <a
-            style={{ textDecoration: "underline", display: "inline-block" }}
-            href="https://drive.google.com/file/d/1YSe6oi6GksTvwUVBhkv-ZLrHkr3SzMqq/view?usp=drive_link"
-            target="_blank"
-            aria-label="Read more in the documentation"
-          >
-            Read more in the documentation
-          </a>
+          {METHODS_HREF ? (
+            <a style={{ textDecoration: "underline", display: "inline-block" }} href={METHODS_HREF}>
+              Read the methods behind this data
+            </a>
+          ) : (
+            <a
+              style={{ textDecoration: "underline", display: "inline-block" }}
+              href="https://drive.google.com/file/d/1YSe6oi6GksTvwUVBhkv-ZLrHkr3SzMqq/view?usp=drive_link"
+              target="_blank"
+              aria-label="Read more in the documentation"
+            >
+              Read more in the documentation
+            </a>
+          )}
         </Typography>
       </Box>
 

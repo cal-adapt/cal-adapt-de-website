@@ -1,4 +1,9 @@
-import { type DataMethodsPageId, type NavLink, navLinks } from "@/config/navigation";
+import {
+  type DataMethodsPageId,
+  isNavLinkEnabled,
+  type NavLink,
+  navLinks,
+} from "@/config/navigation";
 
 /** Filter keywords, in the order their chips are shown. */
 export const DATA_METHODS_TAGS = [
@@ -61,3 +66,14 @@ const DETAILS_BY_PAGE: Record<DataMethodsPageId, DataMethodsDetails> = {
 export const dataMethodsEntries: readonly DataMethodsEntry[] = navLinks.dataMethods.children.map(
   (page) => ({ page, ...DETAILS_BY_PAGE[page.id] })
 );
+
+/** Href of the data methods index, or undefined when the section is off in this environment. */
+export const dataMethodsIndexHref: string | undefined = isNavLinkEnabled(navLinks.dataMethods)
+  ? navLinks.dataMethods.href
+  : undefined;
+
+/** Href of a data methods page, or undefined when the section or that page is off. */
+export function dataMethodsHref(id: DataMethodsPageId): string | undefined {
+  if (dataMethodsIndexHref == null) return undefined;
+  return dataMethodsEntries.find((entry) => entry.page.id === id)?.page.href;
+}

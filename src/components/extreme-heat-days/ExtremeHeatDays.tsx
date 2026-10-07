@@ -12,9 +12,11 @@ import Badge from "@/components/common/ui/Badge";
 import Button from "@/components/common/ui/Button";
 import CitationBox from "@/components/common/ui/CitationBox";
 import Icon from "@/components/common/ui/Icon";
+import Link from "@/components/common/ui/Link";
 import Tabs, { type TabItem } from "@/components/common/ui/Tabs";
 import PageLayout from "@/components/dashboard/PageLayout";
-import { navLinks } from "@/config/navigation";
+import { dataMethodsHref } from "@/config/data-methods";
+import { type DataMethodsPageId, navLinks } from "@/config/navigation";
 import { useExtremeHeatSeries } from "@/hooks/use-extreme-heat-series";
 import {
   formatChartExportFilename,
@@ -62,10 +64,24 @@ const COPY_BY_VARIABLE: Record<string, MDXContent> = {
   "heat-wave-frequency": HeatWaveFrequencyCopy,
 };
 
+/** Closing line of a variable's copy, pointing to its data methods page.
+ *  Renders nothing when that page is off in this environment. */
+function DataMethodsNote({ page }: { page: DataMethodsPageId }) {
+  const href = dataMethodsHref(page);
+  if (!href) return null;
+
+  return (
+    <p>
+      For details on how this metric is calculated, see the <Link href={href}>data methods</Link>.
+    </p>
+  );
+}
+
 // Render the copy inline: skip the site-wide MDX wrapper (page container + article).
 const COPY_MDX_COMPONENTS: MDXComponents = {
   wrapper: ({ children }) => <>{children}</>,
   InterpretSection,
+  DataMethodsNote,
 };
 
 const COPY_ID = "ehd-variable-copy";
