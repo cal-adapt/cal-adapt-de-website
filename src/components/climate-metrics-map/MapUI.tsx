@@ -34,10 +34,6 @@ import type { ValueType } from "./ClimateMetricsMap";
 
 import styles from "./MapUI.module.scss";
 
-/** Fallback for the metric descriptions link while Data Methods is off. */
-const METRICS_DESCRIPTION_DOC_HREF =
-  "https://docs.google.com/document/d/19UB672X38z21QlEkieWEwWLwZQWU_L7wMW5zq9bo7tc/edit?usp=sharing";
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 
@@ -390,7 +386,13 @@ export default function MapUI({
                     perspective on how climate change impacts various regions.
                   </p>
                   (A plain language description of metrics can be found{" "}
-                  <a href={dataMethodsIndexHref ?? METRICS_DESCRIPTION_DOC_HREF} target="_blank">
+                  <a
+                    href={
+                      dataMethodsIndexHref ??
+                      "https://docs.google.com/document/d/19UB672X38z21QlEkieWEwWLwZQWU_L7wMW5zq9bo7tc/edit?usp=sharing"
+                    }
+                    target="_blank"
+                  >
                     <span className="underline">here</span>
                   </a>
                   )
