@@ -17,7 +17,7 @@ export type ChartViewProps = StacChartViewProps<HddCddSelections, HddCddSeries>;
 
 export default function ChartView({
   selections,
-  series: { data: series, status, errorMessage, retry },
+  series: { data: series, status, errorMessage, timedOut, retry },
   chartContainerRef,
   id,
   labelledBy,
@@ -46,7 +46,11 @@ export default function ChartView({
       errorMessage={errorMessage}
       onRetry={retry}
       loadingLabel={`Loading ${metric.accessibleNoun} data`}
-      errorContent={`We couldn't load ${metric.accessibleNoun} data for ${locationLabel}. Check your connection and try again.`}
+      errorContent={
+        timedOut
+          ? `Loading ${metric.accessibleNoun} data for ${locationLabel} is taking longer than expected. Try again.`
+          : `We couldn't load ${metric.accessibleNoun} data for ${locationLabel}. Check your connection and try again.`
+      }
       noDataContent={`No ${metric.accessibleNoun} data is available for ${locationLabel}. Try a different location.`}
       warningContent={partialWarning}
       chartContainerRef={chartContainerRef}

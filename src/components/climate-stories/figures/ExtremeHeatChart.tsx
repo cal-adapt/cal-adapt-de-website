@@ -10,8 +10,8 @@ export default function ExtremeHeatChart({
 }: {
   selections: ExtremeHeatDaysSelections;
 }) {
-  const series = useStacSeries(searchFiltersKey(selections), () =>
-    fetchExtremeHeatSeries(selections)
+  const series = useStacSeries(searchFiltersKey(selections), (signal) =>
+    fetchExtremeHeatSeries(selections, { signal })
   );
   return <ChartView selections={selections} series={series} />;
 }

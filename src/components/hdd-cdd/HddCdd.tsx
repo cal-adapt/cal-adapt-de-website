@@ -59,8 +59,8 @@ export default function HddCdd() {
     [pathname, router]
   );
 
-  const seriesResult = useStacSeries(searchFiltersKey(selections), () =>
-    fetchHddCddSeries(selections)
+  const seriesResult = useStacSeries(searchFiltersKey(selections), (signal) =>
+    fetchHddCddSeries(selections, { signal })
   );
   const isLoading = seriesResult.status === "loading";
 
