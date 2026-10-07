@@ -4,6 +4,7 @@ import {
   CLIMATE_VARIABLE_DROPDOWN_ENTRIES,
   CLIMATE_VARIABLE_OPTIONS,
   CLIMATE_VARIABLE_SELECT_OPTIONS,
+  DEFAULT_SELECTIONS,
   defaultThresholdForKind,
   EH_METRICS_STAC_COLLECTION_ID,
   getHeatMetric,
@@ -11,6 +12,7 @@ import {
   isAllowedThreshold,
   isContiguous,
   parseThresholdNumber,
+  resolveSelections,
   thresholdKindFor,
   thresholdTokenFor,
   thresholdValuesFor,
@@ -20,6 +22,28 @@ import {
 function rangeOf(values: readonly number[]): [number, number] {
   return [values[0], values[values.length - 1]];
 }
+
+describe("resolveSelections", () => {
+  it("fills unspecified fields from the tool defaults", () => {
+    expect(resolveSelections({ location: "Imperial", threshold: "100F" })).toEqual({
+      ...DEFAULT_SELECTIONS,
+      location: "Imperial",
+      threshold: "100F",
+    });
+  });
+
+  it("uses the metric's own default threshold when only the metric is set", () => {
+    expect(resolveSelections({ climateVariable: "warm-nights" }).threshold).toBe("70F");
+  });
+
+  it("rejects values the tool does not offer", () => {
+    expect(() => resolveSelections({ location: "Imperal" })).toThrow(/Imperal/);
+    expect(() => resolveSelections({ threshold: "200F" })).toThrow(/200F/);
+    expect(() => resolveSelections({ climateVariable: "humidity" })).toThrow(/humidity/);
+    expect(() => resolveSelections({ duration: "30" })).toThrow(/30/);
+    expect(() => resolveSelections({ spatialAggregation: "zip_codes" })).toThrow(/zip_codes/);
+  });
+});
 
 describe("threshold helpers", () => {
   it("classifies F tokens as absolute and pctl tokens as relative", () => {
