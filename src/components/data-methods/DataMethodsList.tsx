@@ -75,7 +75,7 @@ export default function DataMethodsList({ entries }: DataMethodsListProps) {
         </div>
       ) : null}
 
-      <p className={styles.count} aria-live="polite">
+      <p className="sr-only" aria-live="polite">
         {results.length === entries.length
           ? `${entries.length} topics`
           : `${results.length} of ${entries.length} topics`}
