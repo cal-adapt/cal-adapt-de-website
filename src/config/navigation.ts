@@ -56,13 +56,11 @@ const dataMethodsPages = [
     id: "data-methods-extreme-heat-days",
     label: "Extreme Heat Days & Warm Nights",
     href: `${DATA_METHODS_HREF}/extreme-heat-days`,
-    featureFlag: "__FF_EXTREME_HEAT_DAYS__",
   },
   {
     id: "data-methods-extreme-heat-season",
     label: "Extreme Heat Season",
     href: `${DATA_METHODS_HREF}/extreme-heat-season`,
-    featureFlag: "__FF_EXTREME_HEAT_DAYS__",
   },
   {
     id: "data-methods-extreme-precipitation",
@@ -78,7 +76,6 @@ const dataMethodsPages = [
     id: "data-methods-heat-waves",
     label: "Heat Waves",
     href: `${DATA_METHODS_HREF}/heat-waves`,
-    featureFlag: "__FF_EXTREME_HEAT_DAYS__",
   },
   {
     id: "data-methods-hdd-cdd",
@@ -142,8 +139,8 @@ export const navLinks = {
     href: "/dashboard/renewables-visualizer",
   },
   /**
-   * Data methods index. Its children are the individual methods pages; each is
-   * hidden along with its tool's feature flag.
+   * Data methods index. Its children are the individual methods pages; a page
+   * with a feature flag is hidden when that flag is off.
    */
   dataMethods: {
     id: "data-methods",
