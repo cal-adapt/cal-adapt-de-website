@@ -6,6 +6,17 @@ import Callout, { type CalloutVariant } from "./Callout";
 
 import mdxStyles from "./MdxContent.module.scss";
 
+const EXPLORE_ACTIONS = (
+  <>
+    <Button href="#" variant="primary" size="small">
+      Explore the Extreme Heat tool
+    </Button>
+    <Button href="#" variant="secondary" size="small">
+      Open the Climate Metrics Map
+    </Button>
+  </>
+);
+
 const meta = {
   title: "Common/Callout",
   component: Callout,
@@ -20,53 +31,51 @@ const meta = {
       </article>
     ),
   ],
-} satisfies Meta;
-
-export default meta;
-
-type Story = StoryObj;
-
-export const Example: Story = {
-  render: () => (
-    <Callout kind="example">
+  argTypes: {
+    kind: { control: "inline-radio", options: ["example", "note", "explore"] },
+    variant: { control: "inline-radio", options: ["blue", "grey"] },
+    label: { control: "text" },
+    title: { control: "text" },
+    actions: { control: false },
+    children: { control: false },
+  },
+  args: {
+    kind: "example",
+    children: (
       <p>
         A day with an average daily temperature of 75 °F has a CDD value of (75 °F - 65 °F) = 10.
         This day is above the heating threshold, so it has an HDD value of 0.
       </p>
-    </Callout>
-  ),
-};
+    ),
+  },
+} satisfies Meta<typeof Callout>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Example: Story = {};
 
 export const NoteWithTitle: Story = {
-  render: () => (
-    <Callout kind="note" title="Why compute the 10th and 90th percentile?">
+  args: {
+    kind: "note",
+    title: "Why compute the 10th and 90th percentile?",
+    children: (
       <p>
         The 10th and 90th percentile values represent the number of extreme heat days on a
         particularly cold year and particularly hot year, respectively.
       </p>
-    </Callout>
-  ),
+    ),
+  },
 };
 
 export const ExploreWithActions: Story = {
-  render: () => (
-    <Callout
-      kind="explore"
-      title="Explore this in the Extreme Heat tool"
-      actions={
-        <>
-          <Button href="#" variant="primary" size="small">
-            Explore the Extreme Heat tool
-          </Button>
-          <Button href="#" variant="secondary" size="small">
-            Open the Climate Metrics Map
-          </Button>
-        </>
-      }
-    >
-      <p>Pick your own location and threshold, or compare counties on the map.</p>
-    </Callout>
-  ),
+  args: {
+    kind: "explore",
+    title: "Explore this in the Extreme Heat tool",
+    actions: EXPLORE_ACTIONS,
+    children: <p>Pick your own location and threshold, or compare counties on the map.</p>,
+  },
 };
 
 const VARIANTS: CalloutVariant[] = ["blue", "grey"];
@@ -87,16 +96,7 @@ export const Variants: Story = {
             kind="explore"
             variant={variant}
             title="Explore this in the Extreme Heat tool"
-            actions={
-              <>
-                <Button href="#" variant="primary" size="small">
-                  Explore the Extreme Heat tool
-                </Button>
-                <Button href="#" variant="secondary" size="small">
-                  Open the Climate Metrics Map
-                </Button>
-              </>
-            }
+            actions={EXPLORE_ACTIONS}
           >
             <p>Pick your own location and threshold, or compare counties on the map.</p>
           </Callout>

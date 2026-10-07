@@ -23,12 +23,12 @@ const DEFAULT_VARIANT: Record<CalloutKind, CalloutVariant> = {
 
 interface CalloutProps {
   kind: CalloutKind;
-  /** Defaults to grey for `example`/`note` and blue for `explore`. */
+  /** Defaults per kind; see `DEFAULT_VARIANT`. */
   variant?: CalloutVariant;
-  /** Overrides the eyebrow text, e.g. "Plain language example". Defaults to the kind's label. */
+  /** Eyebrow text; defaults to the kind's label. */
   label?: string;
   title?: string;
-  /** Buttons or links shown below the body, e.g. a primary and secondary `Button`. */
+  /** Buttons or links rendered below the body. */
   actions?: ReactNode;
   children: ReactNode;
 }

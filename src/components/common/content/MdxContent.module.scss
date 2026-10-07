@@ -59,8 +59,7 @@
     line-height: 1.6;
   }
 
-  // Classless only: authored prose links. Component links (e.g. a `Button` with
-  // `href`) carry their own colours and would otherwise be overridden here.
+  // Classless only, so component links such as `Button` keep their own colours.
   a:not([class]) {
     color: color(blue-4);
     font-size: inherit;
