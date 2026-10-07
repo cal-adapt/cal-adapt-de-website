@@ -9,7 +9,7 @@ import ThermostatOutlinedIcon from "@mui/icons-material/ThermostatOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
 
 import { type IconVariant } from "@/components/common/ui/Icon";
-import { navGroups, type NavLink, navLinks } from "@/config/navigation";
+import { isNavLinkEnabled, navGroups, type NavLink, navLinks } from "@/config/navigation";
 
 export interface DashboardToolAppbarConfig {
   /** Tooltip for the Appbar's right-side icon button (typically opens a side panel). */
@@ -80,6 +80,9 @@ export function getDashboardSidebarItems(): { link: NavLink; icon: ReactNode }[]
       link: tool.navLink,
       icon: tool.sidebarIcon,
     })),
-    { link: navLinks.dataMethods, icon: <DescriptionOutlinedIcon /> },
+    ...[navLinks.dataMethods].filter(isNavLinkEnabled).map((link) => ({
+      link,
+      icon: <DescriptionOutlinedIcon />,
+    })),
   ];
 }

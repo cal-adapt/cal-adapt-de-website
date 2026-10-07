@@ -146,6 +146,7 @@ export const navLinks = {
     id: "data-methods",
     label: "Data Methods",
     href: DATA_METHODS_HREF,
+    featureFlag: "__FF_DATA_METHODS__",
     hideChildrenInSidebar: true,
     persistQuery: false,
     children: dataMethodsPages.filter(isNavLinkEnabled),

@@ -18,6 +18,7 @@ import Link from "@/components/common/ui/Link";
 import { mediaQueries } from "@/config/breakpoints";
 import {
   isNavGroup,
+  isNavLinkEnabled,
   type NavGroup,
   navGroups,
   type NavItem,
@@ -34,10 +35,10 @@ const navIcons: Record<string, React.ReactElement> = {
   tools: <SpaceDashboardIcon />,
 };
 
-/** The Tools menu: every dashboard tool, followed by the Data Methods index. */
+/** The Tools menu: every dashboard tool, followed by the Data Methods index when enabled. */
 const toolsMenu: NavGroup = {
   ...navGroups.tools,
-  links: [...navGroups.tools.links, navLinks.dataMethods],
+  links: [...navGroups.tools.links, ...[navLinks.dataMethods].filter(isNavLinkEnabled)],
 };
 
 const navItems = {
