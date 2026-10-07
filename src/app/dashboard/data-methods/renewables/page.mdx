@@ -1,0 +1,243 @@
+import { SITE_TITLE } from "@/config/constants";
+
+export const metadata = {
+  title: `Data Methods - Solar & Wind Resource Droughts - ${SITE_TITLE}`,
+};
+
+# Solar & Wind Resource Droughts: Data Methods
+
+The steps below describe how the values shown in the tool were
+calculated, from raw climate model output to the final data product.
+
+## Input data
+
+<Specs title="Climate model simulations">
+<Spec label="Description">
+
+Ensemble of 4 bias-adjusted climate model simulations, dynamically downscaled
+using the WRF model for the state of California: `EC-Earth3-r1i1p1f1`,
+`MPI-ESM1-2-HR-r3i1p1f1`, `TaiESM1-r1i1p1f1`, `MIROC6-r1i1p1f1`.
+
+</Spec>
+<Spec label="Spatial resolution">
+
+3 kilometers
+
+</Spec>
+<Spec label="Temporal resolution">
+
+Hourly
+
+</Spec>
+<Spec label="Time period">
+
+1980-2100: the modeled historical period (1980-2014), followed by the SSP3-7.0 scenario (2015-2100)
+
+</Spec>
+<Spec label="Download">
+
+Browse in the <StacBrowserLink collection="wrf-ucla">Cal-Adapt data catalog</StacBrowserLink> (STAC), or download directly from <S3FolderLink folder="wrf/ucla/">cloud storage</S3FolderLink> (AWS).
+
+</Spec>
+</Specs>
+
+## Output data
+
+<Specs title="Resource droughts">
+<Spec label="Description">
+
+The multi-model mean count of resource drought days per month, for each year of the 30-year period at global warming levels of 0.8, 1.5, 2.0, 2.5, and 3.0 °C
+
+</Spec>
+<Spec label="Shown in">
+
+[Renewables Visualizer](/dashboard/renewables-visualizer)
+
+</Spec>
+<Spec label="Format">
+
+Zarr stores at 3 kilometer resolution
+
+</Spec>
+<Spec label="Download">
+
+Download directly from cloud storage (AWS): <S3FolderLink folder="tmp/era/wrf/cae/mm4mean/ssp370/gwl/srdu/">utility solar</S3FolderLink>, <S3FolderLink folder="tmp/era/wrf/cae/mm4mean/ssp370/gwl/srdd/">distributed solar</S3FolderLink>, <S3FolderLink folder="tmp/era/wrf/cae/mm4mean/ssp370/gwl/wrdn/">onshore wind</S3FolderLink>, <S3FolderLink folder="tmp/era/wrf/cae/mm4mean/ssp370/gwl/wrdf/">offshore wind</S3FolderLink>.
+
+</Spec>
+</Specs>
+
+<Specs title="Generation profiles">
+<Spec label="Description">
+
+Generated power (MW) and capacity factor for each simulation, hourly and daily, for the historical and SSP3-7.0 periods
+
+</Spec>
+<Spec label="Shown in">
+
+None (intermediate product)
+
+</Spec>
+<Spec label="Format">
+
+Zarr stores at 3 kilometer resolution
+
+</Spec>
+<Spec label="Download">
+
+Browse in the Cal-Adapt data catalog (STAC), or download directly from cloud storage (AWS):
+
+- Solar: <StacBrowserLink collection="pv-generation">data catalog</StacBrowserLink>, cloud storage (<S3FolderLink bucket="wfclimres" folder="era/pv_utility/">utility</S3FolderLink>, <S3FolderLink bucket="wfclimres" folder="era/pv_distributed/">distributed</S3FolderLink>)
+- Wind: <StacBrowserLink collection="wind-generation">data catalog</StacBrowserLink>, cloud storage (<S3FolderLink bucket="wfclimres" folder="era/windpower_onshore/">onshore</S3FolderLink>, <S3FolderLink bucket="wfclimres" folder="era/windpower_offshore/">offshore</S3FolderLink>)
+
+</Spec>
+</Specs>
+
+## Calculation steps
+
+A solar resource drought refers to periods of daytime cloudiness which result
+in a decrease in the solar radiation used by solar panels to produce
+photovoltaic energy. A wind resource drought refers to periods of still or
+calm winds which result in a decrease in the generated wind power. Under
+guidance from Rinaldi et al., 2021 [@rinaldiWind2021], both are defined using
+the following procedure.
+
+Each global warming level (GWL) is represented by the 30 year time window
+around the year (+/- 15 years) in which each simulation reaches that warming
+level.
+
+<Step n={1} totalSteps={3} title="Reference production">
+
+Calculate the 30-year (centered around the 0.8 °C global warming level) average
+generation potential at each grid cell for each day of the year. This average
+daily quantity is referred to as the **reference production**.
+
+</Step>
+
+<Step n={2} totalSteps={3} title="Resource drought days">
+
+If any day's total generation potential is less than 50% of the reference
+production for that day of the year, it is flagged as a resource drought day.
+
+</Step>
+
+<Step n={3} totalSteps={3} title="Monthly totals">
+
+All resource drought days are summed over each month.
+
+</Step>
+
+## Solar generation profiles
+
+<Specs>
+<Spec label="Generation profiles">
+
+Hourly photovoltaic energy generation potential profiles were simulated with
+the National Laboratory of the Rockies' (NLR, formerly NREL)
+[PVWattsv8](https://developer.nlr.gov/docs/solar/pvwatts/v8/) software, run
+through the Renewable Energy Potential (reV) model, version 0.9.4.
+
+</Spec>
+<Spec label="System design">
+
+For most design characteristics, information from configuration files found
+in [NLR's Renewable Energy Potential (ReV) GitHub repo](https://github.com/NatLabRockies/reV)
+were utilized. Other design characteristics (array type and capacity) are
+informed by an NLR benchmark report [@nrl-solar-cost-report-2021].
+
+</Spec>
+</Specs>
+
+| Parameter             | Utility (front-of-meter)             | Distributed (behind-the-meter)           |
+| --------------------- | ------------------------------------ | ---------------------------------------- |
+| Description           | Typical utility-company installation | Typical residential rooftop installation |
+| Array type            | Single-axis tracking                 | Fixed rooftop mount                      |
+| Installation capacity | 100 MW                               | 10 kW                                    |
+| Tilt                  | None (single-axis tracking)          | 20°                                      |
+
+Shared by both installation types: azimuth 180° (south-facing), no losses
+except snow (snow loss enabled), 96% inverter efficiency, DC to AC ratio of
+1.3, 40% ground cover ratio, standard module type.
+
+## Wind generation profiles
+
+<Specs>
+<Spec label="Generation profiles">
+
+Hourly wind energy generation potential profiles were simulated with the
+National Laboratory of the Rockies' (NLR, formerly NREL)
+[Windpower](https://nrel-pysam.readthedocs.io/en/main/modules/Windpower.html)
+software.
+
+</Spec>
+<Spec label="Turbine design">
+
+Turbine power curves from
+[NLR's Renewable Energy Potential (ReV) GitHub repo](https://github.com/NatLabRockies/reV)
+were utilized.
+
+</Spec>
+</Specs>
+
+| Parameter          | Onshore | Offshore |
+| ------------------ | ------- | -------- |
+| Nameplate capacity | 3 MW    | 8 MW     |
+| Hub height         | 100 m   | 120 m    |
+| Rotor diameter     | 127.5 m | 180 m    |
+
+Shared turbine characteristics: turbine spacing is 8× rotor diameter in the x
+and y directions, with every other row offset by ½ spacing. Max coefficient of
+power: 0.474457866.
+
+The following figures show the power curves and farm layouts for both the
+onshore and offshore wind power modules.
+
+<TurbinePowerCurve />
+<WindFarmLayout />
+
+## Land use exclusions
+
+Generation potential was not simulated at all grid points in the domain due to
+land use or land cover restrictions. The following tables summarize the relevant land use exclusions for the
+PVWattsv8 and Windpower simulations under each installation type. In other
+words, if a grid cell meets any of these criteria, it was excluded from the
+indicated simulations.
+
+**Solar**
+
+| Restriction                                                                  | Utility PV | Distributed PV |
+| ---------------------------------------------------------------------------- | ---------- | -------------- |
+| Federal and state protected lands                                            | ✓          | ✓              |
+| Slope > 20%                                                                  | ✓          |                |
+| High intensity urban (row houses, apartment buildings, commercial buildings) | ✓          |                |
+| Medium intensity urban (single family homes)                                 |            |                |
+| Open water                                                                   | ✓          | ✓              |
+
+**Wind**
+
+| Restriction                                                                  | Onshore | Offshore |
+| ---------------------------------------------------------------------------- | ------- | -------- |
+| Federal and state protected lands                                            | ✓       | ✓        |
+| Slope > 20%                                                                  | ✓       | ✓        |
+| High intensity urban (row houses, apartment buildings, commercial buildings) | ✓       | ✓        |
+| Medium intensity urban (single family homes)                                 | ✓       | ✓        |
+| Open water                                                                   | ✓       |          |
+
+Geospatial data sources used to build the exclusion masks:
+
+- **Federal and state protected lands:** [Protected Areas Database of the United States (PAD-US) 3.0 (ver. 2.0, March 2023)](https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download)
+- **Slope > 20%:** [LandFire, Version 2.2.0, Slope Percent Rise](https://www.landfire.gov/version_download.php)
+- **High/medium intensity urban:** [NLCD land cover](https://www.usgs.gov/centers/eros/news/nlcd-2021-now-available)
+- **Open water:** masked with the WRF domain's land-sea mask
+
+The exclusion datasets are available from cloud storage (AWS):
+
+- The <S3FolderLink bucket="wfclimres" folder="era/resource_data/land_use_restrictions/">geospatial files</S3FolderLink> (`.gpkg` format) used to create the land use and land cover exclusion masks
+- The <S3FolderLink bucket="wfclimres" folder="era/resource_data/d03/static_files/">gridded datasets</S3FolderLink> with the binary land use and land cover restriction masks (`coord_ds_d03_all_restrictions.zarr`)
+
+<hr />
+
+## References
+
+[^ref]
+
+<CitationBox title="Solar & Wind Resource Droughts: Data Methods" />

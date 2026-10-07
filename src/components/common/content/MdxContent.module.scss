@@ -1,5 +1,31 @@
 @use "@/styles/abstracts" as *;
 
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: spacer(8);
+  align-items: start;
+  width: 100%;
+
+  @include breakpoint(large) {
+    grid-template-columns: minmax(0, max-w(content)) 240px;
+  }
+}
+
+// Same treatment as the climate stories' table of contents: a bordered box
+// that sticks beside the article on wide screens.
+.toc {
+  display: none;
+  padding: spacer(4);
+  border: 1px solid color(grey-2);
+
+  @include breakpoint(large) {
+    display: flex;
+    position: sticky;
+    top: spacer(8);
+  }
+}
+
 .content {
   width: 100%;
   min-width: 0;

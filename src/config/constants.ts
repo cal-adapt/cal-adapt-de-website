@@ -18,3 +18,6 @@ export const SITE_URL =
 export const MAP_API_BASE_URL = "https://map.cal-adapt.org";
 
 export const STAC_API_BASE_URL = "https://stac.cal-adapt.org";
+
+/** STAC Browser, a web interface for exploring the catalog served by `STAC_API_BASE_URL`. */
+export const STAC_BROWSER_URL = "https://stac-browser.cal-adapt.org";

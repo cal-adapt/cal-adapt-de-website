@@ -1,0 +1,83 @@
+import { SITE_TITLE } from "@/config/constants";
+
+export const metadata = {
+  title: `Data Methods - Extreme Precipitation - ${SITE_TITLE}`,
+};
+
+# Extreme Precipitation: Data Methods
+
+The steps below describe how the values shown in the tool were
+calculated, from raw climate model output to the final data product.
+
+## Input data
+
+<Specs title="Climate model simulations">
+<Spec label="Description">
+
+Ensemble of 4 bias-adjusted climate model simulations, dynamically downscaled
+using the WRF model for the state of California: `EC-Earth3-r1i1p1f1`,
+`MPI-ESM1-2-HR-r3i1p1f1`, `TaiESM1-r1i1p1f1`, `MIROC6-r1i1p1f1`.
+
+</Spec>
+<Spec label="Variables">
+
+Total daily precipitation, daily snowfall
+
+</Spec>
+<Spec label="Spatial resolution">
+
+3 kilometers
+
+</Spec>
+<Spec label="Temporal resolution">
+
+Daily
+
+</Spec>
+<Spec label="Time period">
+
+1980-2100: the modeled historical period (1980-2014), followed by the SSP3-7.0 scenario (2015-2100)
+
+</Spec>
+<Spec label="Download">
+
+Browse in the <StacBrowserLink collection="wrf-ucla">Cal-Adapt data catalog</StacBrowserLink> (STAC), or download directly from <S3FolderLink folder="wrf/ucla/">cloud storage</S3FolderLink> (AWS).
+
+</Spec>
+</Specs>
+
+## Output data
+
+<Specs title="Gridded data">
+<Spec label="Description">
+
+The 99th percentile of 1-day accumulated precipitation (excluding snowfall), in millimeters, and the change from the historical baseline. Values are given at each grid cell for each global warming level, as the mean, minimum, and maximum across simulations.
+
+</Spec>
+<Spec label="Shown in">
+
+[Climate Metrics Map](/dashboard/climate-metrics-map)
+
+</Spec>
+<Spec label="Format">
+
+Zarr stores at 3 kilometer resolution
+
+</Spec>
+<Spec label="Download">
+
+Browse in the <StacBrowserLink collection="wrf-climate-metrics-map">Cal-Adapt data catalog</StacBrowserLink> (STAC), or download directly from <S3FolderLink folder="wrf/climate-metrics-map/">cloud storage</S3FolderLink> (AWS).
+
+</Spec>
+</Specs>
+
+## Calculation steps
+
+<Callout title="Coming soon">
+
+A step-by-step description of how this variable was calculated, from raw climate
+model output to the final data product, is in progress.
+
+</Callout>
+
+<CitationBox title="Extreme Precipitation: Data Methods" />

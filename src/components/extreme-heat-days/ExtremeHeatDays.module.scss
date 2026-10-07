@@ -71,7 +71,7 @@
   width: 100%;
 
   // Numbered bibliography and in-text citations rendered by rehype-citation;
-  // same formatting as the guidance pages (src/styles/abstracts/_citations.scss).
+  // same formatting as the data methods pages (src/styles/abstracts/_citations.scss).
   :global(.csl-bib-body) {
     @extend %citation-list;
   }

@@ -1,13 +1,11 @@
 import { formatBibliography } from "@/lib/citations/bibliography";
 
-import type { StorySection } from "./StoryTableOfContents";
-
 import styles from "./StoryReferences.module.scss";
 
 export const STORY_REFERENCES_SECTION = {
   id: "references",
   title: "References",
-} as const satisfies StorySection;
+} as const;
 
 interface StoryReferencesProps {
   id?: string;

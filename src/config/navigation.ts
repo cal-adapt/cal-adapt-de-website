@@ -15,6 +15,8 @@ export interface NavLink {
   children?: readonly NavLink[];
   /** When true, child links stay visible even if this item is not the active route. */
   alwaysShowChildren?: boolean;
+  /** When true, children drive breadcrumbs only and are not listed in the sidebar. */
+  hideChildrenInSidebar?: boolean;
   /**
    * When false, child hrefs omit the current URL query string.
    * Defaults to true so tool subnavs keep chart/map selections.
@@ -41,6 +43,57 @@ export function isNavLink(item: NavItem): item is NavLink {
 export function hasNavChildren(link: NavLink): link is NavLink & { children: readonly NavLink[] } {
   return Array.isArray(link.children) && link.children.length > 0;
 }
+
+export function isNavLinkEnabled(link: NavLink): boolean {
+  return link.featureFlag == null || featureFlags[link.featureFlag];
+}
+
+const DATA_METHODS_HREF = "/dashboard/data-methods";
+
+/** Data methods pages, in display order. */
+const dataMethodsPages = [
+  {
+    id: "data-methods-extreme-heat-days",
+    label: "Extreme Heat Days & Warm Nights",
+    href: `${DATA_METHODS_HREF}/extreme-heat-days`,
+    featureFlag: "__FF_EXTREME_HEAT_DAYS__",
+  },
+  {
+    id: "data-methods-heat-waves",
+    label: "Heat Waves",
+    href: `${DATA_METHODS_HREF}/heat-waves`,
+    featureFlag: "__FF_EXTREME_HEAT_DAYS__",
+  },
+  {
+    id: "data-methods-extreme-heat-season",
+    label: "Extreme Heat Season",
+    href: `${DATA_METHODS_HREF}/extreme-heat-season`,
+    featureFlag: "__FF_EXTREME_HEAT_DAYS__",
+  },
+  {
+    id: "data-methods-extreme-precipitation",
+    label: "Extreme Precipitation",
+    href: `${DATA_METHODS_HREF}/extreme-precipitation`,
+  },
+  {
+    id: "data-methods-fire-weather",
+    label: "Fire Weather",
+    href: `${DATA_METHODS_HREF}/fire-weather`,
+  },
+  {
+    id: "data-methods-hdd-cdd",
+    label: "Heating & Cooling Degree Days",
+    href: `${DATA_METHODS_HREF}/hdd-cdd`,
+    featureFlag: "__FF_HDD_CDD__",
+  },
+  {
+    id: "data-methods-renewables",
+    label: "Solar & Wind Resource Droughts",
+    href: `${DATA_METHODS_HREF}/renewables`,
+  },
+] as const satisfies readonly NavLink[];
+
+export type DataMethodsPageId = (typeof dataMethodsPages)[number]["id"];
 
 export const navLinks = {
   home: {
@@ -76,41 +129,29 @@ export const navLinks = {
     label: "Extreme Heat",
     href: "/dashboard/extreme-heat-days",
     featureFlag: "__FF_EXTREME_HEAT_DAYS__",
-    children: [
-      {
-        id: "extreme-heat-days-dashboard",
-        label: "Dashboard",
-        href: "/dashboard/extreme-heat-days",
-      },
-      {
-        id: "extreme-heat-days-guidance",
-        label: "Guidance",
-        href: "/dashboard/extreme-heat-days/guidance",
-      },
-    ],
   },
   hddCdd: {
     id: "hdd-cdd",
     label: "Heating & Cooling Degree Days",
     href: "/dashboard/hdd-cdd",
     featureFlag: "__FF_HDD_CDD__",
-    children: [
-      {
-        id: "hdd-cdd-dashboard",
-        label: "Dashboard",
-        href: "/dashboard/hdd-cdd",
-      },
-      {
-        id: "hdd-cdd-guidance",
-        label: "Guidance",
-        href: "/dashboard/hdd-cdd/guidance",
-      },
-    ],
   },
   renewablesVisualizer: {
     id: "renewables-visualizer",
     label: "Renewables Visualizer",
     href: "/dashboard/renewables-visualizer",
+  },
+  /**
+   * Data methods index. Its children are the individual methods pages; each is
+   * hidden along with its tool's feature flag.
+   */
+  dataMethods: {
+    id: "data-methods",
+    label: "Data Methods",
+    href: DATA_METHODS_HREF,
+    hideChildrenInSidebar: true,
+    persistQuery: false,
+    children: dataMethodsPages.filter(isNavLinkEnabled),
   },
   fourthAssessment: {
     id: "fourth-assessment",
@@ -143,10 +184,6 @@ export const navLinks = {
     external: true,
   },
 } as const satisfies Record<string, NavLink>;
-
-export function isNavLinkEnabled(link: NavLink): boolean {
-  return link.featureFlag == null || featureFlags[link.featureFlag];
-}
 
 export const navGroups = {
   stories: {
