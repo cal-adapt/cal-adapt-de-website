@@ -16,6 +16,9 @@ const IMPERIAL_100F = resolveStoryToolSelections("extreme-heat-days", {
   location: "Imperial",
   threshold: "100F",
 });
+const HEAT_WAVE_FREQUENCY_DEFAULT = resolveStoryToolSelections("extreme-heat-days", {
+  climateVariable: "heat-wave-frequency",
+});
 const HDD_CDD_DEFAULT = resolveStoryToolSelections("hdd-cdd");
 
 const EXTREME_HEAT_TOOL = storyToolCharts["extreme-heat-days"].navLink;
@@ -144,7 +147,7 @@ export default function ExtremeHeatStory() {
           is projected to increase by [X] on average. In [sample location], projections show that by
           mid-century a record breaking [n-day] heatwave is possible.
         </p>
-        <StoryFigure {...FPO_FIGURE} />
+        <StoryToolFigure tool="extreme-heat-days" selections={HEAT_WAVE_FREQUENCY_DEFAULT} />
       </StoryBlock>
 
       <StoryBlock id={WARM_NIGHTS.id} title={WARM_NIGHTS.title}>
