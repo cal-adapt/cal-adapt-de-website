@@ -5,7 +5,7 @@ export const DATA_METHODS_TAGS = [
   "Energy demand",
   "Extreme heat",
   "Precipitation",
-  "Renewables",
+  "Renewable energy",
   "Wildfire",
 ] as const;
 
@@ -112,7 +112,7 @@ const DETAILS_BY_PAGE: Record<DataMethodsPageId, DataMethodsDetails> = {
   "data-methods-renewables": {
     summary:
       "Days per month when solar or wind generation potential falls below half of its historical average for that day of the year.",
-    tags: ["Renewables"],
+    tags: ["Renewable energy"],
     keywords: [
       "Renewables Visualizer",
       "photovoltaic",

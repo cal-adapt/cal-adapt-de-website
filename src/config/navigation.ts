@@ -50,18 +50,12 @@ export function isNavLinkEnabled(link: NavLink): boolean {
 
 const DATA_METHODS_HREF = "/dashboard/data-methods";
 
-/** Data methods pages, in display order. */
+/** Data methods pages, in display order (alphabetical by label). */
 const dataMethodsPages = [
   {
     id: "data-methods-extreme-heat-days",
     label: "Extreme Heat Days & Warm Nights",
     href: `${DATA_METHODS_HREF}/extreme-heat-days`,
-    featureFlag: "__FF_EXTREME_HEAT_DAYS__",
-  },
-  {
-    id: "data-methods-heat-waves",
-    label: "Heat Waves",
-    href: `${DATA_METHODS_HREF}/heat-waves`,
     featureFlag: "__FF_EXTREME_HEAT_DAYS__",
   },
   {
@@ -79,6 +73,12 @@ const dataMethodsPages = [
     id: "data-methods-fire-weather",
     label: "Fire Weather",
     href: `${DATA_METHODS_HREF}/fire-weather`,
+  },
+  {
+    id: "data-methods-heat-waves",
+    label: "Heat Waves",
+    href: `${DATA_METHODS_HREF}/heat-waves`,
+    featureFlag: "__FF_EXTREME_HEAT_DAYS__",
   },
   {
     id: "data-methods-hdd-cdd",

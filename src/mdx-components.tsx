@@ -8,8 +8,6 @@ import SignatureRule from "@/components/common/content/SignatureRule";
 import Spec from "@/components/common/content/Spec";
 import Specs from "@/components/common/content/Specs";
 import StacBrowserLink from "@/components/common/content/StacBrowserLink";
-import Stat from "@/components/common/content/Stat";
-import StatGrid from "@/components/common/content/StatGrid";
 import Step from "@/components/common/content/Step";
 import TurbinePowerCurve from "@/components/common/content/TurbinePowerCurve";
 import WindFarmLayout from "@/components/common/content/WindFarmLayout";
@@ -27,8 +25,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     Step,
     Callout,
     CitationBox,
-    Stat,
-    StatGrid,
     Specs,
     Spec,
     StacBrowserLink,

@@ -60,7 +60,7 @@ describe("filterDataMethodsEntries", () => {
     expect(ids("", ["Energy demand"])).toEqual(["cooling-degree-days"]);
     expect(ids("", ["Extreme heat"])).toEqual(["extreme-heat-days", "warm-nights"]);
     expect(ids("", ["Extreme heat", "Energy demand"])).toHaveLength(ENTRIES.length);
-    expect(ids("", ["Renewables"])).toEqual([]);
+    expect(ids("", ["Renewable energy"])).toEqual([]);
   });
 
   it("combines tags with the search query", () => {

@@ -48,7 +48,7 @@ export default function DataMethodsList({ entries }: DataMethodsListProps) {
           id={searchId}
           type="search"
           className={styles.searchInput}
-          placeholder="Search climate variables, e.g. warm nights"
+          placeholder="Search climate variables, e.g. heat waves"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           autoComplete="off"
