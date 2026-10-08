@@ -11,11 +11,11 @@ import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import PageLayout from "@/components/dashboard/PageLayout";
 import { navLinks } from "@/config/navigation";
-import { useHddCddSeries } from "@/hooks/use-hdd-cdd-series";
-import { formatChartExportFilename, formatViewTitle } from "@/lib/hdd-cdd/format";
-import { getMetric, type HddCddSelections, regionLabelFor, SSP370 } from "@/lib/hdd-cdd/options";
+import { useStacSeries } from "@/hooks/use-stac-series";
+import { formatChartExportFilename } from "@/lib/hdd-cdd/format";
+import { type HddCddSelections, regionLabelFor } from "@/lib/hdd-cdd/options";
 import { selectionsFromSearchParams, selectionsToSearchParams } from "@/lib/hdd-cdd/search-params";
-import { hasRenderableSeries } from "@/lib/hdd-cdd/series";
+import { fetchHddCddSeries, hasRenderableSeries, searchFiltersKey } from "@/lib/hdd-cdd/series";
 import { exportSvgAsPng } from "@/utils/export-chart";
 
 import ChartView from "./ChartView";
@@ -49,7 +49,6 @@ export default function HddCdd() {
   const searchParams = useSearchParams();
 
   const selections = useMemo(() => selectionsFromSearchParams(searchParams), [searchParams]);
-  const viewTitle = formatViewTitle(selections);
   const locationLabel = regionLabelFor(selections);
 
   const handleSelectionsChange = useCallback(
@@ -60,7 +59,9 @@ export default function HddCdd() {
     [pathname, router]
   );
 
-  const seriesResult = useHddCddSeries(selections);
+  const seriesResult = useStacSeries(searchFiltersKey(selections), (signal) =>
+    fetchHddCddSeries(selections, { signal })
+  );
   const isLoading = seriesResult.status === "loading";
 
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
@@ -124,16 +125,8 @@ export default function HddCdd() {
             </Button>
           </div>
           <ChartView
-            title={viewTitle}
-            series={seriesResult.data}
-            status={seriesResult.status}
-            errorMessage={seriesResult.errorMessage}
-            timedOut={seriesResult.timedOut}
-            onRetry={seriesResult.retry}
-            climateVariable={selections.climateVariable}
-            locationLabel={locationLabel}
-            scenarioLabel={SSP370.label}
-            scenarioColor={getMetric(selections.climateVariable).color}
+            selections={selections}
+            series={seriesResult}
             chartContainerRef={chartContainerRef}
           />
         </div>

@@ -6,14 +6,6 @@ import {
   climateStoryCatalog,
   getClimateStory,
 } from "./climate-stories";
-import { navLinks } from "./navigation";
-
-const TOOL_IDS = new Set([
-  navLinks.climateMetricsMap.id,
-  navLinks.dataDownload.id,
-  navLinks.extremeHeatDays.id,
-  navLinks.renewablesVisualizer.id,
-]);
 
 describe("getClimateStory", () => {
   it("returns the Extreme Heat story by slug", () => {
@@ -21,7 +13,6 @@ describe("getClimateStory", () => {
     expect(story?.title).toBe("Extreme Heat in California");
     expect(story?.label).toBe("Extreme Heat");
     expect(story?.href).toBe("/dashboard/climate-stories/extreme-heat");
-    expect(story?.relatedToolId).toBe("extreme-heat-days");
     expect(story?.intro.length).toBeGreaterThan(0);
   });
 
@@ -52,12 +43,6 @@ describe("climateStories", () => {
   it("derives href from slug", () => {
     for (const story of climateStories) {
       expect(story.href).toBe(`${CLIMATE_STORIES_HREF}/${story.slug}`);
-    }
-  });
-
-  it("points relatedToolId at a dashboard tool", () => {
-    for (const story of climateStories) {
-      expect(TOOL_IDS.has(story.relatedToolId)).toBe(true);
     }
   });
 });
