@@ -18,7 +18,6 @@ import {
   formatGlobalWarmingLevel,
   formatGlobalWarmingLevelName,
 } from "@/lib/extreme-heat-days/format";
-import { toSentenceCase } from "@/utils/string";
 
 import styles from "./BarChart.module.scss";
 
@@ -59,9 +58,7 @@ interface HoveredBar {
 export interface BarChartProps {
   globalWarmingLevels: number[];
   values: number[];
-  thresholdLabel: string;
-  locationLabel: string;
-  /** Rendered as SVG text to include in PNG exports. */
+  /** Rendered as SVG text to include in PNG exports; also the chart's accessible name. */
   title: string;
   /** Rendered under the title (also exported), e.g. the threshold and duration. */
   subtitle: string;
@@ -69,29 +66,18 @@ export interface BarChartProps {
   yAxisLabel: string;
   /** Y-axis domain max, already resolved by the caller (see resolveYAxisMax) */
   yAxisMax: number;
-  /** Metric noun for accessible text */
-  accessibleNoun: string;
-  /** Threshold direction for accessible text (e.g., "maximum" or "minimum") */
-  tempExtremum: string;
   /** Unit for bar values/tooltips */
   valueUnit: string;
-  /** Minimum heat-wave length (e.g. "5-day") for metrics keyed by duration. */
-  durationLabel?: string;
 }
 
 export default function BarChart({
   globalWarmingLevels,
   values,
-  thresholdLabel,
-  locationLabel,
   title,
   subtitle,
   yAxisLabel,
   yAxisMax,
-  accessibleNoun,
-  tempExtremum,
   valueUnit,
-  durationLabel,
 }: BarChartProps) {
   const titleId = useId();
   const descId = useId();
@@ -121,11 +107,8 @@ export default function BarChart({
   const valuesKey = values.join(",");
 
   const accessibleDescription =
-    `Bar chart of ${accessibleNoun} per year for ${locationLabel} across ` +
-    `global warming levels of ${globalWarmingLevels.map(formatGlobalWarmingLevel).join(", ")}, ` +
-    (durationLabel
-      ? `counting ${durationLabel} heat waves where the daily ${tempExtremum} temperature reaches ${thresholdLabel} or higher. `
-      : `where the daily ${tempExtremum} temperature reaches ${thresholdLabel} or higher. `) +
+    `Bar chart. ${subtitle}, by global warming level ` +
+    `(${globalWarmingLevels.map(formatGlobalWarmingLevel).join(", ")}). ` +
     `Values: ${globalWarmingLevels
       .map(
         (level, i) =>
@@ -147,9 +130,7 @@ export default function BarChart({
           aria-labelledby={titleId}
           aria-describedby={descId}
         >
-          <title
-            id={titleId}
-          >{`${toSentenceCase(accessibleNoun)} per year by global warming level`}</title>
+          <title id={titleId}>{title}</title>
           <desc id={descId}>{accessibleDescription}</desc>
 
           <Text

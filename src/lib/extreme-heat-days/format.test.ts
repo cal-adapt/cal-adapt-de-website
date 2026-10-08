@@ -56,6 +56,20 @@ describe("formatViewTitle", () => {
   });
 });
 
+describe("heat wave length title and subtitle", () => {
+  const HWL = { ...SELECTIONS, climateVariable: "heat-wave-length" };
+
+  it("titles the chart with the variable name", () => {
+    expect(formatViewTitle(HWL)).toBe(
+      "Heat Wave Length by Global Warming Level: Sacramento County"
+    );
+  });
+
+  it("names the length statistic without a duration", () => {
+    expect(formatViewSubtitle(HWL)).toBe("Median annual mean length of heat waves above 100°F");
+  });
+});
+
 describe("formatViewSubtitle", () => {
   it("names the statistic and an absolute threshold", () => {
     expect(formatViewSubtitle(SELECTIONS)).toBe(
@@ -121,24 +135,51 @@ describe("formatThresholdLabel", () => {
 });
 
 describe("formatChartExportFilename", () => {
-  it("builds a slugified, dated PNG filename with the metric prefix", () => {
-    const date = new Date(2026, 0, 15);
-    expect(formatChartExportFilename("extreme-heat-days", "San Diego", date)).toBe(
-      "extreme-heat-days_san-diego_2026-01-15.png"
+  it("names the metric, aggregation, location, and threshold", () => {
+    expect(formatChartExportFilename({ ...SELECTIONS, location: "San Diego" })).toBe(
+      "extreme-heat-days_county_san-diego_100f.png"
     );
   });
 
-  it("uses the warm-nights prefix for that metric", () => {
-    const date = new Date(2026, 0, 15);
-    expect(formatChartExportFilename("warm-nights", "San Diego", date)).toBe(
-      "warm-nights_san-diego_2026-01-15.png"
+  it("uses the selected metric's prefix and a percentile threshold", () => {
+    expect(
+      formatChartExportFilename({
+        ...SELECTIONS,
+        climateVariable: "warm-nights",
+        threshold: "98pctl",
+      })
+    ).toBe("warm-nights_county_sacramento_98pctl.png");
+  });
+
+  it("includes the duration for metrics that use one", () => {
+    expect(
+      formatChartExportFilename({
+        ...SELECTIONS,
+        climateVariable: "heat-wave-frequency",
+        threshold: "110F",
+      })
+    ).toBe("heat-wave-frequency_county_sacramento_110f_5-day.png");
+  });
+
+  it("leaves the duration out for heat wave length", () => {
+    expect(formatChartExportFilename({ ...SELECTIONS, climateVariable: "heat-wave-length" })).toBe(
+      "heat-wave-length_county_sacramento_100f.png"
     );
+  });
+
+  it("slugifies non-county aggregations and locations", () => {
+    expect(
+      formatChartExportFilename({
+        ...SELECTIONS,
+        spatialAggregation: "forecast_zones",
+        location: "SDG&E",
+      })
+    ).toBe("extreme-heat-days_electricity-forecast-zones_sdg-e_100f.png");
   });
 
   it("falls back to 'unknown' when the location slug is empty", () => {
-    const date = new Date(2026, 0, 15);
-    expect(formatChartExportFilename("extreme-heat-days", "", date)).toBe(
-      "extreme-heat-days_unknown_2026-01-15.png"
+    expect(formatChartExportFilename({ ...SELECTIONS, location: "" })).toBe(
+      "extreme-heat-days_county_unknown_100f.png"
     );
   });
 });

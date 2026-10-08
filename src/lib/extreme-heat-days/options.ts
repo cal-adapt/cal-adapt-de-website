@@ -23,7 +23,7 @@ export interface ExtremeHeatDaysSelections {
 }
 
 /** STAC `variable_id`s of the heat metrics' boundary CSV collections. */
-export type HeatVariableId = "eh_days" | "warm_nights" | "heat_wave_count";
+export type HeatVariableId = "eh_days" | "warm_nights" | "heat_wave_count" | "heat_wave_length";
 
 /** Column names holding the plotted value and its range in a metric's CSVs. */
 export interface HeatCsvColumns {
@@ -33,11 +33,11 @@ export interface HeatCsvColumns {
 }
 
 /**
- * Per-metric configuration. The tool hosts multiple structurally-identical
- * climate variables (Extreme Heat Days, Warm Nights) that differ only in the
- * temperature statistic (`t2max` vs `t2min`), threshold set, and copy. Every
- * metric-specific value flows from this registry rather than being branched on
- * `climateVariable` throughout the app.
+ * Per-metric configuration. The tool hosts several climate variables (Extreme
+ * Heat Days, Warm Nights, Heat Wave Frequency, Heat Wave Length) that share one
+ * chart and set of controls and differ in their data source, thresholds, and
+ * copy. Every metric-specific value flows from this registry rather than being
+ * branched on `climateVariable` throughout the app.
  */
 export interface HeatMetricConfig {
   /** `climateVariable` select value + URL `variable` param. */
@@ -55,9 +55,6 @@ export interface HeatMetricConfig {
   /** Inclusive absolute (°F) slider bounds for this metric. */
   absoluteMinF: number;
   absoluteMaxF: number;
-  /** Selectable relative (percentile) thresholds, ascending. A contiguous run
-   *  renders as a slider; a sparse set (e.g. 95/99) renders as a dropdown. */
-  relativePercentiles: readonly number[];
   /** Default relative threshold token for this metric, e.g. "98pctl". */
   defaultRelativeThreshold: string;
   /** STAC collection holding this metric's boundary CSVs. */
@@ -68,7 +65,10 @@ export interface HeatMetricConfig {
   usesDuration: boolean;
   /** Chart y-axis label. */
   yAxisLabel: string;
-  /** Noun used in accessible chart text, e.g. "warm nights". */
+  /** Plotted statistic that opens the chart subtitle, e.g. "Median annual count". */
+  statisticLabel: string;
+  /** Plural noun for what's measured, used in the subtitle and status messages,
+   *  e.g. "warm nights". */
   accessibleNoun: string;
   /** Unit shown on bar tooltips/values, e.g. "nights". */
   valueUnit: string;
@@ -85,7 +85,9 @@ function inclusiveRange(min: number, max: number): number[] {
   return Array.from({ length: max - min + 1 }, (_, i) => min + i);
 }
 
-const PERCENTILES_90_TO_99 = inclusiveRange(90, 99);
+/** Selectable relative (percentile) thresholds, shared by every metric so a
+ *  percentile selection carries over when switching climate variable. */
+const RELATIVE_PERCENTILES: readonly number[] = inclusiveRange(90, 99);
 
 const EH_METRICS_CSV_COLUMNS: HeatCsvColumns = {
   median: "multimodel_median",
@@ -102,12 +104,12 @@ const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   defaultThreshold: "100F",
   absoluteMinF: 80,
   absoluteMaxF: 135,
-  relativePercentiles: PERCENTILES_90_TO_99,
   defaultRelativeThreshold: "98pctl",
   collectionId: EH_METRICS_STAC_COLLECTION_ID,
   csvColumns: EH_METRICS_CSV_COLUMNS,
   usesDuration: false,
   yAxisLabel: "Number of Extreme Heat Days per Year",
+  statisticLabel: "Median annual count",
   accessibleNoun: "extreme heat days",
   valueUnit: "days",
   thresholdTooltip: "The maximum temperature threshold used to determine an extreme heat day.",
@@ -123,12 +125,12 @@ const WARM_NIGHTS_METRIC: HeatMetricConfig = {
   defaultThreshold: "70F",
   absoluteMinF: 65,
   absoluteMaxF: 135,
-  relativePercentiles: PERCENTILES_90_TO_99,
   defaultRelativeThreshold: "98pctl",
   collectionId: EH_METRICS_STAC_COLLECTION_ID,
   csvColumns: EH_METRICS_CSV_COLUMNS,
   usesDuration: false,
   yAxisLabel: "Number of Warm Nights per Year",
+  statisticLabel: "Median annual count",
   accessibleNoun: "warm nights",
   valueUnit: "nights",
   thresholdTooltip: "The minimum overnight temperature threshold used to determine a warm night.",
@@ -137,6 +139,11 @@ const WARM_NIGHTS_METRIC: HeatMetricConfig = {
 
 /** STAC collection for the heat wave frequency boundary CSVs. */
 export const HWF_METRICS_STAC_COLLECTION_ID = "hwf-metrics-mm-boundary-csv";
+
+/** STAC collection for the heat wave length boundary CSVs. */
+export const HWL_METRICS_STAC_COLLECTION_ID = "hwl-metrics-mm-boundary-csv";
+
+const HEAT_WAVE_CSV_COLUMNS: HeatCsvColumns = { median: "median", p10: "p10", p90: "p90" };
 
 const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
   value: "heat-wave-frequency",
@@ -147,16 +154,40 @@ const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
   defaultThreshold: "110F",
   absoluteMinF: 85,
   absoluteMaxF: 115,
-  relativePercentiles: [95, 99],
   defaultRelativeThreshold: "95pctl",
   collectionId: HWF_METRICS_STAC_COLLECTION_ID,
-  csvColumns: { median: "median", p10: "p10", p90: "p90" },
+  csvColumns: HEAT_WAVE_CSV_COLUMNS,
   usesDuration: true,
   yAxisLabel: "Number of Heat Waves per Year",
+  statisticLabel: "Median annual count",
   accessibleNoun: "heat waves",
   valueUnit: "heat waves",
   thresholdTooltip: "The daily maximum temperature a day must exceed to count toward a heat wave.",
   exportFilenamePrefix: "heat-wave-frequency",
+};
+
+// Heat waves here have a fixed 3-day minimum, so there is no duration control.
+// Years without a heat wave are left out of the data (not counted as zero), so
+// a warming level with no heat waves at all has no value and shows no bar.
+const HEAT_WAVE_LENGTH_METRIC: HeatMetricConfig = {
+  value: "heat-wave-length",
+  variableId: "heat_wave_length",
+  label: "Heat Wave Length",
+  description: "How long heat waves typically last",
+  tempStat: "t2max",
+  defaultThreshold: "100F",
+  absoluteMinF: 85,
+  absoluteMaxF: 115,
+  defaultRelativeThreshold: "95pctl",
+  collectionId: HWL_METRICS_STAC_COLLECTION_ID,
+  csvColumns: HEAT_WAVE_CSV_COLUMNS,
+  usesDuration: false,
+  yAxisLabel: "Annual Mean Heat Wave Length (Days)",
+  statisticLabel: "Median annual mean length",
+  accessibleNoun: "heat waves",
+  valueUnit: "days",
+  thresholdTooltip: "The daily maximum temperature a day must exceed to count toward a heat wave.",
+  exportFilenamePrefix: "heat-wave-length",
 };
 
 /** Metric registry keyed by `climateVariable` value. Order drives dropdown order. */
@@ -164,6 +195,7 @@ export const HEAT_METRICS: Readonly<Record<string, HeatMetricConfig>> = {
   [EXTREME_HEAT_DAYS_METRIC.value]: EXTREME_HEAT_DAYS_METRIC,
   [WARM_NIGHTS_METRIC.value]: WARM_NIGHTS_METRIC,
   [HEAT_WAVE_FREQUENCY_METRIC.value]: HEAT_WAVE_FREQUENCY_METRIC,
+  [HEAT_WAVE_LENGTH_METRIC.value]: HEAT_WAVE_LENGTH_METRIC,
 };
 
 /** A variable listed in the dropdown before it's built; shown disabled. */
@@ -188,12 +220,7 @@ export const CLIMATE_VARIABLE_DROPDOWN_ENTRIES: readonly (HeatMetricConfig | Com
       comingSoon: true,
     },
     HEAT_WAVE_FREQUENCY_METRIC,
-    {
-      value: "heat-wave-length",
-      label: "Heat Wave Length",
-      description: "How long heat waves typically last",
-      comingSoon: true,
-    },
+    HEAT_WAVE_LENGTH_METRIC,
   ];
 
 function isComingSoon(entry: HeatMetricConfig | ComingSoonVariable): entry is ComingSoonVariable {
@@ -238,7 +265,7 @@ export function thresholdValuesFor(
     case "absolute":
       return inclusiveRange(metric.absoluteMinF, metric.absoluteMaxF);
     case "relative":
-      return metric.relativePercentiles;
+      return RELATIVE_PERCENTILES;
     default: {
       const _exhaustive: never = kind;
       return _exhaustive;
@@ -246,15 +273,9 @@ export function thresholdValuesFor(
   }
 }
 
-/** True when the selectable values have no gaps, so a 1-step slider fits. */
-export function isContiguous(values: readonly number[]): boolean {
-  return values.every((value, i) => i === 0 || value === values[i - 1] + 1);
-}
-
 export function parseThresholdNumber(threshold: string): number | null {
-  const match = /^(?<n>\d+)(?<unit>F|pctl)$/.exec(threshold);
-  if (!match?.groups) return null;
-  return Number(match.groups.n);
+  const match = /^(\d+)(?:F|pctl)$/.exec(threshold);
+  return match ? Number(match[1]) : null;
 }
 
 export function thresholdTokenFor(kind: ThresholdKind, value: number): string {
