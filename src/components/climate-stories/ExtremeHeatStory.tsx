@@ -20,6 +20,9 @@ const IMPERIAL_100F = resolveStoryToolSelections("extreme-heat-days", {
 const HEAT_WAVE_FREQUENCY_DEFAULT = resolveStoryToolSelections("extreme-heat-days", {
   climateVariable: "heat-wave-frequency",
 });
+const HEAT_WAVE_LENGTH_DEFAULT = resolveStoryToolSelections("extreme-heat-days", {
+  climateVariable: "heat-wave-length",
+});
 const HDD_CDD_DEFAULT = resolveStoryToolSelections("hdd-cdd");
 
 const EXTREME_HEAT_TOOL = storyToolCharts["extreme-heat-days"].navLink;
@@ -161,6 +164,7 @@ export default function ExtremeHeatStory() {
           mid-century a record breaking [n-day] heatwave is possible.
         </p>
         <StoryToolFigure tool="extreme-heat-days" selections={HEAT_WAVE_FREQUENCY_DEFAULT} />
+        <StoryToolFigure tool="extreme-heat-days" selections={HEAT_WAVE_LENGTH_DEFAULT} />
       </StoryBlock>
 
       <StoryBlock id={WARM_NIGHTS.id} title={WARM_NIGHTS.title}>
