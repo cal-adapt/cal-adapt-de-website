@@ -4,6 +4,7 @@
   width: 100%;
   height: 2px;
   margin-top: spacer(5);
+  margin-bottom: spacer(5);
   border-radius: rounded(pill);
   // Interpolated in OKLCH rather than the default sRGB — sRGB's straight-line
   // RGB lerp desaturates through a muddy grey-brown at the midpoint, while

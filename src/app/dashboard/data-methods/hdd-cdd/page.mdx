@@ -1,0 +1,120 @@
+import { SITE_TITLE } from "@/config/constants";
+
+export const metadata = {
+  title: `Data Methods - Heating & Cooling Degree Days - ${SITE_TITLE}`,
+};
+
+# Heating & Cooling Degree Days: Data Methods
+
+The steps below describe how the values shown in the tool were
+calculated, from raw climate model output to the final data product.
+
+## Input data
+
+<Specs title="Climate model simulations">
+<Spec label="Description">
+
+Ensemble of 4 bias-adjusted climate model simulations, dynamically downscaled using the WRF model for the state of California: `EC-Earth3-r1i1p1f1`, `MPI-ESM1-2-HR-r3i1p1f1`, `TaiESM1-r1i1p1f1`, `MIROC6-r1i1p1f1`.
+
+</Spec>
+<Spec label="Variable">
+
+Average daily air temperature
+
+</Spec>
+<Spec label="Spatial resolution">
+
+3 kilometers
+
+</Spec>
+<Spec label="Temporal resolution">
+
+Daily
+
+</Spec>
+<Spec label="Time period">
+
+1981-2099: the modeled historical period (1981-2014), followed by the SSP3-7.0 scenario (2015-2099). The model data partially covers 1980 and 2100, but HDD and CDD are only computed for complete calendar years.
+
+</Spec>
+<Spec label="Download">
+
+Browse in the <StacBrowserLink collection="wrf-ucla">Cal-Adapt data catalog</StacBrowserLink> (STAC), or download directly from <S3FolderLink folder="wrf/ucla/">cloud storage</S3FolderLink> (AWS).
+
+</Spec>
+</Specs>
+
+## Output data
+
+<Specs title="Regional tables">
+<Spec label="Description">
+
+Heating and cooling degree days for each year, as the mean, minimum, and maximum across simulations
+
+</Spec>
+<Spec label="Shown in">
+
+[Heating & Cooling Degree Days Tool](/dashboard/hdd-cdd)
+
+</Spec>
+<Spec label="Format">
+
+One CSV table per region
+
+</Spec>
+<Spec label="Download">
+
+Browse in the <StacBrowserLink collection="hdd-cdd-metrics-mm-boundary-csv">Cal-Adapt data catalog</StacBrowserLink> (STAC), or download directly from <S3FolderLink folder="wrf/hdd-cdd-tool/multimodel_per_boundary/">cloud storage</S3FolderLink> (AWS).
+
+</Spec>
+</Specs>
+
+## Calculation steps
+
+<Step n={1} totalSteps={5} title="Data retrieval and preprocessing">
+
+Using Cal-Adapt's open source Python library `climakitae`, input data was retrieved. Climate model simulations were retrieved for the modeled historical period (1981-2014) and the future period under the SSP3-7.0 scenario (2015-2099). Inland water was masked from the data to discard artificially high values over water that are not representative of the variable.
+
+</Step>
+
+<Step n={2} totalSteps={5} title="Compute CDD/HDD values">
+
+Cooling degree days (CDDs) are calculated by subtracting the cooling threshold value (65 °F) from each day's average temperature, producing a measurement of how many degrees each day's temperature exceeds the threshold by. Days with an average temperature below the threshold are counted as zero.
+
+Heating degree days are calculated in a similar way by measuring how many degrees each day's average temperature falls below the heating threshold (65 °F). Days with an average temperature above the threshold are counted as zero.
+
+<Callout title="Plain language example">
+
+A day with an average daily temperature of 75 °F has a CDD value of (75 °F - 65 °F) = 10. This day is above the heating threshold, so it has an HDD value of 0.
+
+A day with an average daily temperature of 50 °F has an HDD value of (65 °F - 50 °F) = 15. This day is below the cooling threshold, so it has a CDD value of 0.
+
+</Callout>
+
+<Callout title="Note">
+
+HDD and CDD are computed over a full calendar year, so they are not computed for years with incomplete data. The model data runs from September 1980 to August 2100. As a result, values for this metric are available for 1981–2099, even though the model data partially covers 1980 and 2100.
+
+</Callout>
+
+</Step>
+
+<Step n={3} totalSteps={5} title="Annual sums">
+
+The daily values are summed over each calendar year to produce annual CDDs/HDDs.
+
+</Step>
+
+<Step n={4} totalSteps={5} title="Spatial aggregation">
+
+The gridded data is aggregated by spatial unit (e.g. county, city, etc) by taking a **median** of all the grid cells within the boundary. A median is used to capture the typical value of CDD/HDD within the area of interest without introducing bias from any anomalous grid cells.
+
+</Step>
+
+<Step n={5} totalSteps={5} title="Model mean and range">
+
+For each year of spatially aggregated data, the mean, minimum, and maximum values are taken across the four dynamically downscaled WRF simulations. The multi-model mean is used to plot the timeseries for CDD and HDD, with a shaded area indicating the range between the minimum and maximum model values.
+
+</Step>
+
+<CitationBox title="Heating & Cooling Degree Days: Data Methods" />

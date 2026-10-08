@@ -105,7 +105,7 @@ export const metrics: Metric[] = [
       min_path: "s3://cadcat/wrf/climate-metrics-map/mm4min/ssp370/gwl/ffwige50/d03",
       max_path: "s3://cadcat/wrf/climate-metrics-map/mm4max/ssp370/gwl/ffwige50/d03",
       description:
-        "Absolute median annual number of days with Fosberg Fire Weather Index (FFWI) value greater than 50 (# of days)",
+        "Absolute mean annual number of days with Fosberg Fire Weather Index (FFWI) value of 50 or higher (# of days)",
       short_desc: "How often the weather is conducive for fires in this area (# of days)",
       variable: "ffwige50",
       rescale: "0,365",
@@ -116,7 +116,7 @@ export const metrics: Metric[] = [
       min_path: "s3://cadcat/wrf/climate-metrics-map/mm4min/ssp370/gwl/ffwige50d/d03",
       max_path: "s3://cadcat/wrf/climate-metrics-map/mm4max/ssp370/gwl/ffwige50d/d03",
       description:
-        "Change in median annual number of days with Fosberg Fire Weather Index (FFWI) value greater than 50 (# of days)",
+        "Change in mean annual number of days with Fosberg Fire Weather Index (FFWI) value of 50 or higher (# of days)",
       short_desc: "Change in how often the weather is conducive for fires in this area (# of days)",
       variable: "ffwige50d",
       rescale: "-2,2",
