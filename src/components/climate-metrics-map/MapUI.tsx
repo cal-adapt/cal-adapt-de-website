@@ -25,6 +25,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import HtmlTooltip from "@/components/common/ui/HtmlTooltip";
 import { mediaQueries } from "@/config/breakpoints";
+import { dataMethodsIndexHref } from "@/config/data-methods";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import type { Metric } from "@/data/climate-metrics-map/metrics";
 import { tooltips } from "@/data/tooltips";
@@ -384,14 +385,15 @@ export default function MapUI({
                     extreme precipitation, fire weather index) Each metric provides a unique
                     perspective on how climate change impacts various regions.
                   </p>
-                  (A plain language description of metrics can be found{" "}
-                  <a
-                    href="https://docs.google.com/document/d/19UB672X38z21QlEkieWEwWLwZQWU_L7wMW5zq9bo7tc/edit?usp=sharing"
-                    target="_blank"
-                  >
-                    <span className="underline">here</span>
-                  </a>
-                  )
+                  {dataMethodsIndexHref && (
+                    <>
+                      (A plain language description of metrics can be found{" "}
+                      <a href={dataMethodsIndexHref} target="_blank">
+                        <span className="underline">here</span>
+                      </a>
+                      )
+                    </>
+                  )}
                 </Typography>
                 <Typography id={labelledBy} variant="h6" sx={{ mt: "15px" }}>
                   Interactive Map Features

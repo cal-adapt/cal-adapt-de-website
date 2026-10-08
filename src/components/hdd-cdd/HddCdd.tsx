@@ -9,7 +9,9 @@ import InterpretSection from "@/components/common/content/InterpretSection";
 import Badge from "@/components/common/ui/Badge";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
+import Link from "@/components/common/ui/Link";
 import PageLayout from "@/components/dashboard/PageLayout";
+import { dataMethodsHref } from "@/config/data-methods";
 import { navLinks } from "@/config/navigation";
 import { useStacSeries } from "@/hooks/use-stac-series";
 import { formatChartExportFilename } from "@/lib/hdd-cdd/format";
@@ -22,6 +24,8 @@ import ChartView from "./ChartView";
 import Controls from "./Controls";
 
 import styles from "./HddCdd.module.scss";
+
+const METHODS_HREF = dataMethodsHref("data-methods-hdd-cdd");
 
 const CHART_INFO = (
   <>
@@ -40,6 +44,12 @@ const CHART_INFO = (
         electricity to meet indoor cooling needs.
       </p>
     </Callout>
+    {METHODS_HREF && (
+      <p>
+        For details on how these metrics are calculated, see the{" "}
+        <Link href={METHODS_HREF}>data methods</Link>.
+      </p>
+    )}
   </>
 );
 
