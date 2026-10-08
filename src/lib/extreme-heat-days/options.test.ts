@@ -4,13 +4,15 @@ import {
   CLIMATE_VARIABLE_DROPDOWN_ENTRIES,
   CLIMATE_VARIABLE_OPTIONS,
   CLIMATE_VARIABLE_SELECT_OPTIONS,
+  DEFAULT_SELECTIONS,
   defaultThresholdForKind,
   EH_METRICS_STAC_COLLECTION_ID,
   getHeatMetric,
   HEAT_METRICS,
+  HWL_METRICS_STAC_COLLECTION_ID,
   isAllowedThreshold,
-  isContiguous,
   parseThresholdNumber,
+  resolveSelections,
   thresholdKindFor,
   thresholdTokenFor,
   thresholdValuesFor,
@@ -20,6 +22,28 @@ import {
 function rangeOf(values: readonly number[]): [number, number] {
   return [values[0], values[values.length - 1]];
 }
+
+describe("resolveSelections", () => {
+  it("fills unspecified fields from the tool defaults", () => {
+    expect(resolveSelections({ location: "Imperial", threshold: "100F" })).toEqual({
+      ...DEFAULT_SELECTIONS,
+      location: "Imperial",
+      threshold: "100F",
+    });
+  });
+
+  it("uses the metric's own default threshold when only the metric is set", () => {
+    expect(resolveSelections({ climateVariable: "warm-nights" }).threshold).toBe("70F");
+  });
+
+  it("rejects values the tool does not offer", () => {
+    expect(() => resolveSelections({ location: "Imperal" })).toThrow(/Imperal/);
+    expect(() => resolveSelections({ threshold: "200F" })).toThrow(/200F/);
+    expect(() => resolveSelections({ climateVariable: "humidity" })).toThrow(/humidity/);
+    expect(() => resolveSelections({ duration: "30" })).toThrow(/30/);
+    expect(() => resolveSelections({ spatialAggregation: "zip_codes" })).toThrow(/zip_codes/);
+  });
+});
 
 describe("threshold helpers", () => {
   it("classifies F tokens as absolute and pctl tokens as relative", () => {
@@ -76,10 +100,11 @@ describe("per-metric threshold values", () => {
     expect(absolute).toHaveLength(71);
   });
 
-  it("detects gaps so sparse sets can use a dropdown", () => {
-    expect(isContiguous([90, 91, 92])).toBe(true);
-    expect(isContiguous([95, 99])).toBe(false);
-    expect(isContiguous([])).toBe(true);
+  it("offers the same percentiles on every variable so a selection carries across", () => {
+    for (const metric of Object.values(HEAT_METRICS)) {
+      expect(rangeOf(thresholdValuesFor("relative", metric.value))).toEqual([90, 99]);
+      expect(thresholdValuesFor("relative", metric.value)).toHaveLength(10);
+    }
   });
 
   it("points existing metrics at the eh-metrics collection", () => {
@@ -89,11 +114,11 @@ describe("per-metric threshold values", () => {
 });
 
 describe("heat wave frequency thresholds", () => {
-  it("uses 85-115°F and only the 95th/99th percentiles", () => {
+  it("uses 85-115°F and the 90th-99th percentiles", () => {
     expect(rangeOf(thresholdValuesFor("absolute", "heat-wave-frequency"))).toEqual([85, 115]);
-    expect(thresholdValuesFor("relative", "heat-wave-frequency")).toEqual([95, 99]);
-    expect(isAllowedThreshold("95pctl", "heat-wave-frequency")).toBe(true);
-    expect(isAllowedThreshold("98pctl", "heat-wave-frequency")).toBe(false);
+    expect(isAllowedThreshold("90pctl", "heat-wave-frequency")).toBe(true);
+    expect(isAllowedThreshold("98pctl", "heat-wave-frequency")).toBe(true);
+    expect(isAllowedThreshold("89pctl", "heat-wave-frequency")).toBe(false);
     expect(isAllowedThreshold("120F", "heat-wave-frequency")).toBe(false);
   });
 
@@ -105,6 +130,26 @@ describe("heat wave frequency thresholds", () => {
   it("is selectable", () => {
     const values = CLIMATE_VARIABLE_OPTIONS.map((option) => option.value);
     expect(values).toContain("heat-wave-frequency");
+  });
+});
+
+describe("heat wave length thresholds", () => {
+  it("uses 85-115°F and the 90th-99th percentiles", () => {
+    expect(rangeOf(thresholdValuesFor("absolute", "heat-wave-length"))).toEqual([85, 115]);
+    expect(isAllowedThreshold("90pctl", "heat-wave-length")).toBe(true);
+    expect(isAllowedThreshold("98pctl", "heat-wave-length")).toBe(true);
+    expect(isAllowedThreshold("89pctl", "heat-wave-length")).toBe(false);
+  });
+
+  it("defaults to 100°F, or the 95th percentile for relative", () => {
+    expect(defaultThresholdForKind("heat-wave-length", "absolute")).toBe("100F");
+    expect(defaultThresholdForKind("heat-wave-length", "relative")).toBe("95pctl");
+  });
+
+  it("has no duration control and its own collection", () => {
+    const metric = getHeatMetric("heat-wave-length");
+    expect(metric.usesDuration).toBe(false);
+    expect(metric.collectionId).toBe(HWL_METRICS_STAC_COLLECTION_ID);
   });
 });
 
@@ -144,8 +189,6 @@ describe("climate variable dropdown", () => {
         value: "heat-wave-length",
         label: "Heat Wave Length",
         description: "How long heat waves typically last",
-        disabled: true,
-        hint: "Coming soon",
       },
     ]);
   });
@@ -153,6 +196,5 @@ describe("climate variable dropdown", () => {
   it("keeps coming-soon variables out of the selectable set", () => {
     const values = CLIMATE_VARIABLE_OPTIONS.map((option) => option.value);
     expect(values).not.toContain("extreme-heat-season");
-    expect(values).not.toContain("heat-wave-length");
   });
 });

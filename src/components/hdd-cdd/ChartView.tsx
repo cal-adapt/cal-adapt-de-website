@@ -1,12 +1,9 @@
 "use client";
 
-import { type RefObject, useEffect } from "react";
-
+import ChartFrame, { type StacChartViewProps } from "@/components/common/charts/ChartFrame";
 import Alert from "@/components/common/ui/Alert";
-import Button from "@/components/common/ui/Button";
-import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
-import type { HddCddSeriesStatus } from "@/hooks/use-hdd-cdd-series";
-import { getMetric } from "@/lib/hdd-cdd/options";
+import { formatViewTitle } from "@/lib/hdd-cdd/format";
+import { getMetric, type HddCddSelections, regionLabelFor, SSP370 } from "@/lib/hdd-cdd/options";
 import {
   hasHistoricalData,
   hasRenderableSeries,
@@ -16,116 +13,61 @@ import {
 
 import LineChart from "./LineChart";
 
-import styles from "./ChartView.module.scss";
-
-export interface ChartViewProps {
-  title: string;
-  /** Loaded series for the current location. `null` while loading/erroring/idle. */
-  series: HddCddSeries | null;
-  status: HddCddSeriesStatus;
-  errorMessage: string | null;
-  /** True when the fetch was cancelled for exceeding the data fetch timeout. */
-  timedOut: boolean;
-  /** Re-trigger the data fetch; wired to the error-state "Retry" button. */
-  onRetry: () => void;
-  climateVariable: string;
-  locationLabel: string;
-  scenarioLabel: string;
-  scenarioColor: string;
-  /** Attached to the chart container div so the parent's Download button can
-   *  locate the SVG via a single `querySelector("svg")`. */
-  chartContainerRef?: RefObject<HTMLDivElement | null>;
-}
+export type ChartViewProps = StacChartViewProps<HddCddSelections, HddCddSeries>;
 
 export default function ChartView({
-  title,
-  series,
-  status,
-  errorMessage,
-  timedOut,
-  onRetry,
-  climateVariable,
-  locationLabel,
-  scenarioLabel,
-  scenarioColor,
+  selections,
+  series: { data: series, status, errorMessage, timedOut, retry },
   chartContainerRef,
+  id,
+  labelledBy,
 }: ChartViewProps) {
-  const isLoading = status === "loading";
+  const { climateVariable } = selections;
+  const metric = getMetric(climateVariable);
+  const title = formatViewTitle(selections);
+  const locationLabel = regionLabelFor(selections);
+  const scenarioLabel = SSP370.label;
+  const hasScenario = hasScenarioData(series, climateVariable);
+  const hasHistorical = hasHistoricalData(series, climateVariable);
 
-  useEffect(() => {
-    if (status === "error" && errorMessage) {
-      console.error("[hdd-cdd] fetch failed:", errorMessage);
-    }
-  }, [status, errorMessage]);
-
-  const metricConfig = getMetric(climateVariable);
-  const hasRenderableData = hasRenderableSeries(series, climateVariable);
-
-  const showErrorAlert = status === "error";
-  const showNoDataAlert = status === "success" && !hasRenderableData;
-  const showSourceCitation = status === "success" && hasRenderableData;
-
-  const showPartialWarning =
-    status === "success" &&
-    hasRenderableData &&
-    hasHistoricalData(series, climateVariable) !== hasScenarioData(series, climateVariable);
+  const partialWarning =
+    hasScenario !== hasHistorical ? (
+      <Alert severity="warning" ariaLabel="Incomplete scenario coverage">
+        {hasScenario
+          ? `Historical data is unavailable for ${locationLabel}; showing the ${scenarioLabel} projection only.`
+          : `${scenarioLabel} projection data is unavailable for ${locationLabel}; showing historical data only.`}
+      </Alert>
+    ) : null;
 
   return (
-    <section className={styles.root} aria-label={title} aria-busy={isLoading}>
-      <div ref={chartContainerRef} className={styles.surface}>
-        {hasRenderableData && series && (
-          <LineChart
-            rows={series.rows}
-            climateVariable={climateVariable}
-            locationLabel={locationLabel}
-            title={title}
-            scenarioLabel={scenarioLabel}
-            scenarioColor={scenarioColor}
-          />
-        )}
-        {isLoading && (
-          <div className={styles.loadingState}>
-            <LoadingSpinner label={`Loading ${metricConfig.accessibleNoun} data`} />
-          </div>
-        )}
-      </div>
-
-      {showErrorAlert && (
-        <Alert
-          severity="error"
-          action={
-            <Button type="button" variant="primary" size="small" onClick={onRetry}>
-              Retry
-            </Button>
-          }
-        >
-          {timedOut
-            ? `Loading ${metricConfig.accessibleNoun} data for ${locationLabel} is taking longer than expected. Try again.`
-            : `We couldn't load ${metricConfig.accessibleNoun} data for ${locationLabel}. Check your connection and try again.`}
-        </Alert>
+    <ChartFrame
+      status={status}
+      hasData={hasRenderableSeries(series, climateVariable)}
+      errorMessage={errorMessage}
+      onRetry={retry}
+      loadingLabel={`Loading ${metric.accessibleNoun} data`}
+      errorContent={
+        timedOut
+          ? `Loading ${metric.accessibleNoun} data for ${locationLabel} is taking longer than expected. Try again.`
+          : `We couldn't load ${metric.accessibleNoun} data for ${locationLabel}. Check your connection and try again.`
+      }
+      noDataContent={`No ${metric.accessibleNoun} data is available for ${locationLabel}. Try a different location.`}
+      warningContent={partialWarning}
+      chartContainerRef={chartContainerRef}
+      id={id}
+      labelledBy={labelledBy}
+      ariaLabel={labelledBy ? undefined : title}
+    >
+      {series && (
+        <LineChart
+          rows={series.rows}
+          climateVariable={climateVariable}
+          locationLabel={locationLabel}
+          title={title}
+          scenarioLabel={scenarioLabel}
+          scenarioColor={metric.color}
+        />
       )}
-
-      {showNoDataAlert && (
-        <Alert severity="info" ariaLabel="No data available">
-          No {metricConfig.accessibleNoun} data is available for {locationLabel}. Try a different
-          location.
-        </Alert>
-      )}
-
-      {showPartialWarning && (
-        <Alert severity="warning" ariaLabel="Incomplete scenario coverage">
-          {hasScenarioData(series, climateVariable)
-            ? `Historical data is unavailable for ${locationLabel}; showing the ${scenarioLabel} projection only.`
-            : `${scenarioLabel} projection data is unavailable for ${locationLabel}; showing historical data only.`}
-        </Alert>
-      )}
-
-      {showSourceCitation && (
-        <p className={styles.sourceCitation}>
-          Source: Cal-Adapt. Data: WRF Downscaled CMIP6 Climate Projections (UCLA), WRF Derived
-          Products (Cal-Adapt).
-        </p>
-      )}
-    </section>
+    </ChartFrame>
   );
 }

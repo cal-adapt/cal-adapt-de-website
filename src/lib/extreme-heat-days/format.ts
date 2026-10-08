@@ -1,9 +1,9 @@
-import { formatLocalIsoDate } from "@/utils/date";
 import { toKebabCase } from "@/utils/string";
 
 import {
   type ExtremeHeatDaysSelections,
   getHeatMetric,
+  getSpatialAggregation,
   HEAT_METRICS,
   isAllowedThreshold,
   parseThresholdNumber,
@@ -32,8 +32,8 @@ export function formatViewTitle(selections: ExtremeHeatDaysSelections): string {
   return `${metric.label} by Global Warming Level: ${regionLabelFor(selections)}`;
 }
 
-/** Names the plotted statistic, threshold, and (for heat waves) duration,
- *  e.g. "Median annual count of 5-day heat waves above 110°F". */
+/** Names the plotted statistic, threshold, and (where used) duration, e.g.
+ *  "Median annual count of 5-day heat waves above 110°F". */
 export function formatViewSubtitle(selections: ExtremeHeatDaysSelections): string {
   const metric = getHeatMetric(selections.climateVariable);
   const noun = metric.usesDuration
@@ -41,7 +41,7 @@ export function formatViewSubtitle(selections: ExtremeHeatDaysSelections): strin
     : metric.accessibleNoun;
   const threshold = formatThresholdLabel(selections.threshold);
   const thresholdPhrase = selections.threshold.endsWith("pctl") ? `the ${threshold}` : threshold;
-  return `Median annual count of ${noun} above ${thresholdPhrase}`;
+  return `${metric.statisticLabel} of ${noun} above ${thresholdPhrase}`;
 }
 
 /** e.g. "5" → "5-day". */
@@ -81,17 +81,20 @@ export function formatThresholdLabel(threshold: string): string {
 }
 
 /**
- * File name used when the user downloads the chart as a PNG. Pattern:
- * `<metric-prefix>_<location-slug>_<YYYY-MM-DD>.png`
- * (e.g. `warm-nights_sacramento_2026-01-15.png`).
+ * File name used when the user downloads the chart as a PNG. Names every
+ * selection behind the chart so downloads of different views don't collide:
+ * `<metric-prefix>_<aggregation>_<location>_<threshold>[_<duration>].png`
+ * (e.g. `heat-wave-frequency_county_sacramento_110f_5-day.png`).
+ * The duration is only included for metrics that use one.
  */
-export function formatChartExportFilename(
-  climateVariable: string,
-  location: string,
-  date: Date = new Date()
-): string {
-  const prefix = getHeatMetric(climateVariable).exportFilenamePrefix;
-  const locationSlug = toKebabCase(location) || "unknown";
-  const dateSlug = formatLocalIsoDate(date);
-  return `${prefix}_${locationSlug}_${dateSlug}.png`;
+export function formatChartExportFilename(selections: ExtremeHeatDaysSelections): string {
+  const metric = getHeatMetric(selections.climateVariable);
+  const parts = [
+    metric.exportFilenamePrefix,
+    toKebabCase(getSpatialAggregation(selections.spatialAggregation).label),
+    toKebabCase(selections.location) || "unknown",
+    selections.threshold.toLowerCase(),
+    ...(metric.usesDuration ? [formatDurationLabel(selections.duration)] : []),
+  ];
+  return `${parts.join("_")}.png`;
 }
