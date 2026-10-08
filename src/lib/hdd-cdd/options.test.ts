@@ -3,12 +3,8 @@ import { describe, expect, it } from "vitest";
 import {
   CLIMATE_VARIABLE_OPTIONS,
   DEFAULT_SELECTIONS,
-  defaultLocationFor,
   getMetric,
-  getSpatialAggregation,
-  type HddCddSelections,
-  locationOptionsFor,
-  regionLabelFor,
+  resolveSelections,
 } from "./options";
 
 describe("getMetric", () => {
@@ -34,43 +30,22 @@ describe("CLIMATE_VARIABLE_OPTIONS", () => {
   });
 });
 
-describe("regionLabelFor", () => {
-  it("appends ' County' for the county aggregation", () => {
-    const selections: HddCddSelections = {
-      ...DEFAULT_SELECTIONS,
-      spatialAggregation: "ca_counties",
-      location: "Sacramento",
-    };
-    expect(regionLabelFor(selections)).toBe("Sacramento County");
+describe("resolveSelections", () => {
+  it("returns the defaults when nothing is overridden", () => {
+    expect(resolveSelections({})).toEqual(DEFAULT_SELECTIONS);
   });
 
-  it("uses the raw location name for aggregations without a suffix", () => {
-    const selections: HddCddSelections = {
+  it("uses the aggregation's own default location when only the aggregation is set", () => {
+    expect(resolveSelections({ spatialAggregation: "ca_watersheds" })).toEqual({
       ...DEFAULT_SELECTIONS,
       spatialAggregation: "ca_watersheds",
-      location: "Russian",
-    };
-    expect(regionLabelFor(selections)).toBe("Russian");
-  });
-});
-
-describe("getSpatialAggregation", () => {
-  it("falls back to the county aggregation for an unknown boundary", () => {
-    expect(getSpatialAggregation("not-a-boundary")).toEqual(getSpatialAggregation("ca_counties"));
-  });
-});
-
-describe("locationOptionsFor / defaultLocationFor", () => {
-  it("returns the county options and default for the county aggregation", () => {
-    expect(defaultLocationFor("ca_counties")).toBe("Sacramento");
-    expect(locationOptionsFor("ca_counties")).toContainEqual({
-      value: "Sacramento",
-      label: "Sacramento",
+      location: "Lower Sacramento",
     });
   });
 
-  it("returns a different location set for the watersheds aggregation", () => {
-    expect(defaultLocationFor("ca_watersheds")).toBe("Lower Sacramento");
-    expect(locationOptionsFor("ca_watersheds")).not.toEqual(locationOptionsFor("ca_counties"));
+  it("rejects values the tool does not offer", () => {
+    expect(() => resolveSelections({ climateVariable: "humidity" })).toThrow(/humidity/);
+    expect(() => resolveSelections({ spatialAggregation: "zip_codes" })).toThrow(/zip_codes/);
+    expect(() => resolveSelections({ location: "Imperal" })).toThrow(/Imperal/);
   });
 });
