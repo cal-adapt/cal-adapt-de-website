@@ -15,23 +15,24 @@ import Icon from "@/components/common/ui/Icon";
 import Tabs, { type TabItem } from "@/components/common/ui/Tabs";
 import PageLayout from "@/components/dashboard/PageLayout";
 import { navLinks } from "@/config/navigation";
-import { useExtremeHeatSeries } from "@/hooks/use-extreme-heat-series";
-import {
-  formatChartExportFilename,
-  formatViewSubtitle,
-  formatViewTitle,
-} from "@/lib/extreme-heat-days/format";
-import { type ExtremeHeatDaysSelections, regionLabelFor } from "@/lib/extreme-heat-days/options";
+import { useStacSeries } from "@/hooks/use-stac-series";
+import { formatChartExportFilename } from "@/lib/extreme-heat-days/format";
+import type { ExtremeHeatDaysSelections } from "@/lib/extreme-heat-days/options";
 import {
   selectionsFromSearchParams,
   selectionsToSearchParams,
 } from "@/lib/extreme-heat-days/search-params";
-import { hasRenderableSeries } from "@/lib/extreme-heat-days/series";
+import {
+  fetchExtremeHeatSeries,
+  hasRenderableSeries,
+  searchFiltersKey,
+} from "@/lib/extreme-heat-days/series";
 import { formatIsoDateLong } from "@/utils/date";
 import { exportSvgAsPng } from "@/utils/export-chart";
 
 import ExtremeHeatDaysCopy from "./copy/extreme-heat-days.mdx";
 import HeatWaveFrequencyCopy from "./copy/heat-wave-frequency.mdx";
+import HeatWaveLengthCopy from "./copy/heat-wave-length.mdx";
 import WarmNightsCopy from "./copy/warm-nights.mdx";
 import ChartView from "./ChartView";
 import Controls from "./Controls";
@@ -60,6 +61,7 @@ const COPY_BY_VARIABLE: Record<string, MDXContent> = {
   "extreme-heat-days": ExtremeHeatDaysCopy,
   "warm-nights": WarmNightsCopy,
   "heat-wave-frequency": HeatWaveFrequencyCopy,
+  "heat-wave-length": HeatWaveLengthCopy,
 };
 
 // Render the copy inline: skip the site-wide MDX wrapper (page container + article).
@@ -79,9 +81,6 @@ export default function ExtremeHeatDays() {
   const searchParams = useSearchParams();
 
   const selections = useMemo(() => selectionsFromSearchParams(searchParams), [searchParams]);
-  const viewTitle = formatViewTitle(selections);
-  const viewSubtitle = formatViewSubtitle(selections);
-  const locationLabel = regionLabelFor(selections);
   const VariableCopy =
     COPY_BY_VARIABLE[selections.climateVariable] ?? COPY_BY_VARIABLE["extreme-heat-days"];
 
@@ -95,24 +94,22 @@ export default function ExtremeHeatDays() {
 
   const [view, setView] = useState<ViewMode>("chart");
 
-  const seriesResult = useExtremeHeatSeries(selections);
+  const seriesResult = useStacSeries(searchFiltersKey(selections), (signal) =>
+    fetchExtremeHeatSeries(selections, { signal })
+  );
   const isLoading = seriesResult.status === "loading";
 
   // Chart export plumbing; the button lives in the tabs row here but the
   // SVG it exports is rendered by `ChartView`.
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
   const canExportChart = hasRenderableSeries(seriesResult.data);
-  const exportLocationLabel = seriesResult.data?.location || selections.location;
   const handleExportChart = useCallback(() => {
     const svg = chartContainerRef.current?.querySelector<SVGSVGElement>("svg");
     if (!svg) return;
-    exportSvgAsPng(
-      svg,
-      formatChartExportFilename(selections.climateVariable, exportLocationLabel)
-    ).catch((error) => {
+    exportSvgAsPng(svg, formatChartExportFilename(selections)).catch((error) => {
       console.error("[extreme-heat-days] chart export failed:", error);
     });
-  }, [selections.climateVariable, exportLocationLabel]);
+  }, [selections]);
 
   return (
     <PageLayout
@@ -130,8 +127,9 @@ export default function ExtremeHeatDays() {
       <div className={styles.intro}>
         <p className={styles.introCopy}>
           Explore how extreme heat in California is projected to change as the climate warms. Choose
-          a heat metric, a temperature threshold, and a location to see how often that heat is
-          projected to occur each year at different levels of global warming.
+          a climate variable, a temperature threshold, and a location to see how often extreme heat
+          is projected to occur, or how long heat waves are projected to last, at different levels
+          of global warming.
         </p>
       </div>
 
@@ -162,17 +160,8 @@ export default function ExtremeHeatDays() {
           <ChartView
             id={CHART_TAB.panelId}
             labelledBy={CHART_TAB.tabId}
-            title={viewTitle}
-            subtitle={viewSubtitle}
-            series={seriesResult.data}
-            status={seriesResult.status}
-            errorMessage={seriesResult.errorMessage}
-            timedOut={seriesResult.timedOut}
-            onRetry={seriesResult.retry}
-            climateVariable={selections.climateVariable}
-            threshold={selections.threshold}
-            duration={selections.duration}
-            locationLabel={locationLabel}
+            selections={selections}
+            series={seriesResult}
             chartContainerRef={chartContainerRef}
           />
         </div>

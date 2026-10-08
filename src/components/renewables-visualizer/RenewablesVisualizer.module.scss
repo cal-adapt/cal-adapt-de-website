@@ -1,5 +1,10 @@
 @use "@/styles/abstracts" as *;
 
+.betaBadge {
+  vertical-align: 33%;
+  margin-left: spacer(3);
+}
+
 .intro {
   @include flex(column, $gap: spacer(3));
 }

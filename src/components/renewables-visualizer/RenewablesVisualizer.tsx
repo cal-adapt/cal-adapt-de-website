@@ -22,6 +22,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import clsx from "clsx";
 
 import Alert from "@/components/common/ui/Alert";
+import Badge from "@/components/common/ui/Badge";
 import Button from "@/components/common/ui/Button";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import PageLayout from "@/components/dashboard/PageLayout";
@@ -349,12 +350,22 @@ export default function RenewablesViz() {
   }, []);
 
   return (
-    <PageLayout title={navLinks.renewablesVisualizer.label}>
+    <PageLayout
+      title={
+        <>
+          {navLinks.renewablesVisualizer.label}
+          <Badge variant="blue" size="lg" className={styles.betaBadge}>
+            Beta
+          </Badge>
+        </>
+      }
+      citationTitle={navLinks.renewablesVisualizer.label}
+    >
       <Box className={styles.intro} style={{ maxWidth: "860px" }}>
         <Typography variant="body1" aria-label="Description of the tool">
           This tool shows when there are likely to be significant reductions in solar or wind energy
           availability in the future. To be more specific, it shows the number of wind or solar
-          resource drought days (less than 40% average generation) per month throughout a
+          resource drought days (less than 50% average generation) per month throughout a
           representative 30-year period.{" "}
         </Typography>
         <Typography variant="body1">

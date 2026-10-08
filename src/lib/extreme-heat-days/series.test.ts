@@ -10,6 +10,7 @@ import {
   EH_METRICS_STAC_COLLECTION_ID,
   type ExtremeHeatDaysSelections,
   HWF_METRICS_STAC_COLLECTION_ID,
+  HWL_METRICS_STAC_COLLECTION_ID,
 } from "./options";
 import {
   buildSearchFilters,
@@ -457,5 +458,68 @@ describe("heat wave frequency", () => {
     expect(series.median).toEqual([3.0, 4.875]);
     expect(series.p10).toEqual([1.5, 2.0]);
     expect(series.p90).toEqual([5.0, 8.0]);
+  });
+});
+
+describe("heat wave length", () => {
+  const HWL_SELECTIONS: ExtremeHeatDaysSelections = {
+    ...DEFAULT_SELECTIONS,
+    climateVariable: "heat-wave-length",
+    threshold: "115F",
+    location: "Humboldt",
+  };
+
+  beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
+  it("searches the hwl collection by variable, boundary, and threshold only", () => {
+    expect(buildSearchFilters(HWL_SELECTIONS)).toEqual({
+      collectionFilter: `collection='${HWL_METRICS_STAC_COLLECTION_ID}'`,
+      variableFilter: "variable_id='heat_wave_length'",
+      boundaryFilter: "boundary='ca_counties'",
+      thresholdNameFilter: "threshold_name='t2max_ge115F'",
+    });
+  });
+
+  it("reads the CSV and leaves warming levels without heat waves as NaN", async () => {
+    const prefix =
+      "s3://cadcat/wrf/heat-wave-length/multimodel_per_boundary/ca_counties/gwl/csv/t2max_ge115F/";
+    const csvUrl =
+      "https://cadcat.s3.amazonaws.com/wrf/heat-wave-length/multimodel_per_boundary/ca_counties/gwl/csv/t2max_ge115F/Humboldt_County_t2max_ge115F.csv";
+    server.use(
+      http.get(`${STAC_API_BASE_URL}/search`, () =>
+        HttpResponse.json({
+          type: "FeatureCollection",
+          links: [],
+          features: [
+            {
+              type: "Feature",
+              id: "hwl-metrics-mm-boundary-csv-ca_counties-t2max_ge115F",
+              geometry: null,
+              links: [],
+              assets: { data: { href: prefix } },
+              properties: {},
+            },
+          ],
+        })
+      ),
+      // Matches the real file: no heat waves at 0.8°C, so its values are blank.
+      http.get(csvUrl, () =>
+        HttpResponse.text(
+          [
+            "warming_level,median,median_change_signal,p10,p10_change_signal,p90,p90_change_signal,region_name",
+            "0.8,,,,,,,Humboldt County",
+            "2.0,3.5,0.0,3.0,0.0,4.0,0.0,Humboldt County",
+          ].join("\n")
+        )
+      )
+    );
+
+    const series = await fetchExtremeHeatSeries(HWL_SELECTIONS);
+
+    expect(series.variableId).toBe("heat_wave_length");
+    expect(series.sourceCsvUrl).toBe(csvUrl);
+    expect(series.median).toEqual([NaN, 3.5]);
   });
 });

@@ -17,13 +17,13 @@
 .loadingState {
   @include flex(row, center, center);
   width: 100%;
-  // Should match LineChart's .chartContainer box to prevent layout shift
+  // Should match the charts' .chartContainer box to prevent layout shift
   aspect-ratio: 2 / 1;
   min-height: 340px;
   max-height: 480px;
 }
 
-.sourceCitation {
+.source {
   @include type-item(small);
   margin: 0;
   color: color(grey-4);

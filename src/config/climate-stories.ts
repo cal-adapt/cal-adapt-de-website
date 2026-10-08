@@ -1,12 +1,5 @@
 export const CLIMATE_STORIES_HREF = "/dashboard/climate-stories";
 
-/** Callout can link to related tools, defined below. */
-export type ClimateStoryRelatedToolId =
-  | "climate-metrics-map"
-  | "data-download-tool"
-  | "extreme-heat-days"
-  | "renewables-visualizer";
-
 interface ClimateStoryBase {
   /** Reserved URL segment; only published stories get a route. */
   slug: string;
@@ -25,7 +18,6 @@ export interface ClimateStory extends ClimateStoryBase {
   isNew?: boolean;
   /** "In this story" blurb on the story page. */
   intro: string;
-  relatedToolId: ClimateStoryRelatedToolId;
 }
 
 /** Catalog-only teaser: no route, nav entry, or sitemap entry. */
@@ -52,7 +44,6 @@ const climateStoryDefinitions = [
       "Extreme heat events cause some of the most severe impacts from climate change in California. These events create public health risks, threaten critical infrastructure, and drive electricity use that strains the limits of the electrical grid. Understanding how the hazards from extreme heat will continue to evolve with climate change is essential to planners across California.",
     intro:
       "This page provides an overview of some of the ways that extreme heat is projected to impact California in the coming decades, and highlights how the data and tools on Cal-Adapt can be used to learn about these projected changes. As you move through the page, explore the interactive visualizations to see how extreme heat will impact your community.",
-    relatedToolId: "extreme-heat-days",
   },
   {
     status: "coming-soon",
