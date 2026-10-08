@@ -86,6 +86,7 @@ export default function HddCdd() {
           </Badge>
         </>
       }
+      citationTitle={navLinks.hddCdd.label}
     >
       <BetaFeedbackAlert />
 
