@@ -1,0 +1,15 @@
+@use "@/styles/abstracts" as *;
+
+.panel {
+  @include flex(column, flex-start, stretch, spacer(2));
+  padding: spacer(4) spacer(5);
+  border: 1px solid color(grey-2);
+  border-radius: rounded(1);
+  background: color(white);
+}
+
+.eyebrow {
+  @include type-item(label);
+  margin: 0;
+  color: color(grey-4);
+}

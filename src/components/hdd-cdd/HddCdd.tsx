@@ -32,7 +32,7 @@ const CHART_INFO = (
       shows time increasing from 1981 to 2099. The shaded area shows the range in values modeled for
       each year to visualize the uncertainty in these HDD/CDD estimates.
     </p>
-    <Callout title="Example interpretation">
+    <Callout kind="example" label="Example interpretation">
       <p>
         In a selected region, the average number of CDDs per year is 1,400 historically, and it
         increases to around 2,000 CDDs per year on average in 2040-2060. This is roughly a 40%

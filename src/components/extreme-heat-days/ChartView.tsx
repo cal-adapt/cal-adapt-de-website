@@ -3,7 +3,6 @@
 import ChartFrame, { type StacChartViewProps } from "@/components/common/charts/ChartFrame";
 import { resolveYAxisMax } from "@/lib/extreme-heat-days/axis";
 import {
-  formatDurationLabel,
   formatThresholdLabel,
   formatViewSubtitle,
   formatViewTitle,
@@ -30,7 +29,6 @@ export default function ChartView({
   const title = formatViewTitle(selections);
   const locationLabel = regionLabelFor(selections);
   const thresholdLabel = formatThresholdLabel(selections.threshold);
-  const tempExtremum = metric.tempStat === "t2max" ? "maximum" : "minimum";
 
   return (
     <ChartFrame
@@ -54,16 +52,11 @@ export default function ChartView({
         <BarChart
           globalWarmingLevels={series.globalWarmingLevels}
           values={series.median}
-          thresholdLabel={thresholdLabel}
-          locationLabel={locationLabel}
           title={title}
           subtitle={formatViewSubtitle(selections)}
           yAxisLabel={metric.yAxisLabel}
           yAxisMax={resolveYAxisMax(series.median)}
-          accessibleNoun={metric.accessibleNoun}
-          tempExtremum={tempExtremum}
           valueUnit={metric.valueUnit}
-          durationLabel={metric.usesDuration ? formatDurationLabel(selections.duration) : undefined}
         />
       )}
     </ChartFrame>

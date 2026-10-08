@@ -1,3 +1,5 @@
+import Callout from "@/components/common/content/Callout";
+import Button from "@/components/common/ui/Button";
 import { navLinks } from "@/config/navigation";
 
 import StoryToolFigure from "./figures/StoryToolFigure";
@@ -8,7 +10,6 @@ import StoryCitation from "./StoryCitation";
 import StoryDocument from "./StoryDocument";
 import StoryFigure from "./StoryFigure";
 import type { StorySection } from "./StoryTableOfContents";
-import StoryToolCallout from "./StoryToolCallout";
 
 const FPO_FIGURE = { label: "[FPO: Figure]", source: "Lorem ipsum" } as const;
 
@@ -102,18 +103,30 @@ export default function ExtremeHeatStory() {
         <StoryToolFigure tool="extreme-heat-days" selections={IMPERIAL_100F} />
       </StoryBlock>
 
-      <StoryToolCallout
+      <Callout
+        kind="explore"
         title={`Explore this in the ${EXTREME_HEAT_TOOL.label} tool`}
-        body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac eros felis. Duis id commodo dolor. Vestibulum ex velit, egestas ut quam eget, placerat hendrerit orci. Suspendisse ut elit leo. Nunc vel sem id est accumsan imperdiet sit amet a nulla."
-        primary={{
-          href: storyToolHref("extreme-heat-days", IMPERIAL_100F),
-          label: `Explore the ${EXTREME_HEAT_TOOL.label} tool`,
-        }}
-        secondary={{
-          href: navLinks.climateMetricsMap.href,
-          label: "Open the Climate Metrics Map",
-        }}
-      />
+        actions={
+          <>
+            <Button
+              href={storyToolHref("extreme-heat-days", IMPERIAL_100F)}
+              variant="primary"
+              size="small"
+            >
+              {`Explore the ${EXTREME_HEAT_TOOL.label} tool`}
+            </Button>
+            <Button href={navLinks.climateMetricsMap.href} variant="secondary" size="small">
+              Open the Climate Metrics Map
+            </Button>
+          </>
+        }
+      >
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac eros felis. Duis id
+          commodo dolor. Vestibulum ex velit, egestas ut quam eget, placerat hendrerit orci.
+          Suspendisse ut elit leo. Nunc vel sem id est accumsan imperdiet sit amet a nulla.
+        </p>
+      </Callout>
 
       <StoryBlock id={BREAKING_RECORDS.id} title={BREAKING_RECORDS.title}>
         <p>

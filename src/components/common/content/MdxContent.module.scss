@@ -59,7 +59,8 @@
     line-height: 1.6;
   }
 
-  a {
+  // Classless only, so component links such as `Button` keep their own colours.
+  a:not([class]) {
     color: color(blue-4);
     font-size: inherit;
 

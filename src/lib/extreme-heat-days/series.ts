@@ -1,6 +1,7 @@
 // Pipeline for a single region:
-//  1. STAC `/search` filtered by `variable_id`, `boundary`, and `threshold_name`
-//     → exactly 1 item (the combination is unique in the collection).
+//  1. STAC `/search` filtered by `variable_id`, `boundary`, `threshold_name`,
+//     and (for metrics that use one) `duration_name` → exactly 1 item (the
+//     combination is unique in the metric's collection).
 //  2. That item's `data` asset href is an S3 *directory prefix*, not a file.
 //     Normalize `s3://` → `https://` and append the region's CSV filename.
 //  3. Fetch the region CSV (~450 B; `warming_level` + multi-model
@@ -44,9 +45,9 @@ export function durationNameFor(selections: ExtremeHeatDaysSelections): string |
 }
 
 /**
- * Chart-ready shape for one region + metric + threshold. The threshold is baked
- * into the fetched item, so unlike MVP 1.0 there is a single value series
- * (`median`) rather than a column-per-threshold lookup.
+ * Chart-ready shape for one region + metric + threshold (+ duration, for
+ * metrics that use one). Each combination is its own STAC item and CSV, so
+ * there is a single value series (`median`).
  */
 export interface ExtremeHeatSeries {
   variableId: HeatVariableId;
@@ -57,12 +58,12 @@ export interface ExtremeHeatSeries {
   thresholdName: string;
   /** Global warming levels in °C, sorted ascending. */
   globalWarmingLevels: number[];
-  /** Multi-model median count per year; the plotted value. Index-aligned with
-   *  `globalWarmingLevels`. */
+  /** The plotted value: the metric's median annual value (a count per year, or
+   *  days for heat wave length). Index-aligned with `globalWarmingLevels`. */
   median: number[];
-  /** Multi-model 10th percentile (uncertainty band lower bound). */
+  /** 10th percentile (uncertainty band lower bound). */
   p10: number[];
-  /** Multi-model 90th percentile (uncertainty band upper bound). */
+  /** 90th percentile (uncertainty band upper bound). */
   p90: number[];
   /** STAC item this series was derived from. */
   sourceItem: StacItem;
@@ -103,8 +104,8 @@ export function buildSearchFilters(selections: ExtremeHeatDaysSelections): ItemS
 
 /**
  * Stable cache key over the subset of selections that affect the API call.
- * Unlike MVP 1.0, threshold and climate variable are part of the fetch (they
- * select the STAC item/CSV), so all of them belong in the key, along with the
+ * Climate variable, threshold, aggregation, and location each select a
+ * different STAC item/CSV, so all of them belong in the key, along with the
  * duration for metrics that use one.
  */
 export function searchFiltersKey(selections: ExtremeHeatDaysSelections): string {

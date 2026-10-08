@@ -147,7 +147,7 @@ in each year** that the maximum (extreme heat days) or minimum (warm nights)
 daily temperature exceeds the threshold was counted. The exceedance days were
 calculated for each simulation and GWL.
 
-<Callout title="Plain language example">
+<Callout kind="example" label="Plain language example">
 
 If a specific location has a historical 99th percentile maximum temperature of
 97 °F, this represents an "extreme heat" day in the historical period. Step 3 asks:
@@ -166,7 +166,7 @@ The following metrics were calculated for each simulation across the 30-year
 period corresponding to each GWL: median, 10th percentile, 90th percentile. This
 collapses the time dimension, yielding a single value per metric per simulation.
 
-<Callout title="Why compute the 10th and 90th percentile?">
+<Callout kind="note" title="Why compute the 10th and 90th percentile?">
 
 The 10th and 90th percentile values represent the number of extreme heat days on
 a particularly cold year and particularly hot year, respectively. Together,
@@ -186,7 +186,7 @@ For each GWL above the reference period (1.5 °C and higher) and for each metric
 subtracted from the future GWL value. This difference represents the projected
 change in extreme heat days relative to the historical period.
 
-<Callout title="Plain language example">
+<Callout kind="example" label="Plain language example">
 
 If a grid cell experiences 6 days of extreme heat (say, above 105 °F) in the
 historical period, how many **more** days of extreme heat will that same grid
@@ -203,7 +203,7 @@ taking a **median** of all the grid cells within the boundary. A median is used
 to capture the typical number of extreme heat days within the area of interest
 without introducing bias from any anomalous grid cells.
 
-<Callout title="Grid cells at the edge">
+<Callout kind="note" title="Grid cells at the edge">
 
 All grid cells within or touching the spatial boundary were included (even if not
 fully contained within the boundary) to avoid discarding data representative of
