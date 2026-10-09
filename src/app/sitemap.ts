@@ -21,6 +21,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
   }
 
+  if (featureFlags.__FF_GLOSSARY__) {
+    routes.push(navLinks.glossary.href);
+  }
+
   const staticRoutesSitemap = routes.map((route) => ({
     url: `${SITE_URL}${route}`,
     lastModified: new Date(),

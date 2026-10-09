@@ -5,6 +5,7 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import ElectricBoltOutlinedIcon from "@mui/icons-material/ElectricBoltOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
+import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ThermostatOutlinedIcon from "@mui/icons-material/ThermostatOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
 
@@ -83,6 +84,10 @@ export function getDashboardSidebarItems(): { link: NavLink; icon: ReactNode }[]
     ...[navLinks.dataMethods].filter(isNavLinkEnabled).map((link) => ({
       link,
       icon: <DescriptionOutlinedIcon />,
+    })),
+    ...[navLinks.glossary].filter(isNavLinkEnabled).map((link) => ({
+      link,
+      icon: <SortByAlphaOutlinedIcon />,
     })),
   ];
 }

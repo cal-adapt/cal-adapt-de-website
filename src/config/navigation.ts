@@ -152,6 +152,12 @@ export const navLinks = {
     persistQuery: false,
     children: dataMethodsPages.filter(isNavLinkEnabled),
   },
+  glossary: {
+    id: "glossary",
+    label: "Glossary",
+    href: "/dashboard/glossary",
+    featureFlag: "__FF_GLOSSARY__",
+  },
   fourthAssessment: {
     id: "fourth-assessment",
     label: "4th Assessment Cal-Adapt",
