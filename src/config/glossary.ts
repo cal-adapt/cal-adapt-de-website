@@ -28,7 +28,7 @@ export function isGlossaryLinkEnabled(link: GlossaryLink): boolean {
 }
 
 /** Link to the Heating & Cooling Degree Days tool, opened on the given variable. */
-function hddCddToolLink(climateVariable: "cdd" | "hdd"): GlossaryLink {
+export function hddCddToolLink(climateVariable: "cdd" | "hdd"): GlossaryLink {
   const query = selectionsToSearchParams(resolveSelections({ climateVariable })).toString();
 
   return {
@@ -92,7 +92,7 @@ const entries = [
     term: "Global warming level",
     abbreviation: "GWL",
     definition:
-      "A global warming level (GWL) is defined as the difference in the global mean air temperature from the historical period (defined on the Analytics Engine as the pre-industrial period 1850-1900).",
+      "A global warming level (GWL) is defined as the difference in the global mean air temperature from the historical period (defined by Cal-Adapt as the pre-industrial period 1850-1900).",
     details:
       "Global warming levels are frequently used in international policy discussions (for example, goals to constrain global warming to 1.5 or 2 degrees Celsius). The standard global warming levels are 1.5°C, 2°C, 3°C, and 4°C.",
     links: [
