@@ -15,10 +15,7 @@ export interface GlossaryEntry {
   id: string;
   term: string;
   abbreviation?: string;
-  /** One-sentence definition that can stand on its own. */
   definition: string;
-  /** Further explanation, shown straight after the definition. */
-  details?: string;
   /** Tools or references to see also. Keep to two or three. */
   links?: readonly GlossaryLink[];
 }
@@ -57,9 +54,7 @@ const entries = [
     id: "climakitae",
     term: "ClimaKitAE",
     definition:
-      "An open-source Python library that contains functionality to work with cloud-optimized gridded climate data.",
-    details:
-      "It includes basic tools for creating data objects and visualizations, as well as more advanced tools that support various applications of climate data including analyzing extreme events, understanding regional responses at different global warming levels, and describing uncertainty across different simulations. ClimaKitAE stands for “climate toolkit Analytics Engine”.",
+      "An open-source Python library that contains functionality to work with cloud-optimized gridded climate data. It includes basic tools for creating data objects and visualizations, as well as more advanced tools that support various applications of climate data including analyzing extreme events, understanding regional responses at different global warming levels, and describing uncertainty across different simulations. ClimaKitAE stands for “climate toolkit Analytics Engine”.",
     links: [
       { label: "climakitae on GitHub", href: "https://github.com/cal-adapt/climakitae" },
       {
@@ -73,9 +68,7 @@ const entries = [
     term: "Cooling degree days",
     abbreviation: "CDDs",
     definition:
-      "Cooling degree days (CDDs) measure how much and for how long outdoor temperatures exceed a specific threshold, indicating the need for indoor cooling.",
-    details:
-      "For each day, CDDs are calculated as the number of degrees the day’s temperature is above the chosen base temperature; days that do not exceed the threshold are assigned zero. The threshold (commonly 65°F) represents the temperature above which cooling is typically required.",
+      "Cooling degree days (CDDs) measure how much and for how long outdoor temperatures exceed a specific threshold, indicating the need for indoor cooling. For each day, CDDs are calculated as the number of degrees the day’s temperature is above the chosen base temperature; days that do not exceed the threshold are assigned zero. The threshold (commonly 65°F) represents the temperature above which cooling is typically required.",
     links: [hddCddToolLink("cdd"), DEGREE_DAYS_GUIDANCE_LINK],
   },
   {
@@ -83,9 +76,7 @@ const entries = [
     term: "Extreme meteorological year",
     abbreviation: "XMY",
     definition:
-      "A one-year climate profile that provides the same set of weather variables as a Typical Meteorological Year (TMY), but intentionally preserves or characterizes extreme weather conditions rather than median ones.",
-    details:
-      "The Analytics Engine provides two standardized XMY approaches, a Shock XMY and a Persistence XMY, tailored to different planning use cases.",
+      "A one-year climate profile that provides the same set of weather variables as a Typical Meteorological Year (TMY), but intentionally preserves or characterizes extreme weather conditions rather than median ones. The Analytics Engine provides two standardized XMY approaches, a Shock XMY and a Persistence XMY, tailored to different planning use cases.",
     links: [
       whitePaperLink(
         "https://analytics.cal-adapt.org/assets/pdfs/Cal-Adapt-XMY-Methods-White-Paper.pdf"
@@ -100,9 +91,7 @@ const entries = [
     term: "Global warming level",
     abbreviation: "GWL",
     definition:
-      "A global warming level (GWL) is defined as the difference in the global mean air temperature from the historical period (defined by Cal-Adapt as the pre-industrial period 1850-1900).",
-    details:
-      "Global warming levels are frequently used in international policy discussions (for example, goals to constrain global warming to 1.5 or 2 degrees Celsius). The standard global warming levels are 1.5°C, 2°C, 3°C, and 4°C.",
+      "A global warming level (GWL) is defined as the difference in the global mean air temperature from the historical period (defined by Cal-Adapt as the pre-industrial period 1850-1900). Global warming levels are frequently used in international policy discussions (for example, goals to constrain global warming to 1.5 or 2 degrees Celsius). The standard global warming levels are 1.5°C, 2°C, 3°C, and 4°C.",
     links: [
       whitePaperLink("https://analytics.cal-adapt.org/assets/pdfs/Cal-Adapt-GWL-White-Paper.pdf"),
       analyticsEngineLink(
@@ -115,27 +104,21 @@ const entries = [
     term: "Heating degree days",
     abbreviation: "HDDs",
     definition:
-      "Heating degree days (HDDs) quantify how much and for how long outdoor temperatures fall below a specific threshold, reflecting demand for indoor heating.",
-    details:
-      "The base temperature (commonly 65°F) approximates the point at which heating becomes necessary.",
+      "Heating degree days (HDDs) quantify how much and for how long outdoor temperatures fall below a specific threshold, reflecting demand for indoor heating. The base temperature (commonly 65°F) approximates the point at which heating becomes necessary.",
     links: [hddCddToolLink("hdd"), DEGREE_DAYS_GUIDANCE_LINK],
   },
   {
     id: "resource-drought",
     term: "Resource drought",
     definition:
-      "A period during which the generation potential of a renewable energy source falls well below what is typical for that time of year.",
-    details:
-      "A solar resource drought refers to reduced photovoltaic generation; causes can include cloudiness, wildfire smoke, and/or high temperatures. A wind resource drought refers to reduced wind power generation caused by still or calm conditions. Resource droughts are identified relative to a location’s reference production.",
+      "A period during which the generation potential of a renewable energy source falls well below what is typical for that time of year. A solar resource drought refers to reduced photovoltaic generation; causes can include cloudiness, wildfire smoke, and/or high temperatures. A wind resource drought refers to reduced wind power generation caused by still or calm conditions. Resource droughts are identified relative to a location’s reference production.",
     links: [navLinks.renewablesVisualizer],
   },
   {
     id: "standard-year",
     term: "Standard year",
     definition:
-      "A standard year is one year of hourly data that represents a statistical percentile of meteorological conditions for a location over a set amount of time (30 years).",
-    details:
-      "For example, for each hour of the year, the 90th percentile is taken across the same hour of the year from each of the 30 years of data. A standard year can be generated for any climate variable (temperature, solar radiation, etc.), any desired percentile (median and extremes), and for any location of interest.",
+      "A standard year is one year of hourly data that represents a statistical percentile of meteorological conditions for a location over a set amount of time (30 years). For example, for each hour of the year, the 90th percentile is taken across the same hour of the year from each of the 30 years of data. A standard year can be generated for any climate variable (temperature, solar radiation, etc.), any desired percentile (median and extremes), and for any location of interest.",
     links: [
       analyticsEngineLink(
         "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/standard-year.html"
@@ -147,9 +130,7 @@ const entries = [
     term: "Typical meteorological year",
     abbreviation: "TMY",
     definition:
-      "A typical meteorological year (TMY) is a complete set of meteorological variables at a given location for every hour in a year.",
-    details:
-      "TMYs are used in some building and energy system modeling applications to describe typical annual weather conditions at a specific location.",
+      "A typical meteorological year (TMY) is a complete set of meteorological variables at a given location for every hour in a year. TMYs are used in some building and energy system modeling applications to describe typical annual weather conditions at a specific location.",
     links: [
       analyticsEngineLink(
         "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/typical-met-year.html"
@@ -188,9 +169,7 @@ export function filterGlossaryEntries(
   const words = normalize(query).split(" ").filter(Boolean);
 
   return all.filter((entry) => {
-    const text = normalize(
-      `${glossaryEntryLabel(entry)} ${entry.definition} ${entry.details ?? ""}`
-    );
+    const text = normalize(`${glossaryEntryLabel(entry)} ${entry.definition}`);
     return words.every((word) => text.includes(word));
   });
 }

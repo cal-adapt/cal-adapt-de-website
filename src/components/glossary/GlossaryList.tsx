@@ -95,10 +95,7 @@ function GlossaryListEntry({ entry }: { entry: GlossaryEntry }) {
         </Link>
       </dt>
       <dd className={styles.definition}>
-        <p className={styles.text}>
-          {entry.definition}
-          {entry.details ? ` ${entry.details}` : null}
-        </p>
+        <p className={styles.text}>{entry.definition}</p>
         {entry.links && entry.links.length > 0 ? (
           <p className={styles.seeAlso}>
             <span className={styles.seeAlsoLabel}>See also</span>
