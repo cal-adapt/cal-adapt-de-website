@@ -15,14 +15,15 @@ export interface GlossaryEntry {
   id: string;
   term: string;
   abbreviation?: string;
-  /** One-sentence definition, shown on its own in inline term popovers. */
+  /** One-sentence definition that can stand on its own. */
   definition: string;
-  /** Further explanation, shown after the definition on the glossary page only. */
+  /** Further explanation, shown straight after the definition. */
   details?: string;
   /** Tools or references to see also. Keep to two or three. */
   links?: readonly GlossaryLink[];
 }
 
+/** Like `isNavLinkEnabled`, for links that are not full nav entries. */
 export function isGlossaryLinkEnabled(link: GlossaryLink): boolean {
   return link.featureFlag == null || featureFlags[link.featureFlag];
 }
@@ -37,22 +38,21 @@ export function hddCddToolLink(climateVariable: "cdd" | "hdd"): GlossaryLink {
   };
 }
 
-const DEGREE_DAYS_GUIDANCE_LINK: GlossaryLink = {
-  label: "Learn more on the Analytics Engine",
-  href: "https://analytics.cal-adapt.org/scientific-guidance/heat-metrics.html#cooling-and-heating-degree-days",
-};
+/** Link to a guidance page on the Cal-Adapt: Analytics Engine website. */
+function analyticsEngineLink(href: string): GlossaryLink {
+  return { label: "Learn more on the Analytics Engine", href };
+}
+
+/** Link to a Cal-Adapt methods white paper (PDF). */
+function whitePaperLink(href: string): GlossaryLink {
+  return { label: "Cal-Adapt white paper", href };
+}
+
+const DEGREE_DAYS_GUIDANCE_LINK = analyticsEngineLink(
+  "https://analytics.cal-adapt.org/scientific-guidance/heat-metrics.html#cooling-and-heating-degree-days"
+);
 
 const entries = [
-  {
-    id: "cooling-degree-days",
-    term: "Cooling degree days",
-    abbreviation: "CDDs",
-    definition:
-      "Cooling degree days (CDDs) measure how much and for how long outdoor temperatures exceed a specific threshold, indicating the need for indoor cooling.",
-    details:
-      "For each day, CDDs are calculated as the number of degrees the day’s temperature is above the chosen base temperature; days that do not exceed the threshold are assigned zero. The threshold (commonly 65°F) represents the temperature above which cooling is typically required.",
-    links: [hddCddToolLink("cdd"), DEGREE_DAYS_GUIDANCE_LINK],
-  },
   {
     id: "climakitae",
     term: "ClimaKitAE",
@@ -69,6 +69,16 @@ const entries = [
     ],
   },
   {
+    id: "cooling-degree-days",
+    term: "Cooling degree days",
+    abbreviation: "CDDs",
+    definition:
+      "Cooling degree days (CDDs) measure how much and for how long outdoor temperatures exceed a specific threshold, indicating the need for indoor cooling.",
+    details:
+      "For each day, CDDs are calculated as the number of degrees the day’s temperature is above the chosen base temperature; days that do not exceed the threshold are assigned zero. The threshold (commonly 65°F) represents the temperature above which cooling is typically required.",
+    links: [hddCddToolLink("cdd"), DEGREE_DAYS_GUIDANCE_LINK],
+  },
+  {
     id: "extreme-meteorological-year",
     term: "Extreme meteorological year",
     abbreviation: "XMY",
@@ -77,14 +87,12 @@ const entries = [
     details:
       "The Analytics Engine provides two standardized XMY approaches, a Shock XMY and a Persistence XMY, tailored to different planning use cases.",
     links: [
-      {
-        label: "Cal-Adapt white paper",
-        href: "https://analytics.cal-adapt.org/assets/pdfs/Cal-Adapt-XMY-Methods-White-Paper.pdf",
-      },
-      {
-        label: "Learn more on the Analytics Engine",
-        href: "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/extreme-met-year.html",
-      },
+      whitePaperLink(
+        "https://analytics.cal-adapt.org/assets/pdfs/Cal-Adapt-XMY-Methods-White-Paper.pdf"
+      ),
+      analyticsEngineLink(
+        "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/extreme-met-year.html"
+      ),
     ],
   },
   {
@@ -96,14 +104,10 @@ const entries = [
     details:
       "Global warming levels are frequently used in international policy discussions (for example, goals to constrain global warming to 1.5 or 2 degrees Celsius). The standard global warming levels are 1.5°C, 2°C, 3°C, and 4°C.",
     links: [
-      {
-        label: "Cal-Adapt white paper",
-        href: "https://analytics.cal-adapt.org/assets/pdfs/Cal-Adapt-GWL-White-Paper.pdf",
-      },
-      {
-        label: "Learn more on the Analytics Engine",
-        href: "https://analytics.cal-adapt.org/scientific-guidance/global-warming-levels.html",
-      },
+      whitePaperLink("https://analytics.cal-adapt.org/assets/pdfs/Cal-Adapt-GWL-White-Paper.pdf"),
+      analyticsEngineLink(
+        "https://analytics.cal-adapt.org/scientific-guidance/global-warming-levels.html"
+      ),
     ],
   },
   {
@@ -133,10 +137,9 @@ const entries = [
     details:
       "For example, for each hour of the year, the 90th percentile is taken across the same hour of the year from each of the 30 years of data. A standard year can be generated for any climate variable (temperature, solar radiation, etc.), any desired percentile (median and extremes), and for any location of interest.",
     links: [
-      {
-        label: "Learn more on the Analytics Engine",
-        href: "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/standard-year.html",
-      },
+      analyticsEngineLink(
+        "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/standard-year.html"
+      ),
     ],
   },
   {
@@ -148,15 +151,12 @@ const entries = [
     details:
       "TMYs are used in some building and energy system modeling applications to describe typical annual weather conditions at a specific location.",
     links: [
-      {
-        label: "Learn more on the Analytics Engine",
-        href: "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/typical-met-year.html",
-      },
+      analyticsEngineLink(
+        "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/typical-met-year.html"
+      ),
     ],
   },
 ] as const satisfies readonly GlossaryEntry[];
-
-export type GlossaryEntryId = (typeof entries)[number]["id"];
 
 /** All glossary entries, alphabetical by term, with only the links enabled in this environment. */
 export const glossaryEntries: readonly GlossaryEntry[] = entries
@@ -167,10 +167,6 @@ export const glossaryEntries: readonly GlossaryEntry[] = entries
     })
   )
   .sort((a, b) => a.term.localeCompare(b.term));
-
-export function getGlossaryEntry(id: GlossaryEntryId): GlossaryEntry {
-  return glossaryEntries.find((entry) => entry.id === id)!;
-}
 
 /** Term with its abbreviation, e.g. "Cooling degree days (CDDs)". */
 export function glossaryEntryLabel(entry: GlossaryEntry): string {
