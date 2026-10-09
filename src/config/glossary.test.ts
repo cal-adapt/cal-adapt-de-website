@@ -1,10 +1,14 @@
 import { describe, expect, it } from "vitest";
 
+import { navLinks } from "@/config/navigation";
+import { selectionsFromSearchParams } from "@/lib/hdd-cdd/search-params";
+
 import {
   filterGlossaryEntries,
   glossaryEntries,
   glossaryEntryLabel,
   groupGlossaryEntriesByLetter,
+  hddCddToolLink,
   isGlossaryLinkEnabled,
 } from "./glossary";
 
@@ -27,6 +31,18 @@ describe("glossary links", () => {
         expect(isGlossaryLinkEnabled(link), `${entry.id} -> ${link.href}`).toBe(true);
       }
     }
+  });
+});
+
+describe("hddCddToolLink", () => {
+  // Each term's link should open the tool on that term's variable, not the default one.
+  it.each(["cdd", "hdd"] as const)("opens the tool on %s", (climateVariable) => {
+    const [path, query = ""] = hddCddToolLink(climateVariable).href.split("?");
+
+    expect(path).toBe(navLinks.hddCdd.href);
+    expect(selectionsFromSearchParams(new URLSearchParams(query)).climateVariable).toBe(
+      climateVariable
+    );
   });
 });
 
