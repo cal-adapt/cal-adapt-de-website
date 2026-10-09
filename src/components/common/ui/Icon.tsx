@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import {
   AlertTriangle,
+  ArrowUpRight,
   Check,
   CheckCircle2,
   ChevronsLeft,
@@ -16,6 +17,7 @@ import {
   type LucideProps,
   Mail,
   MessageSquareText,
+  Search,
   Trash2,
   Undo2,
   X,
@@ -65,6 +67,8 @@ const LUCIDE_ICON_COMPONENTS = {
   bolt: Zap,
   copy: Copy,
   check: Check,
+  search: Search,
+  externalLink: ArrowUpRight,
 };
 
 export type IconVariant = keyof typeof ICON_COMPONENTS | keyof typeof LUCIDE_ICON_COMPONENTS;
