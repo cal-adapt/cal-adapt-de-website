@@ -48,7 +48,7 @@ export default function Layout({ children }: LayoutProps) {
   const pageLink = getPageLink(selectedPage);
   const subPageLink = getSubPageLink(pageLink, pathname);
 
-  if (isMobile) {
+  if (isMobile && !pageLink.supportsMobile) {
     return (
       <SidePanelProvider>
         <ErrorView
@@ -73,12 +73,14 @@ export default function Layout({ children }: LayoutProps) {
           overflow: "hidden",
         }}
       >
-        <DashboardSidebar
-          open={open}
-          onToggleOpen={toggleLeftDrawer}
-          activeHref={pathname}
-          items={SIDEBAR_ITEMS}
-        />
+        {!isMobile && (
+          <DashboardSidebar
+            open={open}
+            onToggleOpen={toggleLeftDrawer}
+            activeHref={pathname}
+            items={SIDEBAR_ITEMS}
+          />
+        )}
 
         <div
           style={{

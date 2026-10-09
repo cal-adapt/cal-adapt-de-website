@@ -20,6 +20,8 @@ export interface NavLink {
    * Defaults to true so tool subnavs keep chart/map selections.
    */
   persistQuery?: boolean;
+  /** When true, the dashboard renders this section on phones instead of the desktop-only message. */
+  supportsMobile?: boolean;
 }
 
 export interface NavGroup {
@@ -55,6 +57,7 @@ export const navLinks = {
     featureFlag: "__FF_CLIMATE_STORIES__",
     alwaysShowChildren: true,
     persistQuery: false,
+    supportsMobile: true,
     children: climateStories.map((story) => ({
       id: story.id,
       label: story.label ?? story.title,
