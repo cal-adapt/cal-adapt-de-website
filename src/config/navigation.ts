@@ -112,6 +112,12 @@ export const navLinks = {
     label: "Renewables Visualizer",
     href: "/dashboard/renewables-visualizer",
   },
+  glossary: {
+    id: "glossary",
+    label: "Glossary",
+    href: "/dashboard/glossary",
+    featureFlag: "__FF_GLOSSARY__",
+  },
   fourthAssessment: {
     id: "fourth-assessment",
     label: "4th Assessment Cal-Adapt",

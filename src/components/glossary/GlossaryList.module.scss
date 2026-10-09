@@ -1,0 +1,164 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  @include flex(column, flex-start, stretch, spacer(4));
+  width: 100%;
+  max-width: max-w(content);
+}
+
+.search {
+  position: relative;
+  width: 100%;
+}
+
+.searchIcon {
+  position: absolute;
+  top: 50%;
+  left: spacer(3);
+  width: 1.8rem;
+  height: 1.8rem;
+  transform: translateY(-50%);
+  color: color(grey-4);
+  pointer-events: none;
+}
+
+.searchInput {
+  @include form-control;
+  padding-left: calc(spacer(3) * 2 + 1.8rem);
+}
+
+.jump {
+  @include flex(row, flex-start, center, spacer(1));
+  flex-wrap: wrap;
+}
+
+.jumpLink {
+  @include type-item(body);
+  min-width: 3.2rem;
+  padding: spacer(1) spacer(2);
+  border-radius: rounded(1);
+  color: color(blue-4);
+  font-weight: font-weight(semibold);
+  text-align: center;
+  text-decoration: none;
+
+  &:hover {
+    background: color(blue-1);
+    text-decoration: none;
+  }
+}
+
+// The letter sits in a narrow margin column beside its terms.
+.group {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr);
+  gap: spacer(4);
+  padding-top: spacer(5);
+  border-top: 1px solid color(grey-2);
+  // Keep a jumped-to letter clear of the top edge of the scrolling page area.
+  scroll-margin-top: spacer(4);
+}
+
+.letter {
+  @include type-item(heading-4);
+  margin: 0;
+  color: color(blue-4);
+}
+
+.entries {
+  @include flex(column, flex-start, stretch, spacer(6));
+  margin: 0;
+  padding-bottom: spacer(2);
+}
+
+.entry {
+  @include flex(column, flex-start, stretch, spacer(2));
+  scroll-margin-top: spacer(6);
+}
+
+.term {
+  @include type-item(heading-6);
+  margin: 0;
+  color: color(black);
+}
+
+.termLink {
+  font-weight: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: color(blue-4);
+  }
+
+  // The term the URL points at.
+  .entry:target & {
+    color: color(blue-4);
+  }
+}
+
+.definition {
+  @include flex(column, flex-start, stretch, spacer(3));
+  margin: 0;
+  min-width: 0;
+}
+
+.text {
+  @include type-item(body);
+  margin: 0;
+  color: color(black);
+  line-height: 1.6;
+}
+
+.seeAlso {
+  @include flex(row, flex-start, center, spacer(2));
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+// Same small uppercase label as the row labels in the data methods `Specs` sheets.
+.seeAlsoLabel {
+  margin-right: spacer(1);
+  color: color(grey-4);
+  font-family: font-family(label);
+  font-size: 1.2rem;
+  font-weight: font-weight(regular);
+  letter-spacing: letter-spacing(label);
+  text-transform: text-transform(label);
+}
+
+// A pill with an icon, so it reads as something to click rather than as body text.
+.seeAlsoLink {
+  @include flex(row, flex-start, center, spacer(2));
+  @include type-item(small);
+  @include transition("background-color, border-color");
+  display: inline-flex;
+  padding: spacer(1) spacer(3);
+  background: color(white);
+  border: 1px solid color(grey-2);
+  border-radius: rounded(pill);
+  color: color(black);
+  text-decoration: none;
+
+  &:hover {
+    background: color(blue-1);
+    border-color: color(blue-3);
+    text-decoration: none;
+  }
+}
+
+.seeAlsoIcon {
+  display: inline-flex;
+  color: color(blue-4);
+
+  svg {
+    width: 1.6rem;
+    height: 1.6rem;
+    font-size: 1.6rem;
+  }
+}
+
+.empty {
+  @include type-item(body);
+  margin: 0;
+  color: color(grey-4);
+}
