@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  CLIMATE_VARIABLE_DROPDOWN_ENTRIES,
   CLIMATE_VARIABLE_OPTIONS,
   CLIMATE_VARIABLE_SELECT_OPTIONS,
   DEFAULT_SELECTIONS,
   defaultThresholdForKind,
   EH_METRICS_STAC_COLLECTION_ID,
+  EHS_METRICS_STAC_COLLECTION_ID,
   getHeatMetric,
   HEAT_METRICS,
   HWL_METRICS_STAC_COLLECTION_ID,
@@ -154,13 +154,6 @@ describe("heat wave length thresholds", () => {
 });
 
 describe("climate variable dropdown", () => {
-  it("lists every metric exactly once", () => {
-    const metricValues = CLIMATE_VARIABLE_DROPDOWN_ENTRIES.filter(
-      (entry) => !("comingSoon" in entry)
-    ).map((entry) => entry.value);
-    expect([...metricValues].sort()).toEqual(Object.keys(HEAT_METRICS).sort());
-  });
-
   it("orders single hot days/nights before heat waves, with descriptions", () => {
     expect(CLIMATE_VARIABLE_SELECT_OPTIONS).toEqual([
       {
@@ -177,8 +170,6 @@ describe("climate variable dropdown", () => {
         value: "extreme-heat-season",
         label: "Extreme Heat Season",
         description: "When in the year hot days tend to occur",
-        disabled: true,
-        hint: "Coming soon",
       },
       {
         value: "heat-wave-frequency",
@@ -192,9 +183,25 @@ describe("climate variable dropdown", () => {
       },
     ]);
   });
+});
 
-  it("keeps coming-soon variables out of the selectable set", () => {
-    const values = CLIMATE_VARIABLE_OPTIONS.map((option) => option.value);
-    expect(values).not.toContain("extreme-heat-season");
+describe("extreme heat season", () => {
+  it("uses 65-135°F and the 90th-99th percentiles", () => {
+    expect(rangeOf(thresholdValuesFor("absolute", "extreme-heat-season"))).toEqual([65, 135]);
+    expect(isAllowedThreshold("90pctl", "extreme-heat-season")).toBe(true);
+    expect(isAllowedThreshold("99pctl", "extreme-heat-season")).toBe(true);
+    expect(isAllowedThreshold("64F", "extreme-heat-season")).toBe(false);
+  });
+
+  it("defaults to 90°F", () => {
+    expect(defaultThresholdForKind("extreme-heat-season", "absolute")).toBe("90F");
+  });
+
+  it("is selectable, drawn as a heatmap, with no duration and its own collection", () => {
+    expect(CLIMATE_VARIABLE_OPTIONS.map((option) => option.value)).toContain("extreme-heat-season");
+    const metric = getHeatMetric("extreme-heat-season");
+    expect(metric.chartKind).toBe("heatmap");
+    expect(metric.usesDuration).toBe(false);
+    expect(metric.collectionId).toBe(EHS_METRICS_STAC_COLLECTION_ID);
   });
 });

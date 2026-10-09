@@ -128,14 +128,19 @@ export async function searchExtremeHeatItems(
   return calAdaptApi.stac.searchItems(buildSearchFilters(selections), { signal });
 }
 
-/**
- * End-to-end fetch: STAC search → region CSV download → parsed series. Throws if
- * any step fails so the calling hook can surface a single error state.
- */
-export async function fetchExtremeHeatSeries(
+/** A region's raw CSV plus the STAC item and URL it was resolved from. */
+export interface RegionCsv {
+  item: StacItem;
+  csvUrl: string;
+  csvText: string;
+  thresholdName: string;
+}
+
+/** Steps 1-3 of the pipeline: STAC search → region CSV download. */
+export async function fetchRegionCsv(
   selections: ExtremeHeatDaysSelections,
   { signal }: FetchSeriesOptions = {}
-): Promise<ExtremeHeatSeries> {
+): Promise<RegionCsv> {
   const thresholdName = thresholdNameFor(selections);
   const items = await searchExtremeHeatItems(selections, { signal });
   const item = items.features[0];
@@ -147,7 +152,18 @@ export async function fetchExtremeHeatSeries(
 
   const csvUrl = resolveRegionCsvUrl(item, selections, thresholdName);
   const csvText = await fetchCsvText(csvUrl, signal);
+  return { item, csvUrl, csvText, thresholdName };
+}
 
+/**
+ * End-to-end fetch: STAC search → region CSV download → parsed series. Throws if
+ * any step fails so the calling hook can surface a single error state.
+ */
+export async function fetchExtremeHeatSeries(
+  selections: ExtremeHeatDaysSelections,
+  options: FetchSeriesOptions = {}
+): Promise<ExtremeHeatSeries> {
+  const { item, csvUrl, csvText, thresholdName } = await fetchRegionCsv(selections, options);
   return parseRegionCsv(csvText, item, csvUrl, selections, thresholdName);
 }
 
@@ -200,7 +216,11 @@ function parseRegionCsv(
   thresholdName: string
 ): ExtremeHeatSeries {
   const rows = csvParse(text);
-  const columns = getHeatMetric(selections.climateVariable).csvColumns;
+  const metric = getHeatMetric(selections.climateVariable);
+  if (metric.chartKind !== "bar") {
+    throw new Error(`"${metric.value}" is not a per-warming-level series`);
+  }
+  const columns = metric.csvColumns;
 
   // NOTE: The current CSVs repeat each warming level across several rows.
   // Group by warming level and average the values so we plot one point per level.
@@ -220,8 +240,6 @@ function parseRegionCsv(
   const p10 = globalWarmingLevels.map((level) => mean(byLevel.get(level)!.p10));
   const p90 = globalWarmingLevels.map((level) => mean(byLevel.get(level)!.p90));
 
-  const metric = getHeatMetric(selections.climateVariable);
-
   return {
     variableId: metric.variableId,
     boundary: selections.spatialAggregation,
@@ -237,7 +255,7 @@ function parseRegionCsv(
 }
 
 /** Parse a CSV cell to a number, treating missing/empty cells as NaN. */
-function toNumber(raw: string | undefined): number {
+export function toNumber(raw: string | undefined): number {
   if (raw == null || raw === "") return NaN;
   return Number(raw);
 }

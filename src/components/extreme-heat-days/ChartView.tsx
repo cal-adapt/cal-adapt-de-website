@@ -2,7 +2,9 @@
 
 import ChartFrame, { type StacChartViewProps } from "@/components/common/charts/ChartFrame";
 import { resolveYAxisMax } from "@/lib/extreme-heat-days/axis";
+import { hasRenderableChartData, type HeatChartData } from "@/lib/extreme-heat-days/chart-data";
 import {
+  formatSeasonDescription,
   formatThresholdLabel,
   formatViewSubtitle,
   formatViewTitle,
@@ -12,28 +14,29 @@ import {
   getHeatMetric,
   regionLabelFor,
 } from "@/lib/extreme-heat-days/options";
-import { type ExtremeHeatSeries, hasRenderableSeries } from "@/lib/extreme-heat-days/series";
 
 import BarChart from "./BarChart";
+import Heatmap from "./Heatmap";
 
-export type ChartViewProps = StacChartViewProps<ExtremeHeatDaysSelections, ExtremeHeatSeries>;
+export type ChartViewProps = StacChartViewProps<ExtremeHeatDaysSelections, HeatChartData>;
 
 export default function ChartView({
   selections,
-  series: { data: series, status, errorMessage, timedOut, retry },
+  series: { data, status, errorMessage, timedOut, retry },
   chartContainerRef,
   id,
   labelledBy,
 }: ChartViewProps) {
   const metric = getHeatMetric(selections.climateVariable);
   const title = formatViewTitle(selections);
+  const subtitle = formatViewSubtitle(selections);
   const locationLabel = regionLabelFor(selections);
   const thresholdLabel = formatThresholdLabel(selections.threshold);
 
   return (
     <ChartFrame
       status={status}
-      hasData={hasRenderableSeries(series)}
+      hasData={hasRenderableChartData(data)}
       errorMessage={errorMessage}
       onRetry={retry}
       loadingLabel={`Loading ${metric.accessibleNoun} data`}
@@ -48,15 +51,26 @@ export default function ChartView({
       labelledBy={labelledBy}
       ariaLabel={labelledBy ? undefined : title}
     >
-      {series && (
+      {/* Render from the loaded data's kind: for one render after a variable
+          switch, `data` still belongs to the previous variable. */}
+      {data?.kind === "bar" && metric.chartKind === "bar" && (
         <BarChart
-          globalWarmingLevels={series.globalWarmingLevels}
-          values={series.median}
+          globalWarmingLevels={data.series.globalWarmingLevels}
+          values={data.series.median}
           title={title}
-          subtitle={formatViewSubtitle(selections)}
+          subtitle={subtitle}
           yAxisLabel={metric.yAxisLabel}
-          yAxisMax={resolveYAxisMax(series.median)}
+          yAxisMax={resolveYAxisMax(data.series.median)}
           valueUnit={metric.valueUnit}
+        />
+      )}
+      {data?.kind === "heatmap" && metric.chartKind === "heatmap" && (
+        <Heatmap
+          globalWarmingLevels={data.season.globalWarmingLevels}
+          frequencyPercent={data.season.frequencyPercent}
+          title={title}
+          subtitle={subtitle}
+          description={formatSeasonDescription(selections, data.season)}
         />
       )}
     </ChartFrame>

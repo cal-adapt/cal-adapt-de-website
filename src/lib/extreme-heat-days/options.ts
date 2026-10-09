@@ -23,7 +23,12 @@ export interface ExtremeHeatDaysSelections {
 }
 
 /** STAC `variable_id`s of the heat metrics' boundary CSV collections. */
-export type HeatVariableId = "eh_days" | "warm_nights" | "heat_wave_count" | "heat_wave_length";
+export type HeatVariableId =
+  | "eh_days"
+  | "warm_nights"
+  | "frequency_percent"
+  | "heat_wave_count"
+  | "heat_wave_length";
 
 /** Column names holding the plotted value and its range in a metric's CSVs. */
 export interface HeatCsvColumns {
@@ -34,12 +39,12 @@ export interface HeatCsvColumns {
 
 /**
  * Per-metric configuration. The tool hosts several climate variables (Extreme
- * Heat Days, Warm Nights, Heat Wave Frequency, Heat Wave Length) that share one
- * chart and set of controls and differ in their data source, thresholds, and
- * copy. Every metric-specific value flows from this registry rather than being
- * branched on `climateVariable` throughout the app.
+ * Heat Days, Warm Nights, Extreme Heat Season, Heat Wave Frequency, Heat Wave
+ * Length) that share one set of controls and differ in their chart, data
+ * source, thresholds, and copy. Every metric-specific value flows from this
+ * registry rather than being branched on `climateVariable` throughout the app.
  */
-export interface HeatMetricConfig {
+interface HeatMetricBase {
   /** `climateVariable` select value + URL `variable` param. */
   value: string;
   /** STAC `variable_id`. */
@@ -59,24 +64,38 @@ export interface HeatMetricConfig {
   defaultRelativeThreshold: string;
   /** STAC collection holding this metric's boundary CSVs. */
   collectionId: string;
-  /** CSV columns for the plotted value and range. */
-  csvColumns: HeatCsvColumns;
   /** True when items/CSVs are also keyed by a minimum heat-wave duration. */
   usesDuration: boolean;
-  /** Chart y-axis label. */
-  yAxisLabel: string;
   /** Plotted statistic that opens the chart subtitle, e.g. "Median annual count". */
   statisticLabel: string;
   /** Plural noun for what's measured, used in the subtitle and status messages,
    *  e.g. "warm nights". */
   accessibleNoun: string;
-  /** Unit shown on bar tooltips/values, e.g. "nights". */
-  valueUnit: string;
   /** Threshold control tooltip (min- vs max-temp phrasing). */
   thresholdTooltip: string;
   /** PNG export filename prefix. */
   exportFilenamePrefix: string;
 }
+
+/** A metric plotted as one bar per global warming level. */
+export interface BarMetricConfig extends HeatMetricBase {
+  chartKind: "bar";
+  /** CSV columns for the plotted value and range. */
+  csvColumns: HeatCsvColumns;
+  /** Chart y-axis label. */
+  yAxisLabel: string;
+  /** Unit shown on bar tooltips/values, e.g. "nights". */
+  valueUnit: string;
+}
+
+/** A metric plotted as a day-of-year × global warming level heatmap. */
+export interface HeatmapMetricConfig extends HeatMetricBase {
+  chartKind: "heatmap";
+  /** CSV column holding the plotted value. */
+  valueColumn: string;
+}
+
+export type HeatMetricConfig = BarMetricConfig | HeatmapMetricConfig;
 
 /** STAC collection for the Extreme Heat Days and Warm Nights boundary CSVs. */
 export const EH_METRICS_STAC_COLLECTION_ID = "eh-metrics-mm-boundary-csv";
@@ -95,7 +114,8 @@ const EH_METRICS_CSV_COLUMNS: HeatCsvColumns = {
   p90: "multimodel_p90",
 };
 
-const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
+const EXTREME_HEAT_DAYS_METRIC: BarMetricConfig = {
+  chartKind: "bar",
   value: "extreme-heat-days",
   variableId: "eh_days",
   label: "Extreme Heat Days",
@@ -116,7 +136,8 @@ const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   exportFilenamePrefix: "extreme-heat-days",
 };
 
-const WARM_NIGHTS_METRIC: HeatMetricConfig = {
+const WARM_NIGHTS_METRIC: BarMetricConfig = {
+  chartKind: "bar",
   value: "warm-nights",
   variableId: "warm_nights",
   label: "Warm Nights",
@@ -137,6 +158,31 @@ const WARM_NIGHTS_METRIC: HeatMetricConfig = {
   exportFilenamePrefix: "warm-nights",
 };
 
+/** STAC collection for the extreme heat season boundary CSVs. */
+export const EHS_METRICS_STAC_COLLECTION_ID = "ehs-metrics-mm-boundary-csv";
+
+// Not a heat wave metric: each day of the year is counted on its own, so
+// consecutive days and event length play no part.
+const EXTREME_HEAT_SEASON_METRIC: HeatmapMetricConfig = {
+  chartKind: "heatmap",
+  value: "extreme-heat-season",
+  variableId: "frequency_percent",
+  label: "Extreme Heat Season",
+  description: "When in the year hot days tend to occur",
+  tempStat: "t2max",
+  defaultThreshold: "90F",
+  absoluteMinF: 65,
+  absoluteMaxF: 135,
+  defaultRelativeThreshold: "98pctl",
+  collectionId: EHS_METRICS_STAC_COLLECTION_ID,
+  valueColumn: "frequency_percent",
+  usesDuration: false,
+  statisticLabel: "Multi-model mean of region-median exceedance frequency",
+  accessibleNoun: "extreme heat season",
+  thresholdTooltip: "The daily maximum temperature a day must exceed to count as a hot day.",
+  exportFilenamePrefix: "extreme-heat-season",
+};
+
 /** STAC collection for the heat wave frequency boundary CSVs. */
 export const HWF_METRICS_STAC_COLLECTION_ID = "hwf-metrics-mm-boundary-csv";
 
@@ -145,7 +191,8 @@ export const HWL_METRICS_STAC_COLLECTION_ID = "hwl-metrics-mm-boundary-csv";
 
 const HEAT_WAVE_CSV_COLUMNS: HeatCsvColumns = { median: "median", p10: "p10", p90: "p90" };
 
-const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
+const HEAT_WAVE_FREQUENCY_METRIC: BarMetricConfig = {
+  chartKind: "bar",
   value: "heat-wave-frequency",
   variableId: "heat_wave_count",
   label: "Heat Wave Frequency",
@@ -169,7 +216,8 @@ const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
 // Heat waves here have a fixed 3-day minimum, so there is no duration control.
 // Years without a heat wave are left out of the data (not counted as zero), so
 // a warming level with no heat waves at all has no value and shows no bar.
-const HEAT_WAVE_LENGTH_METRIC: HeatMetricConfig = {
+const HEAT_WAVE_LENGTH_METRIC: BarMetricConfig = {
+  chartKind: "bar",
   value: "heat-wave-length",
   variableId: "heat_wave_length",
   label: "Heat Wave Length",
@@ -190,44 +238,15 @@ const HEAT_WAVE_LENGTH_METRIC: HeatMetricConfig = {
   exportFilenamePrefix: "heat-wave-length",
 };
 
-/** Metric registry keyed by `climateVariable` value. Order drives dropdown order. */
+/** Metric registry keyed by `climateVariable` value. Order drives dropdown
+ *  order: single hot days and nights first, then multi-day heat waves. */
 export const HEAT_METRICS: Readonly<Record<string, HeatMetricConfig>> = {
   [EXTREME_HEAT_DAYS_METRIC.value]: EXTREME_HEAT_DAYS_METRIC,
   [WARM_NIGHTS_METRIC.value]: WARM_NIGHTS_METRIC,
+  [EXTREME_HEAT_SEASON_METRIC.value]: EXTREME_HEAT_SEASON_METRIC,
   [HEAT_WAVE_FREQUENCY_METRIC.value]: HEAT_WAVE_FREQUENCY_METRIC,
   [HEAT_WAVE_LENGTH_METRIC.value]: HEAT_WAVE_LENGTH_METRIC,
 };
-
-/** A variable listed in the dropdown before it's built; shown disabled. */
-interface ComingSoonVariable {
-  value: string;
-  label: string;
-  description: string;
-  comingSoon: true;
-}
-
-/** Climate variable dropdown entries, in display order: single hot days and
- *  nights first, then multi-day heat waves. Every metric in `HEAT_METRICS`
- *  should appear exactly once. */
-export const CLIMATE_VARIABLE_DROPDOWN_ENTRIES: readonly (HeatMetricConfig | ComingSoonVariable)[] =
-  [
-    EXTREME_HEAT_DAYS_METRIC,
-    WARM_NIGHTS_METRIC,
-    {
-      value: "extreme-heat-season",
-      label: "Extreme Heat Season",
-      description: "When in the year hot days tend to occur",
-      comingSoon: true,
-    },
-    HEAT_WAVE_FREQUENCY_METRIC,
-    HEAT_WAVE_LENGTH_METRIC,
-  ];
-
-function isComingSoon(entry: HeatMetricConfig | ComingSoonVariable): entry is ComingSoonVariable {
-  return "comingSoon" in entry;
-}
-
-const COMING_SOON_HINT = "Coming soon";
 
 const DEFAULT_METRIC = EXTREME_HEAT_DAYS_METRIC;
 
@@ -327,13 +346,10 @@ export const CLIMATE_VARIABLE_OPTIONS: readonly SelectOption[] = Object.values(H
   (metric) => ({ value: metric.value, label: metric.label })
 );
 
-/** Dropdown options. Variables not built yet stay visible but disabled,
- *  marked "Coming soon". */
-export const CLIMATE_VARIABLE_SELECT_OPTIONS: readonly SelectOption[] =
-  CLIMATE_VARIABLE_DROPDOWN_ENTRIES.map((entry) => {
-    const option = { value: entry.value, label: entry.label, description: entry.description };
-    return isComingSoon(entry) ? { ...option, disabled: true, hint: COMING_SOON_HINT } : option;
-  });
+/** Dropdown options, with each variable's one-line description. */
+export const CLIMATE_VARIABLE_SELECT_OPTIONS: readonly SelectOption[] = Object.values(
+  HEAT_METRICS
+).map((metric) => ({ value: metric.value, label: metric.label, description: metric.description }));
 
 /** Selectable minimum heat-wave durations, in days. */
 const DURATION_DAYS: readonly number[] = inclusiveRange(3, 14);
