@@ -9,6 +9,7 @@ import {
   parseThresholdNumber,
   regionLabelFor,
 } from "./options";
+import { type ExtremeHeatSeason, summarizeFrequentSeason } from "./season";
 
 /**
  *  Keys match global-warming-level values used in `series.globalWarmingLevels`.
@@ -36,11 +37,13 @@ export function formatViewTitle(selections: ExtremeHeatDaysSelections): string {
  *  "Median annual count of 5-day heat waves above 110°F". */
 export function formatViewSubtitle(selections: ExtremeHeatDaysSelections): string {
   const metric = getHeatMetric(selections.climateVariable);
+  const threshold = formatThresholdLabel(selections.threshold);
+  const thresholdPhrase = selections.threshold.endsWith("pctl") ? `the ${threshold}` : threshold;
+  // The heatmap's statistic already names what is measured.
+  if (metric.chartKind === "heatmap") return `${metric.statisticLabel} above ${thresholdPhrase}`;
   const noun = metric.usesDuration
     ? `${formatDurationLabel(selections.duration)} ${metric.accessibleNoun}`
     : metric.accessibleNoun;
-  const threshold = formatThresholdLabel(selections.threshold);
-  const thresholdPhrase = selections.threshold.endsWith("pctl") ? `the ${threshold}` : threshold;
   return `${metric.statisticLabel} of ${noun} above ${thresholdPhrase}`;
 }
 
@@ -63,6 +66,66 @@ const NAME_BY_GLOBAL_WARMING_LEVEL: Readonly<Record<number, string>> = {
 
 export function formatGlobalWarmingLevelName(value: number): string {
   return NAME_BY_GLOBAL_WARMING_LEVEL[value] ?? "";
+}
+
+const MONTHS: readonly { name: string; days: number }[] = [
+  { name: "Jan", days: 31 },
+  { name: "Feb", days: 28 },
+  { name: "Mar", days: 31 },
+  { name: "Apr", days: 30 },
+  { name: "May", days: 31 },
+  { name: "Jun", days: 30 },
+  { name: "Jul", days: 31 },
+  { name: "Aug", days: 31 },
+  { name: "Sep", days: 30 },
+  { name: "Oct", days: 31 },
+  { name: "Nov", days: 30 },
+  { name: "Dec", days: 31 },
+];
+
+/**
+ * Calendar date for a day of year (1-365) on a no-leap calendar, e.g. 60 →
+ * "Mar 1". The data drops February 29, so a leap-aware conversion would be a
+ * day off after February.
+ */
+export function formatNoLeapDate(dayOfYear: number): string {
+  let remaining = dayOfYear;
+  for (const month of MONTHS) {
+    if (remaining <= month.days) return `${month.name} ${remaining}`;
+    remaining -= month.days;
+  }
+  return "";
+}
+
+/** e.g. 63.33 → "63.3%". */
+export function formatFrequencyPercent(value: number): string {
+  if (!Number.isFinite(value)) return "No data";
+  return `${value.toFixed(1)}%`;
+}
+
+/**
+ * Text alternative for the Extreme Heat Season heatmap: names the location,
+ * statistic, threshold, and warming level range, then the broad seasonal
+ * pattern at the lowest and highest warming levels.
+ */
+export function formatSeasonDescription(
+  selections: ExtremeHeatDaysSelections,
+  season: ExtremeHeatSeason
+): string {
+  const levels = season.globalWarmingLevels;
+  const endIndexes = levels.length > 1 ? [0, levels.length - 1] : [0];
+  const pattern = endIndexes.map((i) => {
+    const level = formatGlobalWarmingLevel(levels[i]);
+    const frequent = summarizeFrequentSeason(season.frequencyPercent[i]);
+    return frequent
+      ? `At ${level}, the threshold is exceeded in at least half of years on ${frequent.dayCount} days of the year, between ${formatNoLeapDate(frequent.firstDay)} and ${formatNoLeapDate(frequent.lastDay)}.`
+      : `At ${level}, no day of the year exceeds the threshold in at least half of years.`;
+  });
+  return (
+    `Heatmap for ${regionLabelFor(selections)}. ${formatViewSubtitle(selections)}, ` +
+    `as the percent of years in each 30-year window, by day of year (1 to 365) and global warming level ` +
+    `(${levels.map(formatGlobalWarmingLevel).join(", ")}). ${pattern.join(" ")}`
+  );
 }
 
 export function formatDaysPerYear(value: number): string {

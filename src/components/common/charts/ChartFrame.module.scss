@@ -18,9 +18,9 @@
   @include flex(row, center, center);
   width: 100%;
   // Should match the charts' .chartContainer box to prevent layout shift
-  aspect-ratio: 2 / 1;
+  aspect-ratio: 16 / 9;
   min-height: 340px;
-  max-height: 480px;
+  max-height: 540px;
 }
 
 .source {

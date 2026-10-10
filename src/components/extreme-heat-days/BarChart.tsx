@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, useId, useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 
 import { AxisLeft } from "@visx/axis";
 import { GridRows } from "@visx/grid";
@@ -16,35 +16,20 @@ import {
   colorForGlobalWarmingLevel,
   formatDaysPerYear,
   formatGlobalWarmingLevel,
-  formatGlobalWarmingLevelName,
 } from "@/lib/extreme-heat-days/format";
+
+import { ChartHeading, GlobalWarmingLevelTick, TITLE_BAND, X_AXIS_LABEL } from "./chart-parts";
 
 import styles from "./BarChart.module.scss";
 
-const TITLE_BAND = 76;
-const TITLE_Y = 26;
-const SUBTITLE_Y = 54;
 const MARGIN = { top: 24, right: 24, bottom: 78, left: 86 } as const;
-
-const X_AXIS_LABEL = "Global Warming Level (°C)";
 
 const Y_TICK_COUNT = 5;
 
 const BAR_GROW_DURATION = 0.5;
 const BAR_CORNER_RADIUS = 3;
 
-const TITLE_PADDING_X = 24;
 const X_TICK_OFFSET = 8;
-
-// Should match CSS variable `--font-family-sans-serif`
-const FONT_FAMILY = '"Inter", "Helvetica Neue", "Helvetica", "Arial", sans-serif';
-const titleMeasureStyle: CSSProperties = { fontFamily: FONT_FAMILY, fontSize: 18, fontWeight: 600 };
-const subtitleMeasureStyle: CSSProperties = {
-  fontFamily: FONT_FAMILY,
-  fontSize: 14,
-  fontWeight: 400,
-};
-const tickMeasureStyle: CSSProperties = { fontFamily: FONT_FAMILY, fontSize: 12, fontWeight: 500 };
 
 interface HoveredBar {
   /** Center x of the bar. */
@@ -133,30 +118,7 @@ export default function BarChart({
           <title id={titleId}>{title}</title>
           <desc id={descId}>{accessibleDescription}</desc>
 
-          <Text
-            className={styles.chartTitle}
-            x={width / 2}
-            y={TITLE_Y}
-            width={Math.max(0, width - 2 * TITLE_PADDING_X)}
-            textAnchor="middle"
-            verticalAnchor="middle"
-            style={titleMeasureStyle}
-            aria-hidden="true"
-          >
-            {title}
-          </Text>
-          <Text
-            className={styles.chartSubtitle}
-            x={width / 2}
-            y={SUBTITLE_Y}
-            width={Math.max(0, width - 2 * TITLE_PADDING_X)}
-            textAnchor="middle"
-            verticalAnchor="middle"
-            style={subtitleMeasureStyle}
-            aria-hidden="true"
-          >
-            {subtitle}
-          </Text>
+          <ChartHeading title={title} subtitle={subtitle} width={width} />
 
           <Group left={MARGIN.left} top={TITLE_BAND + MARGIN.top}>
             <GridRows
@@ -233,26 +195,15 @@ export default function BarChart({
               y2={plotHeight}
               aria-hidden="true"
             />
-            {globalWarmingLevels.map((level) => {
-              const cx = (xScale(level) ?? 0) + bandwidth / 2;
-              const name = formatGlobalWarmingLevelName(level);
-              const temp = `+${formatGlobalWarmingLevel(level)}`;
-              return (
-                <Text
-                  key={level}
-                  className={styles.tickLabel}
-                  x={cx}
-                  y={plotHeight + X_TICK_OFFSET}
-                  width={bandwidth}
-                  textAnchor="middle"
-                  verticalAnchor="start"
-                  style={tickMeasureStyle}
-                  aria-hidden="true"
-                >
-                  {name ? `${name} (${temp})` : temp}
-                </Text>
-              );
-            })}
+            {globalWarmingLevels.map((level) => (
+              <GlobalWarmingLevelTick
+                key={level}
+                level={level}
+                x={(xScale(level) ?? 0) + bandwidth / 2}
+                y={plotHeight + X_TICK_OFFSET}
+                width={bandwidth}
+              />
+            ))}
           </Group>
 
           <Text
