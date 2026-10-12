@@ -51,9 +51,10 @@
     scroll-margin-top: spacer(6);
   }
 
+  // Matches the page title in `PageLayout`: same type style and gap to the content.
   h1 {
-    font-size: 3.6rem;
-    letter-spacing: -0.03em;
+    @include type-item(heading-3);
+    margin-bottom: spacer(6);
   }
 
   h2 {
