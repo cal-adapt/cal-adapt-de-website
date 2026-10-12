@@ -1,0 +1,23 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  @include flex(column, flex-start, stretch, spacer(2));
+  min-width: 0;
+}
+
+.row {
+  @include flex(row, flex-end, center, spacer(2));
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+// Same small uppercase label as the glossary's "See also".
+.label {
+  margin-right: spacer(1);
+  color: color(grey-4);
+  font-family: font-family(label);
+  font-size: 1.2rem;
+  font-weight: font-weight(regular);
+  letter-spacing: letter-spacing(label);
+  text-transform: text-transform(label);
+}
