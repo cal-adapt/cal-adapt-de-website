@@ -20,7 +20,7 @@ export const climateVariables = {
   },
   "extreme-heat-season": {
     label: "Extreme Heat Season",
-    description: "When in the year hot days tend to occur",
+    description: "Time of year when extreme heat tends to occur",
   },
   "heat-wave-frequency": {
     label: "Heat Wave Frequency",
@@ -28,44 +28,40 @@ export const climateVariables = {
   },
   "heat-wave-length": {
     label: "Heat Wave Length",
-    description: "How long heat waves typically last",
+    description: "Typical length of heat waves",
   },
   "extreme-precipitation": {
     label: "Extreme Precipitation",
-    description: "How much rain falls on really heavy rain days",
+    description: "Daily accumulation threshold for highest precipitation days",
   },
   "fire-weather": {
     label: "Fire Weather",
-    description: "Days per year when the weather is conducive to wildfires",
+    description: "Annual count of days with fire weather potential",
   },
   "heating-degree-days": {
     label: "Heating Degree Days",
-    description: "How much and how long temperatures fall below 65°F, reflecting heating demand",
+    description: "Heating demand metric measuring occurrence of temperatures below 65°F",
   },
   "cooling-degree-days": {
     label: "Cooling Degree Days",
-    description: "How much and how long temperatures exceed 65°F, reflecting cooling demand",
+    description: "Cooling demand metric measuring occurrence of temperatures above 65°F",
   },
   // Groups of variables that share a Data Methods page.
   "extreme-heat-days-and-warm-nights": {
     label: "Extreme Heat Days & Warm Nights",
-    description:
-      "Days per year above a daytime high, or nights per year above an overnight low, temperature threshold",
+    description: "Annual frequency of high daytime maximum and overnight low temperatures",
   },
   "heat-waves": {
     label: "Heat Waves",
-    description:
-      "Heat wave frequency and heat wave length: how often heat waves occur and how long they last",
+    description: "Metrics for the frequency and length of heat waves",
   },
   "heating-and-cooling-degree-days": {
     label: "Heating & Cooling Degree Days",
-    description:
-      "How much and for how long daily average temperatures fall below or exceed 65 °F, reflecting demand for indoor heating and cooling",
+    description: "Metrics that reflect heating and cooling energy demand",
   },
   "solar-and-wind-resource-droughts": {
     label: "Solar & Wind Resource Droughts",
-    description:
-      "Days per month when solar or wind generation potential falls below half of its historical average for that day of the year",
+    description: "Days of reduced solar and wind energy generation potential",
   },
 } as const satisfies Record<string, ClimateVariable>;
 
