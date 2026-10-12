@@ -1,0 +1,44 @@
+@use "@/styles/abstracts" as *;
+
+// Doubled to outrank page rules that color links in paragraphs.
+.pill.pill {
+  @include flex(row, flex-start, center, spacer(2));
+  @include type-item(small);
+  @include transition("background-color, border-color");
+  display: inline-flex;
+  padding: spacer(1) spacer(3);
+  background: color(white);
+  border: 1px solid color(grey-2);
+  border-radius: rounded(1);
+  color: color(black);
+  text-decoration: none;
+
+  &:hover {
+    background: color(blue-1);
+    border-color: color(blue-3);
+    color: color(black);
+    text-decoration: none;
+  }
+}
+
+.icon {
+  display: inline-flex;
+  color: color(blue-4);
+
+  svg {
+    width: 1.6rem;
+    height: 1.6rem;
+    font-size: 1.6rem;
+  }
+}
+
+.pill.large {
+  padding: spacer(2) spacer(3);
+  font-size: 1.4rem;
+
+  .icon svg {
+    width: 1.8rem;
+    height: 1.8rem;
+    font-size: 1.8rem;
+  }
+}
