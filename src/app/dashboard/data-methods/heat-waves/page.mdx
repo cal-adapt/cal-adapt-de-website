@@ -135,7 +135,7 @@ any) but may be consecutive. For example, if the 3-day duration is selected, a
 6-day streak that exceeds the temperature threshold would be counted as two
 3-day streaks.
 
-<Callout title="Plain language example">
+<Callout kind="example" label="Plain language example">
 
 If a specific location has a historical 95th percentile maximum temperature of
 100 °F, this represents an "extreme heat" day in the historical period. Step 3
@@ -153,7 +153,7 @@ exceeding the threshold per year** was calculated. Only streaks with a length of
 at least 3 days are included in this average. A streak that runs from one year
 into the next is split, and each part is counted in its own year.
 
-<Callout title="Plain language example">
+<Callout kind="example" label="Plain language example">
 
 If a specific location has a historical 95th percentile maximum temperature of
 100 °F, this represents an "extreme heat" day in the historical period. Step 3
@@ -172,7 +172,7 @@ The following metrics were calculated for each simulation across the 30-year
 period corresponding to each GWL: median, 10th percentile, 90th percentile. This
 yields a single value per metric per simulation.
 
-<Callout title="Why compute the 10th and 90th percentile?">
+<Callout kind="note" title="Why compute the 10th and 90th percentile?">
 
 The 10th and 90th percentile values represent the number or length of heat waves
 in a particularly cold year and particularly hot year, respectively. Together,
@@ -191,7 +191,7 @@ For each GWL above the reference period (1.5 °C and higher) and for each metric
 subtracted from the future GWL value. This difference represents the projected
 change in heat wave frequency or length relative to the historical period.
 
-<Callout title="Plain language example">
+<Callout kind="example" label="Plain language example">
 
 If a grid cell experiences six 3-day heat waves above 100 °F in the historical
 period, how many **more** 3-day heat waves will that same grid cell experience
@@ -210,7 +210,7 @@ taking a **median** of all the grid cells within the boundary. A median is used
 to capture the typical number or length of heat waves within the area of interest
 without introducing bias from any anomalous grid cells.
 
-<Callout title="Grid cells at the edge">
+<Callout kind="note" title="Grid cells at the edge">
 
 All grid cells within or touching the spatial boundary were included (even if not
 fully contained within the boundary) to avoid discarding data representative of

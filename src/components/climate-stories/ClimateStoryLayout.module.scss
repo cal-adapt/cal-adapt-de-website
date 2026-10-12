@@ -47,17 +47,7 @@
 }
 
 .intro {
-  @include flex(column, flex-start, stretch, spacer(2));
   grid-area: intro;
-  padding: spacer(4);
-  background: color(grey-1);
-  border: 1px solid color(grey-2);
-}
-
-.introKicker {
-  @include type-item(label);
-  margin: 0;
-  color: color(grey-4);
 }
 
 .introBody {
@@ -81,8 +71,6 @@
   align-self: stretch;
   width: 100%;
   min-width: 0;
-  padding: spacer(4);
-  border: 1px solid color(grey-2);
 
   @include breakpoint(large) {
     position: sticky;

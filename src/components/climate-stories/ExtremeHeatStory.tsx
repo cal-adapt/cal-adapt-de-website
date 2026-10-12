@@ -1,3 +1,5 @@
+import Callout from "@/components/common/content/Callout";
+import Button from "@/components/common/ui/Button";
 import { navLinks } from "@/config/navigation";
 
 import StoryToolFigure from "./figures/StoryToolFigure";
@@ -7,13 +9,18 @@ import StoryBlock from "./StoryBlock";
 import StoryCitation from "./StoryCitation";
 import StoryDocument from "./StoryDocument";
 import StoryFigure from "./StoryFigure";
-import StoryToolCallout from "./StoryToolCallout";
 
 const FPO_FIGURE = { label: "[FPO: Figure]", source: "Lorem ipsum" } as const;
 
 const IMPERIAL_100F = resolveStoryToolSelections("extreme-heat-days", {
   location: "Imperial",
   threshold: "100F",
+});
+const HEAT_WAVE_FREQUENCY_DEFAULT = resolveStoryToolSelections("extreme-heat-days", {
+  climateVariable: "heat-wave-frequency",
+});
+const HEAT_WAVE_LENGTH_DEFAULT = resolveStoryToolSelections("extreme-heat-days", {
+  climateVariable: "heat-wave-length",
 });
 const HDD_CDD_DEFAULT = resolveStoryToolSelections("hdd-cdd");
 
@@ -53,18 +60,30 @@ export default function ExtremeHeatStory() {
         <StoryToolFigure tool="extreme-heat-days" selections={IMPERIAL_100F} />
       </StoryBlock>
 
-      <StoryToolCallout
+      <Callout
+        kind="explore"
         title={`Explore this in the ${EXTREME_HEAT_TOOL.label} tool`}
-        body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac eros felis. Duis id commodo dolor. Vestibulum ex velit, egestas ut quam eget, placerat hendrerit orci. Suspendisse ut elit leo. Nunc vel sem id est accumsan imperdiet sit amet a nulla."
-        primary={{
-          href: storyToolHref("extreme-heat-days", IMPERIAL_100F),
-          label: `Explore the ${EXTREME_HEAT_TOOL.label} tool`,
-        }}
-        secondary={{
-          href: navLinks.climateMetricsMap.href,
-          label: "Open the Climate Metrics Map",
-        }}
-      />
+        actions={
+          <>
+            <Button
+              href={storyToolHref("extreme-heat-days", IMPERIAL_100F)}
+              variant="primary"
+              size="small"
+            >
+              {`Explore the ${EXTREME_HEAT_TOOL.label} tool`}
+            </Button>
+            <Button href={navLinks.climateMetricsMap.href} variant="secondary" size="small">
+              Open the Climate Metrics Map
+            </Button>
+          </>
+        }
+      >
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac eros felis. Duis id
+          commodo dolor. Vestibulum ex velit, egestas ut quam eget, placerat hendrerit orci.
+          Suspendisse ut elit leo. Nunc vel sem id est accumsan imperdiet sit amet a nulla.
+        </p>
+      </Callout>
 
       <StoryBlock
         id="breaking-records"
@@ -101,7 +120,8 @@ export default function ExtremeHeatStory() {
           is projected to increase by [X] on average. In [sample location], projections show that by
           mid-century a record breaking [n-day] heatwave is possible.
         </p>
-        <StoryFigure {...FPO_FIGURE} />
+        <StoryToolFigure tool="extreme-heat-days" selections={HEAT_WAVE_FREQUENCY_DEFAULT} />
+        <StoryToolFigure tool="extreme-heat-days" selections={HEAT_WAVE_LENGTH_DEFAULT} />
       </StoryBlock>
 
       <StoryBlock id="warm-nights" title="Warm nights prevent the opportunity to cool off">

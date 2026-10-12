@@ -1,24 +1,66 @@
-import type { ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 
-import Icon from "@/components/common/ui/Icon";
+import clsx from "clsx";
 
 import styles from "./Callout.module.scss";
 
+export type CalloutKind = "example" | "note" | "explore";
+
+const KIND_LABEL: Record<CalloutKind, string> = {
+  example: "Example",
+  note: "Note",
+  explore: "Explore the data",
+};
+
+export type CalloutVariant = "blue" | "grey";
+
+/** Blue is reserved for calls to action; reading asides stay neutral. */
+const DEFAULT_VARIANT: Record<CalloutKind, CalloutVariant> = {
+  example: "grey",
+  note: "grey",
+  explore: "blue",
+};
+
 interface CalloutProps {
-  title: string;
+  kind: CalloutKind;
+  /** Defaults per kind; see `DEFAULT_VARIANT`. */
+  variant?: CalloutVariant;
+  /** Eyebrow text; defaults to the kind's label. */
+  label?: string;
+  title?: string;
+  /** Buttons or links rendered below the body. */
+  actions?: ReactNode;
   children: ReactNode;
 }
 
-/** A boxed aside — a plain-language example or a scoping note — matching the
- * "note" callout style used on the Cal-Adapt guidance site (icon + title band). */
-export default function Callout({ title, children }: CalloutProps) {
+/** An authored aside in the reading flow — a worked example, a scoping note, or
+ * a prompt to explore a tool. Distinct from `Alert`, which reports app state. */
+export default function Callout({
+  kind,
+  variant = DEFAULT_VARIANT[kind],
+  label = KIND_LABEL[kind],
+  title,
+  actions,
+  children,
+}: CalloutProps) {
+  const eyebrowId = useId();
+  const titleId = useId();
+
   return (
-    <div className={styles.callout}>
-      <div className={styles.header}>
-        <Icon variant="alertInfo" className={styles.icon} aria-hidden />
-        <p className={styles.title}>{title}</p>
-      </div>
+    <aside
+      className={clsx(styles.callout, styles[kind], styles[variant])}
+      aria-labelledby={title ? titleId : eyebrowId}
+    >
+      <p id={eyebrowId} className={styles.eyebrow}>
+        {label}
+      </p>
+      {title ? (
+        <p id={titleId} className={styles.title}>
+          {title}
+        </p>
+      ) : null}
       <div className={styles.body}>{children}</div>
-    </div>
+      {actions ? <div className={styles.actions}>{actions}</div> : null}
+    </aside>
   );
 }

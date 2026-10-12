@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import ArticleTableOfContents from "@/components/common/content/ArticleTableOfContents";
+import Panel from "@/components/common/content/Panel";
 import CitationBox from "@/components/common/ui/CitationBox";
 import type { ClimateStory } from "@/config/climate-stories";
 
@@ -22,10 +23,9 @@ export default function ClimateStoryLayout({ story, children }: ClimateStoryLayo
         <p className={styles.meta}>Last updated: {story.lastUpdated}</p>
       </header>
 
-      <aside className={styles.intro}>
-        <p className={styles.introKicker}>In this story</p>
+      <Panel eyebrow="In this story" className={styles.intro}>
         <p className={styles.introBody}>{story.intro}</p>
-      </aside>
+      </Panel>
 
       <ArticleTableOfContents articleId={ARTICLE_ID} className={styles.toc} />
 

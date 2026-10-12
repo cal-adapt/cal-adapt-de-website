@@ -1,5 +1,7 @@
 import clsx from "clsx";
 
+import Panel from "@/components/common/content/Panel";
+
 import styles from "./TableOfContents.module.scss";
 
 export interface TocSection {
@@ -16,8 +18,7 @@ interface TableOfContentsProps {
 
 export default function TableOfContents({ sections, className }: TableOfContentsProps) {
   return (
-    <nav className={clsx(styles.root, className)} aria-label="On this page">
-      <p className={styles.label}>Table of contents</p>
+    <Panel as="nav" eyebrow="Table of contents" className={className}>
       <ol className={styles.list}>
         {sections.map((section) => (
           <li key={section.id} className={clsx(section.nested && styles.nested)}>
@@ -25,6 +26,6 @@ export default function TableOfContents({ sections, className }: TableOfContents
           </li>
         ))}
       </ol>
-    </nav>
+    </Panel>
   );
 }

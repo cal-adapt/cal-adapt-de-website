@@ -1,40 +1,65 @@
 @use "@/styles/abstracts" as *;
 
 .callout {
+  @include flex(column, flex-start, stretch, spacer(2));
   margin: spacer(5) 0;
   padding: spacer(4) spacer(5);
-  border: 1px solid color(grey-2);
-  border-radius: rounded(2);
-  background: color(grey-1);
-}
+  border-left: 4px solid var(--callout-bar);
+  background: var(--callout-fill);
 
-.header {
-  @include flex(row, flex-start, center, spacer(2));
-  margin-bottom: spacer(2);
+  // Nested so these outrank MdxContent's `.content p` rule.
+  .eyebrow {
+    @include type-item(label);
+    margin: 0;
+    color: var(--callout-eyebrow);
+  }
 
-  // Higher specificity than MdxContent's global `.content p` rule, which
-  // would otherwise silently win and flatten this back to body text.
   .title {
+    @include type-item(heading-6);
     margin: 0;
     color: color(black);
-    font-size: 1.4rem;
-    font-weight: font-weight(bold);
-    line-height: 1.2;
+  }
+
+  .body {
+    @include type-item(body);
+    color: color(black);
+    line-height: 1.6;
+
+    > p {
+      margin: 0 0 spacer(3);
+      font: inherit;
+      color: inherit;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
   }
 }
 
-.icon {
-  width: 1.6rem;
-  height: 1.6rem;
-  color: color(blue-4);
+.blue {
+  --callout-bar: #{color(blue-4)};
+  --callout-fill: #{color(blue-1)};
+  --callout-outline: #{color(blue-2)};
+  --callout-eyebrow: #{color(blue-5)};
 }
 
-.body {
-  color: color(grey-5);
+.grey {
+  --callout-bar: #{color(grey-3)};
+  --callout-fill: #{color(grey-1)};
+  --callout-outline: #{color(grey-2)};
+  --callout-eyebrow: #{color(grey-4)};
+}
 
-  // Body copy comes from markdown (p, strong, etc.) styled by MdxContent's
-  // global article rules — only tighten spacing for the boxed context.
-  > :last-child {
-    margin-bottom: 0;
-  }
+// Lighter surface so the black/white action buttons sit cleanly on the fill.
+.explore {
+  border: 1px solid var(--callout-outline);
+  border-left: 4px solid var(--callout-bar);
+  background: color-mix(in srgb, var(--callout-fill) 50%, color(white));
+}
+
+.actions {
+  @include flex(row, flex-start, center, spacer(3));
+  flex-wrap: wrap;
+  margin-top: spacer(2);
 }
