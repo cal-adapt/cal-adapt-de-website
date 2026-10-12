@@ -1,0 +1,35 @@
+@use "@/styles/abstracts" as *;
+
+.title {
+  margin: 0 0 spacer(3);
+  color: color(black);
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.mapArea {
+  position: relative;
+  container-type: inline-size;
+}
+
+.map {
+  position: relative;
+  height: 360px;
+  border-radius: rounded(1);
+  overflow: hidden;
+
+  @include breakpoint(medium) {
+    height: 480px;
+  }
+}
+
+@container (min-width: 640px) {
+  .legend {
+    position: absolute;
+    left: spacer(3);
+    bottom: 36px; // above the Mapbox logo, which has to stay visible
+    z-index: 2;
+    width: max-content;
+  }
+}

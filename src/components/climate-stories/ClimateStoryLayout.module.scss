@@ -57,7 +57,7 @@
 }
 
 .body {
-  @include flex(column, flex-start, stretch, spacer(8));
+  @include stack(spacer(8));
   grid-area: body;
   min-width: 0;
 }

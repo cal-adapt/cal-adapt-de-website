@@ -30,6 +30,16 @@
   gap: $gap;
 }
 
+/// Vertical stack; container owns spacing
+@mixin stack($gap) {
+  @include flex(column, flex-start, stretch, $gap);
+
+  > * {
+    --flow-space: 0;
+    margin-block: 0;
+  }
+}
+
 @mixin type-item($type-name, $style: normal) {
   font-family: font-family($type-name);
   font-size: font-size($type-name);
