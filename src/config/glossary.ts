@@ -4,7 +4,8 @@ import { resolveSelections } from "@/lib/hdd-cdd/options";
 import { selectionsToSearchParams } from "@/lib/hdd-cdd/search-params";
 
 /**
- * A "See also" link to a tool or reference where the term is used. Pass a
+ * A link to a tool or reference where the term is used; pages on this site
+ * are listed under "Open in" and outside links under "Read more". Pass a
  * `navLinks` entry for pages on this site, so the link is dropped while that
  * page's feature flag is off.
  */
@@ -16,7 +17,7 @@ export interface GlossaryEntry {
   term: string;
   abbreviation?: string;
   definition: string;
-  /** Tools or references to see also. Keep to two or three. */
+  /** Related tools or references. Keep to two or three. */
   links?: readonly GlossaryLink[];
 }
 
@@ -32,6 +33,15 @@ export function hddCddToolLink(climateVariable: "cdd" | "hdd"): GlossaryLink {
   return {
     ...navLinks.hddCdd,
     href: query ? `${navLinks.hddCdd.href}?${query}` : navLinks.hddCdd.href,
+  };
+}
+
+/** Link to the Data Methods page explaining how a term's data is calculated. */
+function dataMethodsLink(page: "hdd-cdd" | "renewables"): GlossaryLink {
+  return {
+    id: navLinks.dataMethods.id,
+    label: navLinks.dataMethods.label,
+    href: `${navLinks.dataMethods.href}/${page}`,
   };
 }
 
@@ -52,15 +62,16 @@ const DEGREE_DAYS_GUIDANCE_LINK = analyticsEngineLink(
 const entries = [
   {
     id: "climakitae",
-    term: "ClimaKitAE",
+    term: "climakitae",
     definition:
-      "An open-source Python library that contains functionality to work with cloud-optimized gridded climate data. It includes basic tools for creating data objects and visualizations, as well as more advanced tools that support various applications of climate data including analyzing extreme events, understanding regional responses at different global warming levels, and describing uncertainty across different simulations. ClimaKitAE stands for “climate toolkit Analytics Engine”.",
+      "An open-source Python library that contains functionality to work with cloud-optimized gridded climate data. It includes basic tools for creating data objects and visualizations, as well as more advanced tools that support various applications of climate data including analyzing extreme events, understanding regional responses at different global warming levels, and describing uncertainty across different simulations. climakitae stands for “climate toolkit Analytics Engine”.",
     links: [
       { label: "climakitae on GitHub", href: "https://github.com/cal-adapt/climakitae" },
       {
         label: "climakitae documentation",
         href: "https://cal-adapt.github.io/climakitae/dev/",
       },
+      analyticsEngineLink("https://analytics.cal-adapt.org/data-tools/python-tools.html"),
     ],
   },
   {
@@ -69,7 +80,7 @@ const entries = [
     abbreviation: "CDDs",
     definition:
       "Cooling degree days (CDDs) measure how much and for how long outdoor temperatures exceed a specific threshold, indicating the need for indoor cooling. For each day, CDDs are calculated as the number of degrees the day’s temperature is above the chosen base temperature; days that do not exceed the threshold are assigned zero. The threshold (commonly 65°F) represents the temperature above which cooling is typically required.",
-    links: [hddCddToolLink("cdd"), DEGREE_DAYS_GUIDANCE_LINK],
+    links: [hddCddToolLink("cdd"), dataMethodsLink("hdd-cdd"), DEGREE_DAYS_GUIDANCE_LINK],
   },
   {
     id: "extreme-meteorological-year",
@@ -105,14 +116,14 @@ const entries = [
     abbreviation: "HDDs",
     definition:
       "Heating degree days (HDDs) quantify how much and for how long outdoor temperatures fall below a specific threshold, reflecting demand for indoor heating. The base temperature (commonly 65°F) approximates the point at which heating becomes necessary.",
-    links: [hddCddToolLink("hdd"), DEGREE_DAYS_GUIDANCE_LINK],
+    links: [hddCddToolLink("hdd"), dataMethodsLink("hdd-cdd"), DEGREE_DAYS_GUIDANCE_LINK],
   },
   {
     id: "resource-drought",
     term: "Resource drought",
     definition:
       "A period during which the generation potential of a renewable energy source falls well below what is typical for that time of year. A solar resource drought refers to reduced photovoltaic generation; causes can include cloudiness, wildfire smoke, and/or high temperatures. A wind resource drought refers to reduced wind power generation caused by still or calm conditions. Resource droughts are identified relative to a location’s reference production.",
-    links: [navLinks.renewablesVisualizer],
+    links: [navLinks.renewablesVisualizer, dataMethodsLink("renewables")],
   },
   {
     id: "standard-year",

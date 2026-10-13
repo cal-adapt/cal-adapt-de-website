@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { navLinks } from "@/config/navigation";
@@ -30,6 +32,19 @@ describe("glossary links", () => {
       for (const link of entry.links ?? []) {
         expect(isGlossaryLinkEnabled(link), `${entry.id} -> ${link.href}`).toBe(true);
       }
+    }
+  });
+
+  // These hrefs are written by hand, so a typo would send readers to a missing page.
+  it("points Data Methods links at pages that exist", () => {
+    const methodsLinks = glossaryEntries
+      .flatMap((entry) => entry.links ?? [])
+      .filter((link) => link.href.startsWith(`${navLinks.dataMethods.href}/`));
+
+    expect(methodsLinks.length).toBeGreaterThan(0);
+    for (const link of methodsLinks) {
+      const page = resolve(process.cwd(), `src/app${link.href}/page.mdx`);
+      expect(existsSync(page), link.href).toBe(true);
     }
   });
 });

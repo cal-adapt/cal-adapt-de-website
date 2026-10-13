@@ -2,15 +2,20 @@
 
 import { useId, useState } from "react";
 
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
+import ToolPill from "@/components/common/ui/ToolPill";
 import { getDashboardToolByNavId } from "@/components/dashboard/tools";
 import {
   filterGlossaryEntries,
   type GlossaryEntry,
   glossaryEntryLabel,
+  type GlossaryLink,
   groupGlossaryEntriesByLetter,
 } from "@/config/glossary";
+import { navLinks } from "@/config/navigation";
 
 import styles from "./GlossaryList.module.scss";
 
@@ -86,6 +91,11 @@ export default function GlossaryList({ entries }: GlossaryListProps) {
 }
 
 function GlossaryListEntry({ entry }: { entry: GlossaryEntry }) {
+  // Pages on this site (tools, data methods) are listed apart from outside reading.
+  const links = entry.links ?? [];
+  const siteLinks = links.filter((link) => link.href.startsWith("/"));
+  const outsideLinks = links.filter((link) => !link.href.startsWith("/"));
+
   return (
     <div id={entry.id} className={styles.entry}>
       <dt className={styles.term}>
@@ -96,23 +106,37 @@ function GlossaryListEntry({ entry }: { entry: GlossaryEntry }) {
       </dt>
       <dd className={styles.definition}>
         <p className={styles.text}>{entry.definition}</p>
-        {entry.links && entry.links.length > 0 ? (
-          <p className={styles.seeAlso}>
-            <span className={styles.seeAlsoLabel}>See also</span>
-            {entry.links.map((link) => (
-              <Link key={link.href} className={styles.seeAlsoLink} href={link.href}>
-                <span className={styles.seeAlsoIcon} aria-hidden>
-                  {/* A tool shows its sidebar icon; anything else is marked as leaving the page. */}
-                  {getDashboardToolByNavId(link.id ?? null)?.sidebarIcon ?? (
-                    <Icon variant="externalLink" />
-                  )}
-                </span>
-                {link.label}
-              </Link>
-            ))}
-          </p>
+        {siteLinks.length + outsideLinks.length > 0 ? (
+          <div className={styles.links}>
+            <GlossaryLinkRow label="Open in" links={siteLinks} />
+            <GlossaryLinkRow label="Read more" links={outsideLinks} />
+          </div>
         ) : null}
       </dd>
     </div>
   );
+}
+
+function GlossaryLinkRow({ label, links }: { label: string; links: readonly GlossaryLink[] }) {
+  if (links.length === 0) return null;
+
+  return (
+    <p className={styles.linkRow}>
+      <span className={styles.linkRowLabel}>{label}</span>
+      {links.map((link) => (
+        <ToolPill
+          key={link.href}
+          label={link.label}
+          href={link.href}
+          icon={<GlossaryLinkIcon id={link.id} />}
+        />
+      ))}
+    </p>
+  );
+}
+
+/** A tool or Data Methods shows its sidebar icon; anything else is marked as leaving the page. */
+function GlossaryLinkIcon({ id }: { id?: string }) {
+  if (id === navLinks.dataMethods.id) return <DescriptionOutlinedIcon />;
+  return getDashboardToolByNavId(id ?? null)?.sidebarIcon ?? <Icon variant="externalLink" />;
 }
