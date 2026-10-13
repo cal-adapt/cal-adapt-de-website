@@ -1,6 +1,7 @@
 // Domain data for the Extreme Heat tool.
 
 import type { SelectOption } from "@/components/common/form";
+import { climateVariables } from "@/config/climate-variables";
 import {
   DEFAULT_SPATIAL_AGGREGATION,
   defaultLocationFor,
@@ -98,8 +99,7 @@ const EH_METRICS_CSV_COLUMNS: HeatCsvColumns = {
 const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
   value: "extreme-heat-days",
   variableId: "eh_days",
-  label: "Extreme Heat Days",
-  description: "Days per year above a daytime high temperature threshold",
+  ...climateVariables["extreme-heat-days"],
   tempStat: "t2max",
   defaultThreshold: "100F",
   absoluteMinF: 80,
@@ -119,8 +119,7 @@ const EXTREME_HEAT_DAYS_METRIC: HeatMetricConfig = {
 const WARM_NIGHTS_METRIC: HeatMetricConfig = {
   value: "warm-nights",
   variableId: "warm_nights",
-  label: "Warm Nights",
-  description: "Nights per year above an overnight low temperature threshold",
+  ...climateVariables["warm-nights"],
   tempStat: "t2min",
   defaultThreshold: "70F",
   absoluteMinF: 65,
@@ -148,8 +147,7 @@ const HEAT_WAVE_CSV_COLUMNS: HeatCsvColumns = { median: "median", p10: "p10", p9
 const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
   value: "heat-wave-frequency",
   variableId: "heat_wave_count",
-  label: "Heat Wave Frequency",
-  description: "Heat waves per year lasting at least a set number of days",
+  ...climateVariables["heat-wave-frequency"],
   tempStat: "t2max",
   defaultThreshold: "110F",
   absoluteMinF: 85,
@@ -172,8 +170,7 @@ const HEAT_WAVE_FREQUENCY_METRIC: HeatMetricConfig = {
 const HEAT_WAVE_LENGTH_METRIC: HeatMetricConfig = {
   value: "heat-wave-length",
   variableId: "heat_wave_length",
-  label: "Heat Wave Length",
-  description: "How long heat waves typically last",
+  ...climateVariables["heat-wave-length"],
   tempStat: "t2max",
   defaultThreshold: "100F",
   absoluteMinF: 85,
@@ -215,8 +212,7 @@ export const CLIMATE_VARIABLE_DROPDOWN_ENTRIES: readonly (HeatMetricConfig | Com
     WARM_NIGHTS_METRIC,
     {
       value: "extreme-heat-season",
-      label: "Extreme Heat Season",
-      description: "When in the year hot days tend to occur",
+      ...climateVariables["extreme-heat-season"],
       comingSoon: true,
     },
     HEAT_WAVE_FREQUENCY_METRIC,
