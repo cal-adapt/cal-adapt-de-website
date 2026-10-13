@@ -33,11 +33,6 @@ const SAN_DIEGO_HEAT_WAVE_FREQUENCY_98F_3D = resolveStoryToolSelections("extreme
   threshold: "98F",
   duration: "3",
 });
-const SAN_BERNARDINO_WARM_NIGHTS_70F = resolveStoryToolSelections("extreme-heat-days", {
-  climateVariable: "warm-nights",
-  location: "San Bernardino",
-  threshold: "70F",
-});
 const HEAT_SEASON_95F = resolveStoryToolSelections("extreme-heat-days", {
   climateVariable: "extreme-heat-season",
   threshold: "95F",
@@ -189,7 +184,6 @@ export default function ExtremeHeatStory() {
           70°F by mid century and an additional 46 by the end of the century. Explore the map above
           to see the spatial variability in warm nights across the entire state.
         </p>
-        <StoryToolFigure tool="extreme-heat-days" selections={SAN_BERNARDINO_WARM_NIGHTS_70F} />
       </StoryBlock>
 
       <StoryBlock
