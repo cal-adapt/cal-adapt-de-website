@@ -1,4 +1,5 @@
 import { climateVariables } from "@/config/climate-variables";
+import { navLinks } from "@/config/navigation";
 
 export type MetricVariant = {
   mean: string;
@@ -164,3 +165,12 @@ export const metrics: Metric[] = [
     },
   },
 ];
+
+/** Link to the Climate Metrics Map opened on a metric, e.g. "warm-nights". Throws
+ *  on a slug the map doesn't offer. */
+export function climateMetricsMapHref(metricSlug: string): string {
+  if (!metrics.some((metric) => metric.slug === metricSlug)) {
+    throw new Error(`Unknown Climate Metrics Map metric: "${metricSlug}"`);
+  }
+  return `${navLinks.climateMetricsMap.href}?${new URLSearchParams({ metric: metricSlug })}`;
+}

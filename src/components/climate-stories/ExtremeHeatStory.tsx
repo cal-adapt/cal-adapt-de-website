@@ -2,15 +2,11 @@ import Callout from "@/components/common/content/Callout";
 import Link from "@/components/common/ui/Link";
 import ToolPill from "@/components/common/ui/ToolPill";
 import { navLinks } from "@/config/navigation";
+import { climateMetricsMapHref } from "@/data/climate-metrics-map/metrics";
 
 import StoryToolFigure from "./figures/StoryToolFigure";
 import StoryToolLink from "./figures/StoryToolLink";
-import {
-  climateMetricsMapHref,
-  resolveStoryToolSelections,
-  storyToolCharts,
-  storyToolHref,
-} from "./figures/tool-charts";
+import { resolveStoryToolSelections, storyToolCharts, storyToolHref } from "./figures/tool-charts";
 import GlossaryTerm from "./GlossaryTerm";
 import StoryBlock from "./StoryBlock";
 import StoryCitation from "./StoryCitation";
