@@ -60,10 +60,9 @@ export default function DashboardSidebar({
             const itemPath = normalizePath(item.link.href);
             const itemActive =
               !!activePath && (activePath === itemPath || activePath.startsWith(`${itemPath}/`));
+            const hasSubNav = hasNavChildren(item.link) && !item.link.hideChildrenInSidebar;
             const showSubNav =
-              open &&
-              hasNavChildren(item.link) &&
-              (itemActive || item.link.alwaysShowChildren === true);
+              open && hasSubNav && (itemActive || item.link.alwaysShowChildren === true);
 
             if (!open) {
               return (
@@ -82,8 +81,8 @@ export default function DashboardSidebar({
 
             // An item with children shows the active child highlighted in its sub-nav,
             // so the parent button only gets a subtle (bold) active treatment.
-            const parentSelected = itemActive && !hasNavChildren(item.link);
-            const parentActive = itemActive && hasNavChildren(item.link);
+            const parentSelected = itemActive && !hasSubNav;
+            const parentActive = itemActive && hasSubNav;
 
             return (
               <div key={item.link.id} className={styles.navGroup}>

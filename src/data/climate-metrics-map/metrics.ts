@@ -1,3 +1,5 @@
+import { climateVariables } from "@/config/climate-variables";
+
 export type MetricVariant = {
   mean: string;
   min_path?: string;
@@ -28,6 +30,8 @@ type StatLabels = {
 export type Metric = {
   id: number;
   title: string;
+  /** One-line description shown under the title in the metric dropdown. */
+  summary: string;
   slug: string;
   abs: MetricVariant;
   del: MetricVariant;
@@ -39,7 +43,8 @@ const EXTREME_HEAT_BASE = "s3://cadcat/wrf/extreme-heat-tool/multimodel_gridded"
 export const metrics: Metric[] = [
   {
     id: 0,
-    title: "Extreme Heat Days",
+    title: climateVariables["extreme-heat-days"].label,
+    summary: climateVariables["extreme-heat-days"].description,
     slug: "extreme-heat",
     abs: {
       mean: `${EXTREME_HEAT_BASE}/eh_days/mm4mean/ssp370/gwl/t2max_ge99pctl/d03`,
@@ -72,7 +77,8 @@ export const metrics: Metric[] = [
   },
   {
     id: 1,
-    title: "Extreme Precipitation",
+    title: climateVariables["extreme-precipitation"].label,
+    summary: climateVariables["extreme-precipitation"].description,
     slug: "extreme-precipitation",
     abs: {
       mean: "s3://cadcat/wrf/climate-metrics-map/mm4mean/ssp370/gwl/R99p/d03",
@@ -98,14 +104,15 @@ export const metrics: Metric[] = [
   },
   {
     id: 2,
-    title: "Fire Weather",
+    title: climateVariables["fire-weather"].label,
+    summary: climateVariables["fire-weather"].description,
     slug: "fire-weather",
     abs: {
       mean: "s3://cadcat/wrf/climate-metrics-map/mm4mean/ssp370/gwl/ffwige50/d03",
       min_path: "s3://cadcat/wrf/climate-metrics-map/mm4min/ssp370/gwl/ffwige50/d03",
       max_path: "s3://cadcat/wrf/climate-metrics-map/mm4max/ssp370/gwl/ffwige50/d03",
       description:
-        "Absolute median annual number of days with Fosberg Fire Weather Index (FFWI) value greater than 50 (# of days)",
+        "Absolute mean annual number of days with Fosberg Fire Weather Index (FFWI) value of 50 or higher (# of days)",
       short_desc: "How often the weather is conducive for fires in this area (# of days)",
       variable: "ffwige50",
       rescale: "0,365",
@@ -116,7 +123,7 @@ export const metrics: Metric[] = [
       min_path: "s3://cadcat/wrf/climate-metrics-map/mm4min/ssp370/gwl/ffwige50d/d03",
       max_path: "s3://cadcat/wrf/climate-metrics-map/mm4max/ssp370/gwl/ffwige50d/d03",
       description:
-        "Change in median annual number of days with Fosberg Fire Weather Index (FFWI) value greater than 50 (# of days)",
+        "Change in mean annual number of days with Fosberg Fire Weather Index (FFWI) value of 50 or higher (# of days)",
       short_desc: "Change in how often the weather is conducive for fires in this area (# of days)",
       variable: "ffwige50d",
       rescale: "-2,2",
@@ -125,7 +132,8 @@ export const metrics: Metric[] = [
   },
   {
     id: 3,
-    title: "Warm Nights",
+    title: climateVariables["warm-nights"].label,
+    summary: climateVariables["warm-nights"].description,
     slug: "warm-nights",
     abs: {
       mean: `${EXTREME_HEAT_BASE}/warm_nights/mm4mean/ssp370/gwl/t2min_ge99pctl/d03`,

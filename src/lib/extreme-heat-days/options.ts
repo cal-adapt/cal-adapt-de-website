@@ -1,6 +1,7 @@
 // Domain data for the Extreme Heat tool.
 
 import type { SelectOption } from "@/components/common/form";
+import { climateVariables } from "@/config/climate-variables";
 import {
   DEFAULT_SPATIAL_AGGREGATION,
   defaultLocationFor,
@@ -118,8 +119,7 @@ const EXTREME_HEAT_DAYS_METRIC: BarMetricConfig = {
   chartKind: "bar",
   value: "extreme-heat-days",
   variableId: "eh_days",
-  label: "Extreme Heat Days",
-  description: "Days per year above a daytime high temperature threshold",
+  ...climateVariables["extreme-heat-days"],
   tempStat: "t2max",
   defaultThreshold: "100F",
   absoluteMinF: 80,
@@ -140,8 +140,7 @@ const WARM_NIGHTS_METRIC: BarMetricConfig = {
   chartKind: "bar",
   value: "warm-nights",
   variableId: "warm_nights",
-  label: "Warm Nights",
-  description: "Nights per year above an overnight low temperature threshold",
+  ...climateVariables["warm-nights"],
   tempStat: "t2min",
   defaultThreshold: "70F",
   absoluteMinF: 65,
@@ -167,8 +166,7 @@ const EXTREME_HEAT_SEASON_METRIC: HeatmapMetricConfig = {
   chartKind: "heatmap",
   value: "extreme-heat-season",
   variableId: "frequency_percent",
-  label: "Extreme Heat Season",
-  description: "When in the year hot days tend to occur",
+  ...climateVariables["extreme-heat-season"],
   tempStat: "t2max",
   defaultThreshold: "90F",
   absoluteMinF: 65,
@@ -195,8 +193,7 @@ const HEAT_WAVE_FREQUENCY_METRIC: BarMetricConfig = {
   chartKind: "bar",
   value: "heat-wave-frequency",
   variableId: "heat_wave_count",
-  label: "Heat Wave Frequency",
-  description: "Heat waves per year lasting at least a set number of days",
+  ...climateVariables["heat-wave-frequency"],
   tempStat: "t2max",
   defaultThreshold: "110F",
   absoluteMinF: 85,
@@ -220,8 +217,7 @@ const HEAT_WAVE_LENGTH_METRIC: BarMetricConfig = {
   chartKind: "bar",
   value: "heat-wave-length",
   variableId: "heat_wave_length",
-  label: "Heat Wave Length",
-  description: "How long heat waves typically last",
+  ...climateVariables["heat-wave-length"],
   tempStat: "t2max",
   defaultThreshold: "100F",
   absoluteMinF: 85,

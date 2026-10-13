@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
 
 import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import ElectricBoltOutlinedIcon from "@mui/icons-material/ElectricBoltOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
@@ -8,7 +9,7 @@ import ThermostatOutlinedIcon from "@mui/icons-material/ThermostatOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
 
 import { type IconVariant } from "@/components/common/ui/Icon";
-import { navGroups, type NavLink } from "@/config/navigation";
+import { isNavLinkEnabled, navGroups, type NavLink, navLinks } from "@/config/navigation";
 
 export interface DashboardToolAppbarConfig {
   /** Tooltip for the Appbar's right-side icon button (typically opens a side panel). */
@@ -78,6 +79,10 @@ export function getDashboardSidebarItems(): { link: NavLink; icon: ReactNode }[]
     ...dashboardTools.map((tool) => ({
       link: tool.navLink,
       icon: tool.sidebarIcon,
+    })),
+    ...[navLinks.dataMethods].filter(isNavLinkEnabled).map((link) => ({
+      link,
+      icon: <DescriptionOutlinedIcon />,
     })),
   ];
 }

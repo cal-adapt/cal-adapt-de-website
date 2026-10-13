@@ -169,7 +169,7 @@ describe("climate variable dropdown", () => {
       {
         value: "extreme-heat-season",
         label: "Extreme Heat Season",
-        description: "When in the year hot days tend to occur",
+        description: "Time of year when extreme heat tends to occur",
       },
       {
         value: "heat-wave-frequency",
@@ -179,7 +179,7 @@ describe("climate variable dropdown", () => {
       {
         value: "heat-wave-length",
         label: "Heat Wave Length",
-        description: "How long heat waves typically last",
+        description: "Typical length of heat waves",
       },
     ]);
   });

@@ -38,11 +38,11 @@ export default async function ClimateStoryPage({ params }: ClimateStoryPageProps
     notFound();
   }
 
-  const { Body, sections } = page;
+  const { Body } = page;
 
   return (
     <Container align="start" spacing="page">
-      <ClimateStoryLayout story={story} sections={sections}>
+      <ClimateStoryLayout story={story}>
         <Body story={story} />
       </ClimateStoryLayout>
     </Container>
