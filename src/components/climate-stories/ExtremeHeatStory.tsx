@@ -16,7 +16,6 @@ import StoryBlock from "./StoryBlock";
 import StoryCitation from "./StoryCitation";
 import StoryDocument from "./StoryDocument";
 import StoryFigure from "./StoryFigure";
-import type { StorySection } from "./StoryTableOfContents";
 
 const FPO_FIGURE = { label: "[FPO: Figure]", source: "Lorem ipsum" } as const;
 
@@ -59,49 +58,10 @@ const SACRAMENTO_HEAT_WAVES_BLOG_POST = {
 
 const EXTREME_HEAT_TOOL = storyToolCharts["extreme-heat-days"].navLink;
 
-const MORE_FREQUENT_DAYS = {
-  id: "more-frequent-days",
-  title: "Extreme heat days will become more frequent",
-} as const;
-
-const HEAT_WAVES = {
-  id: "heat-waves",
-  title: "Heat waves will be more frequent and last longer",
-} as const;
-
-const WARM_NIGHTS = {
-  id: "warm-nights",
-  title: "Warm nights prevent the opportunity to cool off",
-} as const;
-
-const HEAT_SEASON = {
-  id: "extreme-heat-season",
-  title: "The “extreme heat season” in California will start earlier and last longer",
-} as const;
-
-const ELECTRICITY_DEMAND = {
-  id: "electricity-demand",
-  title: "Extreme heat drives higher electricity demand",
-} as const;
-
-const ROBUST_PLANNING = {
-  id: "robust-planning",
-  title: "Using Cal-Adapt for robust climate planning",
-} as const;
-
-export const extremeHeatSections = [
-  MORE_FREQUENT_DAYS,
-  HEAT_WAVES,
-  WARM_NIGHTS,
-  HEAT_SEASON,
-  ELECTRICITY_DEMAND,
-  ROBUST_PLANNING,
-] as const satisfies readonly StorySection[];
-
 export default function ExtremeHeatStory() {
   return (
     <StoryDocument>
-      <StoryBlock id={MORE_FREQUENT_DAYS.id} title={MORE_FREQUENT_DAYS.title}>
+      <StoryBlock id="more-frequent-days" title="Extreme heat days will become more frequent">
         <p>
           As climate change warms the state, Californians will experience a sharp rise in{" "}
           <GlossaryTerm
@@ -163,7 +123,7 @@ export default function ExtremeHeatStory() {
         </p>
       </Callout>
 
-      <StoryBlock id={HEAT_WAVES.id} title={HEAT_WAVES.title}>
+      <StoryBlock id="heat-waves" title="Heat waves will be more frequent and last longer">
         <p>
           The most severe impacts from extreme heat in California result from prolonged heat waves.
           Each day that a heat wave persists significantly compounds the risks to human health
@@ -196,7 +156,7 @@ export default function ExtremeHeatStory() {
         />
       </StoryBlock>
 
-      <StoryBlock id={WARM_NIGHTS.id} title={WARM_NIGHTS.title}>
+      <StoryBlock id="warm-nights" title="Warm nights prevent the opportunity to cool off">
         <p>
           The impact of extreme heat is multiplied when it is coupled with warm nighttime
           temperatures that don’t allow people, animals, buildings, or critical electrical
@@ -232,7 +192,10 @@ export default function ExtremeHeatStory() {
         <StoryToolFigure tool="extreme-heat-days" selections={SAN_BERNARDINO_WARM_NIGHTS_70F} />
       </StoryBlock>
 
-      <StoryBlock id={HEAT_SEASON.id} title={HEAT_SEASON.title}>
+      <StoryBlock
+        id="extreme-heat-season"
+        title="The “extreme heat season” in California will start earlier and last longer"
+      >
         <p>
           Extreme heat is more dangerous when it isn’t expected. Wildfire preparation, agricultural
           planning, and community cooling center operations all depend on understanding the timing
@@ -256,7 +219,7 @@ export default function ExtremeHeatStory() {
         <StoryToolFigure tool="extreme-heat-days" selections={HEAT_SEASON_95F} />
       </StoryBlock>
 
-      <StoryBlock id={ELECTRICITY_DEMAND.id} title={ELECTRICITY_DEMAND.title}>
+      <StoryBlock id="electricity-demand" title="Extreme heat drives higher electricity demand">
         <p>
           Whenever temperatures rise across the state, so does electricity demand from keeping
           buildings cool. Planning a resilient electrical system requires anticipating how much the
@@ -280,7 +243,7 @@ export default function ExtremeHeatStory() {
         <StoryToolFigure tool="hdd-cdd" selections={GREATER_BAY_AREA_CDD} />
       </StoryBlock>
 
-      <StoryBlock id={ROBUST_PLANNING.id} title={ROBUST_PLANNING.title}>
+      <StoryBlock id="robust-planning" title="Using Cal-Adapt for robust climate planning">
         <p>
           The examples on this page illustrate that it takes more than one chart or metric to tell
           the full story of extreme heat impacts. Considering extreme heat through multiple
