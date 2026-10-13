@@ -9,7 +9,7 @@ import { navLinks } from "@/config/navigation";
 import styles from "./page.module.scss";
 
 const INTRO = [
-  "Climate stories explain how climate change is expected to affect California. Each story starts with the big picture, such as how much hotter or wetter conditions are projected to become, and then shows why those changes matter for the energy sector and communities. Short explanations and interactive visuals help you see what the science says and explore what it could mean for your own community.",
+  "Climate stories explain how climate change is expected to affect California. Each story looks at how conditions are projected to change and why those changes matter for the energy sector and communities. Short explanations and interactive visuals help you see what the science says and explore what it could mean for your own community.",
   "Every story is built on Cal-Adapt’s climate projections and links to the tools and data behind each figure. That means you can start with a statewide overview and then dive into the details of your county. Whether you work in planning, research, or policy, or you’re simply curious, Climate stories are a great way to begin exploring climate change impacts in California.",
 ];
 
