@@ -38,7 +38,7 @@ const climateStoryDefinitions = [
     title: "Extreme Heat in California",
     label: "Extreme Heat",
     hazard: "Heat",
-    lastUpdated: "August 18, 2026",
+    lastUpdated: "October 16, 2026",
     isNew: true,
     summary:
       "Extreme heat events cause some of the most severe impacts from climate change in California. These events create public health risks, threaten critical infrastructure, and drive electricity use that strains the limits of the electrical grid. Understanding how the hazards from extreme heat will continue to evolve with climate change is essential to planners across California.",
