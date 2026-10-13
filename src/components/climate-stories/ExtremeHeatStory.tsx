@@ -224,12 +224,12 @@ export default function ExtremeHeatStory() {
           overnight, and in the foothills surrounding the central valley, where warm air from the
           valley floor is pushed up into the hills and trapped overnight.
         </p>
-        <StoryToolFigure tool="extreme-heat-days" selections={SAN_BERNARDINO_WARM_NIGHTS_70F} />
         <p>
           For example, San Bernardino is expected to experience an additional 28 days per year above
           70°F by mid century and an additional 46 by the end of the century. Explore the map above
           to see the spatial variability in warm nights across the entire state.
         </p>
+        <StoryToolFigure tool="extreme-heat-days" selections={SAN_BERNARDINO_WARM_NIGHTS_70F} />
       </StoryBlock>
 
       <StoryBlock id={HEAT_SEASON.id} title={HEAT_SEASON.title}>
@@ -248,10 +248,10 @@ export default function ExtremeHeatStory() {
           heat season” is crucial for adaptation planning across the state.
         </p>
         <p>
-          In Sacramento County, the part of the year when temperatures top 95°F in at least half of
-          years historically ran from late June to the start of September. At 2.0°C of global
-          warming, that season starts about two weeks earlier and ends about three weeks later,
-          running from mid-June to late September.
+          In Sacramento County, the part of the year where temperatures are likely (more than a 50%
+          chance) to top 95°F historically ran from late June to the start of September. At 2.0°C of
+          global warming, that season starts about two weeks earlier and ends about three weeks
+          later, running from mid-June to late September.
         </p>
         <StoryToolFigure tool="extreme-heat-days" selections={HEAT_SEASON_95F} />
       </StoryBlock>
