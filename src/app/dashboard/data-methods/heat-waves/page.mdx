@@ -56,7 +56,10 @@ The annual average frequency of heat waves, and the change from the historical b
 </Spec>
 <Spec label="Shown in">
 
-[Extreme Heat Tool](/dashboard/extreme-heat-days), [Extreme Heat Climate Story](/dashboard/climate-stories/extreme-heat)
+<ShownIn
+  tools={[{ id: "extreme-heat-days", variable: "heat-wave-frequency" }]}
+  stories={["extreme-heat"]}
+/>
 
 </Spec>
 <Spec label="Format">
@@ -79,7 +82,10 @@ The annual average length of heat waves, and the change from the historical base
 </Spec>
 <Spec label="Shown in">
 
-[Extreme Heat Tool](/dashboard/extreme-heat-days), [Extreme Heat Climate Story](/dashboard/climate-stories/extreme-heat)
+<ShownIn
+  tools={[{ id: "extreme-heat-days", variable: "heat-wave-length" }]}
+  stories={["extreme-heat"]}
+/>
 
 </Spec>
 <Spec label="Format">

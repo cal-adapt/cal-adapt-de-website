@@ -3,6 +3,7 @@ import type { MDXComponents } from "mdx/types";
 import Callout from "@/components/common/content/Callout";
 import MdxContent from "@/components/common/content/MdxContent";
 import S3FolderLink from "@/components/common/content/S3FolderLink";
+import ShownIn from "@/components/common/content/ShownIn";
 import Spec from "@/components/common/content/Spec";
 import Specs from "@/components/common/content/Specs";
 import StacBrowserLink from "@/components/common/content/StacBrowserLink";
@@ -19,6 +20,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     CitationBox,
     Specs,
     Spec,
+    ShownIn,
     StacBrowserLink,
     S3FolderLink,
     TurbinePowerCurve,
