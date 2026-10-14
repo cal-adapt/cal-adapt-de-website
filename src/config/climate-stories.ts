@@ -56,7 +56,7 @@ const climateStoryDefinitions = [
     hazard: "Precipitation",
     image: "/img/climate-stories/precipitation.webp",
     summary:
-      "Explore present-day and future extreme precipitation events with Cal-Adapt’s projections and learn how these changes impact California",
+      "Explore present-day and future extreme precipitation events with Cal-Adapt’s projections and learn how these changes impact California.",
   },
 ] as const satisfies readonly ClimateStoryDefinition[];
 
