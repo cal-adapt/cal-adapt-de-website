@@ -2,6 +2,11 @@ import type { ComponentType } from "react";
 
 import { type NavLink, navLinks } from "@/config/navigation";
 import {
+  type ClimateMetricsMapSelections,
+  resolveSelections as resolveClimateMetricsMapSelections,
+  selectionsToSearchParams as climateMetricsMapSelectionsToSearchParams,
+} from "@/lib/climate-metrics-map/options";
+import {
   type ExtremeHeatDaysSelections,
   resolveSelections as resolveExtremeHeatSelections,
 } from "@/lib/extreme-heat-days/options";
@@ -12,11 +17,13 @@ import {
 } from "@/lib/hdd-cdd/options";
 import { selectionsToSearchParams as hddCddSelectionsToSearchParams } from "@/lib/hdd-cdd/search-params";
 
+import ClimateMetricsMapChart from "./ClimateMetricsMapChart";
 import ExtremeHeatChart from "./ExtremeHeatChart";
 import HddCddChart from "./HddCddChart";
 
 /** Add a tool here and to `storyToolCharts` to make its chart usable in stories. */
 export interface StoryToolSelections {
+  "climate-metrics-map": ClimateMetricsMapSelections;
   "extreme-heat-days": ExtremeHeatDaysSelections;
   "hdd-cdd": HddCddSelections;
 }
@@ -32,6 +39,12 @@ interface StoryToolChart<S> {
 }
 
 export const storyToolCharts: { [K in StoryToolId]: StoryToolChart<StoryToolSelections[K]> } = {
+  "climate-metrics-map": {
+    navLink: navLinks.climateMetricsMap,
+    resolveSelections: resolveClimateMetricsMapSelections,
+    toSearchParams: climateMetricsMapSelectionsToSearchParams,
+    Chart: ClimateMetricsMapChart,
+  },
   "extreme-heat-days": {
     navLink: navLinks.extremeHeatDays,
     resolveSelections: resolveExtremeHeatSelections,

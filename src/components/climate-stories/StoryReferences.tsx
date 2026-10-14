@@ -1,5 +1,7 @@
 import { formatBibliography } from "@/lib/citations/bibliography";
 
+import StoryBlock from "./StoryBlock";
+
 import styles from "./StoryReferences.module.scss";
 
 export const STORY_REFERENCES_SECTION = {
@@ -16,15 +18,11 @@ export default async function StoryReferences({
   id = STORY_REFERENCES_SECTION.id,
   citationKeys,
 }: StoryReferencesProps) {
-  const headingId = `${id}-heading`;
   const bibliography = await formatBibliography(citationKeys);
 
   return (
-    <section id={id} className={styles.section} aria-labelledby={headingId}>
-      <h2 id={headingId} className={styles.heading}>
-        {STORY_REFERENCES_SECTION.title}
-      </h2>
+    <StoryBlock id={id} title={STORY_REFERENCES_SECTION.title}>
       <div className={styles.bibliography} dangerouslySetInnerHTML={{ __html: bibliography }} />
-    </section>
+    </StoryBlock>
   );
 }
