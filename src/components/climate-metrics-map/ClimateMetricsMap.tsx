@@ -9,15 +9,12 @@ import { useEffect, useState } from "react";
 
 import { metrics } from "@/data/climate-metrics-map/metrics";
 import { calAdaptApi } from "@/lib/cal-adapt-api";
+import { DEFAULT_GWL, type ValueType } from "@/lib/climate-metrics-map/options";
 
 import MapboxMap from "./MapboxMap";
 import MapUI from "./MapUI";
 
 import styles from "./ClimateMetricsMap.module.scss";
-
-export type ValueType = "abs" | "del";
-
-const DEFAULT_GWL = 1.5;
 
 export default function ClimateMetricsMap() {
   const [selectedGwlIndex, setSelectedGwlIndex] = useState<number>(0);

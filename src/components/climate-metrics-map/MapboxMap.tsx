@@ -25,8 +25,8 @@ import GeocoderControl from "@/components/common/map/GeocoderControl";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import type { Metric, MetricVariant } from "@/data/climate-metrics-map/metrics";
 import { calAdaptApi, type TileJson } from "@/lib/cal-adapt-api";
+import type { ValueType } from "@/lib/climate-metrics-map/options";
 
-import type { ValueType } from "./ClimateMetricsMap";
 import { buildColorTable } from "./colormap";
 import MapLegend from "./MapLegend";
 import MapPopup from "./MapPopup";
@@ -39,6 +39,16 @@ const INITIAL_VIEW_STATE = {
   latitude: 37.4,
   zoom: 5,
 } as const;
+
+const CALIFORNIA_BOUNDS: LngLatBoundsLike = [
+  [-124.5, 32.5],
+  [-114.1, 42.0],
+];
+
+const EMBEDDED_VIEW_STATE = {
+  bounds: CALIFORNIA_BOUNDS,
+  fitBoundsOptions: { padding: 16 },
+};
 
 const MAP_BOUNDS: LngLatBoundsLike = [
   [-140, 20], // Southwest coordinates [lng, lat]
@@ -55,6 +65,8 @@ type MapProps = {
   globalWarmingLevels: number[];
   metrics: Metric[];
   valueType: ValueType;
+  /** For maps embedded in a page: fit to California, no scroll zoom, no built-in legend. */
+  embedded?: boolean;
 };
 
 type GeocoderResult = {
@@ -95,9 +107,13 @@ const throttledGetPointGWLStats = throttle(
 );
 
 const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
-  ({ metricSelected, gwlSelected, globalWarmingLevels, metrics, valueType }, ref) => {
+  (
+    { metricSelected, gwlSelected, globalWarmingLevels, metrics, valueType, embedded = false },
+    ref
+  ) => {
     const mapRef = useRef<MapRef | null>(null);
     useImperativeHandle(ref, () => mapRef.current || undefined);
+    const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
 
     const [mounted, setMounted] = useState(false);
@@ -389,7 +405,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
 
       mapInstanceRef.current.getCanvas().style.cursor = "pointer";
 
-      const mapContainer = document.getElementById("map");
+      const mapContainer = mapContainerRef.current;
 
       if (mapContainer) {
         const resizeObserver = new ResizeObserver(() => {
@@ -447,6 +463,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
         }}
       >
         <Box
+          ref={mapContainerRef}
           sx={{ height: "100%", position: "relative" }}
           id="map"
           aria-label="Interactive map showing climate data"
@@ -476,9 +493,10 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
               onLoad={handleMapLoad}
               onError={handleMapError}
               mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
-              initialViewState={INITIAL_VIEW_STATE}
+              initialViewState={embedded ? EMBEDDED_VIEW_STATE : INITIAL_VIEW_STATE}
+              cooperativeGestures={embedded}
               mapStyle="mapbox://styles/mapbox/light-v11"
-              scrollZoom={true}
+              scrollZoom={!embedded}
               dragRotate={false}
               pitchWithRotate={false}
               minPitch={0}
@@ -531,23 +549,25 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
                 />
               )}
             </Map>
-            <div
-              style={{
-                position: "absolute",
-                bottom: 40,
-                left: 40,
-                zIndex: 2,
-                maxWidth: 554,
-              }}
-            >
-              <MapLegend
-                colormap={paths.colormap}
-                min={rescaleMin}
-                max={rescaleMax}
-                tickStep={paths.legendTickStep}
-                title={paths.description}
-              />
-            </div>
+            {!embedded && (
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: 40,
+                  left: 40,
+                  zIndex: 2,
+                  maxWidth: 554,
+                }}
+              >
+                <MapLegend
+                  colormap={paths.colormap}
+                  min={rescaleMin}
+                  max={rescaleMax}
+                  tickStep={paths.legendTickStep}
+                  title={paths.description}
+                />
+              </div>
+            )}
           </div>
         </Box>
       </Grid>

@@ -2,7 +2,7 @@
 
 .callout {
   @include flex(column, flex-start, stretch, spacer(2));
-  margin: spacer(5) 0;
+  margin-block: var(--flow-space, #{spacer(5)});
   padding: spacer(4) spacer(5);
   border-left: 4px solid var(--callout-bar);
   background: var(--callout-fill);

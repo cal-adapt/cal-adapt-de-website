@@ -18,8 +18,7 @@ import { dataMethodsHref } from "@/config/data-methods";
 import { isNavLinkEnabled, navLinks } from "@/config/navigation";
 import type { Metric } from "@/data/climate-metrics-map/metrics";
 import { tooltips } from "@/data/tooltips";
-
-import type { ValueType } from "./ClimateMetricsMap";
+import type { ValueType } from "@/lib/climate-metrics-map/options";
 
 import styles from "./MapUI.module.scss";
 

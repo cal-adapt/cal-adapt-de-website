@@ -23,6 +23,11 @@ const HEAT_WAVE_LENGTH_DEFAULT = resolveStoryToolSelections("extreme-heat-days",
   climateVariable: "heat-wave-length",
 });
 const HDD_CDD_DEFAULT = resolveStoryToolSelections("hdd-cdd");
+const EXTREME_HEAT_DAYS_CHANGE_MAP = resolveStoryToolSelections("climate-metrics-map", {
+  metric: "extreme-heat",
+  valueType: "del",
+  gwl: 1.5,
+});
 
 const EXTREME_HEAT_TOOL = storyToolCharts["extreme-heat-days"].navLink;
 
@@ -48,6 +53,7 @@ export default function ExtremeHeatStory() {
           the state experiencing more than [60?] days per year above 95°F by the end of the century
           compared to [days] in the 2000s.
         </p>
+        <StoryToolFigure tool="climate-metrics-map" selections={EXTREME_HEAT_DAYS_CHANGE_MAP} />
         <p>
           The coastal regions of California generally don’t experience temperatures as high as
           inland areas due to temperature moderation from the ocean, but even these areas will need
