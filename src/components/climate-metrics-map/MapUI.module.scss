@@ -4,3 +4,33 @@
   @include flex(column, flex-start, stretch, spacer(4));
   width: 100%;
 }
+
+.title {
+  margin: 0;
+  color: color(black);
+  @include type-item(heading-5);
+}
+
+.intro {
+  margin: calc(-1 * #{spacer(2)}) 0 spacer(2);
+  color: color(grey-4);
+  @include type-item(small);
+}
+
+.methodsNote {
+  margin: 0;
+  color: color(grey-4);
+  @include type-item(small);
+}
+
+// Tighter label/value gap so the read-only threshold sits like the fields above it.
+.threshold {
+  gap: spacer(2);
+}
+
+.thresholdNote {
+  display: block;
+  margin-top: spacer(3);
+  color: color(grey-4);
+  @include type-item(small);
+}

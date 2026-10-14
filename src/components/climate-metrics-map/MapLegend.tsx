@@ -6,7 +6,7 @@
 
 import * as d3 from "d3";
 
-import { binColors, binEdges, buildColorScale } from "./colormap";
+import { buildColorScale } from "./colormap";
 
 import styles from "./MapLegend.module.scss";
 
@@ -15,11 +15,8 @@ type MapLegendProps = {
   min: number;
   max: number;
   title?: string;
-  /** Draw `bins` solid color steps instead of a smooth gradient. */
-  bins?: number;
-  /** Label only ticks at multiples of this value (other ticks are drawn
-   *  shorter, without a label). Labels every tick when omitted. */
-  labelStep?: number;
+  /** Tick interval (e.g. every 30 days); chosen automatically when omitted. */
+  tickStep?: number;
 };
 
 const LABEL_MARGIN = 40;
@@ -28,7 +25,7 @@ const BAR_WIDTH = 520;
 const POINT_INSET = 10;
 const NUM_GRADIENT_STOPS = 32;
 
-export default function MapLegend({ colormap, min, max, title, bins, labelStep }: MapLegendProps) {
+export default function MapLegend({ colormap, min, max, title, tickStep }: MapLegendProps) {
   const boundsWidth = BAR_WIDTH - 2 * LABEL_MARGIN;
   const totalWidth = boundsWidth + 2 * LABEL_MARGIN + 2 * POINT_INSET;
 
@@ -42,9 +39,8 @@ export default function MapLegend({ colormap, min, max, title, bins, labelStep }
   let tickValues: number[];
   const valueRange = max - min;
 
-  if (bins) {
-    // Ticks on the bin edges, so each color step is labelled
-    tickValues = binEdges(min, max, bins);
+  if (tickStep) {
+    tickValues = d3.range(Math.ceil(min / tickStep) * tickStep, max + tickStep / 2, tickStep);
   } else if (min >= 0 && valueRange >= 100) {
     const step = d3.tickStep(min, max, 8);
     const start = Math.ceil(min / step) * step;
@@ -82,39 +78,22 @@ export default function MapLegend({ colormap, min, max, title, bins, labelStep }
     "Z",
   ].join(" ");
 
-  const gradientId = `legend-gradient-${colormap}-${min}-${max}-${bins ?? 0}`.replace(
-    /[^a-z0-9-]/gi,
-    "-"
-  );
+  const gradientId = `legend-gradient-${colormap}-${min}-${max}`.replace(/[^a-z0-9-]/gi, "-");
 
   // The gradient spans the full shape (including the pointed ends), so map the
   // bar's own [min, max] span into gradient offsets.
   const barStart = (xBarLeft - xLeft) / (xRight - xLeft);
   const barEnd = (xBarRight - xLeft) / (xRight - xLeft);
-  const gradientStops = bins
-    ? // Two stops per bin edge with the same offset make hard color steps
-      binColors(colormap, bins).flatMap((color, i) => {
-        const from = i === 0 ? 0 : barStart + ((barEnd - barStart) * i) / bins;
-        const to = i === bins - 1 ? 1 : barStart + ((barEnd - barStart) * (i + 1)) / bins;
-        return [
-          <stop key={`${i}-from`} offset={from} stopColor={color} />,
-          <stop key={`${i}-to`} offset={to} stopColor={color} />,
-        ];
-      })
-    : Array.from({ length: NUM_GRADIENT_STOPS + 1 }, (_, i) => {
-        const t = i / NUM_GRADIENT_STOPS;
-        return <stop key={i} offset={t} stopColor={colorScale(t)} />;
-      });
+  const gradientStops = Array.from({ length: NUM_GRADIENT_STOPS + 1 }, (_, i) => {
+    const t = i / NUM_GRADIENT_STOPS;
+    return <stop key={i} offset={t} stopColor={colorScale(t)} />;
+  });
 
   const range = max - min;
   const formatTick = (value: number) => {
     const precision = range >= 10 ? 0 : range >= 1 ? 1 : 2;
     return precision === 0 ? Math.round(value) : Number(value.toFixed(precision));
   };
-  const tickLabels = tickValues.map((value) => ({
-    value,
-    label: labelStep == null || value % labelStep === 0 ? `${formatTick(value)}` : null,
-  }));
 
   return (
     <div className={styles.mapLegend}>
@@ -137,23 +116,14 @@ export default function MapLegend({ colormap, min, max, title, bins, labelStep }
             </linearGradient>
           </defs>
           <path d={pathD} fill={`url(#${gradientId})`} stroke="black" strokeWidth={1} />
-          {tickLabels.map(({ value, label }, idx) => {
+          {tickValues.map((value) => {
             const x = xScale(value);
             return (
-              <g key={idx}>
-                {/* Unlabelled ticks are shorter, so the labelled ones stand out */}
-                <line
-                  x1={x}
-                  y1={0}
-                  x2={x}
-                  y2={label ? BAR_HEIGHT + 10 : BAR_HEIGHT + 4}
-                  stroke="black"
-                />
-                {label && (
-                  <text x={x} y={BAR_HEIGHT + 20} fontSize={12} textAnchor="middle" fill="black">
-                    {label}
-                  </text>
-                )}
+              <g key={value}>
+                <line x1={x} y1={0} x2={x} y2={BAR_HEIGHT + 10} stroke="black" />
+                <text x={x} y={BAR_HEIGHT + 20} fontSize={12} textAnchor="middle" fill="black">
+                  {formatTick(value)}
+                </text>
               </g>
             );
           })}

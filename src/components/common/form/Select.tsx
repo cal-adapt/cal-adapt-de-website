@@ -3,6 +3,7 @@
 import {
   type CSSProperties,
   forwardRef,
+  type ReactNode,
   useCallback,
   useEffect,
   useId,
@@ -24,6 +25,8 @@ export interface SelectOption {
   disabled?: boolean;
   hint?: string;
   description?: string;
+  /** Small icon shown before the label, in the list and in the closed control. */
+  icon?: ReactNode;
 }
 
 export interface SelectProps {
@@ -124,7 +127,14 @@ const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
           }}
         >
           {selected ? (
-            <span className={styles.value}>{selected.label}</span>
+            <>
+              {selected.icon ? (
+                <span className={styles.optionIcon} aria-hidden>
+                  {selected.icon}
+                </span>
+              ) : null}
+              <span className={styles.value}>{selected.label}</span>
+            </>
           ) : (
             <span className={styles.placeholder}>{placeholder}</span>
           )}
@@ -167,6 +177,11 @@ const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
                   >
                     <span className={styles.optionCopy}>
                       <span className={styles.optionHead}>
+                        {opt.icon ? (
+                          <span className={styles.optionIcon} aria-hidden>
+                            {opt.icon}
+                          </span>
+                        ) : null}
                         <span className={styles.optionText}>{opt.label}</span>
                         {opt.hint ? (
                           <Badge variant="blue-subtle" size="sm">

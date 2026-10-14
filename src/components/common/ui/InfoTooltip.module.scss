@@ -36,7 +36,7 @@
   position: absolute;
   z-index: z(10);
   width: max-content;
-  max-width: 42rem;
+  max-width: min(42rem, calc(100vw - #{spacer(4)}));
   padding: spacer(3) spacer(4);
   border-radius: rounded(2);
   background-color: color(black);
@@ -81,7 +81,7 @@
 .placementTop {
   left: 50%;
   bottom: calc(100% + #{spacer(2)});
-  transform: translateX(-50%);
+  transform: translateX(calc(-50% + var(--tooltip-shift, 0px)));
 
   &::before {
     left: 0;
@@ -91,7 +91,7 @@
   }
 
   &::after {
-    left: 50%;
+    left: calc(50% - var(--tooltip-shift, 0px));
     bottom: -6px;
     transform: translateX(-50%);
     border-width: 6px 6px 0 6px;
@@ -102,7 +102,7 @@
 .placementBottom {
   left: 50%;
   top: calc(100% + #{spacer(2)});
-  transform: translateX(-50%);
+  transform: translateX(calc(-50% + var(--tooltip-shift, 0px)));
 
   &::before {
     left: 0;
@@ -112,7 +112,7 @@
   }
 
   &::after {
-    left: 50%;
+    left: calc(50% - var(--tooltip-shift, 0px));
     top: -6px;
     transform: translateX(-50%);
     border-width: 0 6px 6px 6px;

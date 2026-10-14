@@ -1,12 +1,21 @@
 // MapUI
-// Side panel of controls for the Climate Metrics Map: value type, metric, and GWL selectors.
+// Side panel of controls for the Climate Metrics Map: value type, metric, and GWL selectors,
+// plus the metric's fixed threshold.
 
 "use client";
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+import LocalFireDepartmentOutlinedIcon from "@mui/icons-material/LocalFireDepartmentOutlined";
+import ThermostatOutlinedIcon from "@mui/icons-material/ThermostatOutlined";
+import WaterDropOutlinedIcon from "@mui/icons-material/WaterDropOutlined";
+
 import { FormField, Select } from "@/components/common/form";
+import LabelValue from "@/components/common/ui/LabelValue";
+import Link from "@/components/common/ui/Link";
+import { dataMethodsHref } from "@/config/data-methods";
+import { isNavLinkEnabled, navLinks } from "@/config/navigation";
 import type { Metric } from "@/data/climate-metrics-map/metrics";
 import { tooltips } from "@/data/tooltips";
 
@@ -28,6 +37,17 @@ const VALUE_TYPE_OPTIONS = [
 ];
 
 const VALUE_TYPE_HINT = "Show projected values or the change from the historical period.";
+
+/** Icon shown next to each metric in the dropdown, keyed by metric slug. The heat
+ *  metrics share the thermometer used for the Extreme Heat tool in the side nav. */
+const METRIC_ICONS: Record<string, React.ReactNode> = {
+  "extreme-heat": <ThermostatOutlinedIcon />,
+  "warm-nights": <ThermostatOutlinedIcon />,
+  "extreme-precipitation": <WaterDropOutlinedIcon />,
+  "fire-weather": <LocalFireDepartmentOutlinedIcon />,
+};
+
+const THRESHOLD_HINT = "The threshold used to define an extreme event for this metric.";
 
 type MapUIProps = {
   metricSelected: number;
@@ -52,17 +72,22 @@ export default function MapUI({
   metrics,
 }: MapUIProps) {
   const router = useRouter();
+  const selectedMetric = metrics[metricSelected] ?? metrics[0];
+  const methodsHref = dataMethodsHref(selectedMetric.methodsPage);
+  const heatToolHref =
+    selectedMetric.heatToolVariable && isNavLinkEnabled(navLinks.extremeHeatDays)
+      ? selectedMetric.heatToolVariable === "extreme-heat-days"
+        ? navLinks.extremeHeatDays.href
+        : `${navLinks.extremeHeatDays.href}?variable=${selectedMetric.heatToolVariable}`
+      : undefined;
 
   const handleMetricChange = (value: string) => {
-    const newMetricId = Number(value);
-    setMetricSelected(newMetricId);
+    const index = Number(value);
+    setMetricSelected(index);
 
-    const selectedMetric = metrics.find((m) => m.id === newMetricId);
-    if (selectedMetric) {
-      const params = new URLSearchParams(window.location.search);
-      params.set("metric", selectedMetric.slug);
-      router.push(`?${params.toString()}`);
-    }
+    const params = new URLSearchParams(window.location.search);
+    params.set("metric", metrics[index].slug);
+    router.push(`?${params.toString()}`);
   };
 
   // Load query params into state
@@ -72,15 +97,11 @@ export default function MapUI({
     // set metric from URL if available
     const metricSlug = params.get("metric");
     if (metricSlug) {
-      const matchedMetric = metrics.find((m) => m.slug === metricSlug);
-      if (matchedMetric) {
-        setMetricSelected(matchedMetric.id);
-      } else {
-        console.warn(`Unknown metric selected: ${metricSlug}`);
-        setMetricSelected(metrics[0].id);
-      }
+      const index = metrics.findIndex((m) => m.slug === metricSlug);
+      if (index === -1) console.warn(`Unknown metric selected: ${metricSlug}`);
+      setMetricSelected(Math.max(index, 0));
     } else {
-      setMetricSelected(metrics[0].id);
+      setMetricSelected(0);
     }
 
     // GWL
@@ -102,26 +123,21 @@ export default function MapUI({
     label: `${gwl}°`,
   }));
 
-  const metricOptions = metrics.map((metric) => ({
-    value: String(metric.id),
+  const metricOptions = metrics.map((metric, index) => ({
+    value: String(index),
     label: metric.title,
     description: metric.summary,
+    icon: METRIC_ICONS[metric.slug],
   }));
 
   return (
     <div className={styles.mapUI}>
-      <FormField
-        label="Data Type"
-        hint={VALUE_TYPE_HINT}
-        hintVariant="tooltip"
-        hintPlacement="bottom"
-      >
-        <Select
-          value={valueType}
-          onChange={(value) => setValueType(value as ValueType)}
-          options={VALUE_TYPE_OPTIONS}
-        />
-      </FormField>
+      <h1 className={styles.title}>{navLinks.climateMetricsMap.label}</h1>
+      <p className={styles.intro}>
+        See how extreme heat, precipitation, and fire weather are projected to change across
+        California. Drag to move the map, scroll or use the zoom buttons to zoom, and click the map
+        to see values for a location.
+      </p>
       <FormField
         label="Metric"
         hint={tooltips[1].long_text}
@@ -132,6 +148,18 @@ export default function MapUI({
           value={String(metricSelected)}
           onChange={handleMetricChange}
           options={metricOptions}
+        />
+      </FormField>
+      <FormField
+        label="Data Type"
+        hint={VALUE_TYPE_HINT}
+        hintVariant="tooltip"
+        hintPlacement="bottom"
+      >
+        <Select
+          value={valueType}
+          onChange={(value) => setValueType(value as ValueType)}
+          options={VALUE_TYPE_OPTIONS}
         />
       </FormField>
       <FormField
@@ -146,6 +174,28 @@ export default function MapUI({
           options={gwlOptions}
         />
       </FormField>
+      <LabelValue
+        className={styles.threshold}
+        label="Threshold"
+        hint={THRESHOLD_HINT}
+        value={
+          <>
+            {selectedMetric.thresholdLabel}
+            {heatToolHref && (
+              <span className={styles.thresholdNote}>
+                To explore other thresholds for counties and other regions, see the{" "}
+                <Link href={heatToolHref}>{navLinks.extremeHeatDays.label} tool</Link>.
+              </span>
+            )}
+          </>
+        }
+      />
+      {methodsHref && (
+        <p className={styles.methodsNote}>
+          For details on how this metric is calculated, see the{" "}
+          <Link href={methodsHref}>data methods</Link>.
+        </p>
+      )}
     </div>
   );
 }
