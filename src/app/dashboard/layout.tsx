@@ -18,6 +18,8 @@ import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
 import { extractSegment, normalizePath } from "@/utils/url";
 
+import styles from "./layout.module.scss";
+
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -63,16 +65,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <SidePanelProvider>
-      {/* Viewport-locked frame: the sidebar fills the window height and only the
-          main content scrolls, so the sidebar stays fully visible on long pages.
-          The height subtracts the site-wide banner so nothing overflows below it. */}
-      <div
-        style={{
-          display: "flex",
-          height: "calc(100dvh - var(--banner-height, 0px))",
-          overflow: "hidden",
-        }}
-      >
+      <div className={styles.frame}>
         <DashboardSidebar
           open={open}
           onToggleOpen={toggleLeftDrawer}
@@ -80,18 +73,10 @@ export default function Layout({ children }: LayoutProps) {
           items={SIDEBAR_ITEMS}
         />
 
-        <div
-          style={{
-            flex: 1,
-            minWidth: 0,
-            minHeight: 0,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
+        <div className={styles.content}>
           <DashboardAppBar page={pageLink} subPage={subPageLink} />
 
-          <main id="main-content" style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
+          <main id="main-content" className={styles.main}>
             {children}
           </main>
         </div>

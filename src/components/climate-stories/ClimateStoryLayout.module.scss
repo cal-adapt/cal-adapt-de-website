@@ -77,4 +77,8 @@
     top: spacer(8);
     align-self: start;
   }
+
+  @include print {
+    break-inside: avoid;
+  }
 }

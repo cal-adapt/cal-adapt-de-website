@@ -4,6 +4,10 @@
   @include flex(column, flex-start, stretch, spacer(2));
   margin: 0;
   min-width: 0;
+
+  @include print {
+    break-inside: avoid;
+  }
 }
 
 .placeholder {

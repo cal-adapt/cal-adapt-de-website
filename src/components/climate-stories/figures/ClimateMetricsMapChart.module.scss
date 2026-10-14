@@ -22,6 +22,20 @@
   @include breakpoint(medium) {
     height: 480px;
   }
+
+  @include print {
+    :global(.mapboxgl-ctrl-top-right) {
+      display: none;
+    }
+
+    // Mapbox sizes the canvas inline at screen width, so crop it to the page.
+    // California sits in the middle, so only the edges are lost
+    :global(.mapboxgl-canvas) {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
+    }
+  }
 }
 
 @container (min-width: 640px) {
