@@ -8,7 +8,7 @@ import { Group } from "@visx/group";
 import { useParentSize } from "@visx/responsive";
 import { scaleBand, scaleLinear } from "@visx/scale";
 import { BarRounded } from "@visx/shape";
-import { Text } from "@visx/text";
+import { getStringWidth, Text, useText } from "@visx/text";
 
 import { motion, useReducedMotion } from "motion/react";
 
@@ -21,10 +21,12 @@ import {
 
 import styles from "./BarChart.module.scss";
 
-const TITLE_BAND = 76;
-const TITLE_Y = 26;
-const SUBTITLE_Y = 54;
-const MARGIN = { top: 24, right: 24, bottom: 78, left: 86 } as const;
+const TITLE_TOP = 20;
+const TITLE_LINE_HEIGHT = 22;
+const SUBTITLE_GAP = 8;
+const SUBTITLE_LINE_HEIGHT = 18;
+const TITLE_BAND_BOTTOM = 8;
+const MARGIN = { top: 24, right: 24, left: 86 } as const;
 
 const X_AXIS_LABEL = "Global Warming Level (°C)";
 
@@ -35,6 +37,22 @@ const BAR_CORNER_RADIUS = 3;
 
 const TITLE_PADDING_X = 24;
 const X_TICK_OFFSET = 8;
+const X_TICK_GAP = 6;
+
+const signedLevel = (level: number) => `+${formatGlobalWarmingLevel(level)}`;
+
+// Longest first; the chart uses the first one whose words all fit under a bar
+const X_TICK_FORMATS: { label: (level: number) => string; marginBottom: number }[] = [
+  {
+    label: (level) => {
+      const name = formatGlobalWarmingLevelName(level);
+      return name ? `${name} (${signedLevel(level)})` : signedLevel(level);
+    },
+    marginBottom: 78,
+  },
+  { label: signedLevel, marginBottom: 52 },
+  { label: formatGlobalWarmingLevel, marginBottom: 52 },
+];
 
 // Should match CSS variable `--font-family-sans-serif`
 const FONT_FAMILY = '"Inter", "Helvetica Neue", "Helvetica", "Arial", sans-serif';
@@ -45,6 +63,11 @@ const subtitleMeasureStyle: CSSProperties = {
   fontWeight: 400,
 };
 const tickMeasureStyle: CSSProperties = { fontFamily: FONT_FAMILY, fontSize: 12, fontWeight: 500 };
+const axisLabelMeasureStyle: CSSProperties = {
+  fontFamily: FONT_FAMILY,
+  fontSize: 13,
+  fontWeight: 500,
+};
 
 interface HoveredBar {
   /** Center x of the bar. */
@@ -85,21 +108,40 @@ export default function BarChart({
   const { parentRef, width, height } = useParentSize({ debounceTime: 0 });
   const [hoveredBar, setHoveredBar] = useState<HoveredBar | null>(null);
 
+  const textWidth = Math.max(0, width - 2 * TITLE_PADDING_X);
+  const titleLines = useText({ children: title, width: textWidth, style: titleMeasureStyle })
+    .wordsByLines.length;
+  const subtitleLines = useText({
+    children: subtitle,
+    width: textWidth,
+    style: subtitleMeasureStyle,
+  }).wordsByLines.length;
+  const subtitleTop = TITLE_TOP + titleLines * TITLE_LINE_HEIGHT + SUBTITLE_GAP;
+  const titleBand = subtitleTop + subtitleLines * SUBTITLE_LINE_HEIGHT + TITLE_BAND_BOTTOM;
+
   const plotWidth = Math.max(0, width - MARGIN.left - MARGIN.right);
-  const plotHeight = Math.max(0, height - TITLE_BAND - MARGIN.top - MARGIN.bottom);
-
-  const { xScale, yScale } = useMemo(() => {
-    return {
-      yScale: scaleLinear<number>({ domain: [0, yAxisMax], range: [plotHeight, 0] }),
-      xScale: scaleBand<number>({
-        domain: globalWarmingLevels,
-        range: [0, plotWidth],
-        padding: 0.3,
-      }),
-    };
-  }, [globalWarmingLevels, plotWidth, plotHeight, yAxisMax]);
-
+  const xScale = useMemo(
+    () => scaleBand<number>({ domain: globalWarmingLevels, range: [0, plotWidth], padding: 0.3 }),
+    [globalWarmingLevels, plotWidth]
+  );
   const bandwidth = xScale.bandwidth();
+
+  const tickSlotWidth = xScale.step() - X_TICK_GAP;
+  const xTickFormat =
+    X_TICK_FORMATS.find((format) =>
+      globalWarmingLevels.every((level) =>
+        format
+          .label(level)
+          .split(" ")
+          .every((word) => (getStringWidth(word, tickMeasureStyle) ?? 0) <= tickSlotWidth)
+      )
+    ) ?? X_TICK_FORMATS[X_TICK_FORMATS.length - 1];
+
+  const plotHeight = Math.max(0, height - titleBand - MARGIN.top - xTickFormat.marginBottom);
+  const yScale = useMemo(
+    () => scaleLinear<number>({ domain: [0, yAxisMax], range: [plotHeight, 0] }),
+    [plotHeight, yAxisMax]
+  );
 
   // Re-grow bars only when the data changes: keying each bar by the values
   // remounts it on a threshold/location switch (replaying the grow) but leaves it
@@ -136,10 +178,11 @@ export default function BarChart({
           <Text
             className={styles.chartTitle}
             x={width / 2}
-            y={TITLE_Y}
-            width={Math.max(0, width - 2 * TITLE_PADDING_X)}
+            y={TITLE_TOP}
+            width={textWidth}
+            lineHeight={TITLE_LINE_HEIGHT}
             textAnchor="middle"
-            verticalAnchor="middle"
+            verticalAnchor="start"
             style={titleMeasureStyle}
             aria-hidden="true"
           >
@@ -148,17 +191,18 @@ export default function BarChart({
           <Text
             className={styles.chartSubtitle}
             x={width / 2}
-            y={SUBTITLE_Y}
-            width={Math.max(0, width - 2 * TITLE_PADDING_X)}
+            y={subtitleTop}
+            width={textWidth}
+            lineHeight={SUBTITLE_LINE_HEIGHT}
             textAnchor="middle"
-            verticalAnchor="middle"
+            verticalAnchor="start"
             style={subtitleMeasureStyle}
             aria-hidden="true"
           >
             {subtitle}
           </Text>
 
-          <Group left={MARGIN.left} top={TITLE_BAND + MARGIN.top}>
+          <Group left={MARGIN.left} top={titleBand + MARGIN.top}>
             <GridRows
               className={styles.grid}
               scale={yScale}
@@ -193,7 +237,7 @@ export default function BarChart({
               const showTooltip = () =>
                 setHoveredBar({
                   x: MARGIN.left + x + bandwidth / 2,
-                  y: TITLE_BAND + MARGIN.top + y,
+                  y: titleBand + MARGIN.top + y,
                   label,
                 });
               const hideTooltip = () => setHoveredBar(null);
@@ -233,26 +277,21 @@ export default function BarChart({
               y2={plotHeight}
               aria-hidden="true"
             />
-            {globalWarmingLevels.map((level) => {
-              const cx = (xScale(level) ?? 0) + bandwidth / 2;
-              const name = formatGlobalWarmingLevelName(level);
-              const temp = `+${formatGlobalWarmingLevel(level)}`;
-              return (
-                <Text
-                  key={level}
-                  className={styles.tickLabel}
-                  x={cx}
-                  y={plotHeight + X_TICK_OFFSET}
-                  width={bandwidth}
-                  textAnchor="middle"
-                  verticalAnchor="start"
-                  style={tickMeasureStyle}
-                  aria-hidden="true"
-                >
-                  {name ? `${name} (${temp})` : temp}
-                </Text>
-              );
-            })}
+            {globalWarmingLevels.map((level) => (
+              <Text
+                key={level}
+                className={styles.tickLabel}
+                x={(xScale(level) ?? 0) + bandwidth / 2}
+                y={plotHeight + X_TICK_OFFSET}
+                width={bandwidth}
+                textAnchor="middle"
+                verticalAnchor="start"
+                style={tickMeasureStyle}
+                aria-hidden="true"
+              >
+                {xTickFormat.label(level)}
+              </Text>
+            ))}
           </Group>
 
           <Text
@@ -267,10 +306,12 @@ export default function BarChart({
           <Text
             className={styles.axisLabel}
             x={20}
-            y={TITLE_BAND + MARGIN.top + plotHeight / 2}
+            y={titleBand + MARGIN.top + plotHeight / 2}
+            width={plotHeight}
             angle={-90}
             textAnchor="middle"
             verticalAnchor="middle"
+            style={axisLabelMeasureStyle}
           >
             {yAxisLabel}
           </Text>

@@ -3,9 +3,7 @@
 .chartContainer {
   position: relative;
   width: 100%;
-  aspect-ratio: 2 / 1;
-  min-height: 340px;
-  max-height: 480px;
+  @include chart-size;
 }
 
 .chart {

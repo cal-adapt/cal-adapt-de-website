@@ -3,9 +3,7 @@
 .chartContainer {
   position: relative;
   width: 100%;
-  aspect-ratio: 2 / 1;
-  min-height: 340px;
-  max-height: 480px;
+  @include chart-size;
 }
 
 .chart {
@@ -115,9 +113,14 @@
   stroke-dasharray: 5 3;
 }
 
+.hoverTarget {
+  touch-action: pan-y;
+}
+
 .tooltip {
   position: absolute;
-  transform: translate(-50%, 0);
+  // Keeps the measured width stable near the right edge
+  width: max-content;
   pointer-events: none;
   z-index: 1;
   background-color: color(black);
@@ -136,6 +139,11 @@
 .tooltipLocation {
   color: color(grey-3);
   margin-bottom: spacer(2);
+
+  // Already in the chart title
+  @include narrow-chart {
+    display: none;
+  }
 }
 
 .tooltipRow {
@@ -143,6 +151,12 @@
 
   & + & {
     margin-top: spacer(1);
+  }
+
+  @include narrow-chart {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 0 spacer(2);
   }
 }
 
@@ -161,4 +175,8 @@
 
 .tooltipValues {
   color: color(grey-2);
+
+  @include narrow-chart {
+    grid-column: 2;
+  }
 }
