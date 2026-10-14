@@ -26,7 +26,12 @@ const HDD_CDD_DEFAULT = resolveStoryToolSelections("hdd-cdd");
 const EXTREME_HEAT_DAYS_CHANGE_MAP = resolveStoryToolSelections("climate-metrics-map", {
   metric: "extreme-heat",
   valueType: "del",
-  gwl: 1.5,
+  gwl: 3.0,
+});
+const WARM_NIGHTS_CHANGE_MAP = resolveStoryToolSelections("climate-metrics-map", {
+  metric: "warm-nights",
+  valueType: "del",
+  gwl: 3.0,
 });
 
 const EXTREME_HEAT_TOOL = storyToolCharts["extreme-heat-days"].navLink;
@@ -145,7 +150,7 @@ export default function ExtremeHeatStory() {
           particularly high in the foothills surrounding the central valley, where warm air from the
           valley floor is pushed up into the hills and trapped overnight.
         </p>
-        <StoryFigure {...FPO_FIGURE} />
+        <StoryToolFigure tool="climate-metrics-map" selections={WARM_NIGHTS_CHANGE_MAP} />
       </StoryBlock>
 
       <StoryBlock

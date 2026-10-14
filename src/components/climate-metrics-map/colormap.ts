@@ -5,7 +5,7 @@
 import * as d3 from "d3";
 import * as d3Chromatic from "d3-scale-chromatic";
 
-// Steps for layers without `bins`: fine enough to look smooth, while keeping
+// Color steps per tile color table: fine enough to look smooth, while keeping
 // tile URLs short.
 const SMOOTH_STEPS = 64;
 

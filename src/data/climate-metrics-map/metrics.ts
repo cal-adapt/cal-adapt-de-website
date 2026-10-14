@@ -1,4 +1,5 @@
 import { climateVariables } from "@/config/climate-variables";
+import type { DataMethodsPageId } from "@/config/navigation";
 
 export type MetricVariant = {
   mean: string;
@@ -9,11 +10,8 @@ export type MetricVariant = {
   variable: string;
   rescale: string;
   colormap: string;
-  /** Show this layer as `bins` visible color steps across `rescale`.
-   *  Without it, the layer is drawn as a smooth gradient. */
-  bins?: number;
-  /** Label legend ticks only at multiples of this value (e.g. every 6 days). */
-  legendLabelStep?: number;
+  /** Legend tick interval (e.g. every 30 days); automatic when omitted. */
+  legendTickStep?: number;
 };
 
 // Labels shown next to the min/mean/max values in the map click popup.
@@ -28,7 +26,6 @@ type StatLabels = {
 };
 
 export type Metric = {
-  id: number;
   title: string;
   /** One-line description shown under the title in the metric dropdown. */
   summary: string;
@@ -36,47 +33,89 @@ export type Metric = {
   abs: MetricVariant;
   del: MetricVariant;
   statLabels?: StatLabels;
+  /** Fixed threshold the metric is calculated at, shown read-only in the controls,
+   *  e.g. "95°F" or "99th percentile". */
+  thresholdLabel: string;
+  /** Extreme Heat tool `variable` with this metric at other thresholds; the controls
+   *  link there from the threshold. */
+  heatToolVariable?: "extreme-heat-days" | "warm-nights";
+  /** Data methods page describing how this metric is calculated. */
+  methodsPage: DataMethodsPageId;
 };
 
 const EXTREME_HEAT_BASE = "s3://cadcat/wrf/extreme-heat-tool/multimodel_gridded";
 
+// Extreme Heat Days and Warm Nights share legend scales so the two maps compare
+// directly. Absolute tops out near the 90th percentile of California grid cells at
+// 3.0°C (142 days / 142 nights), leaving room to show coastal differences; delta
+// near the 98th (45 / 48). Both are fixed across warming levels.
+
+// Array order is dropdown order; the map refers to metrics by index.
 export const metrics: Metric[] = [
   {
-    id: 0,
     title: climateVariables["extreme-heat-days"].label,
     summary: climateVariables["extreme-heat-days"].description,
     slug: "extreme-heat",
     abs: {
-      mean: `${EXTREME_HEAT_BASE}/eh_days/mm4mean/ssp370/gwl/t2max_ge99pctl/d03`,
-      min_path: `${EXTREME_HEAT_BASE}/eh_days/mm4min/ssp370/gwl/t2max_ge99pctl/d03`,
-      max_path: `${EXTREME_HEAT_BASE}/eh_days/mm4max/ssp370/gwl/t2max_ge99pctl/d03`,
-      description:
-        "Mean number of days per year with maximum temperature above the local 99th-percentile threshold (# of days)",
-      short_desc:
-        "How many days during the year are expected to be very hot compared to the past (# of days)",
-      variable: "t2max_ge99pctl",
-      rescale: "0,30",
+      mean: `${EXTREME_HEAT_BASE}/eh_days/mm4mean/ssp370/gwl/t2max_ge95F/d03`,
+      min_path: `${EXTREME_HEAT_BASE}/eh_days/mm4min/ssp370/gwl/t2max_ge95F/d03`,
+      max_path: `${EXTREME_HEAT_BASE}/eh_days/mm4max/ssp370/gwl/t2max_ge95F/d03`,
+      description: "Mean number of days per year with maximum temperature above 95°F (# of days)",
+      short_desc: "How many days during the year are expected to reach 95°F or hotter (# of days)",
+      variable: "t2max_ge95F",
+      rescale: "0,120",
       colormap: "cal-adapt-extreme-heat",
-      bins: 15,
-      legendLabelStep: 6,
+      legendTickStep: 30,
     },
     del: {
-      mean: `${EXTREME_HEAT_BASE}/eh_days/mm4mean/ssp370/gwl_delta/t2max_ge99pctl/d03`,
-      min_path: `${EXTREME_HEAT_BASE}/eh_days/mm4min/ssp370/gwl_delta/t2max_ge99pctl/d03`,
-      max_path: `${EXTREME_HEAT_BASE}/eh_days/mm4max/ssp370/gwl_delta/t2max_ge99pctl/d03`,
+      mean: `${EXTREME_HEAT_BASE}/eh_days/mm4mean/ssp370/gwl_delta/t2max_ge95F/d03`,
+      min_path: `${EXTREME_HEAT_BASE}/eh_days/mm4min/ssp370/gwl_delta/t2max_ge95F/d03`,
+      max_path: `${EXTREME_HEAT_BASE}/eh_days/mm4max/ssp370/gwl_delta/t2max_ge95F/d03`,
       description:
         "Mean change in number of extreme heat days relative to a 0.8°C world (# of days)",
       short_desc:
-        "Change in how many days during the year are expected to be very hot compared to the past (# of days)",
-      variable: "t2max_ge99pctl",
-      rescale: "0,30",
+        "Change in how many days during the year are expected to reach 95°F or hotter (# of days)",
+      variable: "t2max_ge95F",
+      rescale: "0,50",
       colormap: "cal-adapt-extreme-heat",
-      bins: 15,
-      legendLabelStep: 6,
     },
+    thresholdLabel: "95°F",
+    heatToolVariable: "extreme-heat-days",
+    methodsPage: "data-methods-extreme-heat-days",
   },
   {
-    id: 1,
+    title: climateVariables["warm-nights"].label,
+    summary: climateVariables["warm-nights"].description,
+    slug: "warm-nights",
+    abs: {
+      mean: `${EXTREME_HEAT_BASE}/warm_nights/mm4mean/ssp370/gwl/t2min_ge70F/d03`,
+      min_path: `${EXTREME_HEAT_BASE}/warm_nights/mm4min/ssp370/gwl/t2min_ge70F/d03`,
+      max_path: `${EXTREME_HEAT_BASE}/warm_nights/mm4max/ssp370/gwl/t2min_ge70F/d03`,
+      description:
+        "Mean number of nights per year with minimum temperature above 70°F (# of nights)",
+      short_desc:
+        "How many nights during the year are expected to stay at 70°F or warmer (# of nights)",
+      variable: "t2min_ge70F",
+      rescale: "0,120",
+      colormap: "cal-adapt-warm-nights",
+      legendTickStep: 30,
+    },
+    del: {
+      mean: `${EXTREME_HEAT_BASE}/warm_nights/mm4mean/ssp370/gwl_delta/t2min_ge70F/d03`,
+      min_path: `${EXTREME_HEAT_BASE}/warm_nights/mm4min/ssp370/gwl_delta/t2min_ge70F/d03`,
+      max_path: `${EXTREME_HEAT_BASE}/warm_nights/mm4max/ssp370/gwl_delta/t2min_ge70F/d03`,
+      description: "Mean change in number of warm nights relative to a 0.8°C world (# of nights)",
+      short_desc:
+        "Change in how many nights during the year are expected to stay at 70°F or warmer (# of nights)",
+      variable: "t2min_ge70F",
+      rescale: "0,50",
+      colormap: "cal-adapt-warm-nights",
+    },
+    thresholdLabel: "70°F",
+    heatToolVariable: "warm-nights",
+    methodsPage: "data-methods-extreme-heat-days",
+  },
+  {
     title: climateVariables["extreme-precipitation"].label,
     summary: climateVariables["extreme-precipitation"].description,
     slug: "extreme-precipitation",
@@ -101,9 +140,10 @@ export const metrics: Metric[] = [
       rescale: "-20,20",
       colormap: "BrBG",
     },
+    thresholdLabel: "99th percentile",
+    methodsPage: "data-methods-extreme-precipitation",
   },
   {
-    id: 2,
     title: climateVariables["fire-weather"].label,
     summary: climateVariables["fire-weather"].description,
     slug: "fire-weather",
@@ -129,38 +169,7 @@ export const metrics: Metric[] = [
       rescale: "-2,2",
       colormap: "PuOr_r",
     },
-  },
-  {
-    id: 3,
-    title: climateVariables["warm-nights"].label,
-    summary: climateVariables["warm-nights"].description,
-    slug: "warm-nights",
-    abs: {
-      mean: `${EXTREME_HEAT_BASE}/warm_nights/mm4mean/ssp370/gwl/t2min_ge99pctl/d03`,
-      min_path: `${EXTREME_HEAT_BASE}/warm_nights/mm4min/ssp370/gwl/t2min_ge99pctl/d03`,
-      max_path: `${EXTREME_HEAT_BASE}/warm_nights/mm4max/ssp370/gwl/t2min_ge99pctl/d03`,
-      description:
-        "Mean number of nights per year with minimum temperature above the local 99th-percentile threshold (# of nights)",
-      short_desc:
-        "How many nights during the year are expected to stay very warm compared to the past (# of nights)",
-      variable: "t2min_ge99pctl",
-      rescale: "0,30",
-      colormap: "cal-adapt-warm-nights",
-      bins: 15,
-      legendLabelStep: 6,
-    },
-    del: {
-      mean: `${EXTREME_HEAT_BASE}/warm_nights/mm4mean/ssp370/gwl_delta/t2min_ge99pctl/d03`,
-      min_path: `${EXTREME_HEAT_BASE}/warm_nights/mm4min/ssp370/gwl_delta/t2min_ge99pctl/d03`,
-      max_path: `${EXTREME_HEAT_BASE}/warm_nights/mm4max/ssp370/gwl_delta/t2min_ge99pctl/d03`,
-      description: "Mean change in number of warm nights relative to a 0.8°C world (# of nights)",
-      short_desc:
-        "Change in how many nights during the year are expected to stay very warm compared to the past (# of nights)",
-      variable: "t2min_ge99pctl",
-      rescale: "0,30",
-      colormap: "cal-adapt-warm-nights",
-      bins: 15,
-      legendLabelStep: 6,
-    },
+    thresholdLabel: "Fosberg Fire Weather Index ≥ 50",
+    methodsPage: "data-methods-fire-weather",
   },
 ];

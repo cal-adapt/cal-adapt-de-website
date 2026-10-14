@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode,useEffect, useId, useRef, useState } from "react";
+import { type ReactNode, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
 
@@ -20,6 +20,9 @@ export interface InfoTooltipProps {
   /** Accessible name for the trigger button. */
   ariaLabel?: string;
 }
+
+/** Minimum gap (px) kept between a tooltip and the edge of the window. */
+const VIEWPORT_MARGIN = 8;
 
 const placementClass: Record<InfoTooltipPlacement, string> = {
   top: styles.placementTop,
@@ -44,6 +47,21 @@ export default function InfoTooltip({
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const open = hovered || focused;
+  const popoverRef = useRef<HTMLSpanElement>(null);
+
+  // Nudge a top/bottom tooltip horizontally so it stays inside the window;
+  // the arrow is offset by the same amount so it still points at the icon.
+  useLayoutEffect(() => {
+    const popover = popoverRef.current;
+    if (!open || !popover || (placement !== "top" && placement !== "bottom")) return;
+    popover.style.setProperty("--tooltip-shift", "0px");
+    const { left, right } = popover.getBoundingClientRect();
+    const maxRight = document.documentElement.clientWidth - VIEWPORT_MARGIN;
+    let shift = 0;
+    if (right > maxRight) shift = Math.max(maxRight - right, VIEWPORT_MARGIN - left);
+    else if (left < VIEWPORT_MARGIN) shift = VIEWPORT_MARGIN - left;
+    popover.style.setProperty("--tooltip-shift", `${shift}px`);
+  }, [open, placement]);
 
   useEffect(() => {
     if (!open) {
@@ -81,6 +99,7 @@ export default function InfoTooltip({
       </button>
       {open ? (
         <span
+          ref={popoverRef}
           id={tooltipId}
           role="tooltip"
           className={clsx(styles.popover, placementClass[placement])}

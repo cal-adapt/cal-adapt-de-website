@@ -1,0 +1,24 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+}
+
+.mapArea {
+  @include flex(column);
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.controlsArea {
+  flex: 0 0 320px;
+  height: 100%;
+  padding: spacer(5);
+  background-color: color(white);
+  border-left: 1px solid color(grey-2);
+}
