@@ -42,6 +42,11 @@ const GREATER_BAY_AREA_CDD = resolveStoryToolSelections("hdd-cdd", {
   spatialAggregation: "forecast_zones",
   location: "Greater Bay Area",
 });
+const EXTREME_HEAT_DAYS_CHANGE_MAP = resolveStoryToolSelections("climate-metrics-map", {
+  metric: "extreme-heat",
+  valueType: "del",
+  gwl: 1.5,
+});
 
 const EXTREME_HEAT_DAYS_MAP_HREF = climateMetricsMapHref("extreme-heat");
 const WARM_NIGHTS_MAP_HREF = climateMetricsMapHref("warm-nights");
@@ -75,6 +80,7 @@ export default function ExtremeHeatStory() {
           Valley like Sacramento, Fresno, and Bakersfield experiencing an additional 30 days per
           year above 95°F by the end of the century compared to the early 2000s.
         </p>
+        <StoryToolFigure tool="climate-metrics-map" selections={EXTREME_HEAT_DAYS_CHANGE_MAP} />
         <p>
           The coastal regions of California generally don’t experience temperatures as high as
           inland areas due to temperature moderation from the ocean, but even these areas will need
