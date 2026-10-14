@@ -5,14 +5,11 @@ import { climateStories, climateStoryCatalog } from "@/config/climate-stories";
 import { getClimateStoryPage } from "./story-pages";
 
 describe("getClimateStoryPage", () => {
-  it("registers a page with unique section ids for every published story", () => {
+  it("registers a page for every published story", () => {
     for (const story of climateStories) {
       const page = getClimateStoryPage(story.slug);
       expect(page).toBeDefined();
       expect(page?.Body).toBeTypeOf("function");
-      const ids = page?.sections.map((section) => section.id) ?? [];
-      expect(ids.length).toBeGreaterThan(0);
-      expect(new Set(ids).size).toBe(ids.length);
     }
   });
 

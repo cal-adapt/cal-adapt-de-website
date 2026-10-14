@@ -14,6 +14,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     routes.push(navLinks.climateStories.href, ...climateStories.map((story) => story.href));
   }
 
+  if (featureFlags.__FF_DATA_METHODS__) {
+    routes.push(
+      navLinks.dataMethods.href,
+      ...navLinks.dataMethods.children.map((page) => page.href)
+    );
+  }
+
   const staticRoutesSitemap = routes.map((route) => ({
     url: `${SITE_URL}${route}`,
     lastModified: new Date(),
