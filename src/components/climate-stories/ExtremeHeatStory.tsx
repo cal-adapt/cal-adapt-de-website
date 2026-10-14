@@ -1,15 +1,14 @@
 import Callout from "@/components/common/content/Callout";
 import Link from "@/components/common/ui/Link";
-import ToolPill from "@/components/common/ui/ToolPill";
+import ToolButton from "@/components/common/ui/ToolButton";
 import { navLinks } from "@/config/navigation";
 
 import StoryToolFigure from "./figures/StoryToolFigure";
-import StoryToolLink from "./figures/StoryToolLink";
 import {
-  climateMetricsMapHref,
   resolveStoryToolSelections,
   storyToolCharts,
   storyToolHref,
+  storyToolLink,
 } from "./figures/tool-charts";
 import GlossaryTerm from "./GlossaryTerm";
 import StoryBlock from "./StoryBlock";
@@ -48,8 +47,14 @@ const EXTREME_HEAT_DAYS_CHANGE_MAP = resolveStoryToolSelections("climate-metrics
   gwl: 1.5,
 });
 
-const EXTREME_HEAT_DAYS_MAP_HREF = climateMetricsMapHref("extreme-heat");
-const WARM_NIGHTS_MAP_HREF = climateMetricsMapHref("warm-nights");
+const EXTREME_HEAT_DAYS_MAP = storyToolLink(
+  "climate-metrics-map",
+  resolveStoryToolSelections("climate-metrics-map", { metric: "extreme-heat" })
+);
+const WARM_NIGHTS_MAP = storyToolLink(
+  "climate-metrics-map",
+  resolveStoryToolSelections("climate-metrics-map", { metric: "warm-nights" })
+);
 
 const SACRAMENTO_HEAT_WAVES_BLOG_POST = {
   label: "The 2020 Sacramento Heat Waves",
@@ -94,7 +99,7 @@ export default function ExtremeHeatStory() {
         <StoryToolFigure
           tool="extreme-heat-days"
           selections={SANTA_BARBARA_99PCTL}
-          mapHref={EXTREME_HEAT_DAYS_MAP_HREF}
+          toolLinks={[EXTREME_HEAT_DAYS_MAP]}
         />
       </StoryBlock>
 
@@ -103,17 +108,13 @@ export default function ExtremeHeatStory() {
         title="Make these figures your own"
         actions={
           <>
-            <ToolPill
-              size="large"
+            <ToolButton
+              size="small"
               navLink={EXTREME_HEAT_TOOL}
               href={storyToolHref("extreme-heat-days", SANTA_BARBARA_99PCTL)}
             />
-            <ToolPill size="large" navLink={navLinks.hddCdd} href={navLinks.hddCdd.href} />
-            <ToolPill
-              size="large"
-              navLink={navLinks.climateMetricsMap}
-              href={navLinks.climateMetricsMap.href}
-            />
+            <ToolButton size="small" navLink={navLinks.hddCdd} />
+            <ToolButton size="small" navLink={navLinks.climateMetricsMap} />
           </>
         }
       >
@@ -172,11 +173,7 @@ export default function ExtremeHeatStory() {
           demand
           <StoryCitation citationKey="wangRapid2023" />.
         </p>
-        <StoryToolLink
-          links={[{ navLink: navLinks.climateMetricsMap, href: WARM_NIGHTS_MAP_HREF }]}
-        >
-          <StoryFigure {...FPO_FIGURE} />
-        </StoryToolLink>
+        <StoryFigure {...FPO_FIGURE} toolLinks={[WARM_NIGHTS_MAP]} />
         <p>
           Across the entire state of California, the number of days per year where the minimum
           temperature remains above 70°F is expected to increase on average by 13 days per year by
