@@ -65,7 +65,7 @@ type MapProps = {
   globalWarmingLevels: number[];
   metrics: Metric[];
   valueType: ValueType;
-  /** For maps embedded in a page: fit to California, don't hijack page scroll, no built-in legend. */
+  /** For maps embedded in a page: fit to California, no scroll zoom, no built-in legend. */
   embedded?: boolean;
 };
 
@@ -496,7 +496,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
               initialViewState={embedded ? EMBEDDED_VIEW_STATE : INITIAL_VIEW_STATE}
               cooperativeGestures={embedded}
               mapStyle="mapbox://styles/mapbox/light-v11"
-              scrollZoom={true}
+              scrollZoom={!embedded}
               dragRotate={false}
               pitchWithRotate={false}
               minPitch={0}
