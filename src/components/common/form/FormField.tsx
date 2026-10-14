@@ -12,7 +12,7 @@ import {
 import clsx from "clsx";
 
 import Badge from "@/components/common/ui/Badge";
-import InfoTooltip from "@/components/common/ui/InfoTooltip";
+import InfoTooltip, { type InfoTooltipPlacement } from "@/components/common/ui/InfoTooltip";
 
 import FormInlineError from "./FormInlineError";
 import Label from "./Label";
@@ -34,6 +34,8 @@ export interface FormFieldProps {
   hint?: ReactNode;
   /** `inline` shows hint text under the label; `tooltip` shows an (i) icon with the hint on hover/focus. */
   hintVariant?: "inline" | "tooltip";
+  /** Side the tooltip opens on when `hintVariant` is `tooltip`. Defaults to `top`. */
+  hintPlacement?: InfoTooltipPlacement;
   error?: ReactNode;
   required?: boolean;
   className?: string;
@@ -51,6 +53,7 @@ export default function FormField({
   labelAccessory,
   hint,
   hintVariant = "inline",
+  hintPlacement = "top",
   error,
   required,
   className,
@@ -95,7 +98,7 @@ export default function FormField({
         className={styles.hintTooltipIcon}
         iconClassName={styles.hintInfoIcon}
         content={<span>{hint}</span>}
-        placement="top"
+        placement={hintPlacement}
       />
     ) : null;
 

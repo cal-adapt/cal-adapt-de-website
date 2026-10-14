@@ -1,42 +1,6 @@
 @use "@/styles/abstracts" as *;
 
 .mapUI {
-  z-index: z(2);
-  position: absolute;
+  @include flex(column, flex-start, stretch, spacer(4));
   width: 100%;
-  height: auto;
-  padding: spacer(3) spacer(4);
-  pointer-events: none;
-  max-width: 100%;
-  overflow: hidden;
-
-  @include breakpoint(large) {
-    padding: spacer(3) spacer(7);
-  }
-
-  .parameterSelection {
-    @include flex(column, $gap: spacer(4));
-    width: 280px;
-    max-width: 100%;
-    pointer-events: auto;
-
-    .container {
-      @include flex(column, center, center);
-    }
-
-    @media (max-height: 680px) {
-      // Adjust this breakpoint for smaller laptops
-      flex-direction: row;
-      width: auto;
-    }
-  }
-
-  .helpButton {
-    pointer-events: auto;
-    margin-right: spacer(2) !important;
-
-    @include breakpoint(large) {
-      margin-right: 50px !important;
-    }
-  }
 }
