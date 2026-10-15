@@ -124,6 +124,8 @@ const GLOBAL_WARMING_LEVEL_TICK_FORMATS: readonly GlobalWarmingLevelTickFormat[]
   },
   { label: signedLevel, marginBottom: 52 },
   { label: formatGlobalWarmingLevel, marginBottom: 52 },
+  // The axis title already gives the unit
+  { label: (level) => level.toFixed(1), marginBottom: 52 },
 ];
 
 /** Picks the longest tick label format whose words each fit within `slotWidth`. */

@@ -23,13 +23,27 @@
     height: 480px;
   }
 
+  @include narrow-chart {
+    :global(.mapboxgl-ctrl-geocoder.mapboxgl-ctrl) {
+      width: calc(100cqw - 20px) !important;
+      min-width: 0;
+    }
+
+    :global(.mapboxgl-ctrl-geocoder.mapboxgl-ctrl-geocoder--collapsed) {
+      width: 36px !important;
+      min-width: 36px;
+    }
+
+    :global(.mapboxgl-ctrl-scale) {
+      display: none;
+    }
+  }
+
   @include print {
     :global(.mapboxgl-ctrl-top-right) {
       display: none;
     }
 
-    // Mapbox sizes the canvas inline at screen width, so crop it to the page.
-    // California sits in the middle, so only the edges are lost
     :global(.mapboxgl-canvas) {
       width: 100% !important;
       height: 100% !important;
@@ -44,6 +58,6 @@
     left: spacer(3);
     bottom: 36px; // above the Mapbox logo, which has to stay visible
     z-index: 2;
-    width: max-content;
+    width: 340px;
   }
 }
