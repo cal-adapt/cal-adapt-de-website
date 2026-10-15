@@ -18,11 +18,18 @@ import {
   formatGlobalWarmingLevel,
 } from "@/lib/extreme-heat-days/format";
 
-import { ChartHeading, GlobalWarmingLevelTick, TITLE_BAND, X_AXIS_LABEL } from "./chart-parts";
+import {
+  axisLabelMeasureStyle,
+  ChartHeading,
+  GlobalWarmingLevelTick,
+  pickGlobalWarmingLevelTickFormat,
+  useChartHeadingLayout,
+  X_AXIS_LABEL,
+} from "./chart-parts";
 
 import styles from "./BarChart.module.scss";
 
-const MARGIN = { top: 24, right: 24, bottom: 78, left: 86 } as const;
+const MARGIN = { top: 24, right: 24, left: 86 } as const;
 
 const Y_TICK_COUNT = 5;
 
@@ -30,6 +37,7 @@ const BAR_GROW_DURATION = 0.5;
 const BAR_CORNER_RADIUS = 3;
 
 const X_TICK_OFFSET = 8;
+const X_TICK_GAP = 6;
 
 interface HoveredBar {
   /** Center x of the bar. */
@@ -70,21 +78,26 @@ export default function BarChart({
   const { parentRef, width, height } = useParentSize({ debounceTime: 0 });
   const [hoveredBar, setHoveredBar] = useState<HoveredBar | null>(null);
 
+  const headingLayout = useChartHeadingLayout(title, subtitle, width);
+  const titleBand = headingLayout.height;
+
   const plotWidth = Math.max(0, width - MARGIN.left - MARGIN.right);
-  const plotHeight = Math.max(0, height - TITLE_BAND - MARGIN.top - MARGIN.bottom);
-
-  const { xScale, yScale } = useMemo(() => {
-    return {
-      yScale: scaleLinear<number>({ domain: [0, yAxisMax], range: [plotHeight, 0] }),
-      xScale: scaleBand<number>({
-        domain: globalWarmingLevels,
-        range: [0, plotWidth],
-        padding: 0.3,
-      }),
-    };
-  }, [globalWarmingLevels, plotWidth, plotHeight, yAxisMax]);
-
+  const xScale = useMemo(
+    () => scaleBand<number>({ domain: globalWarmingLevels, range: [0, plotWidth], padding: 0.3 }),
+    [globalWarmingLevels, plotWidth]
+  );
   const bandwidth = xScale.bandwidth();
+
+  const xTickFormat = pickGlobalWarmingLevelTickFormat(
+    globalWarmingLevels,
+    xScale.step() - X_TICK_GAP
+  );
+
+  const plotHeight = Math.max(0, height - titleBand - MARGIN.top - xTickFormat.marginBottom);
+  const yScale = useMemo(
+    () => scaleLinear<number>({ domain: [0, yAxisMax], range: [plotHeight, 0] }),
+    [plotHeight, yAxisMax]
+  );
 
   // Re-grow bars only when the data changes: keying each bar by the values
   // remounts it on a threshold/location switch (replaying the grow) but leaves it
@@ -118,9 +131,9 @@ export default function BarChart({
           <title id={titleId}>{title}</title>
           <desc id={descId}>{accessibleDescription}</desc>
 
-          <ChartHeading title={title} subtitle={subtitle} width={width} />
+          <ChartHeading title={title} subtitle={subtitle} width={width} layout={headingLayout} />
 
-          <Group left={MARGIN.left} top={TITLE_BAND + MARGIN.top}>
+          <Group left={MARGIN.left} top={titleBand + MARGIN.top}>
             <GridRows
               className={styles.grid}
               scale={yScale}
@@ -155,7 +168,7 @@ export default function BarChart({
               const showTooltip = () =>
                 setHoveredBar({
                   x: MARGIN.left + x + bandwidth / 2,
-                  y: TITLE_BAND + MARGIN.top + y,
+                  y: titleBand + MARGIN.top + y,
                   label,
                 });
               const hideTooltip = () => setHoveredBar(null);
@@ -202,6 +215,7 @@ export default function BarChart({
                 x={(xScale(level) ?? 0) + bandwidth / 2}
                 y={plotHeight + X_TICK_OFFSET}
                 width={bandwidth}
+                format={xTickFormat}
               />
             ))}
           </Group>
@@ -218,10 +232,12 @@ export default function BarChart({
           <Text
             className={styles.axisLabel}
             x={20}
-            y={TITLE_BAND + MARGIN.top + plotHeight / 2}
+            y={titleBand + MARGIN.top + plotHeight / 2}
+            width={plotHeight}
             angle={-90}
             textAnchor="middle"
             verticalAnchor="middle"
+            style={axisLabelMeasureStyle}
           >
             {yAxisLabel}
           </Text>
