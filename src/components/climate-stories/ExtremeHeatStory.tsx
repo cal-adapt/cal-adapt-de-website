@@ -26,11 +26,11 @@ const SACRAMENTO_HEAT_WAVE_LENGTH_100F = resolveStoryToolSelections("extreme-hea
   climateVariable: "heat-wave-length",
   threshold: "100F",
 });
-const SAN_DIEGO_HEAT_WAVE_FREQUENCY_98F_3D = resolveStoryToolSelections("extreme-heat-days", {
+const SACRAMENTO_HEAT_WAVE_FREQUENCY_100F_5D = resolveStoryToolSelections("extreme-heat-days", {
   climateVariable: "heat-wave-frequency",
-  location: "San Diego",
-  threshold: "98F",
-  duration: "3",
+  location: "Sacramento",
+  threshold: "100F",
+  duration: "5",
 });
 const HEAT_SEASON_95F = resolveStoryToolSelections("extreme-heat-days", {
   climateVariable: "extreme-heat-season",
@@ -145,16 +145,17 @@ export default function ExtremeHeatStory() {
           relatedLinks={[SACRAMENTO_HEAT_WAVES_BLOG_POST]}
         />
         <p>
-          Locations where intense heat waves have historically been rare may need to prepare for
-          them to become routine. In San Diego County, a three-day heat wave with daily temperatures
-          exceeding 98°F is projected to occur once a year on average by mid-century, and twice a
-          year by the end of the century. Knowing how the likelihood of prolonged extreme heat waves
-          will change in the coming decades helps planners and policymakers prioritize investments
-          in a resilient electrical grid and public safety measures.
+          These long, intense heat waves will also become more frequent. In Sacramento County, heat
+          waves lasting at least five days with daily temperatures exceeding 100°F have historically
+          occurred about three times a year on average. That number is projected to nearly double by
+          mid-century and to exceed eight per year by the end of the century. Knowing how the
+          likelihood of prolonged extreme heat waves will change in the coming decades helps
+          planners and policymakers prioritize investments in a resilient electrical grid and public
+          safety measures.
         </p>
         <StoryToolFigure
           tool="extreme-heat-days"
-          selections={SAN_DIEGO_HEAT_WAVE_FREQUENCY_98F_3D}
+          selections={SACRAMENTO_HEAT_WAVE_FREQUENCY_100F_5D}
         />
       </StoryBlock>
 
