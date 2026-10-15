@@ -25,7 +25,8 @@
 
 .source {
   @include type-item(small);
-  margin: 0;
+  margin: spacer(2) 0 0;
   color: color(grey-4);
   line-height: 1.4;
+  white-space: pre-line;
 }

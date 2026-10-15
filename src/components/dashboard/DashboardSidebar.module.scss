@@ -1,5 +1,8 @@
 @use "@/styles/abstracts" as *;
 
+// MUI icons render at 24px by default.
+$section-icon-size: 24px;
+
 .sidebar {
   @include flex(column, $justify-content: space-between);
   background: #fff;
@@ -58,12 +61,17 @@
       background: color(blue-1);
     }
 
-    &.active {
+    &.sectionHeaderExpanded {
       font-weight: font-weight(bold);
+    }
+
+    // Line link labels up with the section header text, past its icon.
+    &.sectionLink {
+      padding-left: calc(#{spacer(4)} + #{$section-icon-size} + #{spacer(2)});
     }
   }
 
-  // Collapsed (icon-only) tool buttons keep the Button's centered icon.
+  // Collapsed (icon-only) section buttons keep the Button's centered icon.
   .iconButton {
     &.selected {
       background: color(blue-1);
@@ -71,32 +79,32 @@
   }
 }
 
-.navGroup {
+.section {
   @include flex(column, flex-start, stretch, $gap: spacer(2));
-  width: 100%;
-}
 
-.subNav {
-  @include flex(column, flex-start, stretch, $gap: spacer(1));
-  margin-left: spacer(6);
-  padding-left: spacer(4);
-  border-left: 1px solid color(grey-2);
-}
-
-.subNavLink {
-  @include type-item(button);
-  padding: spacer(2) spacer(3);
-  border-radius: rounded(1);
-  color: color(black);
-  text-decoration: none;
-
-  &:hover {
-    background: color(grey-1);
-    text-decoration: none;
+  & + & {
+    margin-top: spacer(4);
   }
+}
 
-  &.subNavSelected {
-    background: color(blue-1);
+.sectionLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.sectionChevron {
+  @include transition("transform");
+
+  &.collapsed {
+    transform: rotate(-90deg);
+  }
+}
+
+.sectionLinks {
+  @include flex(column, flex-start, stretch, $gap: spacer(2));
+
+  &[hidden] {
+    display: none;
   }
 }
 

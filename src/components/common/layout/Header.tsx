@@ -20,10 +20,10 @@ import {
   isNavGroup,
   isNavLinkEnabled,
   type NavGroup,
-  navGroups,
   type NavItem,
   type NavLink,
   navLinks,
+  toolLinks,
 } from "@/config/navigation";
 import { analytics } from "@/lib/analytics";
 import { isExternalUrl } from "@/utils/url";
@@ -37,8 +37,9 @@ const navIcons: Record<string, React.ReactElement> = {
 
 /** The Tools menu: every dashboard tool, followed by the Data Methods index when enabled. */
 const toolsMenu: NavGroup = {
-  ...navGroups.tools,
-  links: [...navGroups.tools.links, ...[navLinks.dataMethods].filter(isNavLinkEnabled)],
+  id: "tools",
+  label: "Tools",
+  links: [...toolLinks, ...[navLinks.dataMethods].filter(isNavLinkEnabled)],
 };
 
 const navItems = {
@@ -76,7 +77,7 @@ function HeaderNavLink({ item }: { item: NavLink }) {
   );
 }
 
-function HeaderNavGroup({ item }: { item: NavItem & { links: NavLink[] } }) {
+function HeaderNavGroup({ item }: { item: NavGroup }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const icon = navIcons[item.id];
 

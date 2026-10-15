@@ -12,23 +12,14 @@ export interface NavLink {
   external?: boolean;
   /** When set, the link is only shown if the corresponding feature flag is enabled. */
   featureFlag?: FeatureFlagKey;
-  /** Optional nested pages rendered as an indented sub-navigation group */
+  /** Nested pages under this link; they form the second level of the dashboard breadcrumb. */
   children?: readonly NavLink[];
-  /** When true, child links stay visible even if this item is not the active route. */
-  alwaysShowChildren?: boolean;
-  /** When true, children drive breadcrumbs only and are not listed in the sidebar. */
-  hideChildrenInSidebar?: boolean;
-  /**
-   * When false, child hrefs omit the current URL query string.
-   * Defaults to true so tool subnavs keep chart/map selections.
-   */
-  persistQuery?: boolean;
 }
 
 export interface NavGroup {
   id: string;
   label: string;
-  links: NavLink[];
+  links: readonly NavLink[];
 }
 
 export type NavItem = NavLink | NavGroup;
@@ -49,7 +40,9 @@ export function isNavLinkEnabled(link: NavLink): boolean {
   return link.featureFlag == null || featureFlags[link.featureFlag];
 }
 
+const CLIMATE_STORIES_FLAG = "__FF_CLIMATE_STORIES__" satisfies FeatureFlagKey;
 const DATA_METHODS_HREF = "/dashboard/data-methods";
+const ANALYTICS_GUIDANCE_URL = "https://analytics.cal-adapt.org/guidance/";
 
 /** Data methods pages, in display order (alphabetical by label). */
 const dataMethodsPages = [
@@ -103,14 +96,20 @@ export const navLinks = {
     id: "climate-stories",
     label: "Climate Stories",
     href: CLIMATE_STORIES_HREF,
-    featureFlag: "__FF_CLIMATE_STORIES__",
-    alwaysShowChildren: true,
-    persistQuery: false,
+    featureFlag: CLIMATE_STORIES_FLAG,
     children: climateStories.map((story) => ({
       id: story.id,
       label: story.label ?? story.title,
       href: story.href,
+      featureFlag: CLIMATE_STORIES_FLAG,
     })),
+  },
+  /** The climate stories catalog page, as listed among the stories themselves. */
+  allClimateStories: {
+    id: "all-climate-stories",
+    label: "All Stories",
+    href: CLIMATE_STORIES_HREF,
+    featureFlag: CLIMATE_STORIES_FLAG,
   },
   climateMetricsMap: {
     id: "climate-metrics-map",
@@ -148,8 +147,6 @@ export const navLinks = {
     label: "Data Methods",
     href: DATA_METHODS_HREF,
     featureFlag: "__FF_DATA_METHODS__",
-    hideChildrenInSidebar: true,
-    persistQuery: false,
     children: dataMethodsPages.filter(isNavLinkEnabled),
   },
   fourthAssessment: {
@@ -161,7 +158,13 @@ export const navLinks = {
   guidance: {
     id: "guidance",
     label: "Guidance",
-    href: "https://analytics.cal-adapt.org/guidance/",
+    href: ANALYTICS_GUIDANCE_URL,
+    external: true,
+  },
+  moreGuidance: {
+    id: "more-guidance",
+    label: "More Guidance",
+    href: ANALYTICS_GUIDANCE_URL,
     external: true,
   },
   data: {
@@ -184,21 +187,58 @@ export const navLinks = {
   },
 } as const satisfies Record<string, NavLink>;
 
-export const navGroups = {
-  stories: {
-    id: "stories",
+/**
+ * The site's information architecture: every navigable page, grouped into sections.
+ * Key order is display order. Links are already filtered by feature flag, so a
+ * section can be empty in some environments; use `enabledNavSections` to render.
+ */
+export const navSections = {
+  climateStories: {
+    id: "climate-stories",
     label: "Climate Stories",
-    links: [navLinks.climateStories].filter(isNavLinkEnabled),
+    links: [navLinks.allClimateStories, ...navLinks.climateStories.children].filter(
+      isNavLinkEnabled
+    ),
   },
   tools: {
     id: "tools",
     label: "Tools",
-    links: [
-      navLinks.climateMetricsMap,
-      navLinks.dataDownload,
-      navLinks.extremeHeatDays,
-      navLinks.hddCdd,
-      navLinks.renewablesVisualizer,
-    ].filter(isNavLinkEnabled),
+    links: [navLinks.climateMetricsMap, navLinks.dataDownload].filter(isNavLinkEnabled),
+  },
+  betaTools: {
+    id: "beta-tools",
+    label: "Beta Tools",
+    links: [navLinks.extremeHeatDays, navLinks.hddCdd, navLinks.renewablesVisualizer].filter(
+      isNavLinkEnabled
+    ),
+  },
+  guidance: {
+    id: "guidance",
+    label: "Guidance",
+    links: [navLinks.dataMethods, navLinks.moreGuidance].filter(isNavLinkEnabled),
   },
 } as const satisfies Record<string, NavGroup>;
+
+export type NavSectionId = (typeof navSections)[keyof typeof navSections]["id"];
+
+export interface NavSection extends NavGroup {
+  id: NavSectionId;
+}
+
+/** Sections with at least one link in this environment, in display order. */
+export const enabledNavSections: readonly NavSection[] = Object.values(navSections).filter(
+  (section) => section.links.length > 0
+);
+
+/** Every dashboard tool, stable then beta. */
+export const toolLinks: readonly NavLink[] = [
+  ...navSections.tools.links,
+  ...navSections.betaTools.links,
+];
+
+/** Dashboard pages that head a breadcrumb trail; their `children` form the second level. */
+export const dashboardPages: readonly NavLink[] = [
+  navLinks.climateStories,
+  ...toolLinks,
+  navLinks.dataMethods,
+].filter(isNavLinkEnabled);
