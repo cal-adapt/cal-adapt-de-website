@@ -14,9 +14,6 @@ import GlossaryTerm from "./GlossaryTerm";
 import StoryBlock from "./StoryBlock";
 import StoryCitation from "./StoryCitation";
 import StoryDocument from "./StoryDocument";
-import StoryFigure from "./StoryFigure";
-
-const FPO_FIGURE = { label: "[FPO: Figure]", source: "Lorem ipsum" } as const;
 
 const SANTA_BARBARA_99PCTL = resolveStoryToolSelections("extreme-heat-days", {
   location: "Santa Barbara",
@@ -44,16 +41,17 @@ const GREATER_BAY_AREA_CDD = resolveStoryToolSelections("hdd-cdd", {
 const EXTREME_HEAT_DAYS_CHANGE_MAP = resolveStoryToolSelections("climate-metrics-map", {
   metric: "extreme-heat",
   valueType: "del",
-  gwl: 1.5,
+  gwl: 3.0,
+});
+const WARM_NIGHTS_CHANGE_MAP = resolveStoryToolSelections("climate-metrics-map", {
+  metric: "warm-nights",
+  valueType: "del",
+  gwl: 3.0,
 });
 
 const EXTREME_HEAT_DAYS_MAP = storyToolLink(
   "climate-metrics-map",
   resolveStoryToolSelections("climate-metrics-map", { metric: "extreme-heat" })
-);
-const WARM_NIGHTS_MAP = storyToolLink(
-  "climate-metrics-map",
-  resolveStoryToolSelections("climate-metrics-map", { metric: "warm-nights" })
 );
 
 const SACRAMENTO_HEAT_WAVES_BLOG_POST = {
@@ -174,7 +172,7 @@ export default function ExtremeHeatStory() {
           demand
           <StoryCitation citationKey="wangRapid2023" />.
         </p>
-        <StoryFigure {...FPO_FIGURE} toolLinks={[WARM_NIGHTS_MAP]} />
+        <StoryToolFigure tool="climate-metrics-map" selections={WARM_NIGHTS_CHANGE_MAP} />
         <p>
           Across the entire state of California, the number of days per year where the minimum
           temperature remains above 70°F is expected to increase on average by 13 days per year by

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { navGroups, navLinks } from "@/config/navigation";
+import { navLinks, toolLinks } from "@/config/navigation";
 
 import ToolButton from "./ToolButton";
 
@@ -21,7 +21,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/** Given a tool, the button takes its label and icon from the sidebar. */
+/** Given a tool, the button takes its label and icon from the tool. */
 export const Compact: Story = {};
 
 export const Small: Story = {
@@ -31,7 +31,7 @@ export const Small: Story = {
 export const AllTools: Story = {
   render: ({ size }) => (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-      {navGroups.tools.links.map((navLink) => (
+      {toolLinks.map((navLink) => (
         <ToolButton key={navLink.id} navLink={navLink} size={size} />
       ))}
     </div>
