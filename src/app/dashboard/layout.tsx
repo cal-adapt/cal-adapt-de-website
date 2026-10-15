@@ -10,7 +10,7 @@ import Button from "@/components/common/ui/Button";
 import DashboardAppBar from "@/components/dashboard/DashboardAppBar";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import { mediaQueries } from "@/config/breakpoints";
-import { dashboardPages, enabledNavSections, navLinks } from "@/config/navigation";
+import { dashboardPages, enabledNavSections, type NavLink, navLinks } from "@/config/navigation";
 import { useLeftDrawer } from "@/context/LeftDrawerContext";
 import { SidePanelProvider } from "@/context/SidePanelContext";
 import { findActiveChildLink, findActiveNavLink } from "@/utils/navigation";
@@ -26,10 +26,10 @@ export default function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
   const isMobile = useMediaQuery(mediaQueries.max.small);
 
-  const pageLink = findActiveNavLink(dashboardPages, pathname) ?? navLinks.home;
+  const pageLink: NavLink = findActiveNavLink(dashboardPages, pathname) ?? navLinks.home;
   const subPageLink = findActiveChildLink(pageLink, pathname);
 
-  if (isMobile) {
+  if (isMobile && !pageLink.supportsMobile) {
     return (
       <SidePanelProvider>
         <ErrorView
@@ -45,12 +45,14 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <SidePanelProvider>
       <div className={styles.frame}>
-        <DashboardSidebar
-          open={open}
-          onToggleOpen={toggleLeftDrawer}
-          pathname={pathname}
-          sections={enabledNavSections}
-        />
+        {!isMobile && (
+          <DashboardSidebar
+            open={open}
+            onToggleOpen={toggleLeftDrawer}
+            pathname={pathname}
+            sections={enabledNavSections}
+          />
+        )}
 
         <div className={styles.content}>
           <DashboardAppBar page={pageLink} subPage={subPageLink} />

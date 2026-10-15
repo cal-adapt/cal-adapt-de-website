@@ -14,6 +14,8 @@ export interface NavLink {
   featureFlag?: FeatureFlagKey;
   /** Nested pages under this link; they form the second level of the dashboard breadcrumb. */
   children?: readonly NavLink[];
+  /** When true, the dashboard renders this section on phones instead of the desktop-only message. */
+  supportsMobile?: boolean;
 }
 
 export interface NavGroup {
@@ -97,6 +99,7 @@ export const navLinks = {
     label: "Climate Stories",
     href: CLIMATE_STORIES_HREF,
     featureFlag: CLIMATE_STORIES_FLAG,
+    supportsMobile: true,
     children: climateStories.map((story) => ({
       id: story.id,
       label: story.label ?? story.title,

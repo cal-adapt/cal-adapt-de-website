@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, useId, useMemo, useState } from "react";
+import { type CSSProperties, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { GridRows } from "@visx/grid";
@@ -114,6 +114,8 @@ export default function LineChart({
   const descId = useId();
   const { parentRef, width, height } = useParentSize({ debounceTime: 0 });
   const [hovered, setHovered] = useState<HoveredPoint | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [tooltipWidth, setTooltipWidth] = useState(0);
   // Each legend row toggles only its own artist -- independent of the others.
   const [visibility, setVisibility] = useState<LegendVisibility>(INITIAL_LEGEND_VISIBILITY);
   const toggleVisibility = (key: keyof LegendVisibility) =>
@@ -255,7 +257,15 @@ export default function LineChart({
 
   const hasSize = width > 0 && height > 0;
 
-  const handleMouseMove = (event: React.MouseEvent<SVGRectElement>) => {
+  useLayoutEffect(() => {
+    if (tooltipRef.current) setTooltipWidth(tooltipRef.current.offsetWidth);
+  }, [hovered]);
+
+  const tooltipLeft = hovered
+    ? Math.max(0, Math.min(MARGIN.left + hovered.x - tooltipWidth / 2, width - tooltipWidth))
+    : 0;
+
+  const handlePointerMove = (event: React.PointerEvent<SVGRectElement>) => {
     if (rows.length === 0) return;
     const svgRect = event.currentTarget.getBoundingClientRect();
     const localX = event.clientX - svgRect.left;
@@ -422,8 +432,14 @@ export default function LineChart({
                 width={plotWidth}
                 height={plotHeight}
                 fill="transparent"
-                onMouseMove={handleMouseMove}
-                onMouseLeave={() => setHovered(null)}
+                className={styles.hoverTarget}
+                onPointerDown={handlePointerMove}
+                onPointerMove={handlePointerMove}
+                // Touch keeps the tooltip after lifting the finger, so it can be read
+                onPointerLeave={(event) => {
+                  if (event.pointerType === "mouse") setHovered(null);
+                }}
+                onPointerCancel={() => setHovered(null)}
               />
             </Group>
 
@@ -479,8 +495,9 @@ export default function LineChart({
 
           {hovered && (hovered.historical || hovered.scenario) && (
             <div
+              ref={tooltipRef}
               className={styles.tooltip}
-              style={{ left: MARGIN.left + hovered.x, top: TITLE_BAND + MARGIN.top }}
+              style={{ left: tooltipLeft, top: TITLE_BAND + MARGIN.top }}
               role="presentation"
             >
               <div className={styles.tooltipYear}>{hovered.year}</div>

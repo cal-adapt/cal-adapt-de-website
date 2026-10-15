@@ -14,12 +14,24 @@ import {
 } from "@/lib/extreme-heat-days/format";
 import { DAYS_IN_YEAR } from "@/lib/extreme-heat-days/season";
 
-import { ChartHeading, GlobalWarmingLevelTick, TITLE_BAND, X_AXIS_LABEL } from "./chart-parts";
+import {
+  ChartHeading,
+  GlobalWarmingLevelTick,
+  pickGlobalWarmingLevelTickFormat,
+  useChartHeadingLayout,
+  X_AXIS_LABEL,
+} from "./chart-parts";
 
 import chartStyles from "./BarChart.module.scss";
 import styles from "./Heatmap.module.scss";
 
-const MARGIN = { top: 24, right: 112, bottom: 78, left: 86 } as const;
+const MARGIN_TOP = 24;
+
+// The y-axis and the color legend take ~200px beside the plot, which would
+// leave phone-width columns too narrow for any tick label
+const NARROW_WIDTH = 480;
+const WIDE_LAYOUT = { left: 86, right: 112, yTickGap: 12, legendGap: 20, legendTitleOffset: 48 };
+const NARROW_LAYOUT = { left: 60, right: 72, yTickGap: 6, legendGap: 8, legendTitleOffset: 40 };
 
 const Y_AXIS_LABEL = "Day of Year";
 const LEGEND_TITLE = "Years exceeding threshold (%)";
@@ -30,7 +42,6 @@ const DAY_TICKS: readonly number[] = [1, 60, 121, 182, 244, 305, 365];
 
 const PERCENT_MAX = 100;
 const LEGEND_TICKS: readonly number[] = [0, 20, 40, 60, 80, 100];
-const LEGEND_GAP = 20;
 const LEGEND_WIDTH = 14;
 // Plasma is not a straight line through RGB, so the legend needs enough stops
 // to follow it.
@@ -39,6 +50,7 @@ const LEGEND_STOPS = 21;
 const PAGE_STEP_DAYS = 30;
 
 const X_TICK_OFFSET = 8;
+const X_TICK_GAP = 6;
 
 /** Fixed 0-100% scale, so colors mean the same thing for every selection. */
 function colorForPercent(value: number): string {
@@ -140,13 +152,20 @@ export default function Heatmap({
   const missingPatternId = `ehs-missing-${defsId}`;
   const { parentRef, width, height } = useParentSize({ debounceTime: 0 });
   const [activeCell, setActiveCell] = useState<ActiveCell | null>(null);
+  const headingLayout = useChartHeadingLayout(title, subtitle, width);
+  const titleBand = headingLayout.height;
 
-  const plotWidth = Math.max(0, width - MARGIN.left - MARGIN.right);
+  const layout = width < NARROW_WIDTH ? NARROW_LAYOUT : WIDE_LAYOUT;
+  const plotWidth = Math.max(0, width - layout.left - layout.right);
+  const levelCount = globalWarmingLevels.length;
+  const xTickFormat = pickGlobalWarmingLevelTickFormat(
+    globalWarmingLevels,
+    levelCount > 0 ? plotWidth / levelCount - X_TICK_GAP : 0
+  );
   // The chart shares the bar chart's box, so a day's row is usually under a
   // pixel tall.
-  const plotHeight = Math.max(0, height - TITLE_BAND - MARGIN.top - MARGIN.bottom);
+  const plotHeight = Math.max(0, height - titleBand - MARGIN_TOP - xTickFormat.marginBottom);
   const rowHeight = plotHeight / DAYS_IN_YEAR;
-  const levelCount = globalWarmingLevels.length;
 
   // Whole-pixel column edges, so neighbouring columns meet without a seam.
   const columns = useMemo<Column[]>(() => {
@@ -207,8 +226,8 @@ export default function Heatmap({
       : null;
 
   const hasSize = width > 0 && plotHeight > 0 && levelCount > 0;
-  const legendX = MARGIN.left + plotWidth + LEGEND_GAP;
-  const plotTop = TITLE_BAND + MARGIN.top;
+  const legendX = layout.left + plotWidth + layout.legendGap;
+  const plotTop = titleBand + MARGIN_TOP;
 
   return (
     <div ref={parentRef} className={chartStyles.chartContainer}>
@@ -238,9 +257,9 @@ export default function Heatmap({
             </pattern>
           </defs>
 
-          <ChartHeading title={title} subtitle={subtitle} width={width} />
+          <ChartHeading title={title} subtitle={subtitle} width={width} layout={headingLayout} />
 
-          <g transform={`translate(${MARGIN.left}, ${plotTop})`}>
+          <g transform={`translate(${layout.left}, ${plotTop})`}>
             <Cells
               columns={columns}
               frequencyPercent={frequencyPercent}
@@ -252,7 +271,7 @@ export default function Heatmap({
               <text
                 key={day}
                 className={chartStyles.tickLabel}
-                x={-12}
+                x={-layout.yTickGap}
                 y={yForDay(day, rowHeight) + rowHeight / 2}
                 dy="0.32em"
                 textAnchor="end"
@@ -269,6 +288,7 @@ export default function Heatmap({
                 x={columns[i].x + columns[i].width / 2}
                 y={plotHeight + X_TICK_OFFSET}
                 width={columns[i].width}
+                format={xTickFormat}
               />
             ))}
 
@@ -308,7 +328,7 @@ export default function Heatmap({
           </g>
           <Text
             className={chartStyles.axisLabel}
-            x={legendX + LEGEND_WIDTH + 48}
+            x={legendX + LEGEND_WIDTH + layout.legendTitleOffset}
             y={plotTop + plotHeight / 2}
             angle={-90}
             textAnchor="middle"
@@ -330,7 +350,7 @@ export default function Heatmap({
 
           <Text
             className={chartStyles.axisLabel}
-            x={MARGIN.left + plotWidth / 2}
+            x={layout.left + plotWidth / 2}
             y={height - 8}
             textAnchor="middle"
             verticalAnchor="end"
@@ -353,7 +373,7 @@ export default function Heatmap({
         // One focus stop for the whole grid; arrow keys move between cells.
         <div
           className={styles.cellGrid}
-          style={{ left: MARGIN.left, top: plotTop, width: plotWidth, height: plotHeight }}
+          style={{ left: layout.left, top: plotTop, width: plotWidth, height: plotHeight }}
           role="application"
           tabIndex={0}
           aria-label={`${title}. Use the arrow keys to move between days and global warming levels.`}
@@ -376,7 +396,7 @@ export default function Heatmap({
         <div
           className={`${chartStyles.tooltip} ${styles.tooltip}`}
           style={{
-            left: MARGIN.left + active.column.x + active.column.width / 2,
+            left: layout.left + active.column.x + active.column.width / 2,
             top: plotTop + active.y,
           }}
           role="presentation"
