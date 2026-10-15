@@ -2,8 +2,9 @@
 
 import ChartView from "@/components/extreme-heat-days/ChartView";
 import { useStacSeries } from "@/hooks/use-stac-series";
+import { fetchHeatChartData } from "@/lib/extreme-heat-days/chart-data";
 import type { ExtremeHeatDaysSelections } from "@/lib/extreme-heat-days/options";
-import { fetchExtremeHeatSeries, searchFiltersKey } from "@/lib/extreme-heat-days/series";
+import { searchFiltersKey } from "@/lib/extreme-heat-days/series";
 
 export default function ExtremeHeatChart({
   selections,
@@ -11,7 +12,7 @@ export default function ExtremeHeatChart({
   selections: ExtremeHeatDaysSelections;
 }) {
   const series = useStacSeries(searchFiltersKey(selections), (signal) =>
-    fetchExtremeHeatSeries(selections, { signal })
+    fetchHeatChartData(selections, { signal })
   );
   return <ChartView selections={selections} series={series} />;
 }

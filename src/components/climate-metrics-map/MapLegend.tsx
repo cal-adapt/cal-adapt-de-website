@@ -20,6 +20,7 @@ type MapLegendProps = {
   /** Label only ticks at multiples of this value (other ticks are drawn
    *  shorter, without a label). Labels every tick when omitted. */
   labelStep?: number;
+  barWidth?: number;
 };
 
 const LABEL_MARGIN = 40;
@@ -28,8 +29,16 @@ const BAR_WIDTH = 520;
 const POINT_INSET = 10;
 const NUM_GRADIENT_STOPS = 32;
 
-export default function MapLegend({ colormap, min, max, title, bins, labelStep }: MapLegendProps) {
-  const boundsWidth = BAR_WIDTH - 2 * LABEL_MARGIN;
+export default function MapLegend({
+  colormap,
+  min,
+  max,
+  title,
+  bins,
+  labelStep,
+  barWidth = BAR_WIDTH,
+}: MapLegendProps) {
+  const boundsWidth = barWidth - 2 * LABEL_MARGIN;
   const totalWidth = boundsWidth + 2 * LABEL_MARGIN + 2 * POINT_INSET;
 
   const xScale = d3
@@ -122,6 +131,8 @@ export default function MapLegend({ colormap, min, max, title, bins, labelStep }
         <svg
           width={totalWidth}
           height={BAR_HEIGHT + 30}
+          viewBox={`0 0 ${totalWidth} ${BAR_HEIGHT + 30}`}
+          style={{ maxWidth: "100%", height: "auto" }}
           aria-label={`Legend for ${title ?? "color scale"} from ${min} to ${max}`}
         >
           <defs>
@@ -159,7 +170,11 @@ export default function MapLegend({ colormap, min, max, title, bins, labelStep }
           })}
         </svg>
       </div>
-      {title && <p className={styles.title}>{title}</p>}
+      {title && (
+        <p className={styles.title} style={{ maxWidth: totalWidth }}>
+          {title}
+        </p>
+      )}
     </div>
   );
 }

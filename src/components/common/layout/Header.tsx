@@ -16,7 +16,15 @@ import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
 import { mediaQueries } from "@/config/breakpoints";
-import { isNavGroup, navGroups, type NavItem, type NavLink, navLinks } from "@/config/navigation";
+import {
+  isNavGroup,
+  isNavLinkEnabled,
+  type NavGroup,
+  type NavItem,
+  type NavLink,
+  navLinks,
+  toolLinks,
+} from "@/config/navigation";
 import { analytics } from "@/lib/analytics";
 import { isExternalUrl } from "@/utils/url";
 
@@ -27,9 +35,16 @@ const navIcons: Record<string, React.ReactElement> = {
   tools: <SpaceDashboardIcon />,
 };
 
+/** The Tools menu: every dashboard tool, followed by the Data Methods index when enabled. */
+const toolsMenu: NavGroup = {
+  id: "tools",
+  label: "Tools",
+  links: [...toolLinks, ...[navLinks.dataMethods].filter(isNavLinkEnabled)],
+};
+
 const navItems = {
   left: [navLinks.fourthAssessment],
-  right: [navLinks.guidance, navLinks.data, navGroups.tools],
+  right: [navLinks.guidance, navLinks.data, toolsMenu],
 };
 
 const mobileNavItems: NavLink[] = [navLinks.fourthAssessment, navLinks.guidance, navLinks.data];
@@ -37,7 +52,7 @@ const mobileNavItems: NavLink[] = [navLinks.fourthAssessment, navLinks.guidance,
 /** On phones, Tools scrolls to the homepage warning instead of opening a dashboard. */
 const toolsHomeLink: NavLink = {
   id: "tools-home",
-  label: navGroups.tools.label,
+  label: toolsMenu.label,
   href: "/#tools",
 };
 
@@ -62,7 +77,7 @@ function HeaderNavLink({ item }: { item: NavLink }) {
   );
 }
 
-function HeaderNavGroup({ item }: { item: NavItem & { links: NavLink[] } }) {
+function HeaderNavGroup({ item }: { item: NavGroup }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const icon = navIcons[item.id];
 
@@ -143,7 +158,7 @@ function MobileMenuLink({
 function MobileNav() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isSmall = useMediaQuery(mediaQueries.max.small);
-  const items: NavItem[] = [...mobileNavItems, isSmall ? toolsHomeLink : navGroups.tools];
+  const items: NavItem[] = [...mobileNavItems, isSmall ? toolsHomeLink : toolsMenu];
 
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -199,7 +214,7 @@ export default function Header() {
       <nav className={styles.nav}>
         <MobileNav />
         <div className={styles.tabletTools}>
-          <HeaderNavItem item={navGroups.tools} />
+          <HeaderNavItem item={toolsMenu} />
         </div>
         <div className={styles.desktop}>
           <div className={styles.left}>

@@ -1,10 +1,14 @@
 @use "@/styles/abstracts" as *;
 
 .intro {
-  @include type-item(body);
-  margin: 0;
+  @include flex(column, flex-start, stretch, spacer(4));
   max-width: max-w(content);
-  color: color(grey-5);
+
+  p {
+    @include type-item(body);
+    margin: 0;
+    color: color(grey-5);
+  }
 }
 
 .grid {

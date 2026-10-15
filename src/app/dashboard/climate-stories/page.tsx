@@ -8,18 +8,25 @@ import { navLinks } from "@/config/navigation";
 
 import styles from "./page.module.scss";
 
-const INTRO =
-  "Climate stories are narrative-focused pages that connect climate variables to hazards within specific sectors. These pages are written to further define and contextualize metrics found within each Climate Tool. Climate Stories contain interactive visualizations that allow users to quickly identify climate trends across California.";
+const INTRO = [
+  "Climate stories explain how climate change is expected to affect California. Each story starts with the big picture, such as how much hotter or wetter conditions are projected to become, and then shows why those changes matter for the energy sector and communities. Short explanations and interactive visuals help you see what the science says and explore what it could mean for your own community.",
+  "Every story is built on Cal-Adapt’s climate projections and links to the tools and data behind each figure. That means you can start with a statewide overview and then dive into the details of your county. Whether you work in planning, research, or policy, or you’re simply curious, Climate stories are a great way to begin exploring climate change impacts in California.",
+  "Our first climate story on extreme heat is available now. A story on extreme precipitation is coming next, with more topics to follow.",
+];
 
 export const metadata: Metadata = {
   title: `${navLinks.climateStories.label} - ${SITE_TITLE}`,
-  description: INTRO,
+  description: INTRO[0],
 };
 
 export default function ClimateStoriesPage() {
   return (
-    <PageLayout title={navLinks.climateStories.label}>
-      <p className={styles.intro}>{INTRO}</p>
+    <PageLayout title={navLinks.climateStories.label} citationTitle={false}>
+      <div className={styles.intro}>
+        {INTRO.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
+      </div>
       <ul className={styles.grid}>
         {climateStoryCatalog.map((story) => (
           <li key={story.id}>

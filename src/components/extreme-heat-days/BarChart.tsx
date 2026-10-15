@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, useId, useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 
 import { AxisLeft } from "@visx/axis";
 import { GridRows } from "@visx/grid";
@@ -8,7 +8,7 @@ import { Group } from "@visx/group";
 import { useParentSize } from "@visx/responsive";
 import { scaleBand, scaleLinear } from "@visx/scale";
 import { BarRounded } from "@visx/shape";
-import { getStringWidth, Text, useText } from "@visx/text";
+import { Text } from "@visx/text";
 
 import { motion, useReducedMotion } from "motion/react";
 
@@ -16,58 +16,28 @@ import {
   colorForGlobalWarmingLevel,
   formatDaysPerYear,
   formatGlobalWarmingLevel,
-  formatGlobalWarmingLevelName,
 } from "@/lib/extreme-heat-days/format";
+
+import {
+  axisLabelMeasureStyle,
+  ChartHeading,
+  GlobalWarmingLevelTick,
+  pickGlobalWarmingLevelTickFormat,
+  useChartHeadingLayout,
+  X_AXIS_LABEL,
+} from "./chart-parts";
 
 import styles from "./BarChart.module.scss";
 
-const TITLE_TOP = 20;
-const TITLE_LINE_HEIGHT = 22;
-const SUBTITLE_GAP = 8;
-const SUBTITLE_LINE_HEIGHT = 18;
-const TITLE_BAND_BOTTOM = 8;
 const MARGIN = { top: 24, right: 24, left: 86 } as const;
-
-const X_AXIS_LABEL = "Global Warming Level (°C)";
 
 const Y_TICK_COUNT = 5;
 
 const BAR_GROW_DURATION = 0.5;
 const BAR_CORNER_RADIUS = 3;
 
-const TITLE_PADDING_X = 24;
 const X_TICK_OFFSET = 8;
 const X_TICK_GAP = 6;
-
-const signedLevel = (level: number) => `+${formatGlobalWarmingLevel(level)}`;
-
-// Longest first; the chart uses the first one whose words all fit under a bar
-const X_TICK_FORMATS: { label: (level: number) => string; marginBottom: number }[] = [
-  {
-    label: (level) => {
-      const name = formatGlobalWarmingLevelName(level);
-      return name ? `${name} (${signedLevel(level)})` : signedLevel(level);
-    },
-    marginBottom: 78,
-  },
-  { label: signedLevel, marginBottom: 52 },
-  { label: formatGlobalWarmingLevel, marginBottom: 52 },
-];
-
-// Should match CSS variable `--font-family-sans-serif`
-const FONT_FAMILY = '"Inter", "Helvetica Neue", "Helvetica", "Arial", sans-serif';
-const titleMeasureStyle: CSSProperties = { fontFamily: FONT_FAMILY, fontSize: 18, fontWeight: 600 };
-const subtitleMeasureStyle: CSSProperties = {
-  fontFamily: FONT_FAMILY,
-  fontSize: 14,
-  fontWeight: 400,
-};
-const tickMeasureStyle: CSSProperties = { fontFamily: FONT_FAMILY, fontSize: 12, fontWeight: 500 };
-const axisLabelMeasureStyle: CSSProperties = {
-  fontFamily: FONT_FAMILY,
-  fontSize: 13,
-  fontWeight: 500,
-};
 
 interface HoveredBar {
   /** Center x of the bar. */
@@ -108,16 +78,8 @@ export default function BarChart({
   const { parentRef, width, height } = useParentSize({ debounceTime: 0 });
   const [hoveredBar, setHoveredBar] = useState<HoveredBar | null>(null);
 
-  const textWidth = Math.max(0, width - 2 * TITLE_PADDING_X);
-  const titleLines = useText({ children: title, width: textWidth, style: titleMeasureStyle })
-    .wordsByLines.length;
-  const subtitleLines = useText({
-    children: subtitle,
-    width: textWidth,
-    style: subtitleMeasureStyle,
-  }).wordsByLines.length;
-  const subtitleTop = TITLE_TOP + titleLines * TITLE_LINE_HEIGHT + SUBTITLE_GAP;
-  const titleBand = subtitleTop + subtitleLines * SUBTITLE_LINE_HEIGHT + TITLE_BAND_BOTTOM;
+  const headingLayout = useChartHeadingLayout(title, subtitle, width);
+  const titleBand = headingLayout.height;
 
   const plotWidth = Math.max(0, width - MARGIN.left - MARGIN.right);
   const xScale = useMemo(
@@ -126,16 +88,10 @@ export default function BarChart({
   );
   const bandwidth = xScale.bandwidth();
 
-  const tickSlotWidth = xScale.step() - X_TICK_GAP;
-  const xTickFormat =
-    X_TICK_FORMATS.find((format) =>
-      globalWarmingLevels.every((level) =>
-        format
-          .label(level)
-          .split(" ")
-          .every((word) => (getStringWidth(word, tickMeasureStyle) ?? 0) <= tickSlotWidth)
-      )
-    ) ?? X_TICK_FORMATS[X_TICK_FORMATS.length - 1];
+  const xTickFormat = pickGlobalWarmingLevelTickFormat(
+    globalWarmingLevels,
+    xScale.step() - X_TICK_GAP
+  );
 
   const plotHeight = Math.max(0, height - titleBand - MARGIN.top - xTickFormat.marginBottom);
   const yScale = useMemo(
@@ -175,32 +131,7 @@ export default function BarChart({
           <title id={titleId}>{title}</title>
           <desc id={descId}>{accessibleDescription}</desc>
 
-          <Text
-            className={styles.chartTitle}
-            x={width / 2}
-            y={TITLE_TOP}
-            width={textWidth}
-            lineHeight={TITLE_LINE_HEIGHT}
-            textAnchor="middle"
-            verticalAnchor="start"
-            style={titleMeasureStyle}
-            aria-hidden="true"
-          >
-            {title}
-          </Text>
-          <Text
-            className={styles.chartSubtitle}
-            x={width / 2}
-            y={subtitleTop}
-            width={textWidth}
-            lineHeight={SUBTITLE_LINE_HEIGHT}
-            textAnchor="middle"
-            verticalAnchor="start"
-            style={subtitleMeasureStyle}
-            aria-hidden="true"
-          >
-            {subtitle}
-          </Text>
+          <ChartHeading title={title} subtitle={subtitle} width={width} layout={headingLayout} />
 
           <Group left={MARGIN.left} top={titleBand + MARGIN.top}>
             <GridRows
@@ -278,19 +209,14 @@ export default function BarChart({
               aria-hidden="true"
             />
             {globalWarmingLevels.map((level) => (
-              <Text
+              <GlobalWarmingLevelTick
                 key={level}
-                className={styles.tickLabel}
+                level={level}
                 x={(xScale(level) ?? 0) + bandwidth / 2}
                 y={plotHeight + X_TICK_OFFSET}
                 width={bandwidth}
-                textAnchor="middle"
-                verticalAnchor="start"
-                style={tickMeasureStyle}
-                aria-hidden="true"
-              >
-                {xTickFormat.label(level)}
-              </Text>
+                format={xTickFormat}
+              />
             ))}
           </Group>
 
