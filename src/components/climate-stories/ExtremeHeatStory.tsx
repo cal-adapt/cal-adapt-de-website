@@ -1,28 +1,43 @@
 import Callout from "@/components/common/content/Callout";
-import Button from "@/components/common/ui/Button";
+import Link from "@/components/common/ui/Link";
+import ToolButton from "@/components/common/ui/ToolButton";
 import { navLinks } from "@/config/navigation";
 
 import StoryToolFigure from "./figures/StoryToolFigure";
-import { resolveStoryToolSelections, storyToolCharts, storyToolHref } from "./figures/tool-charts";
+import {
+  resolveStoryToolSelections,
+  storyToolCharts,
+  storyToolHref,
+  storyToolLink,
+} from "./figures/tool-charts";
 import GlossaryTerm from "./GlossaryTerm";
 import StoryBlock from "./StoryBlock";
 import StoryCitation from "./StoryCitation";
 import StoryDocument from "./StoryDocument";
-import StoryFigure from "./StoryFigure";
 
-const FPO_FIGURE = { label: "[FPO: Figure]", source: "Lorem ipsum" } as const;
-
-const IMPERIAL_100F = resolveStoryToolSelections("extreme-heat-days", {
-  location: "Imperial",
+const SANTA_BARBARA_99PCTL = resolveStoryToolSelections("extreme-heat-days", {
+  location: "Santa Barbara",
+  threshold: "99pctl",
+});
+const SACRAMENTO_HEAT_WAVE_LENGTH_100F = resolveStoryToolSelections("extreme-heat-days", {
+  climateVariable: "heat-wave-length",
   threshold: "100F",
 });
-const HEAT_WAVE_FREQUENCY_DEFAULT = resolveStoryToolSelections("extreme-heat-days", {
+const SAN_DIEGO_HEAT_WAVE_FREQUENCY_98F_3D = resolveStoryToolSelections("extreme-heat-days", {
   climateVariable: "heat-wave-frequency",
+  location: "San Diego",
+  threshold: "98F",
+  duration: "3",
 });
-const HEAT_WAVE_LENGTH_DEFAULT = resolveStoryToolSelections("extreme-heat-days", {
-  climateVariable: "heat-wave-length",
+const HEAT_SEASON_95F = resolveStoryToolSelections("extreme-heat-days", {
+  climateVariable: "extreme-heat-season",
+  threshold: "95F",
 });
-const HDD_CDD_DEFAULT = resolveStoryToolSelections("hdd-cdd");
+const GREATER_BAY_AREA_CDD = resolveStoryToolSelections("hdd-cdd", {
+  climateVariable: "cdd",
+  spatialAggregation: "forecast_zones",
+  location: "Greater Bay Area",
+});
 const EXTREME_HEAT_DAYS_CHANGE_MAP = resolveStoryToolSelections("climate-metrics-map", {
   metric: "extreme-heat",
   valueType: "del",
@@ -33,6 +48,16 @@ const WARM_NIGHTS_CHANGE_MAP = resolveStoryToolSelections("climate-metrics-map",
   valueType: "del",
   gwl: 3.0,
 });
+
+const EXTREME_HEAT_DAYS_MAP = storyToolLink(
+  "climate-metrics-map",
+  resolveStoryToolSelections("climate-metrics-map", { metric: "extreme-heat" })
+);
+
+const SACRAMENTO_HEAT_WAVES_BLOG_POST = {
+  label: "The 2020 Sacramento Heat Waves",
+  href: "https://analytics.cal-adapt.org/blog/posts/2026-08-18-sac-extreme-heat/",
+} as const;
 
 const EXTREME_HEAT_TOOL = storyToolCharts["extreme-heat-days"].navLink;
 
@@ -50,107 +75,116 @@ export default function ExtremeHeatStory() {
           </GlossaryTerm>{" "}
           multiplying the daily risks to our communities and critical infrastructure. Days where the
           temperature reaches 95°F or higher pose a danger to outdoor workers
-          <StoryCitation citationKey="khatanaAssociation2022" />, and days above 100°F are more
+          <StoryCitation citationKey="calOSHAheatillness2024" />, and days above 100°F are more
           likely to result in power outages from electrical equipment exposed to high temperatures
           combined with increased electricity demand from air conditioning
-          <StoryCitation citationKey="eia-ca-consumers-heatwave-2022" />. The frequency of these
-          extreme heat days is projected to increase across California, with the hottest parts of
-          the state experiencing more than [60?] days per year above 95°F by the end of the century
-          compared to [days] in the 2000s.
+          <StoryCitation citationKey="sakiMultiyear2025" />. Climate models project that these
+          extreme heat days will become more frequent across California, with cities in the Central
+          Valley like Sacramento, Fresno, and Bakersfield experiencing an additional 30 days per
+          year above 95°F by the end of the century compared to the early 2000s.
         </p>
         <StoryToolFigure tool="climate-metrics-map" selections={EXTREME_HEAT_DAYS_CHANGE_MAP} />
         <p>
           The coastal regions of California generally don’t experience temperatures as high as
           inland areas due to temperature moderation from the ocean, but even these areas will need
           to adapt to a new range of conditions under climate change. Temperatures that were
-          previously only reached on the 3-4 hottest days of the year are projected to occur up to
-          [X] times per year on average. Buildings, infrastructure, and ecological communities
-          residing within these coastal regions were not designed and have not adapted for frequent
-          high temperatures.
+          previously only reached on the 3-4 hottest days of the year in coastal cities like Santa
+          Barbara are projected to occur up to 10-12 times per year on average by the end of the
+          century. These changes can have significant impacts in these coastal regions where
+          buildings, infrastructure, and ecological communities have not adapted for frequent high
+          temperatures.
         </p>
-        <StoryToolFigure tool="extreme-heat-days" selections={IMPERIAL_100F} />
+        <StoryToolFigure
+          tool="extreme-heat-days"
+          selections={SANTA_BARBARA_99PCTL}
+          toolLinks={[EXTREME_HEAT_DAYS_MAP]}
+        />
       </StoryBlock>
 
       <Callout
         kind="explore"
-        title={`Explore this in the ${EXTREME_HEAT_TOOL.label} tool`}
+        title="Make these figures your own"
         actions={
           <>
-            <Button
-              href={storyToolHref("extreme-heat-days", IMPERIAL_100F)}
-              variant="primary"
+            <ToolButton
               size="small"
-            >
-              {`Explore the ${EXTREME_HEAT_TOOL.label} tool`}
-            </Button>
-            <Button href={navLinks.climateMetricsMap.href} variant="secondary" size="small">
-              Open the Climate Metrics Map
-            </Button>
+              navLink={EXTREME_HEAT_TOOL}
+              href={storyToolHref("extreme-heat-days", SANTA_BARBARA_99PCTL)}
+            />
+            <ToolButton size="small" navLink={navLinks.hddCdd} />
+            <ToolButton size="small" navLink={navLinks.climateMetricsMap} />
           </>
         }
       >
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac eros felis. Duis id
-          commodo dolor. Vestibulum ex velit, egestas ut quam eget, placerat hendrerit orci.
-          Suspendisse ut elit leo. Nunc vel sem id est accumsan imperdiet sit amet a nulla.
+          Every figure on this page comes from a Cal-Adapt tool. Open a tool to see the same figure
+          for another location or temperature threshold, download it, or read about the underlying
+          data.
         </p>
       </Callout>
 
-      <StoryBlock
-        id="breaking-records"
-        title="Climate change is breaking records across California"
-      >
-        <p>
-          In the past 10 years, [some fraction] of California has experienced record high
-          temperatures. Climate projections show that by mid-century, most of those records will be
-          broken again, with record high temperatures increasing by [x-y] F across the state. These
-          record breaking temperatures pose significant public health risks and stress the limits of
-          the electrical grid. Understanding how temperatures will continue to reach unprecedented
-          levels and strain the limits of what communities have prepared for is essential for
-          planning resilient infrastructure and social services to protect Californians.
-        </p>
-        <p>
-          The highest temperatures in the state are reached in California’s southwestern desert
-          valleys, but every region of the state is expected to break its own record hottest
-          temperature by mid-century. The largest increases in record temperature are projected to
-          occur in the Sierra Nevadas and coastal regions of California. The most important impacts
-          of high temperatures have less to do with the absolute number, and more to do with how far
-          extremes surpass what humans are accustomed to and what infrastructure is designed to
-          withstand.
-        </p>
-        <StoryFigure {...FPO_FIGURE} />
-      </StoryBlock>
-
       <StoryBlock id="heat-waves" title="Heat waves will be more frequent and last longer">
         <p>
-          The most severe impacts from extreme heat in California result from prolonged heatwaves.
-          Each day that a heat wave persists significantly compounds the risks to human health, the
-          increases in electricity demand to keep buildings cool, and the chances of wildfires. As
-          climate change drives warmer temperatures across the state, the frequency of moderate
-          length heatwaves (2-3 days) is projected to increase by [Y], and the length of heatwaves
-          is projected to increase by [X] on average. In [sample location], projections show that by
-          mid-century a record breaking [n-day] heatwave is possible.
+          The most severe impacts from extreme heat in California result from prolonged heat waves.
+          Each day that a heat wave persists significantly compounds the risks to human health
+          <StoryCitation citationKey="guirguisImpact2014" />{" "}
+          <StoryCitation citationKey="andersonHeat2011" />, the increases in electricity demand
+          <StoryCitation citationKey="millerClimate2008" /> to keep buildings cool, and the chances
+          of wildfires
+          <StoryCitation citationKey="vargaMegafires2022" />{" "}
+          <StoryCitation citationKey="shivesMultiple2025" />. In Sacramento County where heat waves
+          over 100°F already pose significant stress to the electrical grid and human health, the
+          average length of these events is projected to increase by nearly two days by the end of
+          the century.
         </p>
-        <StoryToolFigure tool="extreme-heat-days" selections={HEAT_WAVE_FREQUENCY_DEFAULT} />
-        <StoryToolFigure tool="extreme-heat-days" selections={HEAT_WAVE_LENGTH_DEFAULT} />
+        <StoryToolFigure
+          tool="extreme-heat-days"
+          selections={SACRAMENTO_HEAT_WAVE_LENGTH_100F}
+          relatedLinks={[SACRAMENTO_HEAT_WAVES_BLOG_POST]}
+        />
+        <p>
+          Locations where intense heat waves have historically been rare may need to prepare for
+          them to become routine. In San Diego County, a three-day heat wave with daily temperatures
+          exceeding 98°F is projected to occur once a year on average by mid-century, and twice a
+          year by the end of the century. Knowing how the likelihood of prolonged extreme heat waves
+          will change in the coming decades helps planners and policymakers prioritize investments
+          in a resilient electrical grid and public safety measures.
+        </p>
+        <StoryToolFigure
+          tool="extreme-heat-days"
+          selections={SAN_DIEGO_HEAT_WAVE_FREQUENCY_98F_3D}
+        />
       </StoryBlock>
 
       <StoryBlock id="warm-nights" title="Warm nights prevent the opportunity to cool off">
         <p>
           The impact of extreme heat is multiplied when it is coupled with warm nighttime
-          temperatures that don’t allow people, plants, animals, or buildings to cool off overnight
-          before another hot day. These warm night conditions can increase the mortality rate of
-          heatwaves, reduce the productivity of crops that depend on nighttime chill hours, and
-          change the dynamics of the electrical grid by driving electricity demand at hours that
-          previously had very low demand.
-        </p>
-        <p>
-          Across California, the number of days per year where the minimum temperature does not drop
-          below 70°F is expected to increase by [X] on average. The increase in warm nights is
-          particularly high in the foothills surrounding the central valley, where warm air from the
-          valley floor is pushed up into the hills and trapped overnight.
+          temperatures that don’t allow people, animals, buildings, or critical electrical
+          infrastructure to cool off overnight before another hot day. These warm night conditions
+          can raise the mortality rate of heat waves
+          <StoryCitation citationKey="guirguisImpact2014" />, reduce the productivity of crops that
+          depend on nighttime chill hours
+          <StoryCitation citationKey="romeroCapRadioAlmonds2018" />, increase the failure rate of
+          electrical transformers
+          <StoryCitation citationKey="kezunovicExtremeWeather2016" />, and change the dynamics of
+          the electrical grid by driving electricity demand at hours that previously had very low
+          demand
+          <StoryCitation citationKey="wangRapid2023" />.
         </p>
         <StoryToolFigure tool="climate-metrics-map" selections={WARM_NIGHTS_CHANGE_MAP} />
+        <p>
+          Across the entire state of California, the number of days per year where the minimum
+          temperature remains above 70°F is expected to increase on average by 13 days per year by
+          mid-century, and 24 days per year by the end of the century. The increase in warm nights
+          is particularly high in urban regions where the built infrastructure retains more heat
+          overnight, and in the foothills surrounding the central valley, where warm air from the
+          valley floor is pushed up into the hills and trapped overnight.
+        </p>
+        <p>
+          For example, San Bernardino is expected to experience an additional 28 days per year above
+          70°F by mid century and an additional 46 by the end of the century. Explore the map above
+          to see the spatial variability in warm nights across the entire state.
+        </p>
       </StoryBlock>
 
       <StoryBlock
@@ -158,45 +192,50 @@ export default function ExtremeHeatStory() {
         title="The “extreme heat season” in California will start earlier and last longer"
       >
         <p>
-          Extreme heat is more dangerous when it isn’t expected. Preparing for wildfire risks,
-          planning the agricultural growing season, and operating community cooling centers are all
-          based on an expectation of when extreme heat is expected throughout the year. Climate
-          models show that as climate change progresses, extreme heat events will occur both earlier
-          and later in the year than ever before, expanding the seasonal window for extreme heat.
-          Extreme heat events that occur early in the year before humans, animals, and plants have
-          acclimated to the heat can be much more dangerous. Extreme heat progressing later into the
-          fall can lengthen the wildfire season and exacerbate the effects of Santa Ana wind events
-          on fire risk. Understanding this extended “extreme heat season” is crucial for adaptation
-          planning across the state.
+          Extreme heat is more dangerous when it isn’t expected. Wildfire preparation, agricultural
+          planning, and community cooling center operations all depend on understanding the timing
+          and seasonality of extreme heat. Climate models show that as climate change progresses,
+          extreme heat events will occur both earlier and later in the year than ever before,
+          expanding the seasonal window for extreme heat. Extreme heat events that occur early in
+          the year before humans, animals, and plants have acclimated to the heat can be much more
+          dangerous
+          <StoryCitation citationKey="guirguisImpact2014" />. Extreme heat progressing later into
+          the fall can lengthen the wildfire season and exacerbate the effects of Santa Ana wind
+          events on fire risk
+          <StoryCitation citationKey="gershunovHot2021" />. Understanding this extended “extreme
+          heat season” is crucial for adaptation planning across the state.
         </p>
         <p>
-          In [example location], temperatures above 105°F may be expected as early as [ ] (x days
-          earlier than the historical average) and as late as [ ] (y days later than the historical
-          average).
+          In Sacramento County, the part of the year where temperatures are likely (more than a 50%
+          chance) to top 95°F historically ran from late June to the start of September. At 2.0°C of
+          global warming, that season starts about two weeks earlier and ends about three weeks
+          later, running from mid-June to late September.
         </p>
-        <StoryFigure {...FPO_FIGURE} />
-        <StoryFigure {...FPO_FIGURE} />
+        <StoryToolFigure tool="extreme-heat-days" selections={HEAT_SEASON_95F} />
       </StoryBlock>
 
       <StoryBlock id="electricity-demand" title="Extreme heat drives higher electricity demand">
         <p>
           Whenever temperatures rise across the state, so does electricity demand from keeping
-          buildings cool. Planning a resilient electrical system for the state requires anticipating
-          how much the climate will be driving increased demand, and where in the state that demand
-          will be the highest.
+          buildings cool. Planning a resilient electrical system requires anticipating how much the
+          climate will be driving increased demand, and where that demand will be the highest.
         </p>
         <p>
-          Cooling Degree Days (CDD) is a yearly measure of how far above a comfortable temperature
-          it is, and the amount of time spent above that temperature. This metric estimates the
-          increased electricity usage to cool buildings, and is an important part of forecasting
-          future electricity demand across the state.
+          Cooling Degree Days (CDD) are a metric used by the energy sector to estimate how hot
+          temperatures will translate into demand for electricity to keep buildings cool. Using a
+          comfort threshold of 65°F, CDDs measure how far the temperature exceeds that threshold and
+          how often those exceedances happen throughout the year. Although it does not account for
+          all the factors that drive electricity demand for cooling, CDDs are an essential metric
+          for forecasting electricity demand across the state.
         </p>
         <p>
-          Across the state, CDDs are projected to increase by [ ], but the increased demand is
-          strongly driven by the hottest parts of the state. In [sample forecast region], CDDs are
-          projected to increase by [Y] by mid century, and by [Z] by the end of the century.
+          Across the entire state the projected median increase in annual CDDs is 37% by
+          mid-century. The most impactful increases in temperature driven demand can come from parts
+          of the state with more moderate temperatures that will likely start experiencing more days
+          above 65°F. For example, in the Greater Bay Area Electricity Forecast Zone, CDDs are
+          projected to nearly double by mid-century and triple by the end of the century.
         </p>
-        <StoryToolFigure tool="hdd-cdd" selections={HDD_CDD_DEFAULT} />
+        <StoryToolFigure tool="hdd-cdd" selections={GREATER_BAY_AREA_CDD} />
       </StoryBlock>
 
       <StoryBlock id="robust-planning" title="Using Cal-Adapt for robust climate planning">
@@ -205,27 +244,30 @@ export default function ExtremeHeatStory() {
           the full story of extreme heat impacts. Considering extreme heat through multiple
           perspectives of timescales, thresholds, and seasons is key to understanding the full
           picture of how a region, community, or industry will be impacted by climate change. For
-          planners examining electricity demand, changes in cooling degree days (CDD) provide a
-          convenient annual summary of increasing demand, while warm nights and extreme heat season
+          planners examining electricity demand, changes in Cooling Degree Days (CDD) provide a
+          convenient annual summary of increasing demand, while Warm Nights and Extreme Heat Season
           metrics can help plan for additional demand during off-peak hours and times of the year.
-          To support robust climate planning, Cal-Adapt offers a range of extreme heat metrics
-          within each [data interface].
         </p>
         <p>
           Cal-Adapt is built to enable users to understand the climate impacts to their own
           community. As this statewide overview demonstrates, each region of California will
           experience extreme heat differently. For example, while coastal regions will not face the
           same threat from record high temperatures as inland California, they must plan for
-          persistent heatwaves occurring earlier in the year. Use the [detailed tools] across
-          Cal-Adapt to see how extreme heat is projected to change in your own county, city, census
-          tract, or watershed.
+          persistent heat waves occurring earlier in the year. Use the detailed tools across
+          Cal-Adapt to see how extreme heat is projected to change in your own community.
         </p>
-        <p>
-          For users that require even more depth and customization, such as implementing custom
-          metrics or using statistical techniques to examine extreme events, the Cal-Adapt:
-          Analytics Engine provides a Python package and a notebook interface for advanced climate
-          data analysis.
-        </p>
+        <Callout kind="note" variant="blue" title="Go further with the Cal-Adapt: Analytics Engine">
+          <p>
+            For users that require even more depth and customization, such as implementing custom
+            metrics or using statistical techniques to examine extreme events, the Cal-Adapt:
+            Analytics Engine provides a Python package and a notebook interface for advanced climate
+            data analysis. See our page on{" "}
+            <Link href="https://analytics.cal-adapt.org/data-tools/python-tools.html">
+              Cal-Adapt Python tools
+            </Link>{" "}
+            for more information.
+          </p>
+        </Callout>
       </StoryBlock>
     </StoryDocument>
   );
