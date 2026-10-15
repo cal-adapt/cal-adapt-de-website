@@ -22,6 +22,10 @@ $section-icon-size: 24px;
   &.closed {
     width: 72px;
   }
+
+  @include print {
+    display: none;
+  }
 }
 
 .top {

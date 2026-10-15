@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import { CHART_SOURCE } from "@/components/common/charts/ChartFrame";
 import BetaFeedbackAlert from "@/components/common/content/BetaFeedbackAlert";
 import Callout from "@/components/common/content/Callout";
 import InterpretSection from "@/components/common/content/InterpretSection";
@@ -79,11 +80,11 @@ export default function HddCdd() {
   const handleExportChart = useCallback(() => {
     const svg = chartContainerRef.current?.querySelector<SVGSVGElement>("svg");
     if (!svg) return;
-    exportSvgAsPng(svg, formatChartExportFilename(selections.climateVariable, locationLabel)).catch(
-      (error) => {
-        console.error("[hdd-cdd] chart export failed:", error);
-      }
-    );
+    exportSvgAsPng(svg, formatChartExportFilename(selections.climateVariable, locationLabel), {
+      footnote: CHART_SOURCE,
+    }).catch((error) => {
+      console.error("[hdd-cdd] chart export failed:", error);
+    });
   }, [selections.climateVariable, locationLabel]);
 
   return (

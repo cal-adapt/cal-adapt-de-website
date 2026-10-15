@@ -7,9 +7,16 @@ import Link from "@/components/common/ui/Link";
 
 import styles from "./Button.module.scss";
 
-export type ButtonVariant = "primary" | "secondary" | "tertiary" | "accent" | "skip" | "floating";
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "accent"
+  | "outline"
+  | "skip"
+  | "floating";
 
-export type ButtonSize = "small" | "large";
+export type ButtonSize = "compact" | "small" | "large";
 
 export type ButtonShape = "square" | "circle";
 

@@ -7,6 +7,10 @@
   border-left: 4px solid var(--callout-bar);
   background: var(--callout-fill);
 
+  @include print {
+    break-inside: avoid;
+  }
+
   // Nested so these outrank MdxContent's `.content p` rule.
   .eyebrow {
     @include type-item(label);
@@ -56,6 +60,11 @@
   border: 1px solid var(--callout-outline);
   border-left: 4px solid var(--callout-bar);
   background: color-mix(in srgb, var(--callout-fill) 50%, color(white));
+
+  // Only points to interactive tools, which do nothing on paper
+  @include print {
+    display: none;
+  }
 }
 
 .actions {
