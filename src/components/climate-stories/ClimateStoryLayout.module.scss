@@ -21,6 +21,10 @@
       "body toc"
       "citation toc";
   }
+
+  @include print {
+    @include flex(column, flex-start, stretch, spacer(8));
+  }
 }
 
 .header {
@@ -79,6 +83,7 @@
   }
 
   @include print {
+    position: static;
     break-inside: avoid;
   }
 }
