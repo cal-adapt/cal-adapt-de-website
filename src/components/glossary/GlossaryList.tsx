@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 
+import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 
 import Button from "@/components/common/ui/Button";
@@ -132,7 +133,7 @@ function GlossaryLinkRow({ label, links }: { label: string; links: readonly Glos
           link.id === navLinks.dataMethods.id ? (
             <DescriptionOutlinedIcon />
           ) : (
-            <Icon variant="externalLink" />
+            <ArrowOutwardOutlinedIcon />
           );
         return (
           <Button key={link.href} variant="outline" size="compact" href={link.href} prefix={icon}>
