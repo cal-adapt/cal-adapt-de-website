@@ -196,10 +196,9 @@ export default function ExtremeHeatStory() {
           Extreme heat is more dangerous when it isn’t expected. Wildfire preparation, agricultural
           planning, and community cooling center operations all depend on understanding the timing
           and seasonality of extreme heat. Climate models show that as climate change progresses,
-          extreme heat events will occur both earlier and later in the year than ever before,
-          expanding the seasonal window for extreme heat. Extreme heat events that occur early in
-          the year before humans, animals, and plants have acclimated to the heat can be much more
-          dangerous
+          extreme heat events will occur both earlier and later in the year, expanding the seasonal
+          window for extreme heat. Extreme heat events that occur early in the year before humans,
+          animals, and plants have acclimated to the heat can be much more dangerous
           <StoryCitation citationKey="guirguisImpact2014" />. Extreme heat progressing later into
           the fall can lengthen the wildfire season and exacerbate the effects of Santa Ana wind
           events on fire risk
