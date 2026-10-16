@@ -1,18 +1,9 @@
 @use "@/styles/abstracts" as *;
 
-.section {
-  scroll-margin-top: spacer(6);
-}
-
-.heading {
-  @include type-item(heading-5);
-  margin: 0;
-  color: color(black);
-}
-
 .bibliography {
   :global(.csl-bib-body) {
     @extend %citation-list;
+    margin-top: 0;
   }
 
   :global(.csl-entry) {

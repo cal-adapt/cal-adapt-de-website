@@ -4,6 +4,8 @@
 
 "use client";
 
+import { useParentSize } from "@visx/responsive";
+
 import * as d3 from "d3";
 
 import { binColors, binEdges, buildColorScale } from "./colormap";
@@ -20,17 +22,32 @@ type MapLegendProps = {
   /** Label only ticks at multiples of this value (other ticks are drawn
    *  shorter, without a label). Labels every tick when omitted. */
   labelStep?: number;
+  barWidth?: number;
+  /** Draw the bar at the width of the legend instead of `barWidth`. */
+  fill?: boolean;
 };
 
-const LABEL_MARGIN = 40;
+// Leaves room for half of the end labels, which are centred on the bar ends
+const LABEL_MARGIN = 20;
 const BAR_HEIGHT = 24;
 const BAR_WIDTH = 520;
 const POINT_INSET = 10;
 const NUM_GRADIENT_STOPS = 32;
+const SVG_HEIGHT = BAR_HEIGHT + 30;
 
-export default function MapLegend({ colormap, min, max, title, bins, labelStep }: MapLegendProps) {
-  const boundsWidth = BAR_WIDTH - 2 * LABEL_MARGIN;
-  const totalWidth = boundsWidth + 2 * LABEL_MARGIN + 2 * POINT_INSET;
+export default function MapLegend({
+  colormap,
+  min,
+  max,
+  title,
+  bins,
+  labelStep,
+  barWidth = BAR_WIDTH,
+  fill = false,
+}: MapLegendProps) {
+  const { parentRef, width: parentWidth } = useParentSize({ debounceTime: 0 });
+  const totalWidth = fill ? parentWidth : barWidth;
+  const boundsWidth = totalWidth - 2 * LABEL_MARGIN;
 
   const xScale = d3
     .scaleLinear()
@@ -118,48 +135,60 @@ export default function MapLegend({ colormap, min, max, title, bins, labelStep }
 
   return (
     <div className={styles.mapLegend}>
-      <div className={styles.colorbar}>
-        <svg
-          width={totalWidth}
-          height={BAR_HEIGHT + 30}
-          aria-label={`Legend for ${title ?? "color scale"} from ${min} to ${max}`}
-        >
-          <defs>
-            <linearGradient
-              id={gradientId}
-              x1={xLeft}
-              y1={0}
-              x2={xRight}
-              y2={0}
-              gradientUnits="userSpaceOnUse"
-            >
-              {gradientStops}
-            </linearGradient>
-          </defs>
-          <path d={pathD} fill={`url(#${gradientId})`} stroke="black" strokeWidth={1} />
-          {tickLabels.map(({ value, label }, idx) => {
-            const x = xScale(value);
-            return (
-              <g key={idx}>
-                {/* Unlabelled ticks are shorter, so the labelled ones stand out */}
-                <line
-                  x1={x}
-                  y1={0}
-                  x2={x}
-                  y2={label ? BAR_HEIGHT + 10 : BAR_HEIGHT + 4}
-                  stroke="black"
-                />
-                {label && (
-                  <text x={x} y={BAR_HEIGHT + 20} fontSize={12} textAnchor="middle" fill="black">
-                    {label}
-                  </text>
-                )}
-              </g>
-            );
-          })}
-        </svg>
+      <div
+        ref={fill ? parentRef : undefined}
+        className={styles.colorbar}
+        style={fill ? { height: SVG_HEIGHT } : undefined}
+      >
+        {totalWidth > 0 && (
+          <svg
+            width={totalWidth}
+            height={SVG_HEIGHT}
+            viewBox={`0 0 ${totalWidth} ${SVG_HEIGHT}`}
+            style={{ maxWidth: "100%", height: "auto" }}
+            aria-label={`Legend for ${title ?? "color scale"} from ${min} to ${max}`}
+          >
+            <defs>
+              <linearGradient
+                id={gradientId}
+                x1={xLeft}
+                y1={0}
+                x2={xRight}
+                y2={0}
+                gradientUnits="userSpaceOnUse"
+              >
+                {gradientStops}
+              </linearGradient>
+            </defs>
+            <path d={pathD} fill={`url(#${gradientId})`} stroke="black" strokeWidth={1} />
+            {tickLabels.map(({ value, label }, idx) => {
+              const x = xScale(value);
+              return (
+                <g key={idx}>
+                  {/* Unlabelled ticks are shorter, so the labelled ones stand out */}
+                  <line
+                    x1={x}
+                    y1={0}
+                    x2={x}
+                    y2={label ? BAR_HEIGHT + 10 : BAR_HEIGHT + 4}
+                    stroke="black"
+                  />
+                  {label && (
+                    <text x={x} y={BAR_HEIGHT + 20} fontSize={12} textAnchor="middle" fill="black">
+                      {label}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
+          </svg>
+        )}
       </div>
-      {title && <p className={styles.title}>{title}</p>}
+      {title && (
+        <p className={styles.title} style={fill ? undefined : { maxWidth: totalWidth }}>
+          {title}
+        </p>
+      )}
     </div>
   );
 }

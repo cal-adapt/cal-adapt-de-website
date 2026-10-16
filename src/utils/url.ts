@@ -38,29 +38,10 @@ export function extractFilenameFromURL(url: string): string {
   return path.split("/").at(-1) ?? "";
 }
 
-export function extractSegment(
-  url: string,
-  startDelimiter: string,
-  endDelimiter: string
-): string | null {
-  // Find the start index of the segment
-  const startIndex = url.indexOf(startDelimiter);
-
-  // If start delimiter is not found, return null
-  if (startIndex === -1) {
-    return null;
-  }
-
-  // Adjust the start index to the beginning of the segment
-  const segmentStartIndex = startIndex + startDelimiter.length;
-
-  // Find the end index of the segment
-  const endIndex = url.indexOf(endDelimiter, segmentStartIndex);
-
-  // Extract the segment from the URL
-  // If end delimiter is not found, extract until the end of the string
-  const segment =
-    endIndex === -1 ? url.substring(segmentStartIndex) : url.substring(segmentStartIndex, endIndex);
-
-  return segment;
+/** True when `path` is `base` or nested under it (`/a/b` is within `/a`, `/ab` is not). */
+export function isPathWithin(path: string, base: string): boolean {
+  const normalizedPath = normalizePath(path);
+  const normalizedBase = normalizePath(base);
+  if (normalizedBase === "/") return normalizedPath.startsWith("/");
+  return normalizedPath === normalizedBase || normalizedPath.startsWith(`${normalizedBase}/`);
 }

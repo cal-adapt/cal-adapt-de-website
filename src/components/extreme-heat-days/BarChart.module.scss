@@ -3,13 +3,17 @@
 .chartContainer {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  min-height: 340px;
-  max-height: 540px;
+  @include chart-size;
 }
 
 .chart {
   display: block;
+
+  // Drawn at screen width, which is wider than the page
+  @include print {
+    width: 100%;
+    height: auto;
+  }
 }
 
 .tooltip {

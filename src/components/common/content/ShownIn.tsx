@@ -1,10 +1,13 @@
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 
-import ToolPill from "@/components/common/ui/ToolPill";
-import { getDashboardToolByNavId } from "@/components/dashboard/tools";
+import Button from "@/components/common/ui/Button";
+import ToolButton from "@/components/common/ui/ToolButton";
 import { type ClimateStorySlug, getClimateStory } from "@/config/climate-stories";
-import type { navGroups, NavLink } from "@/config/navigation";
-import { climateMetricsMapHref } from "@/data/climate-metrics-map/metrics";
+import { type NavLink, navLinks, toolLinks } from "@/config/navigation";
+import {
+  resolveSelections as resolveClimateMetricsMapSelections,
+  selectionsToSearchParams as climateMetricsMapSelectionsToSearchParams,
+} from "@/lib/climate-metrics-map/options";
 import { resolveSelections as resolveExtremeHeatSelections } from "@/lib/extreme-heat-days/options";
 import { selectionsToSearchParams as extremeHeatSelectionsToSearchParams } from "@/lib/extreme-heat-days/search-params";
 import { resolveSelections as resolveHddCddSelections } from "@/lib/hdd-cdd/options";
@@ -12,7 +15,12 @@ import { selectionsToSearchParams as hddCddSelectionsToSearchParams } from "@/li
 
 import styles from "./ShownIn.module.scss";
 
-type ToolId = (typeof navGroups.tools.links)[number]["id"];
+type ToolId = (typeof navLinks)[
+  | "climateMetricsMap"
+  | "dataDownload"
+  | "extremeHeatDays"
+  | "hddCdd"
+  | "renewablesVisualizer"]["id"];
 
 interface ToolTarget {
   id: ToolId;
@@ -33,7 +41,10 @@ function toolHref(navLink: NavLink, id: ToolId, variable: string): string {
   let query: string;
   switch (id) {
     case "climate-metrics-map":
-      return climateMetricsMapHref(variable);
+      query = climateMetricsMapSelectionsToSearchParams(
+        resolveClimateMetricsMapSelections({ metric: variable })
+      ).toString();
+      break;
     case "extreme-heat-days":
       query = extremeHeatSelectionsToSearchParams(
         resolveExtremeHeatSelections({ climateVariable: variable })
@@ -56,20 +67,23 @@ export default function ShownIn({ tools = [], stories = [] }: ShownInProps) {
     <div className={styles.row}>
       {tools.map((tool) => {
         const { id, variable } = typeof tool === "string" ? { id: tool, variable: null } : tool;
-        const navLink = getDashboardToolByNavId(id)?.navLink;
+        const navLink = toolLinks.find((link) => link.id === id);
         if (!navLink) return null;
         const href = variable === null ? navLink.href : toolHref(navLink, id, variable);
-        return <ToolPill key={href} navLink={navLink} href={href} />;
+        return <ToolButton key={href} navLink={navLink} href={href} />;
       })}
       {stories.map((slug) => {
         const story = getClimateStory(slug);
         return story ? (
-          <ToolPill
+          <Button
             key={slug}
-            label={`${story.label ?? story.title} Climate Story`}
+            variant="outline"
+            size="compact"
             href={story.href}
-            icon={<MenuBookOutlinedIcon />}
-          />
+            prefix={<MenuBookOutlinedIcon />}
+          >
+            {`${story.label ?? story.title} Climate Story`}
+          </Button>
         ) : null;
       })}
     </div>

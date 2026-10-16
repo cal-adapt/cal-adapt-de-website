@@ -7,6 +7,8 @@ interface ClimateStoryBase {
   title: string;
   hazard: string;
   summary: string;
+  /** Catalog card thumbnail, as a path under `public/`. Decorative, so no alt text. */
+  image?: string;
 }
 
 export interface ClimateStory extends ClimateStoryBase {
@@ -38,10 +40,11 @@ const climateStoryDefinitions = [
     title: "Extreme Heat in California",
     label: "Extreme Heat",
     hazard: "Heat",
-    lastUpdated: "August 18, 2026",
+    lastUpdated: "October 16, 2026",
     isNew: true,
+    image: "/img/climate-stories/extreme-heat.webp",
     summary:
-      "Extreme heat events cause some of the most severe impacts from climate change in California. These events create public health risks, threaten critical infrastructure, and drive electricity use that strains the limits of the electrical grid. Understanding how the hazards from extreme heat will continue to evolve with climate change is essential to planners across California.",
+      "An overview of how extreme heat is projected to impact California in the coming decades, and how Cal-Adapt data and tools can be used to explore these changes.",
     intro:
       "This page provides an overview of some of the ways that extreme heat is projected to impact California in the coming decades, and highlights how the data and tools on Cal-Adapt can be used to learn about these projected changes. As you move through the page, explore the interactive visualizations to see how extreme heat will impact your community.",
   },
@@ -49,10 +52,11 @@ const climateStoryDefinitions = [
     status: "coming-soon",
     slug: "precipitation",
     id: "climate-story-precipitation",
-    title: "Precipitation in California",
+    title: "Extreme Precipitation in California",
     hazard: "Precipitation",
+    image: "/img/climate-stories/precipitation.webp",
     summary:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac eros felis. Duis id commodo dolor. Vestibulum ex velit, egestas ut quam eget, placerat hendrerit orci.",
+      "Explore present-day and future extreme precipitation events with Cal-Adapt’s projections and learn how these changes impact California.",
   },
 ] as const satisfies readonly ClimateStoryDefinition[];
 

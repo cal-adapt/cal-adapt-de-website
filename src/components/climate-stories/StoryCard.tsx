@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import clsx from "clsx";
 import type { ReactNode } from "react";
 
@@ -17,7 +19,17 @@ function StoryCardContent({ story, badge, footer }: StoryCardContentProps) {
   return (
     <>
       <div className={styles.thumbnail} aria-hidden>
-        <span className={styles.thumbnailLabel}>[FPO: Figure]</span>
+        {story.image ? (
+          <Image
+            src={story.image}
+            alt=""
+            fill
+            sizes="(min-width: 1200px) 33vw, 100vw"
+            style={{ objectFit: "cover" }}
+          />
+        ) : (
+          <span className={styles.thumbnailLabel}>[FPO: Figure]</span>
+        )}
       </div>
       <div className={styles.body}>
         <div className={styles.meta}>

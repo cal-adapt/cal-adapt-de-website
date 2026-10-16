@@ -20,8 +20,15 @@
   @include type-item(small);
 }
 
+.copy {
+  @include print {
+    display: none;
+  }
+}
+
 .text {
   margin: 0;
   color: color(grey-5);
+  overflow-wrap: anywhere;
   @include type-item(body);
 }
