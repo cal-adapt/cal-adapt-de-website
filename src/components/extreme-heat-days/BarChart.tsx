@@ -20,6 +20,8 @@ import {
 
 import {
   axisLabelMeasureStyle,
+  BAR_CHART_MARGIN as MARGIN,
+  BAR_PADDING,
   ChartHeading,
   GlobalWarmingLevelTick,
   pickGlobalWarmingLevelTickFormat,
@@ -29,15 +31,12 @@ import {
 
 import styles from "./BarChart.module.scss";
 
-const MARGIN = { top: 24, right: 24, left: 86 } as const;
-
 const Y_TICK_COUNT = 5;
 
 const BAR_GROW_DURATION = 0.5;
 const BAR_CORNER_RADIUS = 3;
 
 const X_TICK_OFFSET = 8;
-const X_TICK_GAP = 6;
 
 interface HoveredBar {
   /** Center x of the bar. */
@@ -83,15 +82,17 @@ export default function BarChart({
 
   const plotWidth = Math.max(0, width - MARGIN.left - MARGIN.right);
   const xScale = useMemo(
-    () => scaleBand<number>({ domain: globalWarmingLevels, range: [0, plotWidth], padding: 0.3 }),
+    () =>
+      scaleBand<number>({
+        domain: globalWarmingLevels,
+        range: [0, plotWidth],
+        padding: BAR_PADDING,
+      }),
     [globalWarmingLevels, plotWidth]
   );
   const bandwidth = xScale.bandwidth();
 
-  const xTickFormat = pickGlobalWarmingLevelTickFormat(
-    globalWarmingLevels,
-    xScale.step() - X_TICK_GAP
-  );
+  const xTickFormat = pickGlobalWarmingLevelTickFormat(globalWarmingLevels, width);
 
   const plotHeight = Math.max(0, height - titleBand - MARGIN.top - xTickFormat.marginBottom);
   const yScale = useMemo(
