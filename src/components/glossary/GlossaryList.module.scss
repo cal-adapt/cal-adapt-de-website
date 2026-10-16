@@ -6,6 +6,16 @@
   max-width: max-w(content);
 }
 
+// Search and letters stay pinned to the top of the scrolling page area.
+.controls {
+  @include flex(column, flex-start, stretch, spacer(4));
+  position: sticky;
+  top: 0;
+  z-index: z(1);
+  padding-block: spacer(3);
+  background: color(white);
+}
+
 .search {
   position: relative;
   width: 100%;

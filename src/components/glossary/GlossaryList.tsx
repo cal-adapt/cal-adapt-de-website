@@ -37,20 +37,31 @@ export default function GlossaryList({ entries }: GlossaryListProps) {
 
   return (
     <div className={styles.root}>
-      <div className={styles.search}>
-        <label htmlFor={searchId} className="sr-only">
-          Search glossary terms
-        </label>
-        <Icon variant="search" className={styles.searchIcon} aria-hidden />
-        <input
-          id={searchId}
-          type="search"
-          className={styles.searchInput}
-          placeholder="Search terms, e.g. cooling degree days"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          autoComplete="off"
-        />
+      <div className={styles.controls}>
+        <div className={styles.search}>
+          <label htmlFor={searchId} className="sr-only">
+            Search glossary terms
+          </label>
+          <Icon variant="search" className={styles.searchIcon} aria-hidden />
+          <input
+            id={searchId}
+            type="search"
+            className={styles.searchInput}
+            placeholder="Search terms, e.g. cooling degree days"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            autoComplete="off"
+          />
+        </div>
+        {groups.length > 0 ? (
+          <nav className={styles.jump} aria-label="Jump to letter">
+            {groups.map((group) => (
+              <Link key={group.letter} className={styles.jumpLink} href={`#letter-${group.letter}`}>
+                {group.letter}
+              </Link>
+            ))}
+          </nav>
+        ) : null}
       </div>
 
       <p className="sr-only" aria-live="polite">
@@ -61,13 +72,6 @@ export default function GlossaryList({ entries }: GlossaryListProps) {
 
       {groups.length > 0 ? (
         <>
-          <nav className={styles.jump} aria-label="Jump to letter">
-            {groups.map((group) => (
-              <Link key={group.letter} className={styles.jumpLink} href={`#letter-${group.letter}`}>
-                {group.letter}
-              </Link>
-            ))}
-          </nav>
           {groups.map((group) => (
             <section
               key={group.letter}
