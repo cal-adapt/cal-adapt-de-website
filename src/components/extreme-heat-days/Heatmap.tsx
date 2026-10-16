@@ -34,7 +34,7 @@ const WIDE_LAYOUT = { left: 86, right: 112, yTickGap: 12, legendGap: 20, legendT
 const NARROW_LAYOUT = { left: 60, right: 72, yTickGap: 6, legendGap: 8, legendTitleOffset: 40 };
 
 const Y_AXIS_LABEL = "Day of Year";
-const LEGEND_TITLE = "Years exceeding threshold (%)";
+const LEGEND_TITLE = "Percentage of years (%)";
 const MISSING_CUE = "Hatched = no data";
 
 // The first day of every other month on the no-leap calendar, plus the last day.
