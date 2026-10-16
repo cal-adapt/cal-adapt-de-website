@@ -61,7 +61,7 @@ function toolHref(navLink: NavLink, id: ToolId, variable: string): string {
   return query ? `${navLink.href}?${query}` : navLink.href;
 }
 
-/** A row of pills linking to the tools and climate stories a dataset appears in. */
+/** A row of buttons linking to the tools and climate stories a dataset appears in. */
 export default function ShownIn({ tools = [], stories = [] }: ShownInProps) {
   return (
     <div className={styles.row}>
