@@ -1,6 +1,7 @@
 // SVG pieces shared by the tool's charts, so every variable's chart has the
 // same title block and global warming level axis.
 
+import { scaleBand } from "@visx/scale";
 import { getStringWidth, Text, useText } from "@visx/text";
 
 import type { CSSProperties } from "react";
@@ -20,6 +21,10 @@ const TITLE_BAND_BOTTOM = 8;
 const TITLE_PADDING_X = 24;
 
 export const X_AXIS_LABEL = "Global Warming Level (°C)";
+
+export const BAR_CHART_MARGIN = { top: 24, right: 24, left: 86 } as const;
+export const BAR_PADDING = 0.3;
+const X_TICK_GAP = 6;
 
 // Should match CSS variable `--font-family-sans-serif`
 const FONT_FAMILY = '"Inter", "Helvetica Neue", "Helvetica", "Arial", sans-serif';
@@ -128,11 +133,19 @@ const GLOBAL_WARMING_LEVEL_TICK_FORMATS: readonly GlobalWarmingLevelTickFormat[]
   { label: (level) => level.toFixed(1), marginBottom: 52 },
 ];
 
-/** Picks the longest tick label format whose words each fit within `slotWidth`. */
+/**
+ * Picks the longest tick label format whose words each fit under a bar in a
+ * bar chart `chartWidth` wide. The heatmap passes its own width too, so every
+ * chart names the warming levels the same way at a given width.
+ */
 export function pickGlobalWarmingLevelTickFormat(
   levels: readonly number[],
-  slotWidth: number
+  chartWidth: number
 ): GlobalWarmingLevelTickFormat {
+  const plotWidth = Math.max(0, chartWidth - BAR_CHART_MARGIN.left - BAR_CHART_MARGIN.right);
+  const slotWidth =
+    scaleBand<number>({ domain: [...levels], range: [0, plotWidth], padding: BAR_PADDING }).step() -
+    X_TICK_GAP;
   return (
     GLOBAL_WARMING_LEVEL_TICK_FORMATS.find((format) =>
       levels.every((level) =>

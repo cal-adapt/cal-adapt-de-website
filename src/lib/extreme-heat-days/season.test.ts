@@ -103,10 +103,10 @@ describe("formatNoLeapDate", () => {
 describe("extreme heat season chart text", () => {
   it("names the statistic and threshold in the subtitle", () => {
     expect(formatViewSubtitle(SELECTIONS)).toBe(
-      "Multi-model mean of region-median exceedance frequency above 90°F"
+      "Percentage of years each day of the year tops 90°F"
     );
     expect(formatViewSubtitle({ ...SELECTIONS, threshold: "95pctl" })).toBe(
-      "Multi-model mean of region-median exceedance frequency above the 95th percentile"
+      "Percentage of years each day of the year tops the 95th percentile"
     );
   });
 
