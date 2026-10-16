@@ -1,7 +1,11 @@
 import type { ComponentType } from "react";
 
 import { type NavLink, navLinks } from "@/config/navigation";
-import { metrics as climateMetricsMapMetrics } from "@/data/climate-metrics-map/metrics";
+import {
+  type ClimateMetricsMapSelections,
+  resolveSelections as resolveClimateMetricsMapSelections,
+  selectionsToSearchParams as climateMetricsMapSelectionsToSearchParams,
+} from "@/lib/climate-metrics-map/options";
 import {
   type ExtremeHeatDaysSelections,
   resolveSelections as resolveExtremeHeatSelections,
@@ -13,11 +17,15 @@ import {
 } from "@/lib/hdd-cdd/options";
 import { selectionsToSearchParams as hddCddSelectionsToSearchParams } from "@/lib/hdd-cdd/search-params";
 
+import type { StoryFigureToolLink } from "../StoryFigure";
+
+import ClimateMetricsMapChart from "./ClimateMetricsMapChart";
 import ExtremeHeatChart from "./ExtremeHeatChart";
 import HddCddChart from "./HddCddChart";
 
 /** Add a tool here and to `storyToolCharts` to make its chart usable in stories. */
 export interface StoryToolSelections {
+  "climate-metrics-map": ClimateMetricsMapSelections;
   "extreme-heat-days": ExtremeHeatDaysSelections;
   "hdd-cdd": HddCddSelections;
 }
@@ -33,6 +41,12 @@ interface StoryToolChart<S> {
 }
 
 export const storyToolCharts: { [K in StoryToolId]: StoryToolChart<StoryToolSelections[K]> } = {
+  "climate-metrics-map": {
+    navLink: navLinks.climateMetricsMap,
+    resolveSelections: resolveClimateMetricsMapSelections,
+    toSearchParams: climateMetricsMapSelectionsToSearchParams,
+    Chart: ClimateMetricsMapChart,
+  },
   "extreme-heat-days": {
     navLink: navLinks.extremeHeatDays,
     resolveSelections: resolveExtremeHeatSelections,
@@ -64,11 +78,10 @@ export function storyToolHref<K extends StoryToolId>(
   return query ? `${navLink.href}?${query}` : navLink.href;
 }
 
-/** Link to the Climate Metrics Map opened on a metric, e.g. "warm-nights". Throws
- *  on a slug the map doesn't offer. */
-export function climateMetricsMapHref(metricSlug: string): string {
-  if (!climateMetricsMapMetrics.some((metric) => metric.slug === metricSlug)) {
-    throw new Error(`Unknown Climate Metrics Map metric: "${metricSlug}"`);
-  }
-  return `${navLinks.climateMetricsMap.href}?${new URLSearchParams({ metric: metricSlug })}`;
+/** An "Open in" link for a `StoryFigure` whose chart comes from another tool. */
+export function storyToolLink<K extends StoryToolId>(
+  tool: K,
+  selections: StoryToolSelections[K]
+): StoryFigureToolLink {
+  return { navLink: storyToolCharts[tool].navLink, href: storyToolHref(tool, selections) };
 }

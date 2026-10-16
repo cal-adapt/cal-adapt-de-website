@@ -12,20 +12,19 @@
   border: 1px solid color(grey-3);
   border-radius: rounded(2);
   padding: spacer(3);
+  container-type: inline-size;
 }
 
 .loadingState {
   @include flex(row, center, center);
   width: 100%;
-  // Should match the charts' .chartContainer box to prevent layout shift
-  aspect-ratio: 16 / 9;
-  min-height: 340px;
-  max-height: 540px;
+  @include chart-size;
 }
 
 .source {
   @include type-item(small);
-  margin: 0;
+  margin: spacer(2) 0 0;
   color: color(grey-4);
   line-height: 1.4;
+  white-space: pre-line;
 }

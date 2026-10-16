@@ -1,12 +1,9 @@
-import { navLinks } from "@/config/navigation";
+import StoryFigure, { type StoryFigureRelatedLink, type StoryFigureToolLink } from "../StoryFigure";
 
-import StoryFigure from "../StoryFigure";
-
-import StoryToolLink, { type StoryRelatedLink, type StoryToolLinkTarget } from "./StoryToolLink";
 import {
   storyToolCharts,
-  storyToolHref,
   type StoryToolId,
+  storyToolLink,
   type StoryToolSelections,
 } from "./tool-charts";
 
@@ -14,28 +11,28 @@ interface StoryToolFigureProps<K extends StoryToolId> {
   tool: K;
   selections: StoryToolSelections[K];
   caption?: string;
-  /** From `climateMetricsMapHref`. Adds a link to the map of this metric. */
-  mapHref?: string;
+  /** Other tools to explore this figure in, after the figure's own tool. */
+  toolLinks?: readonly StoryFigureToolLink[];
   /** Further reading on another site, e.g. a blog post about this chart. */
-  relatedLinks?: readonly StoryRelatedLink[];
+  relatedLinks?: readonly StoryFigureRelatedLink[];
 }
 
 export default function StoryToolFigure<K extends StoryToolId>({
   tool,
   selections,
   caption,
-  mapHref,
+  toolLinks = [],
   relatedLinks,
 }: StoryToolFigureProps<K>) {
-  const { Chart, navLink } = storyToolCharts[tool];
-  const links: StoryToolLinkTarget[] = [{ navLink, href: storyToolHref(tool, selections) }];
-  if (mapHref) links.push({ navLink: navLinks.climateMetricsMap, href: mapHref });
+  const { Chart } = storyToolCharts[tool];
 
   return (
-    <StoryFigure caption={caption}>
-      <StoryToolLink links={links} relatedLinks={relatedLinks}>
-        <Chart selections={selections} />
-      </StoryToolLink>
+    <StoryFigure
+      caption={caption}
+      toolLinks={[storyToolLink(tool, selections), ...toolLinks]}
+      relatedLinks={relatedLinks}
+    >
+      <Chart selections={selections} />
     </StoryFigure>
   );
 }

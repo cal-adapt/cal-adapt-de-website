@@ -1,0 +1,13 @@
+@use "../abstracts" as *;
+
+@page {
+  margin: 0.5in;
+}
+
+@include print {
+  html,
+  body {
+    background: none;
+    overflow: visible;
+  }
+}

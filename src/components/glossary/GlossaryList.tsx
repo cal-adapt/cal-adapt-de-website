@@ -4,10 +4,10 @@ import { useId, useState } from "react";
 
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 
+import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
-import ToolPill from "@/components/common/ui/ToolPill";
-import { getDashboardToolByNavId } from "@/components/dashboard/tools";
+import ToolButton from "@/components/common/ui/ToolButton";
 import {
   filterGlossaryEntries,
   type GlossaryEntry,
@@ -15,7 +15,7 @@ import {
   type GlossaryLink,
   groupGlossaryEntriesByLetter,
 } from "@/config/glossary";
-import { navLinks } from "@/config/navigation";
+import { navLinks, toolLinks } from "@/config/navigation";
 
 import styles from "./GlossaryList.module.scss";
 
@@ -123,20 +123,23 @@ function GlossaryLinkRow({ label, links }: { label: string; links: readonly Glos
   return (
     <p className={styles.linkRow}>
       <span className={styles.linkRowLabel}>{label}</span>
-      {links.map((link) => (
-        <ToolPill
-          key={link.href}
-          label={link.label}
-          href={link.href}
-          icon={<GlossaryLinkIcon id={link.id} />}
-        />
-      ))}
+      {links.map((link) => {
+        const tool = toolLinks.find((toolLink) => toolLink.id === link.id);
+        if (tool) return <ToolButton key={link.href} navLink={tool} href={link.href} />;
+
+        // Data Methods keeps its page icon; anything else is marked as leaving the page.
+        const icon =
+          link.id === navLinks.dataMethods.id ? (
+            <DescriptionOutlinedIcon />
+          ) : (
+            <Icon variant="externalLink" />
+          );
+        return (
+          <Button key={link.href} variant="outline" size="compact" href={link.href} prefix={icon}>
+            {link.label}
+          </Button>
+        );
+      })}
     </p>
   );
-}
-
-/** A tool or Data Methods shows its sidebar icon; anything else is marked as leaving the page. */
-function GlossaryLinkIcon({ id }: { id?: string }) {
-  if (id === navLinks.dataMethods.id) return <DescriptionOutlinedIcon />;
-  return getDashboardToolByNavId(id ?? null)?.sidebarIcon ?? <Icon variant="externalLink" />;
 }
