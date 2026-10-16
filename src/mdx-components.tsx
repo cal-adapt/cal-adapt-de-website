@@ -10,12 +10,15 @@ import StacBrowserLink from "@/components/common/content/StacBrowserLink";
 import Step from "@/components/common/content/Step";
 import TurbinePowerCurve from "@/components/common/content/TurbinePowerCurve";
 import WindFarmLayout from "@/components/common/content/WindFarmLayout";
+import Button from "@/components/common/ui/Button";
 import CitationBox from "@/components/common/ui/CitationBox";
+import ToolButton from "@/components/common/ui/ToolButton";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     wrapper: ({ children }) => <MdxContent>{children}</MdxContent>,
     Step,
+    Button,
     Callout,
     CitationBox,
     Specs,
@@ -23,6 +26,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ShownIn,
     StacBrowserLink,
     S3FolderLink,
+    ToolButton,
     TurbinePowerCurve,
     WindFarmLayout,
     ...components,

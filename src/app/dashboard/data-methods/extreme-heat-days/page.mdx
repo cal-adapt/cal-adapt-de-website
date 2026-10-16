@@ -1,4 +1,6 @@
+import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import { SITE_TITLE } from "@/config/constants";
+import { navLinks } from "@/config/navigation";
 
 export const metadata = {
   title: `Data Methods - Extreme Heat Days & Warm Nights - ${SITE_TITLE}`,
@@ -59,7 +61,17 @@ The number of extreme heat days or warm nights per year for each threshold and g
 </Spec>
 <Spec label="Shown in">
 
-<ShownIn tools={["extreme-heat-days"]} stories={["extreme-heat"]} />
+<ShownIn>
+  <ToolButton navLink={navLinks.extremeHeatDays} />
+  <Button
+    variant="outline"
+    size="compact"
+    href="/dashboard/climate-stories/extreme-heat"
+    prefix={<MenuBookOutlinedIcon />}
+  >
+    Extreme Heat Climate Story
+  </Button>
+</ShownIn>
 
 </Spec>
 <Spec label="Format">
@@ -82,7 +94,9 @@ The mean number of extreme heat days or warm nights per year at each grid cell, 
 </Spec>
 <Spec label="Shown in">
 
-<ShownIn tools={["climate-metrics-map"]} />
+<ShownIn>
+  <ToolButton navLink={navLinks.climateMetricsMap} />
+</ShownIn>
 
 </Spec>
 <Spec label="Format">

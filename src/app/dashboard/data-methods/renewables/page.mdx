@@ -1,4 +1,5 @@
 import { SITE_TITLE } from "@/config/constants";
+import { navLinks } from "@/config/navigation";
 
 export const metadata = {
   title: `Data Methods - Solar & Wind Resource Droughts - ${SITE_TITLE}`,
@@ -51,7 +52,9 @@ The multi-model mean count of resource drought days per month, for each year of 
 </Spec>
 <Spec label="Shown in">
 
-<ShownIn tools={["renewables-visualizer"]} />
+<ShownIn>
+  <ToolButton navLink={navLinks.renewablesVisualizer} />
+</ShownIn>
 
 </Spec>
 <Spec label="Format">
