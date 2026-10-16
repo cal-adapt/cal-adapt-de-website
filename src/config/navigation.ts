@@ -152,6 +152,12 @@ export const navLinks = {
     featureFlag: "__FF_DATA_METHODS__",
     children: dataMethodsPages.filter(isNavLinkEnabled),
   },
+  glossary: {
+    id: "glossary",
+    label: "Glossary",
+    href: "/dashboard/glossary",
+    featureFlag: "__FF_GLOSSARY__",
+  },
   fourthAssessment: {
     id: "fourth-assessment",
     label: "4th Assessment Cal-Adapt",
@@ -218,7 +224,9 @@ export const navSections = {
   guidance: {
     id: "guidance",
     label: "Guidance",
-    links: [navLinks.dataMethods, navLinks.moreGuidance].filter(isNavLinkEnabled),
+    links: [navLinks.dataMethods, navLinks.glossary, navLinks.moreGuidance].filter(
+      isNavLinkEnabled
+    ),
   },
 } as const satisfies Record<string, NavGroup>;
 
@@ -244,4 +252,5 @@ export const dashboardPages: readonly NavLink[] = [
   navLinks.climateStories,
   ...toolLinks,
   navLinks.dataMethods,
+  navLinks.glossary,
 ].filter(isNavLinkEnabled);
