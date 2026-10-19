@@ -22,6 +22,8 @@ export interface NavGroup {
   id: string;
   label: string;
   links: readonly NavLink[];
+  /** The links are still in user testing; each is marked with a flask icon. */
+  beta?: boolean;
 }
 
 export type NavItem = NavLink | NavGroup;
@@ -211,6 +213,7 @@ export const navSections = {
   betaTools: {
     id: "beta-tools",
     label: "Beta Tools",
+    beta: true,
     links: [navLinks.extremeHeatDays, navLinks.hddCdd, navLinks.renewablesVisualizer].filter(
       isNavLinkEnabled
     ),
@@ -232,6 +235,45 @@ export interface NavSection extends NavGroup {
 export const enabledNavSections: readonly NavSection[] = Object.values(navSections).filter(
   (section) => section.links.length > 0
 );
+
+/**
+ * A site menu: a section whose links are listed directly, followed by related
+ * sections shown under their own headings (e.g. Beta Tools inside Tools).
+ */
+export interface NavMenu extends NavSection {
+  subsections: readonly NavSection[];
+  /** The section's own landing page. The site header links straight to it instead of opening a menu. */
+  landing?: NavLink;
+}
+
+function navMenu(
+  section: NavSection,
+  { subsections = [], landing }: { subsections?: readonly NavSection[]; landing?: NavLink } = {}
+): NavMenu {
+  return {
+    ...section,
+    subsections: subsections.filter((subsection) => subsection.links.length > 0),
+    landing,
+  };
+}
+
+/**
+ * Site header menus: the same sections as the dashboard sidebar, grouped more
+ * coarsely. Only menus with at least one link, in display order.
+ */
+export const navMenus: readonly NavMenu[] = [
+  navMenu(navSections.climateStories, { landing: navLinks.allClimateStories }),
+  navMenu(navSections.tools, { subsections: [navSections.betaTools] }),
+  navMenu({
+    ...navSections.guidance,
+    links: [navLinks.dataMethods, navLinks.data, navLinks.moreGuidance].filter(isNavLinkEnabled),
+  }),
+].filter((menu) => menu.links.length > 0 || menu.subsections.length > 0);
+
+/** IDs of every dashboard tool, stable or beta, whether or not its feature flag is on. */
+export type ToolId =
+  | (typeof navSections.tools.links)[number]["id"]
+  | (typeof navSections.betaTools.links)[number]["id"];
 
 /** Every dashboard tool, stable then beta. */
 export const toolLinks: readonly NavLink[] = [

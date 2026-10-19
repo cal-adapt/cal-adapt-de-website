@@ -1,22 +1,7 @@
-import { type ReactNode } from "react";
-
-import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
-import ElectricBoltOutlinedIcon from "@mui/icons-material/ElectricBoltOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-import ThermostatOutlinedIcon from "@mui/icons-material/ThermostatOutlined";
-import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
-
-import { type NavLink, navLinks } from "@/config/navigation";
+import { type NavLink } from "@/config/navigation";
 
 import Button, { type ButtonSize } from "./Button";
-
-const TOOL_ICONS: Record<string, ReactNode> = {
-  [navLinks.climateMetricsMap.id]: <MapOutlinedIcon />,
-  [navLinks.dataDownload.id]: <DatasetOutlinedIcon />,
-  [navLinks.extremeHeatDays.id]: <ThermostatOutlinedIcon />,
-  [navLinks.hddCdd.id]: <ElectricBoltOutlinedIcon />,
-  [navLinks.renewablesVisualizer.id]: <WbSunnyOutlinedIcon />,
-};
+import ToolIcon, { isToolId } from "./ToolIcon";
 
 interface ToolButtonProps {
   /** The tool to open; supplies the label and icon. */
@@ -24,6 +9,7 @@ interface ToolButtonProps {
   /** Defaults to the tool's page; pass one with selections to open it preconfigured. */
   href?: string;
   size?: ButtonSize;
+  className?: string;
 }
 
 /** An outline `Button` that opens a dashboard tool. */
@@ -31,9 +17,16 @@ export default function ToolButton({
   navLink,
   href = navLink.href,
   size = "compact",
+  className,
 }: ToolButtonProps) {
   return (
-    <Button variant="outline" size={size} href={href} prefix={TOOL_ICONS[navLink.id]}>
+    <Button
+      variant="outline"
+      size={size}
+      href={href}
+      className={className}
+      prefix={isToolId(navLink.id) ? <ToolIcon id={navLink.id} /> : undefined}
+    >
       {navLink.label}
     </Button>
   );
