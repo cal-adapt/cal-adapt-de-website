@@ -9,12 +9,12 @@ type EnvValue = (typeof Env)[keyof typeof Env];
 const currentEnv: EnvValue = (process.env.NEXT_PUBLIC_APP_ENV as EnvValue) ?? Env.Prod;
 
 const flagDefinitions = {
-  __FF_DEBUG__: [Env.Dev, Env.Stg],
+  __FF_DEBUG__: [Env.Dev],
   __FF_SITE_BANNER__: [Env.Dev, Env.Stg, Env.Prod],
-  __FF_EXTREME_HEAT_DAYS__: [Env.Dev, Env.Stg],
-  __FF_CLIMATE_STORIES__: [Env.Dev, Env.Stg],
-  __FF_HDD_CDD__: [Env.Dev, Env.Stg],
-  __FF_DATA_METHODS__: [Env.Dev, Env.Stg],
+  __FF_EXTREME_HEAT_DAYS__: [Env.Dev, Env.Stg, Env.Prod],
+  __FF_CLIMATE_STORIES__: [Env.Dev, Env.Stg, Env.Prod],
+  __FF_HDD_CDD__: [Env.Dev, Env.Stg, Env.Prod],
+  __FF_DATA_METHODS__: [Env.Dev, Env.Stg, Env.Prod],
 } as const satisfies Record<string, readonly EnvValue[]>;
 
 type FlagKey = keyof typeof flagDefinitions;
