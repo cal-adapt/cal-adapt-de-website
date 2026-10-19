@@ -27,14 +27,14 @@ import styles from "./Heatmap.module.scss";
 
 const MARGIN_TOP = 24;
 
-// The y-axis and the color legend take ~200px beside the plot, which would
+// The y-axis and the color legend take ~150px beside the plot, which would
 // leave phone-width columns too narrow for any tick label
 const NARROW_WIDTH = 480;
-const WIDE_LAYOUT = { left: 86, right: 112, yTickGap: 12, legendGap: 20, legendTitleOffset: 48 };
+const WIDE_LAYOUT = { left: 68, right: 84, yTickGap: 10, legendGap: 12, legendTitleOffset: 40 };
 const NARROW_LAYOUT = { left: 60, right: 72, yTickGap: 6, legendGap: 8, legendTitleOffset: 40 };
 
 const Y_AXIS_LABEL = "Day of Year";
-const LEGEND_TITLE = "Years exceeding threshold (%)";
+const LEGEND_TITLE = "Percentage of years (%)";
 const MISSING_CUE = "Hatched = no data";
 
 // The first day of every other month on the no-leap calendar, plus the last day.
@@ -50,7 +50,6 @@ const LEGEND_STOPS = 21;
 const PAGE_STEP_DAYS = 30;
 
 const X_TICK_OFFSET = 8;
-const X_TICK_GAP = 6;
 
 /** Fixed 0-100% scale, so colors mean the same thing for every selection. */
 function colorForPercent(value: number): string {
@@ -158,10 +157,9 @@ export default function Heatmap({
   const layout = width < NARROW_WIDTH ? NARROW_LAYOUT : WIDE_LAYOUT;
   const plotWidth = Math.max(0, width - layout.left - layout.right);
   const levelCount = globalWarmingLevels.length;
-  const xTickFormat = pickGlobalWarmingLevelTickFormat(
-    globalWarmingLevels,
-    levelCount > 0 ? plotWidth / levelCount - X_TICK_GAP : 0
-  );
+  // Same wording as a bar chart of this width, though the legend leaves the
+  // heatmap's columns a little narrower.
+  const xTickFormat = pickGlobalWarmingLevelTickFormat(globalWarmingLevels, width);
   // The chart shares the bar chart's box, so a day's row is usually under a
   // pixel tall.
   const plotHeight = Math.max(0, height - titleBand - MARGIN_TOP - xTickFormat.marginBottom);
