@@ -1,9 +1,10 @@
-import { type RefObject, useEffect } from "react";
+import { type RefObject, useEffect, useRef } from "react";
 
 /**
  * While `open`, calls `onDismiss` when the user clicks or moves focus outside
- * `containerRef`, or presses escape. Escape also returns focus to `returnFocusRef`,
- * so keyboard users land back on the control that opened the popup.
+ * `containerRef`, or presses escape. If focus was inside the popup, escape
+ * returns it to `returnFocusRef`, so keyboard users land back on the control
+ * that opened it.
  */
 export default function useDismiss(
   containerRef: RefObject<HTMLElement | null>,
@@ -11,6 +12,11 @@ export default function useDismiss(
   onDismiss: () => void,
   returnFocusRef?: RefObject<HTMLElement | null>
 ) {
+  const onDismissRef = useRef(onDismiss);
+  useEffect(() => {
+    onDismissRef.current = onDismiss;
+  });
+
   useEffect(() => {
     if (!open) return;
 
@@ -18,15 +24,16 @@ export default function useDismiss(
       target instanceof Node && !containerRef.current?.contains(target);
 
     const handlePointerDown = (event: PointerEvent) => {
-      if (isOutside(event.target)) onDismiss();
+      if (isOutside(event.target)) onDismissRef.current();
     };
     const handleFocusIn = (event: FocusEvent) => {
-      if (isOutside(event.target)) onDismiss();
+      if (isOutside(event.target)) onDismissRef.current();
     };
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      onDismiss();
-      returnFocusRef?.current?.focus();
+      const hadFocus = containerRef.current?.contains(document.activeElement) ?? false;
+      onDismissRef.current();
+      if (hadFocus) returnFocusRef?.current?.focus();
     };
 
     document.addEventListener("pointerdown", handlePointerDown);
@@ -37,5 +44,5 @@ export default function useDismiss(
       document.removeEventListener("focusin", handleFocusIn);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [containerRef, open, onDismiss, returnFocusRef]);
+  }, [containerRef, open, returnFocusRef]);
 }

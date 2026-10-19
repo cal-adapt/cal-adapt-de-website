@@ -1,6 +1,6 @@
 "use client";
 
-import { type PointerEvent, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { type PointerEvent, type ReactNode, useEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
 import { ChevronDown, ExternalLink, Menu as MenuIcon, X } from "lucide-react";
@@ -16,7 +16,6 @@ import {
   type NavMenu,
   navMenus,
   type NavSection,
-  navSections,
   type ToolId,
 } from "@/config/navigation";
 import useDismiss from "@/hooks/use-dismiss";
@@ -104,35 +103,38 @@ function ToolLink({
  * most of the dashboard, so those links are hidden there.
  */
 function MenuPanelContent({ menu, onSelect }: { menu: NavMenu; onSelect: () => void }) {
-  return menuSections(menu).map((section, index) => (
-    <div
-      key={section.id}
-      className={clsx(
-        index > 0 && styles.panelSubsection,
-        !hasPhoneLinks([section]) && styles.desktopOnly
-      )}
-    >
-      {index > 0 ? (
-        <p className={styles.panelHeading}>
-          {section.label}
-          {section.beta ? <span className={styles.betaNote}>In user testing</span> : null}
-        </p>
-      ) : null}
-      <ul className={styles.panelList}>
-        {section.links.map((link) => (
-          <li key={link.id} className={clsx(!worksOnPhones(link) && styles.desktopOnly)}>
-            {isToolId(link.id) ? (
-              <ToolLink link={link} toolId={link.id} onSelect={onSelect} />
-            ) : (
-              <NavAnchor link={link} className={styles.compactLink} onSelect={onSelect}>
-                <LinkLabel link={link} />
-              </NavAnchor>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
-  ));
+  return menuSections(menu).map((section) => {
+    const isSubsection = section !== menu;
+    return (
+      <div
+        key={section.id}
+        className={clsx(
+          isSubsection && styles.panelSubsection,
+          !hasPhoneLinks([section]) && styles.desktopOnly
+        )}
+      >
+        {isSubsection ? (
+          <p className={styles.panelHeading}>
+            {section.label}
+            {section.beta ? <span className={styles.betaNote}>In user testing</span> : null}
+          </p>
+        ) : null}
+        <ul className={styles.panelList}>
+          {section.links.map((link) => (
+            <li key={link.id} className={clsx(!worksOnPhones(link) && styles.desktopOnly)}>
+              {isToolId(link.id) ? (
+                <ToolLink link={link} toolId={link.id} onSelect={onSelect} />
+              ) : (
+                <NavAnchor link={link} className={styles.compactLink} onSelect={onSelect}>
+                  <LinkLabel link={link} />
+                </NavAnchor>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  });
 }
 
 /** Matches the dashboard layout, which shows phones a desktop-only message unless the page opts in. */
@@ -173,7 +175,7 @@ function DesktopMenu({
   useDismiss(containerRef, open, onClose, buttonRef);
 
   const cancelClose = () => clearTimeout(closeTimerRef.current);
-  useEffect(() => cancelClose, []);
+  useEffect(() => () => clearTimeout(closeTimerRef.current), []);
 
   const handlePointerEnter = (event: PointerEvent) => {
     if (event.pointerType !== "mouse") return;
@@ -190,16 +192,9 @@ function DesktopMenu({
   };
 
   const handleClick = () => {
-    if (open && openedByHoverRef.current) {
-      openedByHoverRef.current = false;
-      return;
-    }
+    if (open && !openedByHoverRef.current) onClose();
+    else onOpen();
     openedByHoverRef.current = false;
-    if (open) {
-      onClose();
-    } else {
-      onOpen();
-    }
   };
 
   const panelId = `${menu.id}-panel`;
@@ -259,29 +254,21 @@ function DesktopNav() {
 
 /* ---------- Mobile ---------- */
 
-/** The desktop menus, stacked under their names. */
+/** A group with nothing usable on phones is hidden there, unless it has a note to show instead. */
 function MobileGroup({ menu, onSelect }: { menu: NavMenu; onSelect: () => void }) {
-  const sections = menuSections(menu);
-  const isTools = menu.id === navSections.tools.id;
-
   return (
-    <section
+    <div
       className={clsx(
         styles.sheetGroup,
-        !isTools && !hasPhoneLinks(sections) && styles.desktopOnly
+        !menu.phoneNote && !hasPhoneLinks(menuSections(menu)) && styles.desktopOnly
       )}
-      aria-labelledby={`sheet-${menu.id}`}
     >
-      <h2 id={`sheet-${menu.id}`} className={styles.sheetHeading}>
-        {menu.label}
-      </h2>
+      <p className={styles.sheetHeading}>{menu.label}</p>
       <MenuPanelContent menu={menu} onSelect={onSelect} />
-      {isTools ? (
-        <p className={clsx(styles.sheetNote, styles.phoneOnly)}>
-          Open the tools on a tablet or computer.
-        </p>
+      {menu.phoneNote ? (
+        <p className={clsx(styles.sheetNote, styles.phoneOnly)}>{menu.phoneNote}</p>
       ) : null}
-    </section>
+    </div>
   );
 }
 
@@ -289,7 +276,7 @@ function MobileNav() {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const close = useCallback(() => setOpen(false), []);
+  const close = () => setOpen(false);
   useDismiss(containerRef, open, close, buttonRef);
 
   return (
