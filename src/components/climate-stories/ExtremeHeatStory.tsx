@@ -1,8 +1,11 @@
+import { Suspense } from "react";
+
 import Callout from "@/components/common/content/Callout";
 import Link from "@/components/common/ui/Link";
 import ToolButton from "@/components/common/ui/ToolButton";
 import { navLinks } from "@/config/navigation";
 
+import HeatSummaryRadialPrototype from "./figures/HeatSummaryRadial.prototype";
 import StoryToolFigure from "./figures/StoryToolFigure";
 import {
   resolveStoryToolSelections,
@@ -64,6 +67,12 @@ const EXTREME_HEAT_TOOL = storyToolCharts["extreme-heat-days"].navLink;
 export default function ExtremeHeatStory() {
   return (
     <StoryDocument>
+      {/* PROTOTYPE: remove before merging to main. */}
+      {process.env.NODE_ENV !== "production" ? (
+        <Suspense fallback={null}>
+          <HeatSummaryRadialPrototype />
+        </Suspense>
+      ) : null}
       <StoryBlock id="more-frequent-days" title="Extreme heat days will become more frequent">
         <p>
           As climate change warms the state, Californians will experience a sharp rise in{" "}

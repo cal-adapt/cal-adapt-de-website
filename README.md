@@ -46,6 +46,32 @@ pnpm build
 pnpm start
 ```
 
+## OEHHA indicator notebook
+
+[OEHHA indicators](notebooks/oehha_indicators.ipynb) uses `ClimateData` with
+xarray/Dask. Its default workflow clips Sacramento County using climakitae's
+boundary catalog and requests every available monthly WRF model/member for
+historical + SSP370. It then offers optional daily, hourly, and direct-S3 coastal
+methods. Use a climakitae development environment as its
+Python kernel; this website's Node environment does not supply those dependencies.
+The county figures show ensemble medians, 10th-90th percentile spread, valid
+simulation counts, and overlaid histograms of every annual value across all
+simulations. Historical blue is drawn beneath future orange, both at opacity 0.7,
+using shared bins. Counts are simulation-years, not period means.
+County averages use geodesic native-cell areas, supporting WRF's projected
+Lambert Conformal grid and spherical Earth definition without regridding.
+If extracting a variable loses its CRS association, the notebook restores it
+from the source Dataset's CF grid-mapping attributes or WKT, never a guessed EPSG.
+Boundary-touching cells contribute their full area, not fractional county overlap.
+Monthly data cannot recover heat waves, daily extremes, or dry spells; those remain
+in the optional daily workflow. Seasonal plots, follow-on synthetic tests, and
+optional single-member plots are disabled by default. County plotting never
+automatically saves files; explicitly call `export_monthly_ensemble()` to save
+PNG figures alongside the computed datasets. It also includes offline synthetic checks and explicit
+controls for remote queries. See the
+[feasibility inventory](docs/oehha-2026-feasibility-inventory.md) for indicator
+definitions and external-data gaps.
+
 ## Testing
 
 This project uses the [Vitest](https://vitest.dev) test runner with [React Testing Library](https://testing-library.com/docs/react-testing-library/intro) for unit testing and [Storybook](https://storybook.js.org) for UI development and documentation.
