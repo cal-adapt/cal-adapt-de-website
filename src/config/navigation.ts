@@ -22,6 +22,8 @@ export interface NavGroup {
   id: string;
   label: string;
   links: readonly NavLink[];
+  /** The links are still in user testing; menus say so beside the section's heading. */
+  beta?: boolean;
 }
 
 export type NavItem = NavLink | NavGroup;
@@ -217,6 +219,7 @@ export const navSections = {
   betaTools: {
     id: "beta-tools",
     label: "Beta Tools",
+    beta: true,
     links: [navLinks.extremeHeatDays, navLinks.hddCdd, navLinks.renewablesVisualizer].filter(
       isNavLinkEnabled
     ),
@@ -240,6 +243,61 @@ export interface NavSection extends NavGroup {
 export const enabledNavSections: readonly NavSection[] = Object.values(navSections).filter(
   (section) => section.links.length > 0
 );
+
+/**
+ * A site menu: a section whose links are listed directly, followed by related
+ * sections shown under their own headings (e.g. Beta Tools inside Tools).
+ */
+export interface NavMenu extends NavSection {
+  subsections: readonly NavSection[];
+  /** The section's own landing page. The site header links straight to it instead of opening a menu. */
+  landing?: NavLink;
+  /** Shown on phones in place of links that only work on larger screens. */
+  phoneNote?: string;
+}
+
+function navMenu(
+  section: NavSection,
+  {
+    subsections = [],
+    extraLinks = [],
+    landing,
+    phoneNote,
+  }: {
+    subsections?: readonly NavSection[];
+    /** Links the header lists after the section's own, which the sidebar doesn't show. */
+    extraLinks?: readonly NavLink[];
+    landing?: NavLink;
+    phoneNote?: string;
+  } = {}
+): NavMenu {
+  return {
+    ...section,
+    links: [...section.links, ...extraLinks.filter(isNavLinkEnabled)],
+    subsections: subsections.filter((subsection) => subsection.links.length > 0),
+    landing,
+    phoneNote,
+  };
+}
+
+/**
+ * Site header menus: the dashboard sidebar's sections, grouped more coarsely.
+ * Only menus with at least one link, in display order.
+ */
+export const navMenus: readonly NavMenu[] = [
+  navMenu(navSections.climateStories, { landing: navLinks.allClimateStories }),
+  navMenu(navSections.tools, {
+    subsections: [navSections.betaTools],
+    phoneNote: "Open the tools on a tablet or computer.",
+  }),
+  // The sidebar doesn't list Data Docs; the header keeps it from the previous top bar.
+  navMenu(navSections.guidance, { extraLinks: [navLinks.data] }),
+].filter((menu) => menu.links.length > 0 || menu.subsections.length > 0);
+
+/** IDs of every dashboard tool, stable or beta, whether or not its feature flag is on. */
+export type ToolId =
+  | (typeof navSections.tools.links)[number]["id"]
+  | (typeof navSections.betaTools.links)[number]["id"];
 
 /** Every dashboard tool, stable then beta. */
 export const toolLinks: readonly NavLink[] = [

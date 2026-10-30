@@ -1,4 +1,10 @@
+import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
+import {
+  resolveStoryToolSelections,
+  storyToolHref,
+} from "@/components/climate-stories/figures/tool-charts";
 import { SITE_TITLE } from "@/config/constants";
+import { navLinks } from "@/config/navigation";
 
 export const metadata = {
   title: `Data Methods - Heat Waves - ${SITE_TITLE}`,
@@ -56,7 +62,22 @@ The annual average frequency of heat waves, and the change from the historical b
 </Spec>
 <Spec label="Shown in">
 
-[Extreme Heat Tool](/dashboard/extreme-heat-days), [Extreme Heat Climate Story](/dashboard/climate-stories/extreme-heat)
+<ShownIn>
+  <ToolButton
+    navLink={navLinks.extremeHeatDays}
+    href={storyToolHref(
+      "extreme-heat-days",
+      resolveStoryToolSelections("extreme-heat-days", { climateVariable: "heat-wave-frequency" })
+    )}
+  />
+  <Button
+    variant="outline"
+    size="compact"
+    href="/dashboard/climate-stories/extreme-heat"
+    prefix={<MenuBookOutlinedIcon />}
+    children="Extreme Heat Climate Story"
+  />
+</ShownIn>
 
 </Spec>
 <Spec label="Format">
@@ -79,7 +100,22 @@ The annual average length of heat waves, and the change from the historical base
 </Spec>
 <Spec label="Shown in">
 
-[Extreme Heat Tool](/dashboard/extreme-heat-days), [Extreme Heat Climate Story](/dashboard/climate-stories/extreme-heat)
+<ShownIn>
+  <ToolButton
+    navLink={navLinks.extremeHeatDays}
+    href={storyToolHref(
+      "extreme-heat-days",
+      resolveStoryToolSelections("extreme-heat-days", { climateVariable: "heat-wave-length" })
+    )}
+  />
+  <Button
+    variant="outline"
+    size="compact"
+    href="/dashboard/climate-stories/extreme-heat"
+    prefix={<MenuBookOutlinedIcon />}
+    children="Extreme Heat Climate Story"
+  />
+</ShownIn>
 
 </Spec>
 <Spec label="Format">

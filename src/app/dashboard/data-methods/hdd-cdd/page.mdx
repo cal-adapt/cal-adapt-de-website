@@ -1,4 +1,5 @@
 import { SITE_TITLE } from "@/config/constants";
+import { navLinks } from "@/config/navigation";
 
 export const metadata = {
   title: `Data Methods - Heating & Cooling Degree Days - ${SITE_TITLE}`,
@@ -54,7 +55,9 @@ Heating and cooling degree days for each year, as the mean, minimum, and maximum
 </Spec>
 <Spec label="Shown in">
 
-[Heating & Cooling Degree Days Tool](/dashboard/hdd-cdd)
+<ShownIn>
+  <ToolButton navLink={navLinks.hddCdd} />
+</ShownIn>
 
 </Spec>
 <Spec label="Format">

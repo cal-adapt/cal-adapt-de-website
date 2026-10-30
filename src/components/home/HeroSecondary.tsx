@@ -6,6 +6,7 @@ import clsx from "clsx";
 
 import Button from "@/components/common/ui/Button";
 import { mediaQueries } from "@/config/breakpoints";
+import { navLinks } from "@/config/navigation";
 
 import styles from "./HeroSecondary.module.scss";
 
@@ -36,7 +37,7 @@ export default function HeroSecondary() {
         <Button
           variant="secondary"
           className={clsx({ hidden: isMobile })}
-          href="/dashboard/climate-metrics-map?metric=fire-weather"
+          href={`${navLinks.climateMetricsMap.href}?metric=fire-weather`}
         >
           See it in the Climate Metrics Map
         </Button>

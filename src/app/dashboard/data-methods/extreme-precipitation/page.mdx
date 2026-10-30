@@ -1,4 +1,9 @@
+import {
+  resolveStoryToolSelections,
+  storyToolHref,
+} from "@/components/climate-stories/figures/tool-charts";
 import { SITE_TITLE } from "@/config/constants";
+import { navLinks } from "@/config/navigation";
 
 export const metadata = {
   title: `Data Methods - Extreme Precipitation - ${SITE_TITLE}`,
@@ -56,7 +61,15 @@ The 99th percentile of 1-day accumulated precipitation (excluding snowfall), in 
 </Spec>
 <Spec label="Shown in">
 
-[Climate Metrics Map](/dashboard/climate-metrics-map)
+<ShownIn>
+  <ToolButton
+    navLink={navLinks.climateMetricsMap}
+    href={storyToolHref(
+      "climate-metrics-map",
+      resolveStoryToolSelections("climate-metrics-map", { metric: "extreme-precipitation" })
+    )}
+  />
+</ShownIn>
 
 </Spec>
 <Spec label="Format">
