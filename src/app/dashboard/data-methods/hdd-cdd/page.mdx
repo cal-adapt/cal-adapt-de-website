@@ -110,7 +110,19 @@ The daily values are summed over each calendar year to produce annual CDDs/HDDs.
 
 <Step n={4} totalSteps={5} title="Spatial aggregation">
 
-The gridded data is aggregated by spatial unit (e.g. county, city, etc) by taking a **median** of all the grid cells within the boundary. A median is used to capture the typical value of CDD/HDD within the area of interest without introducing bias from any anomalous grid cells.
+The gridded data is aggregated by spatial unit (e.g. county, watershed, forecast zone) by taking a **median** of all the grid cells within the boundary. A median is used to capture the typical value of CDD/HDD within the area of interest without introducing bias from any anomalous grid cells. Because many census tracts are smaller than a single grid cell, census tract spatial aggregations use a weighted approach, described in more detail below.
+
+#### Census tract summaries
+
+Census tracts are small geographic areas defined by the U.S. Census Bureau. Some are smaller than the climate model’s 3-kilometer grid cells, so neighboring tracts may share the same underlying climate data.
+
+To calculate a tract’s heating and cooling degree days, we combine values from the grid cells that overlap it. Each cell’s contribution depends on how much of that cell falls inside the tract. For example, a cell with half its area inside the tract receives a weight of 1/2, whereas a cell entirely within the tract boundary receives a weight of 1 in the average. This lets small tracts receive a value even when no grid cell falls entirely within their boundaries.
+
+We summarize each tract with a weighted median: the middle value after accounting for the overlap weights. Grid cells classified as water are excluded. Tracts with no overlapping land cells are left without a value rather than assigned zero.
+
+<Callout kind="note">
+Tract summaries do not add detail beyond the original 3-kilometer climate data. Nearby tracts may therefore have similar or identical values. These summaries describe outdoor temperature conditions associated with heating and cooling needs, not actual household energy use.
+</Callout>
 
 </Step>
 
