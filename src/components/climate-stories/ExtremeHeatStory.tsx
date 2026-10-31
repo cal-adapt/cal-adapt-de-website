@@ -1,6 +1,7 @@
 import Callout from "@/components/common/content/Callout";
 import Link from "@/components/common/ui/Link";
 import ToolButton from "@/components/common/ui/ToolButton";
+import GlossaryTerm from "@/components/glossary/GlossaryTerm";
 import { navLinks } from "@/config/navigation";
 
 import StoryToolFigure from "./figures/StoryToolFigure";
@@ -10,7 +11,6 @@ import {
   storyToolHref,
   storyToolLink,
 } from "./figures/tool-charts";
-import GlossaryTerm from "./GlossaryTerm";
 import StoryBlock from "./StoryBlock";
 import StoryCitation from "./StoryCitation";
 import StoryDocument from "./StoryDocument";
