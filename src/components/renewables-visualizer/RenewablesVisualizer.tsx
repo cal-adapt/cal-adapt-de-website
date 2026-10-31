@@ -27,6 +27,7 @@ import Button from "@/components/common/ui/Button";
 import LoadingSpinner from "@/components/common/ui/LoadingSpinner";
 import PageLayout from "@/components/dashboard/PageLayout";
 import SidePanel from "@/components/dashboard/SidePanel";
+import GlossaryTerm from "@/components/glossary/GlossaryTerm";
 import Heatmap from "@/components/renewables-visualizer/Heatmap/Heatmap";
 import MapboxMap from "@/components/renewables-visualizer/MapboxMap";
 import { dataMethodsHref } from "@/config/data-methods";
@@ -367,9 +368,9 @@ export default function RenewablesViz() {
       <Box className={styles.intro} style={{ maxWidth: "860px" }}>
         <Typography variant="body1" aria-label="Description of the tool">
           This tool shows when there are likely to be significant reductions in solar or wind energy
-          availability in the future. To be more specific, it shows the number of wind or solar
-          resource drought days (less than 50% average generation) per month throughout a
-          representative 30-year period.{" "}
+          availability in the future. To be more specific, it shows the number of wind or solar{" "}
+          <GlossaryTerm id="resource-drought">resource drought</GlossaryTerm> days (less than 50%
+          average generation) per month throughout a representative 30-year period.{" "}
         </Typography>
         <Typography variant="body1">
           {METHODS_HREF ? (
@@ -480,8 +481,9 @@ export default function RenewablesViz() {
             {queriedData && !isLoading && isPointValid && (
               <Box className={styles.alerts} sx={{ maxWidth: "100%" }}>
                 <Alert ariaLabel="Global models estimate information">
-                  Global models estimate that {gwlYearEstimateData[gwlSelected].name}° global
-                  warming levels (GWL) will be reached between{" "}
+                  Global models estimate that {gwlYearEstimateData[gwlSelected].name}°{" "}
+                  <GlossaryTerm id="global-warming-level">global warming levels (GWL)</GlossaryTerm>{" "}
+                  will be reached between{" "}
                   <strong>{gwlYearEstimateData[gwlSelected].estimatedStartYear}</strong> and{" "}
                   <strong>{gwlYearEstimateData[gwlSelected].estimatedEndYear}</strong>
                   <div className={styles.cta}>
