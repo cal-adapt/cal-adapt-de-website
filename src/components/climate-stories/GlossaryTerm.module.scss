@@ -71,3 +71,7 @@
   font-weight: font-weight(regular);
   color: color(grey-5);
 }
+
+.more {
+  @include type-item(small);
+}

@@ -66,15 +66,9 @@ export default function ExtremeHeatStory() {
     <StoryDocument>
       <StoryBlock id="more-frequent-days" title="Extreme heat days will become more frequent">
         <p>
-          As climate change warms the state, Californians will experience a sharp rise in{" "}
-          <GlossaryTerm
-            term="Extreme Heat Day"
-            definition="A day in which the maximum temperature exceeds a defined threshold that poses a significant risk to human health, ecosystems, and infrastructure."
-          >
-            extreme heat days,
-          </GlossaryTerm>{" "}
-          multiplying the daily risks to our communities and critical infrastructure. Days where the
-          temperature reaches 95°F or higher pose a danger to outdoor workers
+          As climate change warms the state, Californians will experience a sharp rise in extreme
+          heat days, multiplying the daily risks to our communities and critical infrastructure.
+          Days where the temperature reaches 95°F or higher pose a danger to outdoor workers
           <StoryCitation citationKey="calOSHAheatillness2024" />, and days above 100°F are more
           likely to result in power outages from electrical equipment exposed to high temperatures
           combined with increased electricity demand from air conditioning
@@ -221,12 +215,13 @@ export default function ExtremeHeatStory() {
           climate will be driving increased demand, and where that demand will be the highest.
         </p>
         <p>
-          Cooling Degree Days (CDD) are a metric used by the energy sector to estimate how hot
-          temperatures will translate into demand for electricity to keep buildings cool. Using a
-          comfort threshold of 65°F, CDDs measure how far the temperature exceeds that threshold and
-          how often those exceedances happen throughout the year. Although it does not account for
-          all the factors that drive electricity demand for cooling, CDDs are an essential metric
-          for forecasting electricity demand across the state.
+          <GlossaryTerm id="cooling-degree-days">Cooling Degree Days (CDD)</GlossaryTerm> are a
+          metric used by the energy sector to estimate how hot temperatures will translate into
+          demand for electricity to keep buildings cool. Using a comfort threshold of 65°F, CDDs
+          measure how far the temperature exceeds that threshold and how often those exceedances
+          happen throughout the year. Although it does not account for all the factors that drive
+          electricity demand for cooling, CDDs are an essential metric for forecasting electricity
+          demand across the state.
         </p>
         <p>
           Across the entire state the projected median increase in annual CDDs is 37% by
