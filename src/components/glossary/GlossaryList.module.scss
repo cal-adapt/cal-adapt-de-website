@@ -61,11 +61,16 @@ $controls-height: 11rem;
   }
 }
 
-// The letter sits in a narrow margin column beside its terms.
+// On phones the letter sits above its terms; from "small" up it moves to a narrow margin column.
 .group {
   display: grid;
-  grid-template-columns: 6rem minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: spacer(4);
+
+  @include breakpoint("small") {
+    grid-template-columns: 6rem minmax(0, 1fr);
+  }
+
   padding-top: spacer(5);
   border-top: 1px solid color(grey-2);
   scroll-margin-top: calc(#{$controls-height} + #{spacer(4)});
