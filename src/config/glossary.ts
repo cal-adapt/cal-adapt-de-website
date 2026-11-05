@@ -150,6 +150,8 @@ const entries = [
   },
 ] as const satisfies readonly GlossaryEntry[];
 
+export type GlossaryId = (typeof entries)[number]["id"];
+
 /** All glossary entries, alphabetical by term, with only the links enabled in this environment. */
 export const glossaryEntries: readonly GlossaryEntry[] = entries
   .map(
@@ -159,6 +161,11 @@ export const glossaryEntries: readonly GlossaryEntry[] = entries
     })
   )
   .sort((a, b) => a.term.localeCompare(b.term));
+
+/** The definition's first sentence, for short previews like story popups. */
+export function glossaryEntrySummary(entry: GlossaryEntry): string {
+  return entry.definition.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? entry.definition;
+}
 
 /** Term with its abbreviation, e.g. "Cooling degree days (CDDs)". */
 export function glossaryEntryLabel(entry: GlossaryEntry): string {

@@ -9,6 +9,7 @@ import {
   filterGlossaryEntries,
   glossaryEntries,
   glossaryEntryLabel,
+  glossaryEntrySummary,
   groupGlossaryEntriesByLetter,
   hddCddToolLink,
   isGlossaryLinkEnabled,
@@ -23,6 +24,26 @@ describe("glossaryEntries", () => {
   it("is sorted alphabetically by term", () => {
     const terms = glossaryEntries.map((entry) => entry.term);
     expect(terms).toEqual([...terms].sort((a, b) => a.localeCompare(b)));
+  });
+});
+
+describe("glossaryEntrySummary", () => {
+  it("returns the definition's first sentence", () => {
+    expect(
+      glossaryEntrySummary({
+        id: "test",
+        term: "Test",
+        definition: "Warming of 1.5°C or more. A second sentence.",
+      })
+    ).toBe("Warming of 1.5°C or more.");
+  });
+
+  // The split is a simple "period then space" match, so an abbreviation such as "e.g." early in a
+  // definition would cut the popup short.
+  it("doesn't cut any entry off at an abbreviation", () => {
+    for (const entry of glossaryEntries) {
+      expect(glossaryEntrySummary(entry), entry.id).not.toMatch(/\b(e\.g|i\.e|etc|vs)\.$/);
+    }
   });
 });
 
