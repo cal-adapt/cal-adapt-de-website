@@ -48,8 +48,8 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: -#{spacer(3)};
-    height: #{spacer(3)};
+    top: calc(-1 * #{spacer(3)});
+    height: spacer(3);
   }
 }
 
