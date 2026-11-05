@@ -1,0 +1,8 @@
+@use "@/styles/abstracts" as *;
+
+.intro {
+  @include type-item(body);
+  margin: 0;
+  max-width: max-w(content);
+  color: color(grey-5);
+}
