@@ -47,7 +47,7 @@ function dataMethodsLink(page: "hdd-cdd" | "renewables"): GlossaryLink {
 
 /** Link to a guidance page on the Cal-Adapt: Analytics Engine website. */
 function analyticsEngineLink(href: string): GlossaryLink {
-  return { label: "Learn more on the Analytics Engine", href };
+  return { label: "Cal-Adapt: Analytics Engine", href };
 }
 
 /** Link to a Cal-Adapt methods white paper (PDF). */

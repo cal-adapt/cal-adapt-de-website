@@ -159,6 +159,7 @@ export const navLinks = {
     label: "Glossary",
     href: "/dashboard/glossary",
     featureFlag: "__FF_GLOSSARY__",
+    supportsMobile: true,
   },
   fourthAssessment: {
     id: "fourth-assessment",
