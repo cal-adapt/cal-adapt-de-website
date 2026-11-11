@@ -351,6 +351,56 @@ describe("fetchExtremeHeatSeries", () => {
     await expect(fetchExtremeHeatSeries(SELECTIONS)).rejects.toThrow("has no `data` asset href");
   });
 
+  describe("electric utilities (area-weighted)", () => {
+    const IOU_PREFIX =
+      "s3://cadcat/wrf/extreme-heat-tool/multimodel_per_boundary/eh_days/ious_pous/weighted_median/ssp370/t2max_ge100F/";
+    const IOU_CSV_URL =
+      "https://cadcat.s3.amazonaws.com/wrf/extreme-heat-tool/multimodel_per_boundary/eh_days/ious_pous/weighted_median/ssp370/t2max_ge100F/Pacific_Gas_%26_Electric_Company.csv";
+    const IOU_SELECTIONS: ExtremeHeatDaysSelections = {
+      ...DEFAULT_SELECTIONS,
+      spatialAggregation: "ious_pous",
+      location: "Pacific Gas & Electric Company",
+    };
+
+    function mockIouSearch() {
+      mockSearch([
+        makeItem({
+          assets: { data: { href: IOU_PREFIX } },
+          properties: {
+            variable_id: "eh_days",
+            boundary: "ious_pous",
+            threshold_name: "t2max_ge100F",
+          },
+        }),
+      ]);
+    }
+
+    it("builds the CSV url from the region name alone, without the threshold suffix", async () => {
+      let requestedUrl = "";
+      mockIouSearch();
+      server.use(
+        http.get(IOU_CSV_URL, ({ request }) => {
+          requestedUrl = request.url;
+          return HttpResponse.text("warming_level,multimodel_median\n0.8,10");
+        })
+      );
+
+      const series = await fetchExtremeHeatSeries(IOU_SELECTIONS);
+
+      expect(requestedUrl).toBe(IOU_CSV_URL);
+      expect(series.median).toEqual([10]);
+    });
+
+    it("treats a missing region CSV as no data instead of an error", async () => {
+      mockIouSearch();
+      server.use(http.get(IOU_CSV_URL, () => new HttpResponse(null, { status: 404 })));
+
+      const series = await fetchExtremeHeatSeries(IOU_SELECTIONS);
+
+      expect(hasRenderableSeries(series)).toBe(false);
+    });
+  });
+
   it("throws when the CSV fetch fails", async () => {
     mockSearch([makeItem()]);
     server.use(http.get(NORMALIZED_CSV_URL, () => new HttpResponse(null, { status: 404 })));

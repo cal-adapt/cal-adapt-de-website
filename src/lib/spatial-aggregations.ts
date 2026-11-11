@@ -85,6 +85,10 @@ export interface SpatialAggregationConfig {
   regionSuffix: string;
   locations: readonly SelectOption[];
   defaultLocation: string;
+  /** True for area-weighted boundaries (census tracts, IOU/POUs). The extreme heat
+   *  tool's CSVs for them are named `{Region}.csv`, without the threshold and
+   *  duration suffix, and a region can be missing when a metric is undefined there. */
+  areaWeighted?: boolean;
 }
 
 const toLocationOptions = (names: readonly string[]): readonly SelectOption[] =>
@@ -304,12 +308,80 @@ const ELECTRIC_BALANCING_AGGREGATION: SpatialAggregationConfig = {
   defaultLocation: "CALISO",
 };
 
+// Investor-owned and publicly owned electric utilities (IOU/POUs), as named in
+// the area-weighted CSVs
+const IOU_POU_NAMES: readonly string[] = [
+  "Alameda Power & Telecom",
+  "Azusa Light & Power",
+  "Bear Valley Electric Service",
+  "Biggs Municipal Utilities",
+  "Burbank Water & Power",
+  "City and County of San Francisco - Hetch Hetchy Water and Power",
+  "City of Anaheim Public Utilities Department",
+  "City of Banning Electric Department",
+  "City of Cerritos",
+  "City of Corona Department of Water & Power",
+  "City of Healdsburg Electric Department",
+  "City of Industry",
+  "City of Lompoc Electric Division",
+  "City of Needles",
+  "City of Palo Alto",
+  "City of Pittsburg",
+  "City of Riverside",
+  "City of Shasta Lake",
+  "City of Ukiah Electric Utilities Division",
+  "City of Vernon Municipal Light Department",
+  "Colton Electric Utility Department",
+  "Eastside Power Authority",
+  "Glendale Water & Power",
+  "Gridley Electric Utility",
+  "Imperial Irrigation District",
+  "Kirkwood Meadows Public Utility District",
+  "Lassen Municipal Utility District",
+  "Lathrop Irrigation District",
+  "Liberty Utilities",
+  "Lodi Electric Utility",
+  "Los Angeles Department of Water & Power",
+  "Merced Irrigation District",
+  "Modesto Irrigation District",
+  "Moreno Valley Utility",
+  "Pacific Gas & Electric Company",
+  "PacifiCorp",
+  "Pasadena Water & Power",
+  "Port of Oakland",
+  "Port of Stockton",
+  "Power and Water Resource Pooling Authority",
+  "Rancho Cucamonga Municipal Utility",
+  "Redding Electric Utility",
+  "Roseville Electric",
+  "Sacramento Municipal Utility District",
+  "San Diego Gas & Electric",
+  "Shelter Cove Resort Improvement District",
+  "Silicon Valley Power",
+  "Southern California Edison",
+  "Trinity Public Utilities District",
+  "Truckee Donner Public Utilities District",
+  "Turlock Irrigation District",
+  "Victorville Municipal Utilities Services",
+];
+
+const IOU_POU_AGGREGATION: SpatialAggregationConfig = {
+  value: "ious_pous",
+  label: "Electric Utilities",
+  description: "Service area of an investor-owned or publicly owned electric utility",
+  regionSuffix: "",
+  locations: toLocationOptions(IOU_POU_NAMES),
+  defaultLocation: "Pacific Gas & Electric Company",
+  areaWeighted: true,
+};
+
 /** Keyed by STAC `boundary`. Insertion order is the dropdown order. */
 export const SPATIAL_AGGREGATIONS: Readonly<Record<string, SpatialAggregationConfig>> = {
   [COUNTY_AGGREGATION.value]: COUNTY_AGGREGATION,
   [WATERSHEDS_AGGREGATION.value]: WATERSHEDS_AGGREGATION,
   [FORECAST_ZONES_AGGREGATION.value]: FORECAST_ZONES_AGGREGATION,
   [ELECTRIC_BALANCING_AGGREGATION.value]: ELECTRIC_BALANCING_AGGREGATION,
+  [IOU_POU_AGGREGATION.value]: IOU_POU_AGGREGATION,
 };
 
 export const DEFAULT_SPATIAL_AGGREGATION = COUNTY_AGGREGATION;

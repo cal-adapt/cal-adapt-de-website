@@ -45,7 +45,7 @@ describe("selectionsFromSearchParams", () => {
   });
 
   it("falls back for unknown aggregations", () => {
-    const params = new URLSearchParams("aggregation=ious_pous");
+    const params = new URLSearchParams("aggregation=ca_census_tracts");
     expect(selectionsFromSearchParams(params).spatialAggregation).toBe(
       DEFAULT_SELECTIONS.spatialAggregation
     );
