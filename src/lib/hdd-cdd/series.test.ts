@@ -248,6 +248,31 @@ describe("fetchHddCddSeries", () => {
     expect(series.location).toBe("SDG&E");
   });
 
+  it("builds an electric utility (IOU/POU) CSV url under the weighted median prefix", async () => {
+    const iouPrefix =
+      "s3://cadcat/wrf/hdd-cdd-tool/multimodel_per_boundary/ious_pous/weighted_median/ssp370/timeseries/csv/";
+    const iouCsvUrl =
+      "https://cadcat.s3.amazonaws.com/wrf/hdd-cdd-tool/multimodel_per_boundary/ious_pous/weighted_median/ssp370/timeseries/csv/Pacific_Gas_%26_Electric_Company.csv";
+    let requestedUrl = "";
+    mockSearch([
+      makeItem({ assets: { data: { href: iouPrefix } }, properties: { boundary: "ious_pous" } }),
+    ]);
+    server.use(
+      http.get(iouCsvUrl, ({ request }) => {
+        requestedUrl = request.url;
+        return HttpResponse.text("year,hdd_mean\n2000,10");
+      })
+    );
+
+    await fetchHddCddSeries({
+      ...DEFAULT_SELECTIONS,
+      spatialAggregation: "ious_pous",
+      location: "Pacific Gas & Electric Company",
+    });
+
+    expect(requestedUrl).toBe(iouCsvUrl);
+  });
+
   it("skips rows with a non-numeric year and represents missing cells as NaN", async () => {
     mockSearch([makeItem()]);
     mockCsv(["year,hdd_mean,cdd_mean", "2000,10,", "not-a-year,999,999", "2001,,30"].join("\n"));

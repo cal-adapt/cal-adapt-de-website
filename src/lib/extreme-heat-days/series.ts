@@ -23,6 +23,7 @@ import { normalizeDownloadUrl } from "@/utils/url";
 import {
   type ExtremeHeatDaysSelections,
   getHeatMetric,
+  getSpatialAggregation,
   type HeatVariableId,
   regionLabelFor,
 } from "./options";
@@ -151,7 +152,11 @@ export async function fetchRegionCsv(
   }
 
   const csvUrl = resolveRegionCsvUrl(item, selections, thresholdName);
-  const csvText = await fetchCsvText(csvUrl, signal);
+  // Area-weighted boundaries skip regions where a metric is undefined (e.g. no
+  // heat waves above a high threshold in a mountain utility), so a missing CSV
+  // there is "no data", which an empty CSV becomes downstream
+  const missingIsEmpty = getSpatialAggregation(selections.spatialAggregation).areaWeighted;
+  const csvText = await fetchCsvText(csvUrl, signal, missingIsEmpty);
   return { item, csvUrl, csvText, thresholdName };
 }
 
@@ -170,7 +175,8 @@ export async function fetchExtremeHeatSeries(
 /**
  * The `data` asset href is a directory prefix; the per-region CSV lives under it
  * as `{regionLabel}_{threshold}.csv` with spaces replaced by underscores
- * (e.g. `Sacramento_County_t2max_ge100F.csv`).
+ * (e.g. `Sacramento_County_t2max_ge100F.csv`), or `{regionLabel}.csv` for
+ * area-weighted boundaries (e.g. `Pacific_Gas_&_Electric_Company.csv`).
  */
 function resolveRegionCsvUrl(
   item: StacItem,
@@ -188,14 +194,24 @@ function resolveRegionCsvUrl(
 
 function regionCsvFileName(selections: ExtremeHeatDaysSelections, thresholdName: string): string {
   const region = regionLabelFor(selections).replace(/\s+/g, "_");
+  if (getSpatialAggregation(selections.spatialAggregation).areaWeighted) {
+    return `${region}.csv`;
+  }
   const durationSuffix = getHeatMetric(selections.climateVariable).usesDuration
     ? `_${selections.duration}d`
     : "";
   return `${region}_${thresholdName}${durationSuffix}.csv`;
 }
 
-async function fetchCsvText(url: string, signal?: AbortSignal): Promise<string> {
+async function fetchCsvText(
+  url: string,
+  signal?: AbortSignal,
+  missingIsEmpty = false
+): Promise<string> {
   const response = await fetch(url, { headers: { Accept: "text/csv" }, signal });
+  if (missingIsEmpty && response.status === 404) {
+    return "";
+  }
   if (!response.ok) {
     throw new Error(`CSV fetch failed (${response.status} ${response.statusText}): ${url}`);
   }

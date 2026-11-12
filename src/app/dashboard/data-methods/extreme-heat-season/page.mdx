@@ -142,10 +142,11 @@ a fixed temperature threshold, it changes to: during how many years of the
 
 <Step n={4} totalSteps={5} title="Spatial aggregation">
 
-Next, we aggregated the gridded data by spatial unit (e.g. county, city, etc) by
+Next, we aggregated the gridded data by spatial unit (e.g. county, watershed, forecast zone) by
 taking a **median** of all the grid cells within the boundary. A median is used
 to capture the typical frequency of extreme heat days within the area of interest
-without introducing bias from any anomalous grid cells.
+without introducing bias from any anomalous grid cells. Census tracts and
+electric utilities use a weighted approach instead, described below.
 
 <Callout kind="note" title="Grid cells at the edge">
 
@@ -155,6 +156,32 @@ conditions at the edge. Additionally, small spatial units such as census tracts
 may not fully contain any single grid cell, so an all-touched approach is
 generally used across Cal Adapt for consistency across spatial scales.
 
+</Callout>
+
+#### Census tract and electric utility summaries
+
+Census tracts are small geographic areas defined by the U.S. Census Bureau. Some
+are smaller than the climate model’s 3-kilometer grid cells, so neighboring
+tracts may share the same underlying climate data. Electric utilities are the
+service areas of investor-owned and publicly owned utilities (IOUs and POUs),
+and are summarized the same way due to some small service areas raising the
+same issues as census tracts.
+
+To calculate the frequency of extreme heat days for a tract or utility, we
+combine values from the grid cells that overlap it. Each cell’s contribution
+depends on how much of that cell falls inside the boundary. For example, a cell
+with half its area inside the boundary receives a weight of 1/2, whereas a cell
+entirely within the boundary receives a weight of 1. This lets small tracts
+receive a value even when no grid cell falls entirely within their boundaries.
+
+We summarize each tract or utility with a weighted median: the middle value
+after accounting for the overlap weights. Grid cells classified as water are
+excluded. Areas with no overlapping land cells are left without a value rather
+than assigned zero.
+
+<Callout kind="note">
+These summaries do not add detail beyond the original 3-kilometer climate data.
+Nearby tracts may therefore have similar or identical values.
 </Callout>
 
 </Step>

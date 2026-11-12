@@ -55,10 +55,19 @@ describe("selectionsFromSearchParams", () => {
   });
 
   it("falls back for unknown aggregations", () => {
-    const params = new URLSearchParams("aggregation=ious_pous");
+    const params = new URLSearchParams("aggregation=ca_census_tracts");
     expect(selectionsFromSearchParams(params).spatialAggregation).toBe(
       DEFAULT_SELECTIONS.spatialAggregation
     );
+  });
+
+  it("accepts electric utilities (IOU/POUs)", () => {
+    const params = new URLSearchParams(
+      "aggregation=ious_pous&location=Sacramento+Municipal+Utility+District"
+    );
+    const selections = selectionsFromSearchParams(params);
+    expect(selections.spatialAggregation).toBe("ious_pous");
+    expect(selections.location).toBe("Sacramento Municipal Utility District");
   });
 
   it("maps the 'variable' query key onto climateVariable", () => {
