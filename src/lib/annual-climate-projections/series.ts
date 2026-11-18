@@ -4,8 +4,8 @@
 //     simulation) and, for WRF, the observed ERA5 CSV (year, value).
 //  3. Parse into `AnnualSeries`.
 //
-// PROTOTYPE: the CSVs are served from `public/prototype-data/` and only cover
-// a few counties (WRF only). Once the STAC collections exist
+// PROTOTYPE: the CSVs are read from the `tmp/` prefixes on S3, which use the
+// final product layout but only cover a few counties. Once the STAC collections exist
 // (`acp-wrf-boundary-csv`, `acp-loca2-boundary-csv`, `acp-era5-boundary-csv`),
 // replace `csvUrl` with a STAC search like `src/lib/hdd-cdd/series.ts`. The
 // file names and columns already match the planned products.
@@ -19,7 +19,11 @@ import {
   variableIdFor,
 } from "./options";
 
-export const PROTOTYPE_DATA_BASE = "/prototype-data/annual-climate-projections";
+/** Prototype data prefix per ensemble. Swap for a STAC search once ingested. */
+export const DATA_BASE_URLS = {
+  wrf: "https://cadcat.s3.amazonaws.com/wrf/annual_climate_projections/tmp",
+  loca2: "https://cadcat.s3.amazonaws.com/loca2/annual_climate_projections/tmp",
+} as const;
 
 /** Summary columns in the boundary CSV; every other column is a simulation. */
 const SUMMARY_COLUMNS = ["year", "mean", "min", "max"] as const;
@@ -58,14 +62,23 @@ function regionToken(selections: AnnualClimateProjectionsSelections): string {
   return regionLabelFor(selections).replace(/\s+/g, "_");
 }
 
-/** `{Region}_{variable}_{ssp}.csv` (boundary) or `{Region}_{variable}_era5.csv` (observed). */
+/**
+ * Boundary CSV: `per_boundary/{variable}/{boundary}/{ssp}/csv/{Region}_{variable}_{ssp}.csv`.
+ * Observed CSV: `era5_per_boundary/{variable}/{boundary}/csv/{Region}_{variable}_era5.csv`.
+ */
 export function csvUrl(
   selections: AnnualClimateProjectionsSelections,
   kind: "boundary" | "observed"
 ): string {
+  const variable = variableIdFor(selections);
+  const boundary = selections.spatialAggregation;
+  const folder =
+    kind === "observed"
+      ? `era5_per_boundary/${variable}/${boundary}/csv`
+      : `per_boundary/${variable}/${boundary}/${selections.scenario}/csv`;
   const suffix = kind === "observed" ? "era5" : selections.scenario;
-  const fileName = `${regionToken(selections)}_${variableIdFor(selections)}_${suffix}.csv`;
-  return `${PROTOTYPE_DATA_BASE}/${selections.ensemble}/${encodeURIComponent(fileName)}`;
+  const fileName = `${regionToken(selections)}_${variable}_${suffix}.csv`;
+  return `${DATA_BASE_URLS[selections.ensemble]}/${folder}/${encodeURIComponent(fileName)}`;
 }
 
 /**

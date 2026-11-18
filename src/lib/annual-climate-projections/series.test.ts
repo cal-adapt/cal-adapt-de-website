@@ -1,22 +1,22 @@
 import { describe, expect, it } from "vitest";
 
 import { DEFAULT_SELECTIONS, withEnsemble } from "./options";
-import { csvUrl, parseBoundaryCsv, parseObservedCsv, PROTOTYPE_DATA_BASE } from "./series";
+import { csvUrl, DATA_BASE_URLS,parseBoundaryCsv, parseObservedCsv } from "./series";
 
 describe("csvUrl", () => {
-  it("builds the boundary and observed file names", () => {
+  it("builds the boundary and observed paths", () => {
     expect(csvUrl(DEFAULT_SELECTIONS, "boundary")).toBe(
-      `${PROTOTYPE_DATA_BASE}/wrf/Alameda_County_t2max_ssp370.csv`
+      `${DATA_BASE_URLS.wrf}/per_boundary/t2max/ca_counties/ssp370/csv/Alameda_County_t2max_ssp370.csv`
     );
     expect(csvUrl(DEFAULT_SELECTIONS, "observed")).toBe(
-      `${PROTOTYPE_DATA_BASE}/wrf/Alameda_County_t2max_era5.csv`
+      `${DATA_BASE_URLS.wrf}/era5_per_boundary/t2max/ca_counties/csv/Alameda_County_t2max_era5.csv`
     );
   });
 
   it("uses the ensemble's own variable id", () => {
     const loca2 = { ...withEnsemble(DEFAULT_SELECTIONS, "loca2"), scenario: "ssp245" };
     expect(csvUrl(loca2, "boundary")).toBe(
-      `${PROTOTYPE_DATA_BASE}/loca2/Alameda_County_tasmax_ssp245.csv`
+      `${DATA_BASE_URLS.loca2}/per_boundary/tasmax/ca_counties/ssp245/csv/Alameda_County_tasmax_ssp245.csv`
     );
   });
 });
