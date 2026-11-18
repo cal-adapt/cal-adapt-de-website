@@ -1,0 +1,66 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  @include flex(row, space-between, center, spacer(3), nowrap);
+  @include type-item(body);
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: rounded(1);
+  background: none;
+  color: color(black);
+  font-weight: font-weight(semibold);
+  text-align: start;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid color(blue-4);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.subtle {
+  font-weight: font-weight(medium);
+}
+
+.label {
+  flex: 1 1 auto;
+}
+
+.track {
+  position: relative;
+  flex-shrink: 0;
+  width: 36px;
+  height: 20px;
+  border-radius: rounded(pill);
+  background-color: color(grey-3);
+  @include transition("background-color");
+}
+
+.knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: color(white);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  @include transition("transform");
+}
+
+.root[aria-checked="true"] {
+  .track {
+    background-color: color(blue-4);
+  }
+
+  .knob {
+    transform: translateX(16px);
+  }
+}

@@ -138,6 +138,12 @@ export const navLinks = {
     href: "/dashboard/hdd-cdd",
     featureFlag: "__FF_HDD_CDD__",
   },
+  annualClimateProjections: {
+    id: "annual-climate-projections",
+    label: "Annual Climate Projections",
+    href: "/dashboard/annual-climate-projections",
+    featureFlag: "__FF_ANNUAL_CLIMATE_PROJECTIONS__",
+  },
   renewablesVisualizer: {
     id: "renewables-visualizer",
     label: "Renewables Visualizer",
@@ -221,9 +227,12 @@ export const navSections = {
     id: "beta-tools",
     label: "Beta Tools",
     beta: true,
-    links: [navLinks.extremeHeatDays, navLinks.hddCdd, navLinks.renewablesVisualizer].filter(
-      isNavLinkEnabled
-    ),
+    links: [
+      navLinks.annualClimateProjections,
+      navLinks.extremeHeatDays,
+      navLinks.hddCdd,
+      navLinks.renewablesVisualizer,
+    ].filter(isNavLinkEnabled),
   },
   guidance: {
     id: "guidance",
