@@ -21,8 +21,8 @@ import {
 
 /** Prototype data prefix per ensemble. Swap for a STAC search once ingested. */
 export const DATA_BASE_URLS = {
-  wrf: "https://cadcat.s3.amazonaws.com/wrf/annual_climate_projections/tmp",
-  loca2: "https://cadcat.s3.amazonaws.com/loca2/annual_climate_projections/tmp",
+  wrf: "https://cadcat.s3.amazonaws.com/wrf/annual-climate-projections/tmp",
+  loca2: "https://cadcat.s3.amazonaws.com/loca2/annual-climate-projections/tmp",
 } as const;
 
 /** Summary columns in the boundary CSV; every other column is a simulation. */
