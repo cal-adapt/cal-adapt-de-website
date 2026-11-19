@@ -111,6 +111,8 @@ const SSP585: ScenarioConfig = { value: "ssp585", label: "SSP5-8.5" };
 export interface EnsembleConfig {
   value: Ensemble;
   label: string;
+  /** Dataset name shown under the label in the dropdown. */
+  description: string;
   /** Scenarios available for this ensemble. WRF only has SSP3-7.0. */
   scenarios: readonly ScenarioConfig[];
   /** True when an observed (ERA5) series exists for this ensemble. */
@@ -120,20 +122,26 @@ export interface EnsembleConfig {
 export const ENSEMBLES: Readonly<Record<Ensemble, EnsembleConfig>> = {
   wrf: {
     value: "wrf",
-    label: "Dynamically Downscaled Ensemble",
+    label: "Dynamically Downscaled",
+    description: "WRF",
     scenarios: [SSP370],
     hasObserved: true,
   },
   loca2: {
     value: "loca2",
-    label: "Statistical (LOCA2-Hybrid)",
+    label: "Statistically Downscaled",
+    description: "LOCA2-Hybrid",
     scenarios: [SSP245, SSP370, SSP585],
     hasObserved: false,
   },
 };
 
 export const ENSEMBLE_OPTIONS: readonly SelectOption[] = Object.values(ENSEMBLES).map(
-  (ensemble) => ({ value: ensemble.value, label: ensemble.label })
+  (ensemble) => ({
+    value: ensemble.value,
+    label: ensemble.label,
+    description: ensemble.description,
+  })
 );
 
 export function isEnsemble(value: string): value is Ensemble {
