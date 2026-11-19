@@ -17,28 +17,28 @@ import {
 const LOCA2_SSP245 = { ...withEnsemble(DEFAULT_SELECTIONS, "loca2"), scenario: "ssp245" };
 
 describe("buildSearchFilters", () => {
-  it("filters the boundary item by collection, variable, boundary and scenario", () => {
+  it("filters the projection item by variable, boundary and scenario", () => {
     expect(buildSearchFilters(DEFAULT_SELECTIONS, "boundary")).toEqual({
-      collectionFilter: "collection='acp-wrf-boundary-csv'",
+      collectionFilter: "collection='acp-boundary-csv'",
       variableFilter: "variable_id='t2max'",
       boundaryFilter: "boundary='ca_counties'",
       scenarioFilter: "cmip6:experiment_id='ssp370'",
     });
   });
 
-  it("uses the LOCA2 collection and variable id for LOCA2", () => {
+  it("uses the LOCA2 variable id for LOCA2", () => {
     expect(buildSearchFilters(LOCA2_SSP245, "boundary")).toMatchObject({
-      collectionFilter: "collection='acp-loca2-boundary-csv'",
       variableFilter: "variable_id='tasmax'",
       scenarioFilter: "cmip6:experiment_id='ssp245'",
     });
   });
 
-  it("filters the observed item without a scenario", () => {
+  it("filters the observed item by the reanalysis experiment", () => {
     expect(buildSearchFilters(DEFAULT_SELECTIONS, "observed")).toEqual({
-      collectionFilter: "collection='acp-era5-boundary-csv'",
+      collectionFilter: "collection='acp-boundary-csv'",
       variableFilter: "variable_id='t2max'",
       boundaryFilter: "boundary='ca_counties'",
+      scenarioFilter: "cmip6:experiment_id='reanalysis'",
     });
   });
 });
@@ -71,15 +71,15 @@ describe("fetchAnnualSeries", () => {
     };
   }
 
-  /** Answers each STAC search with the item for the collection in its filter. */
-  function mockSearch(itemsByCollection: Record<string, StacItem[]>) {
+  /** Answers each STAC search with the item for the experiment in its filter. */
+  function mockSearch(itemsByExperiment: Record<string, StacItem[]>) {
     server.use(
       http.get(`${STAC_API_BASE_URL}/search`, ({ request }) => {
         const filter = new URL(request.url).searchParams.get("filter") ?? "";
-        const collection = filter.match(/collection='([^']+)'/)?.[1] ?? "";
+        const experiment = filter.match(/cmip6:experiment_id='([^']+)'/)?.[1] ?? "";
         return HttpResponse.json({
           type: "FeatureCollection",
-          features: itemsByCollection[collection] ?? [],
+          features: itemsByExperiment[experiment] ?? [],
           links: [],
         });
       })
@@ -92,8 +92,8 @@ describe("fetchAnnualSeries", () => {
 
   it("resolves both CSVs through STAC and parses them", async () => {
     mockSearch({
-      "acp-wrf-boundary-csv": [item("wrf", BOUNDARY_PREFIX)],
-      "acp-era5-boundary-csv": [item("era5", OBSERVED_PREFIX)],
+      ssp370: [item("wrf", BOUNDARY_PREFIX)],
+      reanalysis: [item("era5", OBSERVED_PREFIX)],
     });
     server.use(
       http.get(

@@ -1,7 +1,8 @@
 // Pipeline for a single region:
-//  1. STAC `/search` for the boundary item (collection + variable + boundary +
-//     scenario) and, for WRF, the observed ERA5 item (collection + variable +
-//     boundary). Each search resolves to exactly one item.
+//  1. STAC `/search` in the `acp-boundary-csv` collection for the projection
+//     item (variable + boundary + scenario) and, for WRF, the observed ERA5
+//     item (variable + boundary + experiment `reanalysis`). Each search resolves
+//     to exactly one item.
 //  2. Each item's `data` asset href is an S3 *directory prefix*. Normalize
 //     `s3://` -> `https://` and append the region's CSV file name.
 //  3. Fetch the boundary CSV (year, mean, min, max, then one column per
@@ -20,12 +21,15 @@ import {
   variableIdFor,
 } from "./options";
 
-/** STAC collection per CSV kind. Items are keyed by variable, boundary and (projections) scenario. */
-export const STAC_COLLECTION_IDS = {
-  wrf: "acp-wrf-boundary-csv",
-  loca2: "acp-loca2-boundary-csv",
-  observed: "acp-era5-boundary-csv",
-} as const;
+/**
+ * STAC collection holding WRF and LOCA2 projections and ERA5 observed CSVs.
+ * Variable ids differ between WRF and LOCA2 (`t2max` vs `tasmax`), so variable
+ * + experiment + boundary identify one item without filtering on the ensemble.
+ */
+export const ACP_STAC_COLLECTION_ID = "acp-boundary-csv" as const;
+
+/** `cmip6:experiment_id` of the ERA5 observed items. */
+const OBSERVED_EXPERIMENT_ID = "reanalysis";
 
 type CsvKind = "boundary" | "observed";
 
@@ -66,15 +70,12 @@ export function buildSearchFilters(
   selections: AnnualClimateProjectionsSelections,
   kind: CsvKind
 ): ItemSearchFilters {
-  const collection =
-    kind === "observed" ? STAC_COLLECTION_IDS.observed : STAC_COLLECTION_IDS[selections.ensemble];
+  const experiment = kind === "observed" ? OBSERVED_EXPERIMENT_ID : selections.scenario;
   return {
-    collectionFilter: `collection='${collection}'`,
+    collectionFilter: `collection='${ACP_STAC_COLLECTION_ID}'`,
     variableFilter: `variable_id='${variableIdFor(selections)}'`,
     boundaryFilter: `boundary='${selections.spatialAggregation}'`,
-    ...(kind === "boundary"
-      ? { scenarioFilter: `cmip6:experiment_id='${selections.scenario}'` }
-      : {}),
+    scenarioFilter: `cmip6:experiment_id='${experiment}'`,
   };
 }
 
