@@ -123,7 +123,7 @@ export const ENSEMBLES: Readonly<Record<Ensemble, EnsembleConfig>> = {
   wrf: {
     value: "wrf",
     label: "Dynamically Downscaled",
-    description: "WRF",
+    description: "5 bias-adjusted CMIP6 models (WRF)",
     scenarios: [SSP370],
     hasObserved: true,
   },
