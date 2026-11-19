@@ -16,7 +16,6 @@ const flagDefinitions = {
   __FF_HDD_CDD__: [Env.Dev, Env.Stg, Env.Prod],
   __FF_DATA_METHODS__: [Env.Dev, Env.Stg, Env.Prod],
   __FF_GLOSSARY__: [Env.Dev, Env.Stg, Env.Prod],
-  __FF_ANNUAL_CLIMATE_PROJECTIONS__: [Env.Dev],
 } as const satisfies Record<string, readonly EnvValue[]>;
 
 type FlagKey = keyof typeof flagDefinitions;

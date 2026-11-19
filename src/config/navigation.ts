@@ -142,7 +142,6 @@ export const navLinks = {
     id: "annual-climate-projections",
     label: "Annual Climate Projections",
     href: "/dashboard/annual-climate-projections",
-    featureFlag: "__FF_ANNUAL_CLIMATE_PROJECTIONS__",
   },
   renewablesVisualizer: {
     id: "renewables-visualizer",
