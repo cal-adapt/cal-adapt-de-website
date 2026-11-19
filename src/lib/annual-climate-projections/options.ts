@@ -118,7 +118,12 @@ export interface EnsembleConfig {
 }
 
 export const ENSEMBLES: Readonly<Record<Ensemble, EnsembleConfig>> = {
-  wrf: { value: "wrf", label: "Dynamical (WRF)", scenarios: [SSP370], hasObserved: true },
+  wrf: {
+    value: "wrf",
+    label: "Dynamically Downscaled Ensemble",
+    scenarios: [SSP370],
+    hasObserved: true,
+  },
   loca2: {
     value: "loca2",
     label: "Statistical (LOCA2-Hybrid)",
