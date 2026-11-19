@@ -1,16 +1,17 @@
 // Pipeline for a single region:
-//  1. Build the region's CSV URLs from the selections.
-//  2. Fetch the boundary CSV (year, mean, min, max, then one column per
-//     simulation) and, for WRF, the observed ERA5 CSV (year, value).
-//  3. Parse into `AnnualSeries`.
-//
-// PROTOTYPE: the CSVs are read from the `tmp/` prefixes on S3, which use the
-// final product layout but only cover a few counties. Once the STAC collections exist
-// (`acp-wrf-boundary-csv`, `acp-loca2-boundary-csv`, `acp-era5-boundary-csv`),
-// replace `csvUrl` with a STAC search like `src/lib/hdd-cdd/series.ts`. The
-// file names and columns already match the planned products.
+//  1. STAC `/search` for the boundary item (collection + variable + boundary +
+//     scenario) and, for WRF, the observed ERA5 item (collection + variable +
+//     boundary). Each search resolves to exactly one item.
+//  2. Each item's `data` asset href is an S3 *directory prefix*. Normalize
+//     `s3://` -> `https://` and append the region's CSV file name.
+//  3. Fetch the boundary CSV (year, mean, min, max, then one column per
+//     simulation) and the observed CSV (year, value).
+//  4. Parse into `AnnualSeries`.
 
 import { csvParse } from "d3";
+
+import { calAdaptApi, type ItemSearchFilters, type StacItem } from "@/lib/cal-adapt-api";
+import { normalizeDownloadUrl } from "@/utils/url";
 
 import {
   type AnnualClimateProjectionsSelections,
@@ -19,11 +20,14 @@ import {
   variableIdFor,
 } from "./options";
 
-/** Prototype data prefix per ensemble. Swap for a STAC search once ingested. */
-export const DATA_BASE_URLS = {
-  wrf: "https://cadcat.s3.amazonaws.com/wrf/annual-climate-projections/tmp",
-  loca2: "https://cadcat.s3.amazonaws.com/loca2/annual-climate-projections/tmp",
+/** STAC collection per CSV kind. Items are keyed by variable, boundary and (projections) scenario. */
+export const STAC_COLLECTION_IDS = {
+  wrf: "acp-wrf-boundary-csv",
+  loca2: "acp-loca2-boundary-csv",
+  observed: "acp-era5-boundary-csv",
 } as const;
+
+type CsvKind = "boundary" | "observed";
 
 /** Summary columns in the boundary CSV; every other column is a simulation. */
 const SUMMARY_COLUMNS = ["year", "mean", "min", "max"] as const;
@@ -57,28 +61,34 @@ export interface FetchSeriesOptions {
   signal?: AbortSignal;
 }
 
-/** Region token used in CSV file names, e.g. "Alameda_County". */
-function regionToken(selections: AnnualClimateProjectionsSelections): string {
-  return regionLabelFor(selections).replace(/\s+/g, "_");
+/** STAC `/search` filters resolving to the one item for this CSV kind. */
+export function buildSearchFilters(
+  selections: AnnualClimateProjectionsSelections,
+  kind: CsvKind
+): ItemSearchFilters {
+  const collection =
+    kind === "observed" ? STAC_COLLECTION_IDS.observed : STAC_COLLECTION_IDS[selections.ensemble];
+  return {
+    collectionFilter: `collection='${collection}'`,
+    variableFilter: `variable_id='${variableIdFor(selections)}'`,
+    boundaryFilter: `boundary='${selections.spatialAggregation}'`,
+    ...(kind === "boundary"
+      ? { scenarioFilter: `cmip6:experiment_id='${selections.scenario}'` }
+      : {}),
+  };
 }
 
 /**
- * Boundary CSV: `per_boundary/{variable}/{boundary}/{ssp}/csv/{Region}_{variable}_{ssp}.csv`.
- * Observed CSV: `era5_per_boundary/{variable}/{boundary}/csv/{Region}_{variable}_era5.csv`.
+ * Region CSV file name under the item's `data` prefix:
+ * `{Region}_{variable}_{ssp}.csv` (boundary) or `{Region}_{variable}_era5.csv` (observed).
  */
-export function csvUrl(
+export function regionCsvFileName(
   selections: AnnualClimateProjectionsSelections,
-  kind: "boundary" | "observed"
+  kind: CsvKind
 ): string {
-  const variable = variableIdFor(selections);
-  const boundary = selections.spatialAggregation;
-  const folder =
-    kind === "observed"
-      ? `era5_per_boundary/${variable}/${boundary}/csv`
-      : `per_boundary/${variable}/${boundary}/${selections.scenario}/csv`;
+  const region = regionLabelFor(selections).replace(/\s+/g, "_");
   const suffix = kind === "observed" ? "era5" : selections.scenario;
-  const fileName = `${regionToken(selections)}_${variable}_${suffix}.csv`;
-  return `${DATA_BASE_URLS[selections.ensemble]}/${folder}/${encodeURIComponent(fileName)}`;
+  return `${region}_${variableIdFor(selections)}_${suffix}.csv`;
 }
 
 /**
@@ -103,12 +113,15 @@ export async function fetchAnnualSeries(
   selections: AnnualClimateProjectionsSelections,
   { signal }: FetchSeriesOptions = {}
 ): Promise<AnnualSeries> {
-  const boundaryUrl = csvUrl(selections, "boundary");
   const wantsObserved = ENSEMBLES[selections.ensemble].hasObserved;
 
+  const [boundaryUrl, observedUrl] = await Promise.all([
+    resolveCsvUrl(selections, "boundary", signal),
+    wantsObserved ? resolveCsvUrl(selections, "observed", signal) : Promise.resolve(null),
+  ]);
   const [boundaryText, observedText] = await Promise.all([
     fetchCsvText(boundaryUrl, signal),
-    wantsObserved ? fetchCsvText(csvUrl(selections, "observed"), signal) : Promise.resolve(null),
+    observedUrl ? fetchCsvText(observedUrl, signal) : Promise.resolve(null),
   ]);
 
   return {
@@ -116,6 +129,28 @@ export async function fetchAnnualSeries(
     observed: observedText ? parseObservedCsv(observedText) : [],
     sourceCsvUrl: boundaryUrl,
   };
+}
+
+/** STAC search for the CSV kind's item, then the region CSV URL under its `data` prefix. */
+async function resolveCsvUrl(
+  selections: AnnualClimateProjectionsSelections,
+  kind: CsvKind,
+  signal?: AbortSignal
+): Promise<string> {
+  const items = await calAdaptApi.stac.searchItems(buildSearchFilters(selections, kind), {
+    signal,
+  });
+  const item: StacItem | undefined = items.features[0];
+  if (!item) {
+    throw new Error(`No STAC item found for ${kind} data (${searchFiltersKey(selections)})`);
+  }
+  const rawHref = item.assets.data?.href;
+  if (typeof rawHref !== "string" || rawHref.length === 0) {
+    throw new Error(`STAC item ${item.id} has no \`data\` asset href`);
+  }
+  const prefix = normalizeDownloadUrl(rawHref);
+  const base = prefix.endsWith("/") ? prefix : `${prefix}/`;
+  return `${base}${encodeURIComponent(regionCsvFileName(selections, kind))}`;
 }
 
 async function fetchCsvText(url: string, signal?: AbortSignal): Promise<string> {
