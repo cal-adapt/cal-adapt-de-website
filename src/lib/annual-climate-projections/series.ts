@@ -5,7 +5,7 @@
 //     to exactly one item.
 //  2. Each item's `data` asset href is an S3 *directory prefix*. Normalize
 //     `s3://` -> `https://` and append the region's CSV file name.
-//  3. Fetch the boundary CSV (year, mean, min, max, then one column per
+//  3. Fetch the boundary CSV (year, ensemble_mean, ensemble_min, ensemble_max, then one column per
 //     simulation) and the observed CSV (year, value).
 //  4. Parse into `AnnualSeries`.
 
@@ -34,7 +34,7 @@ const OBSERVED_EXPERIMENT_ID = "reanalysis";
 type CsvKind = "boundary" | "observed";
 
 /** Summary columns in the boundary CSV; every other column is a simulation. */
-const SUMMARY_COLUMNS = ["year", "mean", "min", "max"] as const;
+const SUMMARY_COLUMNS = ["year", "ensemble_mean", "ensemble_min", "ensemble_max"] as const;
 
 export interface AnnualYearRow {
   year: number;
@@ -171,9 +171,9 @@ export function parseBoundaryCsv(text: string): Pick<AnnualSeries, "rows" | "sim
   const rows: AnnualYearRow[] = parsed
     .map((row) => ({
       year: Number(row.year),
-      mean: toNumber(row.mean),
-      min: toNumber(row.min),
-      max: toNumber(row.max),
+      mean: toNumber(row.ensemble_mean),
+      min: toNumber(row.ensemble_min),
+      max: toNumber(row.ensemble_max),
       simulations: Object.fromEntries(simulationNames.map((name) => [name, toNumber(row[name])])),
     }))
     .filter((row) => Number.isFinite(row.year))

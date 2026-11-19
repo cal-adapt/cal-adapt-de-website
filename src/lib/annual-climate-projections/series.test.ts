@@ -98,7 +98,8 @@ describe("fetchAnnualSeries", () => {
     server.use(
       http.get(
         `${HTTPS}/per_boundary/t2max/ca_counties/ssp370/csv/Alameda_County_t2max_ssp370.csv`,
-        () => HttpResponse.text("year,mean,min,max,MIROC6\n2000,70,69,71,70")
+        () =>
+          HttpResponse.text("year,ensemble_mean,ensemble_min,ensemble_max,MIROC6\n2000,70,69,71,70")
       ),
       http.get(
         `${HTTPS}/era5_per_boundary/t2max/ca_counties/csv/Alameda_County_t2max_era5.csv`,
@@ -124,7 +125,8 @@ describe("fetchAnnualSeries", () => {
 
 describe("parseBoundaryCsv", () => {
   it("reads the summary columns and treats the rest as simulations", () => {
-    const text = "year,mean,min,max,MIROC6,TaiESM1\n2000,60,59,61,59,61\n1999,58,57,59,57,";
+    const text =
+      "year,ensemble_mean,ensemble_min,ensemble_max,MIROC6,TaiESM1\n2000,60,59,61,59,61\n1999,58,57,59,57,";
     const { rows, simulationNames } = parseBoundaryCsv(text);
     expect(simulationNames).toEqual(["MIROC6", "TaiESM1"]);
     expect(rows.map((row) => row.year)).toEqual([1999, 2000]);
