@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { DEFAULT_SELECTIONS, withEnsemble } from "./options";
-import { csvUrl, DATA_BASE_URLS,parseBoundaryCsv, parseObservedCsv } from "./series";
+import { csvUrl, DATA_BASE_URLS, parseBoundaryCsv, parseObservedCsv } from "./series";
 
 describe("csvUrl", () => {
   it("builds the boundary and observed paths", () => {

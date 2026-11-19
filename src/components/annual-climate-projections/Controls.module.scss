@@ -9,3 +9,8 @@
 .advanced {
   @include flex(column, flex-start, stretch, spacer(4));
 }
+
+// Divider's own margin stacks on the column gap; use the gap alone.
+.root .divider {
+  margin: 0;
+}

@@ -80,10 +80,15 @@ export default function Controls({
         />
       </FormField>
 
-      <Divider />
+      <Divider className={styles.divider} />
 
       <div className={styles.advanced}>
-        <Switch label="Advanced view" checked={advanced} onChange={onAdvancedChange} />
+        <Switch
+          label="Advanced view"
+          hint={CONTROL_TOOLTIPS.advancedView}
+          checked={advanced}
+          onChange={onAdvancedChange}
+        />
         {/* TODO: advanced view description copy */}
 
         {advanced && (
@@ -106,9 +111,9 @@ export default function Controls({
                 disabled={disabled}
               />
             </FormField>
-            {/* TODO: individual models tooltip copy (CONTROL_TOOLTIPS.individualModels) */}
             <Switch
               label="Show individual models"
+              hint={CONTROL_TOOLTIPS.individualModels}
               checked={showSimulations}
               onChange={onShowSimulationsChange}
               subtle
