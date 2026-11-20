@@ -125,7 +125,7 @@ export const ENSEMBLES: Readonly<Record<Ensemble, EnsembleConfig>> = {
   wrf: {
     value: "wrf",
     label: "Dynamically Downscaled",
-    description: "CMIP6 models downscaled using WRF",
+    description: "CMIP6 model simulations downscaled using WRF",
     scenarios: [SSP370],
     hasObserved: true,
     chartSource:
@@ -134,7 +134,7 @@ export const ENSEMBLES: Readonly<Record<Ensemble, EnsembleConfig>> = {
   loca2: {
     value: "loca2",
     label: "Statistically Downscaled",
-    description: "CMIP6 models downscaled using LOCA2-Hybrid",
+    description: "CMIP6 model simulations downscaled using LOCA2-Hybrid",
     scenarios: [SSP245, SSP370, SSP585],
     hasObserved: false,
     chartSource:
