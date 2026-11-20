@@ -83,6 +83,18 @@ const entries = [
     links: [hddCddToolLink("cdd"), dataMethodsLink("hdd-cdd"), DEGREE_DAYS_GUIDANCE_LINK],
   },
   {
+    id: "dynamical-downscaling",
+    term: "Dynamical downscaling",
+    definition:
+      "A method to generate fine scale spatial resolution data from coarse scale global climate models using a dynamical regional weather model. The regional model uses the global climate model output as the inputs to generate additional projections. Cal-Adapt hosts dynamically downscaled model output created using the Weather Research and Forecasting (WRF) model.",
+    links: [
+      {
+        label: "CMIP6 downscaling using WRF (UCLA)",
+        href: "https://atmos.ucla.edu/alexhall/cmip6-downscaling-using-wrf/",
+      },
+    ],
+  },
+  {
     id: "extreme-meteorological-year",
     term: "Extreme meteorological year",
     abbreviation: "XMY",
@@ -119,6 +131,12 @@ const entries = [
     links: [hddCddToolLink("hdd"), dataMethodsLink("hdd-cdd"), DEGREE_DAYS_GUIDANCE_LINK],
   },
   {
+    id: "internal-variability",
+    term: "Internal variability",
+    definition:
+      "Internal variability represents the natural (stochastic) variations in the Earth’s climate, due to interactions between the atmosphere, ocean, land surface, and sea ice. In global climate models with multiple simulations, this uncertainty can result in slightly different outputs based on small differences in the model’s physical processes design.",
+  },
+  {
     id: "resource-drought",
     term: "Resource drought",
     definition:
@@ -134,6 +152,18 @@ const entries = [
       analyticsEngineLink(
         "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/standard-year.html"
       ),
+    ],
+  },
+  {
+    id: "statistical-downscaling",
+    term: "Statistical downscaling",
+    definition:
+      "A method to generate fine scale spatial resolution data outputs from coarser scale global climate models using statistical relationships between the coarse global climate model output and observed climatological conditions. Cal-Adapt hosts statistically downscaled model output from LOCA2-Hybrid.",
+    links: [
+      {
+        label: "LOCA2-Hybrid for California (UCSD)",
+        href: "https://loca.ucsd.edu/loca-version-2-for-california-ca-may-2023/",
+      },
     ],
   },
   {
