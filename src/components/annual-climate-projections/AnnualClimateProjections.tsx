@@ -4,11 +4,13 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import BetaFeedbackAlert from "@/components/common/content/BetaFeedbackAlert";
+import Callout from "@/components/common/content/Callout";
 import InterpretSection from "@/components/common/content/InterpretSection";
 import Badge from "@/components/common/ui/Badge";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import PageLayout from "@/components/dashboard/PageLayout";
+import GlossaryTerm from "@/components/glossary/GlossaryTerm";
 import { navLinks } from "@/config/navigation";
 import { useStacSeries } from "@/hooks/use-stac-series";
 import { formatChartExportFilename } from "@/lib/annual-climate-projections/format";
@@ -101,7 +103,12 @@ export default function AnnualClimateProjections() {
     >
       <BetaFeedbackAlert />
 
-      <div className={styles.intro}>{/* TODO: intro copy */}</div>
+      <div className={styles.intro}>
+        <p className={styles.introCopy}>
+          Explore how annual temperature and precipitation in California are projected to change
+          through the end of this century.
+        </p>
+      </div>
 
       <div className={styles.workspace}>
         <div className={styles.viewArea}>
@@ -143,8 +150,30 @@ export default function AnnualClimateProjections() {
       </div>
 
       <InterpretSection title="How to interpret this figure">
-        {/* TODO: interpretation copy */}
-        {null}
+        <p>
+          This time series chart shows annual average temperature or total annual precipitation for
+          the selected location, calculated from climate model simulations. The line shows the model
+          mean, and the shaded area shows the range between the lowest and highest simulation in
+          each year, which reflects uncertainty in the projections.
+        </p>
+        <p>
+          The observed line shows a reconstruction of historical weather from 1981 to 2019, produced
+          by combining observations with a weather model (ERA5 reanalysis,{" "}
+          <GlossaryTerm id="dynamical-downscaling">dynamically downscaled</GlossaryTerm> with WRF).
+          It can be used to check whether past conditions fall within the range of the simulations.
+        </p>
+        <Callout kind="note">
+          <p>
+            Climate models are designed to capture long-term trends and the range of conditions a
+            place may experience, not the weather in any specific year. Simulated values for a
+            single year shouldn’t be expected to match historical weather, and they don’t predict
+            what will happen in a particular future year. Each simulation produces its own{" "}
+            <GlossaryTerm id="internal-variability">internal variability</GlossaryTerm>, so warm,
+            cool, wet and dry years fall at different times in each model. Looking across an
+            ensemble of many simulations, through the model mean and the range around it, gives a
+            fuller picture of possible future conditions.
+          </p>
+        </Callout>
       </InterpretSection>
     </PageLayout>
   );

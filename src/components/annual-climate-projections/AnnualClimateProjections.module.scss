@@ -11,6 +11,12 @@
   max-width: max-w(global);
 }
 
+.introCopy {
+  margin: 0;
+  color: color(black);
+  @include type-item(body);
+}
+
 .workspace {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 280px;
