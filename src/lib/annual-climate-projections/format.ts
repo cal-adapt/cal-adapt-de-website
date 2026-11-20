@@ -13,7 +13,7 @@ export const CHART_COLORS = {
   range: "#b9deff",
   mean: "#33658a",
   simulations: "#4d9de0",
-  observed: "#8a8f98",
+  observed: "#c56907",
 } as const;
 
 export function formatViewTitle(selections: AnnualClimateProjectionsSelections): string {
