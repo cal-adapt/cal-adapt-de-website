@@ -4,6 +4,7 @@ import ChartFrame, { type StacChartViewProps } from "@/components/common/charts/
 import { formatViewTitle } from "@/lib/annual-climate-projections/format";
 import {
   type AnnualClimateProjectionsSelections,
+  ENSEMBLES,
   getVariable,
   regionLabelFor,
 } from "@/lib/annual-climate-projections/options";
@@ -43,6 +44,7 @@ export default function ChartView({
           ? `Loading ${noun} data for ${locationLabel} is taking longer than expected. Try again.`
           : `We couldn't load ${noun} data for ${locationLabel}. Check your connection and try again.`
       }
+      source={ENSEMBLES[selections.ensemble].chartSource}
       noDataContent={`No ${noun} data is available for ${locationLabel}. Try a different location.`}
       chartContainerRef={chartContainerRef}
       id={id}

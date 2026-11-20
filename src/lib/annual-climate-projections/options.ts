@@ -117,6 +117,8 @@ export interface EnsembleConfig {
   scenarios: readonly ScenarioConfig[];
   /** True when an observed (ERA5) series exists for this ensemble. */
   hasObserved: boolean;
+  /** Source and dataset credit shown under the chart. */
+  chartSource: string;
 }
 
 export const ENSEMBLES: Readonly<Record<Ensemble, EnsembleConfig>> = {
@@ -126,6 +128,8 @@ export const ENSEMBLES: Readonly<Record<Ensemble, EnsembleConfig>> = {
     description: "CMIP6 models downscaled using WRF",
     scenarios: [SSP370],
     hasObserved: true,
+    chartSource:
+      "Source: Cal-Adapt\nData: WRF Downscaled CMIP6 Climate Projections and ERA5 Reanalysis (UCLA), WRF Derived Products (Cal-Adapt)",
   },
   loca2: {
     value: "loca2",
@@ -133,6 +137,8 @@ export const ENSEMBLES: Readonly<Record<Ensemble, EnsembleConfig>> = {
     description: "CMIP6 models downscaled using LOCA2-Hybrid",
     scenarios: [SSP245, SSP370, SSP585],
     hasObserved: false,
+    chartSource:
+      "Source: Cal-Adapt\nData: LOCA2-Hybrid Downscaled CMIP6 Climate Projections (UCSD), LOCA2 Derived Products (Cal-Adapt)",
   },
 };
 

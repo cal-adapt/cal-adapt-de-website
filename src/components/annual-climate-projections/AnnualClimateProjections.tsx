@@ -15,6 +15,7 @@ import { formatChartExportFilename } from "@/lib/annual-climate-projections/form
 import {
   type AnnualClimateProjectionsSelections,
   DEFAULT_SELECTIONS,
+  ENSEMBLES,
   regionLabelFor,
   withEnsemble,
 } from "@/lib/annual-climate-projections/options";
@@ -79,12 +80,12 @@ export default function AnnualClimateProjections() {
   const handleExportChart = useCallback(() => {
     const svg = chartContainerRef.current?.querySelector<SVGSVGElement>("svg");
     if (!svg) return;
-    exportSvgAsPng(svg, formatChartExportFilename(selections.climateVariable, locationLabel)).catch(
-      (error) => {
-        console.error("[annual-climate-projections] chart export failed:", error);
-      }
-    );
-  }, [selections.climateVariable, locationLabel]);
+    exportSvgAsPng(svg, formatChartExportFilename(selections.climateVariable, locationLabel), {
+      footnote: ENSEMBLES[selections.ensemble].chartSource,
+    }).catch((error) => {
+      console.error("[annual-climate-projections] chart export failed:", error);
+    });
+  }, [selections.climateVariable, selections.ensemble, locationLabel]);
 
   return (
     <PageLayout
