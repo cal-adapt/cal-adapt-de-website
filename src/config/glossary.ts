@@ -75,6 +75,19 @@ const entries = [
     ],
   },
   {
+    id: "cmip6",
+    term: "CMIP6",
+    definition:
+      "The Coupled Model Intercomparison Project, Phase 6 is a coordinated international effort to produce climate model output with consistent standards in areas such as variable naming and experimental design. This consistency allows different models to be compared to each other more easily. CMIP6 is the latest generation of global climate models (ca. 2020), used in the Intergovernmental Panel on Climate Change Sixth Assessment Report (IPCC AR6), and in California’s Fifth Climate Change Assessment.",
+    links: [
+      { label: "CMIP6 (WCRP)", href: "https://wcrp-cmip.org/cmip-phases/cmip6/" },
+      {
+        label: "IPCC Sixth Assessment Report",
+        href: "https://www.ipcc.ch/report/sixth-assessment-report-cycle/",
+      },
+    ],
+  },
+  {
     id: "cooling-degree-days",
     term: "Cooling degree days",
     abbreviation: "CDDs",
