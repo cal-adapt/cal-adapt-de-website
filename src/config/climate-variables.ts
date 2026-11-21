@@ -47,6 +47,10 @@ export const climateVariables = {
     description: "Cooling demand metric measuring occurrence of temperatures above 65°F",
   },
   // Groups of variables that share a Data Methods page.
+  "annual-temperature-and-precipitation": {
+    label: "Annual Climate Projections",
+    description: "Annual average temperature and total precipitation",
+  },
   "extreme-heat-days-and-warm-nights": {
     label: "Extreme Heat Days & Warm Nights",
     description: "Annual frequency of high daytime maximum and overnight low temperatures",

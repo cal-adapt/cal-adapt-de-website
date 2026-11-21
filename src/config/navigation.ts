@@ -51,6 +51,11 @@ const ANALYTICS_GUIDANCE_URL = "https://analytics.cal-adapt.org/guidance/";
 /** Data methods pages, in display order (alphabetical by label). */
 const dataMethodsPages = [
   {
+    id: "data-methods-annual-climate-projections",
+    label: climateVariables["annual-temperature-and-precipitation"].label,
+    href: `${DATA_METHODS_HREF}/annual-climate-projections`,
+  },
+  {
     id: "data-methods-extreme-heat-days",
     label: climateVariables["extreme-heat-days-and-warm-nights"].label,
     href: `${DATA_METHODS_HREF}/extreme-heat-days`,
