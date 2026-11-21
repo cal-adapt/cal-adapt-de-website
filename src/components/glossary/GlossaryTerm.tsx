@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useEffect, useId, useRef, useState } from "react";
+import { type ReactNode, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
 import Link from "@/components/common/ui/Link";
 import {
@@ -13,18 +13,28 @@ import { isNavLinkEnabled, navLinks } from "@/config/navigation";
 
 import styles from "./GlossaryTerm.module.scss";
 
+/** Space kept between the popover and the edge of the page, in pixels. */
+const POPOVER_EDGE_GAP = 16;
+
 interface GlossaryTermProps {
   /** The glossary entry to define; its term and definition come from the glossary. */
   id: GlossaryId;
   /** Text shown in the story. Defaults to the glossary term. */
   children?: ReactNode;
+  /**
+   * Punctuation right after the term, such as "," or ".". Pass it here rather than after the
+   * component: browsers can wrap the line right after a button, which would leave the
+   * punctuation alone at the start of the next line.
+   */
+  punctuation?: string;
 }
 
-export default function GlossaryTerm({ id, children }: GlossaryTermProps) {
+export default function GlossaryTerm({ id, children, punctuation }: GlossaryTermProps) {
   const entry = glossaryEntries.find((e) => e.id === id)!;
   const term = glossaryEntryLabel(entry);
   const tooltipId = useId();
   const rootRef = useRef<HTMLSpanElement>(null);
+  const popoverRef = useRef<HTMLSpanElement>(null);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const open = hovered || focused;
@@ -46,6 +56,22 @@ export default function GlossaryTerm({ id, children }: GlossaryTermProps) {
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
+  // The popover opens left-aligned under the term. Near the right edge of the page that would
+  // push it off screen, so shift it left just enough to fit.
+  useLayoutEffect(() => {
+    const popover = popoverRef.current;
+    if (!open || !popover) {
+      return;
+    }
+
+    const { left, right } = popover.getBoundingClientRect();
+    const overflow = right - (document.documentElement.clientWidth - POPOVER_EDGE_GAP);
+    if (overflow > 0) {
+      const shift = Math.min(overflow, left - POPOVER_EDGE_GAP);
+      popover.style.left = `${-shift}px`;
+    }
   }, [open]);
 
   return (
@@ -71,8 +97,9 @@ export default function GlossaryTerm({ id, children }: GlossaryTermProps) {
       >
         {children ?? entry.term}
       </button>
+      {punctuation}
       {open ? (
-        <span id={tooltipId} className={styles.popover}>
+        <span id={tooltipId} ref={popoverRef} className={styles.popover}>
           <span className={styles.kicker}>Glossary</span>
           <span className={styles.term}>{term}</span>
           <span className={styles.definition}>{glossaryEntrySummary(entry)}</span>

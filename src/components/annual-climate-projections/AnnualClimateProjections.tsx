@@ -168,9 +168,11 @@ export default function AnnualClimateProjections() {
             place may experience, not the weather in any specific year. Simulated values for a
             single year shouldn’t be expected to match historical weather, and they don’t predict
             what will happen in a particular future year. Each simulation produces its own{" "}
-            <GlossaryTerm id="internal-variability">internal variability</GlossaryTerm>, so warm,
-            cool, wet and dry years fall at different times in each model. Looking across an
-            ensemble of many simulations, through the model mean and the range around it, gives a
+            <GlossaryTerm id="internal-variability" punctuation=",">
+              internal variability
+            </GlossaryTerm>{" "}
+            so warm, cool, wet and dry years fall at different times in each model. Looking across
+            an ensemble of many simulations, through the model mean and the range around it, gives a
             fuller picture of possible future conditions.
           </p>
         </Callout>
