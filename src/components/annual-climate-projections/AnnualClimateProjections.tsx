@@ -9,8 +9,10 @@ import InterpretSection from "@/components/common/content/InterpretSection";
 import Badge from "@/components/common/ui/Badge";
 import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
+import Link from "@/components/common/ui/Link";
 import PageLayout from "@/components/dashboard/PageLayout";
 import GlossaryTerm from "@/components/glossary/GlossaryTerm";
+import { dataMethodsHref } from "@/config/data-methods";
 import { navLinks } from "@/config/navigation";
 import { useStacSeries } from "@/hooks/use-stac-series";
 import { formatChartExportFilename } from "@/lib/annual-climate-projections/format";
@@ -36,6 +38,8 @@ import ChartView from "./ChartView";
 import Controls from "./Controls";
 
 import styles from "./AnnualClimateProjections.module.scss";
+
+const METHODS_HREF = dataMethodsHref("data-methods-annual-climate-projections");
 
 export default function AnnualClimateProjections() {
   const router = useRouter();
@@ -176,6 +180,12 @@ export default function AnnualClimateProjections() {
             fuller picture of possible future conditions.
           </p>
         </Callout>
+        {METHODS_HREF && (
+          <p>
+            For details on how these values are calculated, see the{" "}
+            <Link href={METHODS_HREF}>data methods</Link>.
+          </p>
+        )}
       </InterpretSection>
     </PageLayout>
   );
