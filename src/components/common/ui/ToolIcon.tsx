@@ -1,8 +1,17 @@
-import { type LucideIcon, Map as MapIcon, Sheet, Sun, Thermometer, Zap } from "lucide-react";
+import {
+  ChartLine,
+  type LucideIcon,
+  Map as MapIcon,
+  Sheet,
+  Sun,
+  Thermometer,
+  Zap,
+} from "lucide-react";
 
 import type { ToolId } from "@/config/navigation";
 
 const TOOL_ICONS: Record<ToolId, LucideIcon> = {
+  "annual-climate-projections": ChartLine,
   "climate-metrics-map": MapIcon,
   "data-download-tool": Sheet,
   "extreme-heat-days": Thermometer,

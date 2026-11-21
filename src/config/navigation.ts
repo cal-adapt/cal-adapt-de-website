@@ -51,6 +51,11 @@ const ANALYTICS_GUIDANCE_URL = "https://analytics.cal-adapt.org/guidance/";
 /** Data methods pages, in display order (alphabetical by label). */
 const dataMethodsPages = [
   {
+    id: "data-methods-annual-climate-projections",
+    label: climateVariables["annual-temperature-and-precipitation"].label,
+    href: `${DATA_METHODS_HREF}/annual-climate-projections`,
+  },
+  {
     id: "data-methods-extreme-heat-days",
     label: climateVariables["extreme-heat-days-and-warm-nights"].label,
     href: `${DATA_METHODS_HREF}/extreme-heat-days`,
@@ -138,6 +143,11 @@ export const navLinks = {
     href: "/dashboard/hdd-cdd",
     featureFlag: "__FF_HDD_CDD__",
   },
+  annualClimateProjections: {
+    id: "annual-climate-projections",
+    label: "Annual Climate Projections",
+    href: "/dashboard/annual-climate-projections",
+  },
   renewablesVisualizer: {
     id: "renewables-visualizer",
     label: "Renewables Visualizer",
@@ -221,9 +231,12 @@ export const navSections = {
     id: "beta-tools",
     label: "Beta Tools",
     beta: true,
-    links: [navLinks.extremeHeatDays, navLinks.hddCdd, navLinks.renewablesVisualizer].filter(
-      isNavLinkEnabled
-    ),
+    links: [
+      navLinks.annualClimateProjections,
+      navLinks.extremeHeatDays,
+      navLinks.hddCdd,
+      navLinks.renewablesVisualizer,
+    ].filter(isNavLinkEnabled),
   },
   guidance: {
     id: "guidance",

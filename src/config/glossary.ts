@@ -75,12 +75,37 @@ const entries = [
     ],
   },
   {
+    id: "cmip6",
+    term: "CMIP6",
+    definition:
+      "The Coupled Model Intercomparison Project, Phase 6 is a coordinated international effort to produce climate model output with consistent standards in areas such as variable naming and experimental design. This consistency allows different models to be compared to each other more easily. CMIP6 is the latest generation of global climate models (ca. 2020), used in the Intergovernmental Panel on Climate Change Sixth Assessment Report (IPCC AR6), and in California’s Fifth Climate Change Assessment.",
+    links: [
+      { label: "CMIP6 (WCRP)", href: "https://wcrp-cmip.org/cmip-phases/cmip6/" },
+      {
+        label: "IPCC Sixth Assessment Report",
+        href: "https://www.ipcc.ch/report/sixth-assessment-report-cycle/",
+      },
+    ],
+  },
+  {
     id: "cooling-degree-days",
     term: "Cooling degree days",
     abbreviation: "CDDs",
     definition:
       "Cooling degree days (CDDs) measure how much and for how long outdoor temperatures exceed a specific threshold, indicating the need for indoor cooling. For each day, CDDs are calculated as the number of degrees the day’s temperature is above the chosen base temperature; days that do not exceed the threshold are assigned zero. The threshold (commonly 65°F) represents the temperature above which cooling is typically required.",
     links: [hddCddToolLink("cdd"), dataMethodsLink("hdd-cdd"), DEGREE_DAYS_GUIDANCE_LINK],
+  },
+  {
+    id: "dynamical-downscaling",
+    term: "Dynamical downscaling",
+    definition:
+      "A method to generate fine scale spatial resolution data from coarse scale global climate models using a dynamical regional weather model. The regional model uses the global climate model output as the inputs to generate additional projections. Cal-Adapt hosts dynamically downscaled model output created using the Weather Research and Forecasting (WRF) model.",
+    links: [
+      {
+        label: "CMIP6 downscaling using WRF (UCLA)",
+        href: "https://atmos.ucla.edu/alexhall/cmip6-downscaling-using-wrf/",
+      },
+    ],
   },
   {
     id: "extreme-meteorological-year",
@@ -119,6 +144,12 @@ const entries = [
     links: [hddCddToolLink("hdd"), dataMethodsLink("hdd-cdd"), DEGREE_DAYS_GUIDANCE_LINK],
   },
   {
+    id: "internal-variability",
+    term: "Internal variability",
+    definition:
+      "Internal variability represents the natural (stochastic) variations in the Earth’s climate, due to interactions between the atmosphere, ocean, land surface, and sea ice. In global climate models with multiple simulations, this uncertainty can result in slightly different outputs based on small differences in the model’s physical processes design.",
+  },
+  {
     id: "resource-drought",
     term: "Resource drought",
     definition:
@@ -134,6 +165,18 @@ const entries = [
       analyticsEngineLink(
         "https://analytics.cal-adapt.org/scientific-guidance/climate_profiles/standard-year.html"
       ),
+    ],
+  },
+  {
+    id: "statistical-downscaling",
+    term: "Statistical downscaling",
+    definition:
+      "A method to generate fine scale spatial resolution data outputs from coarser scale global climate models using statistical relationships between the coarse global climate model output and observed climatological conditions. Cal-Adapt hosts statistically downscaled model output from LOCA2-Hybrid.",
+    links: [
+      {
+        label: "LOCA2-Hybrid for California (UCSD)",
+        href: "https://loca.ucsd.edu/loca-version-2-for-california-ca-may-2023/",
+      },
     ],
   },
   {

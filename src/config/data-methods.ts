@@ -12,6 +12,7 @@ export const DATA_METHODS_TAGS = [
   "Extreme heat",
   "Precipitation",
   "Renewable energy",
+  "Temperature",
   "Wildfire",
 ] as const;
 
@@ -32,6 +33,10 @@ export interface DataMethodsEntry {
 }
 
 const DETAILS_BY_PAGE: Record<DataMethodsPageId, DataMethodsDetails> = {
+  "data-methods-annual-climate-projections": {
+    variable: "annual-temperature-and-precipitation",
+    tags: ["Precipitation", "Temperature"],
+  },
   "data-methods-extreme-heat-days": {
     variable: "extreme-heat-days-and-warm-nights",
     tags: ["Extreme heat"],

@@ -1,0 +1,157 @@
+import { SITE_TITLE } from "@/config/constants";
+import { navLinks } from "@/config/navigation";
+
+export const metadata = {
+  title: `Data Methods - Annual Climate Projections - ${SITE_TITLE}`,
+};
+
+# Data Methods: Annual Climate Projections
+
+The steps below describe how the values shown in the tool were
+calculated, from raw climate model output to the final data product.
+
+## Input data
+
+<Specs title="CMIP6 model simulations downscaled using WRF">
+<Spec label="Description">
+
+ERA5 historical reanalysis data and ensemble of 5 bias-adjusted climate model simulations, dynamically downscaled using the WRF model for the state of California
+
+</Spec>
+<Spec label="Variables">
+
+Air temperature at 2m (`t2`), Precipitation (total) (`prec`), Maximum air temperature at 2m (`t2max`), Minimum air temperature at 2m (`t2min`), Dew point temperature (`dew_point`)
+
+</Spec>
+<Spec label="Spatial resolution">
+
+3 km
+
+</Spec>
+<Spec label="Temporal resolution">
+
+Monthly
+
+</Spec>
+<Spec label="Time period">
+
+- WRF simulations: 1981–2099, the modeled historical period (1981–2014) followed by the SSP3-7.0 scenario (2015–2099)
+- ERA5 reanalysis: 1981–2019
+
+</Spec>
+<Spec label="Download">
+
+Browse the WRF simulations in the <StacBrowserLink collection="wrf-ucla">Cal-Adapt data catalog</StacBrowserLink> (STAC), or download directly from <S3FolderLink folder="wrf/ucla/">cloud storage</S3FolderLink> (AWS).
+
+</Spec>
+</Specs>
+
+<Specs title="CMIP6 model simulations downscaled using LOCA2">
+<Spec label="Description">
+
+CMIP6 model simulations statistically downscaled using LOCA2-Hybrid for the state of California
+
+</Spec>
+<Spec label="Variables">
+
+Precipitation (total) (`pr`), Maximum air temperature at 2m (`tasmax`), Minimum air temperature at 2m (`tasmin`)
+
+</Spec>
+<Spec label="Spatial resolution">
+
+3 km
+
+</Spec>
+<Spec label="Temporal resolution">
+
+Monthly
+
+</Spec>
+<Spec label="Time period">
+
+LOCA2 simulations: 1950–2099, the modeled historical period (1950–2014) followed by SSP2-4.5, SSP3-7.0 or SSP5-8.5 (2015–2099)
+
+</Spec>
+<Spec label="Download">
+
+Browse the LOCA2 simulations in the <StacBrowserLink collection="loca2">Cal-Adapt data catalog</StacBrowserLink> (STAC), or download directly from <S3FolderLink folder="loca2/ucsd/">cloud storage</S3FolderLink> (AWS).
+
+</Spec>
+</Specs>
+
+## Output data
+
+<Specs title="Regional tables">
+<Spec label="Description">
+
+Annual average temperature and total precipitation for each year, as the mean, minimum and maximum across simulations, plus one column per simulation. ERA5 observed values are in separate tables.
+
+</Spec>
+<Spec label="Shown in">
+
+<ShownIn>
+  <ToolButton navLink={navLinks.annualClimateProjections} />
+</ShownIn>
+
+</Spec>
+<Spec label="Format">
+
+One CSV table per region, variable and scenario
+
+</Spec>
+<Spec label="Download">
+
+- WRF-derived data: Browse in the <StacBrowserLink collection="acp-boundary-csv">Cal-Adapt data catalog</StacBrowserLink> (STAC) or download directly from <S3FolderLink folder="wrf/annual-climate-projections/tmp/per_boundary/">cloud storage</S3FolderLink> (AWS)
+- LOCA2-derived data: Browse in the <StacBrowserLink collection="acp-boundary-csv">Cal-Adapt data catalog</StacBrowserLink> (STAC) or download directly from <S3FolderLink folder="loca2/annual-climate-projections/tmp/per_boundary/">cloud storage</S3FolderLink> (AWS)
+- ERA5-derived data: Browse in the <StacBrowserLink collection="acp-boundary-csv">Cal-Adapt data catalog</StacBrowserLink> (STAC) or download directly from <S3FolderLink folder="wrf/annual-climate-projections/tmp/era5_per_boundary/">cloud storage</S3FolderLink> (AWS)
+
+</Spec>
+</Specs>
+
+## Calculation steps
+
+<Step n={1} totalSteps={4} title="Data retrieval">
+
+Using Cal-Adapt's open source Python library `climakitae`, input data was retrieved. Temperature variables were converted to degrees Fahrenheit, and precipitation variables to inches. Inland water was masked from the data to discard artificially high values over water that are not representative of the variable.
+
+</Step>
+
+<Step n={2} totalSteps={4} title="Temporal aggregation">
+
+The data was aggregated by calendar year for each grid cell: an annual mean for temperature variables and an annual total for precipitation.
+
+</Step>
+
+<Step n={3} totalSteps={4} title="Spatial aggregation">
+
+Next, we aggregated the gridded data by spatial unit (e.g. county, watershed, forecast zone) by taking a **median** of all the grid cells within the boundary. A median is used to capture the typical value within the area of interest without introducing bias from any anomalous grid cells. Census tracts and electric utilities use a weighted approach instead, described below.
+
+<Callout kind="note" title="Grid cells at the edge">
+
+All grid cells within or touching the spatial boundary were included (even if not fully contained within the boundary) to avoid discarding data representative of conditions at the edge. Additionally, small spatial units such as census tracts may not fully contain any single grid cell, so an all-touched approach is generally used across Cal Adapt for consistency across spatial scales.
+
+</Callout>
+
+#### Census tract and electric utility summaries
+
+Census tracts are small geographic areas defined by the U.S. Census Bureau. Some are smaller than the climate model’s 3-kilometer grid cells, so neighboring tracts may share the same underlying climate data. Electric utilities are the service areas of investor-owned and publicly owned utilities (IOUs and POUs), and are summarized the same way due to some small service areas raising the same issues as census tracts.
+
+To calculate the value for a tract or utility, we combine values from the grid cells that overlap it. Each cell’s contribution depends on how much of that cell falls inside the boundary. For example, a cell with half its area inside the boundary receives a weight of 1/2, whereas a cell entirely within the boundary receives a weight of 1. This lets small tracts receive a value even when no grid cell falls entirely within their boundaries.
+
+We summarize each tract or utility with a weighted median: the middle value after accounting for the overlap weights. Grid cells classified as water are excluded. Areas with no overlapping land cells are left without a value rather than assigned zero.
+
+<Callout kind="note">
+
+These summaries do not add detail beyond the original 3-kilometer climate data. Nearby tracts may therefore have similar or identical values.
+
+</Callout>
+
+</Step>
+
+<Step n={4} totalSteps={4} title="Aggregate across simulations">
+
+The data for each ensemble was aggregated across all simulations to compute an ensemble mean, minimum and maximum for each year. The minimum and maximum show the range across simulations. For LOCA2, the ensemble includes every available run of each model, so models with more runs carry more weight. ERA5 is a single reanalysis, so it skips this step. The final data product is one table per region, variable and scenario, with the ensemble statistics and the annual value for each simulation.
+
+</Step>
+
+<CitationBox title="Data Methods: Annual Climate Projections" />
