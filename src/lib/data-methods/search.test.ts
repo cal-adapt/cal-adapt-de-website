@@ -43,6 +43,15 @@ describe("filterDataMethodsEntries", () => {
     expect(ids("threshold")).toEqual(["extreme-heat-days", "warm-nights"]);
   });
 
+  it("matches the keyword tags", () => {
+    expect(ids("energy demand")).toEqual(["cooling-degree-days"]);
+  });
+
+  it("treats a trailing s on a term as optional", () => {
+    expect(ids("energy demands")).toEqual(["cooling-degree-days"]);
+    expect(ids("nights")).toEqual(["warm-nights"]);
+  });
+
   it("requires every term to match, in any order", () => {
     expect(ids("threshold nights")).toEqual(["warm-nights"]);
     expect(ids("nights 65")).toEqual([]);
