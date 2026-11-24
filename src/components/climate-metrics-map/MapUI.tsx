@@ -1,10 +1,10 @@
 // MapUI
-// Side panel of controls for the Climate Metrics Map: value type, metric, and GWL selectors,
+// Side panel of controls for the Climate Metrics Map: metric, data type, and GWL selectors,
 // plus the metric's fixed threshold.
 
 "use client";
 
-import React, { useEffect } from "react";
+import { type ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import LocalFireDepartmentOutlinedIcon from "@mui/icons-material/LocalFireDepartmentOutlined";
@@ -39,14 +39,12 @@ const VALUE_TYPE_HINT = "Show projected values or the change from the historical
 
 /** Icon shown next to each metric in the dropdown, keyed by metric slug. The heat
  *  metrics share the thermometer used for the Extreme Heat tool in the side nav. */
-const METRIC_ICONS: Record<string, React.ReactNode> = {
+const METRIC_ICONS: Record<string, ReactNode> = {
   "extreme-heat": <ThermostatOutlinedIcon />,
   "warm-nights": <ThermostatOutlinedIcon />,
   "extreme-precipitation": <WaterDropOutlinedIcon />,
   "fire-weather": <LocalFireDepartmentOutlinedIcon />,
 };
-
-const THRESHOLD_HINT = "The threshold used to define an extreme event for this metric.";
 
 type MapUIProps = {
   metricSelected: number;
@@ -73,11 +71,10 @@ export default function MapUI({
   const router = useRouter();
   const selectedMetric = metrics[metricSelected] ?? metrics[0];
   const methodsHref = dataMethodsHref(selectedMetric.methodsPage);
+  // Heat metrics link to the Extreme Heat tool (while it's enabled), opened on the same variable
   const heatToolHref =
     selectedMetric.heatToolVariable && isNavLinkEnabled(navLinks.extremeHeatDays)
-      ? selectedMetric.heatToolVariable === "extreme-heat-days"
-        ? navLinks.extremeHeatDays.href
-        : `${navLinks.extremeHeatDays.href}?variable=${selectedMetric.heatToolVariable}`
+      ? `${navLinks.extremeHeatDays.href}?variable=${selectedMetric.heatToolVariable}`
       : undefined;
 
   const handleMetricChange = (value: string) => {
@@ -176,7 +173,6 @@ export default function MapUI({
       <LabelValue
         className={styles.threshold}
         label="Threshold"
-        hint={THRESHOLD_HINT}
         value={
           <>
             {selectedMetric.thresholdLabel}

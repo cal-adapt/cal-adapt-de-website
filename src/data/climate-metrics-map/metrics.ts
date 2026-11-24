@@ -45,10 +45,11 @@ export type Metric = {
 
 const EXTREME_HEAT_BASE = "s3://cadcat/wrf/extreme-heat-tool/multimodel_gridded";
 
-// Extreme Heat Days and Warm Nights share legend scales so the two maps compare
-// directly. Absolute tops out near the 90th percentile of California grid cells at
-// 3.0°C (142 days / 142 nights), leaving room to show coastal differences; delta
-// near the 98th (45 / 48). Both are fixed across warming levels.
+// Extreme Heat Days and Warm Nights share an absolute scale so the two maps compare
+// directly. It tops out near the 90th percentile of California grid cells at 3.0°C
+// (142 days / 142 nights), leaving room to show coastal differences. Delta scales are
+// set per metric: Warm Nights near the 98th percentile (48 nights), Extreme Heat Days
+// lower (40) for more contrast. All scales are fixed across warming levels.
 
 // Array order is dropdown order; the map refers to metrics by index.
 export const metrics: Metric[] = [
@@ -76,7 +77,7 @@ export const metrics: Metric[] = [
       short_desc:
         "Change in how many days during the year are expected to reach 95°F or hotter (# of days)",
       variable: "t2max_ge95F",
-      rescale: "0,50",
+      rescale: "0,40",
       colormap: "cal-adapt-extreme-heat",
     },
     thresholdLabel: "95°F",
