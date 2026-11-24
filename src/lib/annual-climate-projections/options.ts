@@ -175,7 +175,7 @@ export function getScenario(ensemble: Ensemble, scenario: string): ScenarioConfi
 const STATE_AGGREGATION: SpatialAggregationConfig = {
   value: "state",
   label: "State",
-  description: "All of California",
+  description: "Statewide boundary of California",
   regionSuffix: "",
   locations: [{ value: "California", label: "California" }],
   defaultLocation: "California",
