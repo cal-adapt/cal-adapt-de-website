@@ -91,7 +91,6 @@ export default function Controls({
           checked={advanced}
           onChange={onAdvancedChange}
         />
-        {/* TODO: advanced view description copy */}
 
         {advanced && (
           <>
