@@ -39,6 +39,8 @@ export default function Controls({
   onShowSimulationsChange,
   disabled = false,
 }: ControlsProps) {
+  const scenarioOptions = scenarioOptionsFor(selections.ensemble);
+
   return (
     <div className={styles.root}>
       <FormField
@@ -107,8 +109,9 @@ export default function Controls({
               <Select
                 value={selections.scenario}
                 onChange={(scenario) => onChange({ ...selections, scenario })}
-                options={scenarioOptionsFor(selections.ensemble)}
-                disabled={disabled}
+                options={scenarioOptions}
+                // WRF only has SSP3-7.0, so there is nothing to choose.
+                disabled={disabled || scenarioOptions.length < 2}
               />
             </FormField>
             <Switch
