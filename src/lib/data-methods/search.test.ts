@@ -21,6 +21,10 @@ const ENTRIES: readonly DataMethodsEntry[] = [
     summary: "How much daily average temperatures exceed 65 °F.",
     tags: ["Energy demand"],
   }),
+  entry("renewables", "Solar & Wind Resource Droughts", {
+    summary: "Days of reduced solar and wind energy generation potential.",
+    tags: ["Renewable energy"],
+  }),
 ];
 
 function ids(query: string, tags: DataMethodsTag[] = []): string[] {
@@ -43,6 +47,15 @@ describe("filterDataMethodsEntries", () => {
     expect(ids("threshold")).toEqual(["extreme-heat-days", "warm-nights"]);
   });
 
+  it("matches the keyword tags", () => {
+    expect(ids("energy demand")).toEqual(["cooling-degree-days"]);
+  });
+
+  it("forgives plurals and small typos", () => {
+    expect(ids("renewables")).toEqual(["renewables"]);
+    expect(ids("overnigt")).toEqual(["warm-nights"]);
+  });
+
   it("requires every term to match, in any order", () => {
     expect(ids("threshold nights")).toEqual(["warm-nights"]);
     expect(ids("nights 65")).toEqual([]);
@@ -55,8 +68,8 @@ describe("filterDataMethodsEntries", () => {
   it("keeps entries carrying any selected tag", () => {
     expect(ids("", ["Energy demand"])).toEqual(["cooling-degree-days"]);
     expect(ids("", ["Extreme heat"])).toEqual(["extreme-heat-days", "warm-nights"]);
-    expect(ids("", ["Extreme heat", "Energy demand"])).toHaveLength(ENTRIES.length);
-    expect(ids("", ["Renewable energy"])).toEqual([]);
+    expect(ids("", ["Extreme heat", "Energy demand"])).toHaveLength(3);
+    expect(ids("", ["Precipitation"])).toEqual([]);
   });
 
   it("combines tags with the search query", () => {
