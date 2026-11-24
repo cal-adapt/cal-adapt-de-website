@@ -59,8 +59,7 @@ export default function ClimateMetricsMapChart({
             colormap={layer.colormap}
             min={legendMin}
             max={legendMax}
-            bins={layer.bins}
-            labelStep={layer.legendLabelStep}
+            tickStep={layer.legendTickStep}
             title={layer.description}
             fill
           />

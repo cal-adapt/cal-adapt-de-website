@@ -7,14 +7,14 @@
 
 import { useEffect, useState } from "react";
 
-import Grid from "@mui/material/Unstable_Grid2";
-
 import { metrics } from "@/data/climate-metrics-map/metrics";
 import { calAdaptApi } from "@/lib/cal-adapt-api";
 import { DEFAULT_GWL, type ValueType } from "@/lib/climate-metrics-map/options";
 
 import MapboxMap from "./MapboxMap";
 import MapUI from "./MapUI";
+
+import styles from "./ClimateMetricsMap.module.scss";
 
 export default function ClimateMetricsMap() {
   const [selectedGwlIndex, setSelectedGwlIndex] = useState<number>(0);
@@ -49,32 +49,28 @@ export default function ClimateMetricsMap() {
   }, [selectedMetricIndex, valueType]);
 
   return (
-    <Grid
-      container
-      sx={{
-        height: "100%",
-        flexDirection: "column",
-        flexWrap: "nowrap",
-        flexGrow: 1,
-      }}
-    >
-      <MapUI
-        globalWarmingLevels={gwlList}
-        metrics={metrics}
-        gwlSelected={selectedGwlIndex}
-        setGwlSelected={setSelectedGwlIndex}
-        metricSelected={selectedMetricIndex}
-        setMetricSelected={setSelectedMetricIndex}
-        valueType={valueType}
-        setValueType={setValueType}
-      />
-      <MapboxMap
-        gwlSelected={selectedGwlIndex}
-        metricSelected={selectedMetricIndex}
-        globalWarmingLevels={gwlList}
-        metrics={metrics}
-        valueType={valueType}
-      />
-    </Grid>
+    <div className={styles.root}>
+      <div className={styles.mapArea}>
+        <MapboxMap
+          gwlSelected={selectedGwlIndex}
+          metricSelected={selectedMetricIndex}
+          globalWarmingLevels={gwlList}
+          metrics={metrics}
+          valueType={valueType}
+        />
+      </div>
+      <aside className={styles.controlsArea} aria-label="Map controls">
+        <MapUI
+          globalWarmingLevels={gwlList}
+          metrics={metrics}
+          gwlSelected={selectedGwlIndex}
+          setGwlSelected={setSelectedGwlIndex}
+          metricSelected={selectedMetricIndex}
+          setMetricSelected={setSelectedMetricIndex}
+          valueType={valueType}
+          setValueType={setValueType}
+        />
+      </aside>
+    </div>
   );
 }

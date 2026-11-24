@@ -165,7 +165,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
 
     // Depend on everything that goes into the request: absolute and delta layers
     // can share a variable name, so `paths.mean` is what changes on a tab switch.
-    const colorTable = buildColorTable(paths.colormap, rescaleMin, rescaleMax, paths.bins);
+    const colorTable = buildColorTable(paths.colormap, rescaleMin, rescaleMax);
     useEffect(() => {
       async function loadTileJson() {
         try {
@@ -563,8 +563,7 @@ const MapboxMap = forwardRef<MapRef | undefined, MapProps>(
                   colormap={paths.colormap}
                   min={rescaleMin}
                   max={rescaleMax}
-                  bins={paths.bins}
-                  labelStep={paths.legendLabelStep}
+                  tickStep={paths.legendTickStep}
                   title={paths.description}
                 />
               </div>

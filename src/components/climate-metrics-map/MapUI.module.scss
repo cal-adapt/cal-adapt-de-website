@@ -1,42 +1,36 @@
 @use "@/styles/abstracts" as *;
 
 .mapUI {
-  z-index: z(2);
-  position: absolute;
+  @include flex(column, flex-start, stretch, spacer(4));
   width: 100%;
-  height: auto;
-  padding: spacer(3) spacer(4);
-  pointer-events: none;
-  max-width: 100%;
-  overflow: hidden;
+}
 
-  @include breakpoint(large) {
-    padding: spacer(3) spacer(7);
-  }
+.title {
+  margin: 0;
+  color: color(black);
+  @include type-item(heading-5);
+}
 
-  .parameterSelection {
-    @include flex(column, $gap: spacer(4));
-    width: 280px;
-    max-width: 100%;
-    pointer-events: auto;
+.intro {
+  margin: calc(-1 * #{spacer(2)}) 0 spacer(2);
+  color: color(grey-4);
+  @include type-item(small);
+}
 
-    .container {
-      @include flex(column, center, center);
-    }
+.methodsNote {
+  margin: 0;
+  color: color(grey-4);
+  @include type-item(small);
+}
 
-    @media (max-height: 680px) {
-      // Adjust this breakpoint for smaller laptops
-      flex-direction: row;
-      width: auto;
-    }
-  }
+// Tighter label/value gap so the read-only threshold sits like the fields above it.
+.threshold {
+  gap: spacer(2);
+}
 
-  .helpButton {
-    pointer-events: auto;
-    margin-right: spacer(2) !important;
-
-    @include breakpoint(large) {
-      margin-right: 50px !important;
-    }
-  }
+.thresholdNote {
+  display: block;
+  margin-top: spacer(3);
+  color: color(grey-4);
+  @include type-item(small);
 }

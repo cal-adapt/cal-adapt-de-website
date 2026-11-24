@@ -9,10 +9,9 @@ export const tooltips: Tooltip[] = [
   {
     id: 0,
     title: "Global Warming Level",
-    long_text:
-      "A global warming level refers to the increase in global-mean temperature with respect to preindustrial conditions.",
+    long_text: "Global mean temperature increase relative to the 1850-1900 pre-industrial baseline",
     short_text:
-      "A global warming level refers to the increase in global-mean temperature with respect to preindustrial conditions.",
+      "Global mean temperature increase relative to the 1850-1900 pre-industrial baseline",
   },
   {
     id: 1,
