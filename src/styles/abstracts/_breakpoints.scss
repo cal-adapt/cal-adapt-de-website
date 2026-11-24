@@ -85,3 +85,9 @@ $breakpoints-max: (
     @warn "Error: Breakpoint `#{$breakpoint}` not found.";
   }
 }
+
+@mixin print {
+  @media print {
+    @content;
+  }
+}

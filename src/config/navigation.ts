@@ -12,23 +12,18 @@ export interface NavLink {
   external?: boolean;
   /** When set, the link is only shown if the corresponding feature flag is enabled. */
   featureFlag?: FeatureFlagKey;
-  /** Optional nested pages rendered as an indented sub-navigation group */
+  /** Nested pages under this link; they form the second level of the dashboard breadcrumb. */
   children?: readonly NavLink[];
-  /** When true, child links stay visible even if this item is not the active route. */
-  alwaysShowChildren?: boolean;
-  /** When true, children drive breadcrumbs only and are not listed in the sidebar. */
-  hideChildrenInSidebar?: boolean;
-  /**
-   * When false, child hrefs omit the current URL query string.
-   * Defaults to true so tool subnavs keep chart/map selections.
-   */
-  persistQuery?: boolean;
+  /** When true, the dashboard renders this section on phones instead of the desktop-only message. */
+  supportsMobile?: boolean;
 }
 
 export interface NavGroup {
   id: string;
   label: string;
-  links: NavLink[];
+  links: readonly NavLink[];
+  /** The links are still in user testing; menus say so beside the section's heading. */
+  beta?: boolean;
 }
 
 export type NavItem = NavLink | NavGroup;
@@ -49,7 +44,9 @@ export function isNavLinkEnabled(link: NavLink): boolean {
   return link.featureFlag == null || featureFlags[link.featureFlag];
 }
 
+const CLIMATE_STORIES_FLAG = "__FF_CLIMATE_STORIES__" satisfies FeatureFlagKey;
 const DATA_METHODS_HREF = "/dashboard/data-methods";
+const ANALYTICS_GUIDANCE_URL = "https://analytics.cal-adapt.org/guidance/";
 
 /** Data methods pages, in display order (alphabetical by label). */
 const dataMethodsPages = [
@@ -103,14 +100,21 @@ export const navLinks = {
     id: "climate-stories",
     label: "Climate Stories",
     href: CLIMATE_STORIES_HREF,
-    featureFlag: "__FF_CLIMATE_STORIES__",
-    alwaysShowChildren: true,
-    persistQuery: false,
+    featureFlag: CLIMATE_STORIES_FLAG,
+    supportsMobile: true,
     children: climateStories.map((story) => ({
       id: story.id,
       label: story.label ?? story.title,
       href: story.href,
+      featureFlag: CLIMATE_STORIES_FLAG,
     })),
+  },
+  /** The climate stories catalog page, as listed among the stories themselves. */
+  allClimateStories: {
+    id: "all-climate-stories",
+    label: "All Stories",
+    href: CLIMATE_STORIES_HREF,
+    featureFlag: CLIMATE_STORIES_FLAG,
   },
   climateMetricsMap: {
     id: "climate-metrics-map",
@@ -148,9 +152,14 @@ export const navLinks = {
     label: "Data Methods",
     href: DATA_METHODS_HREF,
     featureFlag: "__FF_DATA_METHODS__",
-    hideChildrenInSidebar: true,
-    persistQuery: false,
     children: dataMethodsPages.filter(isNavLinkEnabled),
+  },
+  glossary: {
+    id: "glossary",
+    label: "Glossary",
+    href: "/dashboard/glossary",
+    featureFlag: "__FF_GLOSSARY__",
+    supportsMobile: true,
   },
   fourthAssessment: {
     id: "fourth-assessment",
@@ -161,7 +170,13 @@ export const navLinks = {
   guidance: {
     id: "guidance",
     label: "Guidance",
-    href: "https://analytics.cal-adapt.org/guidance/",
+    href: ANALYTICS_GUIDANCE_URL,
+    external: true,
+  },
+  moreGuidance: {
+    id: "more-guidance",
+    label: "More Guidance",
+    href: ANALYTICS_GUIDANCE_URL,
     external: true,
   },
   data: {
@@ -184,21 +199,117 @@ export const navLinks = {
   },
 } as const satisfies Record<string, NavLink>;
 
-export const navGroups = {
-  stories: {
-    id: "stories",
+/**
+ * The site's information architecture: every navigable page, grouped into sections.
+ * Key order is display order. Links are already filtered by feature flag, so a
+ * section can be empty in some environments; use `enabledNavSections` to render.
+ */
+export const navSections = {
+  climateStories: {
+    id: "climate-stories",
     label: "Climate Stories",
-    links: [navLinks.climateStories].filter(isNavLinkEnabled),
+    links: [navLinks.allClimateStories, ...navLinks.climateStories.children].filter(
+      isNavLinkEnabled
+    ),
   },
   tools: {
     id: "tools",
     label: "Tools",
-    links: [
-      navLinks.climateMetricsMap,
-      navLinks.dataDownload,
-      navLinks.extremeHeatDays,
-      navLinks.hddCdd,
-      navLinks.renewablesVisualizer,
-    ].filter(isNavLinkEnabled),
+    links: [navLinks.climateMetricsMap, navLinks.dataDownload].filter(isNavLinkEnabled),
+  },
+  betaTools: {
+    id: "beta-tools",
+    label: "Beta Tools",
+    beta: true,
+    links: [navLinks.extremeHeatDays, navLinks.hddCdd, navLinks.renewablesVisualizer].filter(
+      isNavLinkEnabled
+    ),
+  },
+  guidance: {
+    id: "guidance",
+    label: "Guidance",
+    links: [navLinks.dataMethods, navLinks.glossary, navLinks.moreGuidance].filter(
+      isNavLinkEnabled
+    ),
   },
 } as const satisfies Record<string, NavGroup>;
+
+export type NavSectionId = (typeof navSections)[keyof typeof navSections]["id"];
+
+export interface NavSection extends NavGroup {
+  id: NavSectionId;
+}
+
+/** Sections with at least one link in this environment, in display order. */
+export const enabledNavSections: readonly NavSection[] = Object.values(navSections).filter(
+  (section) => section.links.length > 0
+);
+
+/**
+ * A site menu: a section whose links are listed directly, followed by related
+ * sections shown under their own headings (e.g. Beta Tools inside Tools).
+ */
+export interface NavMenu extends NavSection {
+  subsections: readonly NavSection[];
+  /** The section's own landing page. The site header links straight to it instead of opening a menu. */
+  landing?: NavLink;
+  /** Shown on phones in place of links that only work on larger screens. */
+  phoneNote?: string;
+}
+
+function navMenu(
+  section: NavSection,
+  {
+    subsections = [],
+    extraLinks = [],
+    landing,
+    phoneNote,
+  }: {
+    subsections?: readonly NavSection[];
+    /** Links the header lists after the section's own, which the sidebar doesn't show. */
+    extraLinks?: readonly NavLink[];
+    landing?: NavLink;
+    phoneNote?: string;
+  } = {}
+): NavMenu {
+  return {
+    ...section,
+    links: [...section.links, ...extraLinks.filter(isNavLinkEnabled)],
+    subsections: subsections.filter((subsection) => subsection.links.length > 0),
+    landing,
+    phoneNote,
+  };
+}
+
+/**
+ * Site header menus: the dashboard sidebar's sections, grouped more coarsely.
+ * Only menus with at least one link, in display order.
+ */
+export const navMenus: readonly NavMenu[] = [
+  navMenu(navSections.climateStories, { landing: navLinks.allClimateStories }),
+  navMenu(navSections.tools, {
+    subsections: [navSections.betaTools],
+    phoneNote: "Open the tools on a tablet or computer.",
+  }),
+  // The sidebar doesn't list Data Docs; the header keeps it from the previous top bar.
+  navMenu(navSections.guidance, { extraLinks: [navLinks.data] }),
+].filter((menu) => menu.links.length > 0 || menu.subsections.length > 0);
+
+/** IDs of every dashboard tool, stable or beta, whether or not its feature flag is on. */
+export type ToolId =
+  | (typeof navSections.tools.links)[number]["id"]
+  | (typeof navSections.betaTools.links)[number]["id"];
+
+/** Every dashboard tool, stable then beta. */
+export const toolLinks: readonly NavLink[] = [
+  ...navSections.tools.links,
+  ...navSections.betaTools.links,
+];
+
+/** Dashboard pages that head a breadcrumb trail; their `children` form the second level. */
+export const dashboardPages: readonly NavLink[] = [
+  navLinks.climateStories,
+  ...toolLinks,
+  navLinks.dataMethods,
+  navLinks.glossary,
+].filter(isNavLinkEnabled);

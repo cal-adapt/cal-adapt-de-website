@@ -6,8 +6,9 @@ import SiteBanner from "@/components/common/layout/SiteBanner";
 import ThemeRegistry from "@/components/common/theme/ThemeRegistry";
 import Button from "@/components/common/ui/Button";
 import Link from "@/components/common/ui/Link";
-import { ANALYTICS_ENGINE_URL, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/config/constants";
+import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/config/constants";
 import { featureFlags } from "@/config/feature-flags";
+import { navLinks } from "@/config/navigation";
 import { LeftDrawerProvider } from "@/context/LeftDrawerContext";
 
 import "@/styles/global.scss";
@@ -33,8 +34,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
         </Button>
         {showBanner && (
           <SiteBanner>
-            The Cal-Adapt: Analytics Engine website has a new look and improved navigation.{" "}
-            <Link href={ANALYTICS_ENGINE_URL}>Explore the new site!</Link>
+            Just launched: See how extreme heat days could change where you live.{" "}
+            <Link href={navLinks.extremeHeatDays.href}>Explore now →</Link>
           </SiteBanner>
         )}
         <ThemeRegistry options={{ key: "mui-theme" }}>

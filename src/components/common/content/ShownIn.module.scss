@@ -1,0 +1,6 @@
+@use "@/styles/abstracts" as *;
+
+.row {
+  @include flex(row, flex-start, center, spacer(2));
+  flex-wrap: wrap;
+}

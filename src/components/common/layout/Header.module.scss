@@ -1,122 +1,292 @@
 @use "@/styles/abstracts" as *;
 
+$bar-height: 72px;
+$panel-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+
 .header {
   position: absolute;
   top: var(--banner-height, 0px);
   left: 0;
   right: 0;
   z-index: z(3);
+}
 
-  .nav {
-    @include flex(row, center, center);
-    position: relative;
-    width: 100%;
-    max-width: max-w(global);
-    margin: 0 auto;
-    color: white;
+.nav {
+  @include flex(row, flex-start, center, spacer(4));
+  position: relative;
+  width: 100%;
+  max-width: max-w(global);
+  height: $bar-height;
+  margin: 0 auto;
+  padding: 0 spacer(4);
+  color: color(white);
+
+  @include breakpoint(large) {
+    padding: 0 spacer(6);
+  }
+}
+
+.logoLink {
+  @include flex(row, center, center);
+  flex-shrink: 0;
+
+  .logo {
+    height: 2.25em;
+  }
+}
+
+.links {
+  display: none;
+
+  @include breakpoint(large) {
+    @include flex(row, flex-start, center, spacer(1));
+    margin-left: spacer(4);
+  }
+}
+
+.actions {
+  @include flex(row, flex-end, center, spacer(2));
+  margin-left: auto;
+}
+
+.navItem {
+  @include type-item(button);
+  @include flex(row, center, center, spacer(1));
+  @include transition("background-color");
+  @include focus-ring;
+  background-color: transparent;
+  color: inherit;
+  padding: spacer(2) spacer(3);
+  border: none;
+  border-radius: rounded(2);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover,
+  &.navItemOpen {
+    background-color: rgba(255, 255, 255, 0.12);
+    text-decoration: none;
+  }
+}
+
+.quietLink {
+  display: none;
+  opacity: 0.85;
+
+  &:hover {
+    opacity: 1;
   }
 
-  .mobile {
-    @include flex;
+  @include breakpoint(large) {
+    display: inline-flex;
+  }
+}
+
+.cta {
+  display: none;
+  white-space: nowrap;
+
+  @include breakpoint(medium) {
+    display: inline-flex;
+  }
+}
+
+.chevron {
+  @include transition("transform");
+  flex-shrink: 0;
+
+  &.chevronOpen {
+    transform: rotate(180deg);
+  }
+}
+
+.externalIcon {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+/* ---------- Desktop panels ---------- */
+
+.menu {
+  position: relative;
+}
+
+.panel {
+  position: absolute;
+  top: calc(100% + spacer(2));
+  left: 0;
+  min-width: 220px;
+  padding: spacer(2);
+  background-color: color(white);
+  color: color(black);
+  border-radius: rounded(2);
+  box-shadow: $panel-shadow;
+
+  // Invisible bridge over the gap below the button, so hover survives the trip to the panel.
+  &::before {
+    content: "";
     position: absolute;
-    top: 50%;
-    left: spacer(4);
-    transform: translateY(-50%);
-
-    @include breakpoint(medium) {
-      display: none;
-    }
+    right: 0;
+    bottom: 100%;
+    left: 0;
+    height: spacer(2);
   }
+}
 
-  .tabletTools {
-    display: none;
-    position: absolute;
-    top: 50%;
-    right: spacer(4);
-    transform: translateY(-50%);
+.panelSubsection {
+  margin-top: spacer(2);
+  padding-top: spacer(4);
+  border-top: 1px solid color(grey-2);
+}
 
-    @include breakpoint(small) {
-      display: block;
-    }
+.panelHeading {
+  @include type-item(overline);
+  @include flex(row, flex-start, center, spacer(2));
+  margin: 0 0 spacer(2);
+  padding: 0 spacer(2);
+  color: color(grey-4);
+}
 
-    @include breakpoint(medium) {
-      display: none;
-    }
+.betaNote {
+  text-transform: none;
+  letter-spacing: 0;
+
+  &::before {
+    content: "·";
+    margin-right: spacer(2);
   }
+}
 
-  .desktop {
-    @include flex(row, center, center);
-    width: 100%;
-    height: 72px;
-    margin: 0 auto;
-    padding: spacer(6);
+.panelList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
 
-    .left,
-    .right {
-      display: none;
+.toolLink {
+  @include type-item(body);
+  @include flex(row, flex-start, center, spacer(3));
+  @include transition("background-color");
+  padding: spacer(2);
+  border-radius: rounded(2);
+  text-decoration: none;
+  white-space: nowrap;
 
-      @include breakpoint(medium) {
-        @include flex(row, center, center, spacer(2));
-        flex: 1;
-      }
-    }
-
-    .left {
-      justify-content: flex-start;
-    }
-
-    .right {
-      justify-content: flex-end;
-    }
-  }
-
-  .navItem {
-    @include type-item(overline);
-    @include flex(row, center, center, spacer(2));
-    @include transition("background-color");
-    background-color: transparent;
-    padding: spacer(3) spacer(4);
-    border: none;
-    border-radius: rounded(2);
-    cursor: pointer;
+  &:hover {
+    background-color: color(grey-1);
     text-decoration: none;
 
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-  }
-
-  .logoWrapper {
-    @include flex(row, center, center);
-    position: absolute;
-    height: 100%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: z(1);
-
-    .navItem {
-      &:hover {
-        background-color: transparent;
-      }
-    }
-
-    .logo {
-      height: 2.25em;
+    .iconTile {
+      background-color: color(blue-2);
     }
   }
 }
 
-.menuItem {
-  font-size: 0.9em !important;
+$tile-size: 32px;
+
+.iconTile {
+  @include flex(row, center, center);
+  @include transition("background-color");
+  flex-shrink: 0;
+  width: $tile-size;
+  height: $tile-size;
+  border-radius: rounded(2);
+  background-color: color(blue-1);
+  color: color(blue-4);
 }
 
-.menuItemNested {
-  padding-left: spacer(7) !important;
+.compactLink {
+  @include flex(row, flex-start, center, spacer(2));
+  @include transition("background-color");
+  padding: spacer(2);
+  border-radius: rounded(1);
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: color(grey-1);
+    text-decoration: none;
+  }
 }
 
-.menuGroupLabel {
-  font-size: 0.9em !important;
-  opacity: 1 !important;
-  font-weight: font-weight(bold);
+/* ---------- Mobile ---------- */
+
+.mobile {
+  @include flex;
+
+  @include breakpoint(large) {
+    display: none;
+  }
+}
+
+.menuButton {
+  @include flex(row, center, center);
+  @include focus-ring;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  border: none;
+  border-radius: rounded(2);
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+}
+
+.sheet {
+  position: absolute;
+  top: calc(100% + spacer(2));
+  left: spacer(4);
+  right: spacer(4);
+  max-height: calc(100dvh - #{$bar-height} - var(--banner-height, 0px) - #{spacer(4)});
+  overflow-y: auto;
+  padding: spacer(2);
+  background-color: color(white);
+  color: color(black);
+  border-radius: rounded(2);
+  box-shadow: $panel-shadow;
+
+  @include breakpoint(medium) {
+    left: auto;
+    width: 360px;
+  }
+}
+
+// Dividers sit below each group, so a group hidden on phones never leaves a stray line on top.
+.sheetGroup {
+  padding: spacer(2) 0;
+  border-bottom: 1px solid color(grey-2);
+}
+
+.sheetHeading {
+  @include type-item(heading-6);
+  margin: 0 0 spacer(1);
+  padding: spacer(1) spacer(2);
+}
+
+.sheetNote {
+  @include type-item(small);
+  margin: 0;
+  padding: 0 spacer(2) spacer(1);
+  color: color(grey-4);
+}
+
+.sheetFooter {
+  padding-top: spacer(2);
+}
+
+.phoneOnly {
+  @include breakpoint(small) {
+    display: none;
+  }
+}
+
+.desktopOnly {
+  @include breakpoint-max(small) {
+    display: none;
+  }
 }

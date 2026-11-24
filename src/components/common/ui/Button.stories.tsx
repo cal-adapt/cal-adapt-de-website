@@ -58,6 +58,15 @@ export const Accent: Story = {
   },
 };
 
+export const Outline: Story = {
+  args: {
+    variant: "outline",
+    size: "compact",
+    children: "Outline",
+    prefix: <Icon variant="info" aria-hidden />,
+  },
+};
+
 export const Skip: Story = {
   args: {
     variant: "skip",
@@ -114,8 +123,8 @@ export const WithSuffixIcon: Story = {
 
 export const VariantMatrix: Story = {
   render: () => {
-    const variants = ["primary", "secondary", "tertiary", "accent"] as const;
-    const sizes = ["large", "small"] as const;
+    const variants = ["primary", "secondary", "tertiary", "accent", "outline"] as const;
+    const sizes = ["large", "small", "compact"] as const;
 
     return (
       <div style={{ display: "grid", gap: "16px", minWidth: "840px" }}>

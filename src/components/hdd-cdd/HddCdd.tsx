@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import { CHART_SOURCE } from "@/components/common/charts/ChartFrame";
 import BetaFeedbackAlert from "@/components/common/content/BetaFeedbackAlert";
 import Callout from "@/components/common/content/Callout";
 import InterpretSection from "@/components/common/content/InterpretSection";
@@ -11,6 +12,7 @@ import Button from "@/components/common/ui/Button";
 import Icon from "@/components/common/ui/Icon";
 import Link from "@/components/common/ui/Link";
 import PageLayout from "@/components/dashboard/PageLayout";
+import GlossaryTerm from "@/components/glossary/GlossaryTerm";
 import { dataMethodsHref } from "@/config/data-methods";
 import { navLinks } from "@/config/navigation";
 import { useStacSeries } from "@/hooks/use-stac-series";
@@ -79,11 +81,11 @@ export default function HddCdd() {
   const handleExportChart = useCallback(() => {
     const svg = chartContainerRef.current?.querySelector<SVGSVGElement>("svg");
     if (!svg) return;
-    exportSvgAsPng(svg, formatChartExportFilename(selections.climateVariable, locationLabel)).catch(
-      (error) => {
-        console.error("[hdd-cdd] chart export failed:", error);
-      }
-    );
+    exportSvgAsPng(svg, formatChartExportFilename(selections.climateVariable, locationLabel), {
+      footnote: CHART_SOURCE,
+    }).catch((error) => {
+      console.error("[hdd-cdd] chart export failed:", error);
+    });
   }, [selections.climateVariable, locationLabel]);
 
   return (
@@ -102,12 +104,13 @@ export default function HddCdd() {
 
       <div className={styles.intro}>
         <p className={styles.introCopy}>
-          Heating Degree Days (HDDs) and Cooling Degree Days (CDDs) are measures of the average
-          daily temperature departure from a 65°F threshold. These metrics are used to translate
-          outdoor temperatures into estimated energy demand from indoor heating and cooling. HDDs
-          quantify how much and how long outdoor temperatures fall below 65°F, reflecting demand for
-          indoor heating. CDDs quantify how much and how long outdoor temperatures exceed 65°F,
-          reflecting demand for indoor cooling.
+          <GlossaryTerm id="heating-degree-days">Heating Degree Days (HDDs)</GlossaryTerm> and{" "}
+          <GlossaryTerm id="cooling-degree-days">Cooling Degree Days (CDDs)</GlossaryTerm> are
+          measures of the average daily temperature departure from a 65°F threshold. These metrics
+          are used to translate outdoor temperatures into estimated energy demand from indoor
+          heating and cooling. HDDs quantify how much and how long outdoor temperatures fall below
+          65°F, reflecting demand for indoor heating. CDDs quantify how much and how long outdoor
+          temperatures exceed 65°F, reflecting demand for indoor cooling.
         </p>
         <p className={styles.introCopy}>
           Cooling is a major driver of peak electricity demand in California, so looking at

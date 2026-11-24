@@ -51,6 +51,7 @@ export default function CitationBox({ title, bordered = true, className }: Citat
           type="button"
           variant="tertiary"
           size="small"
+          className={styles.copy}
           prefix={<Icon variant={copied ? "check" : "copy"} width={16} height={16} aria-hidden />}
           onClick={handleCopy}
         >

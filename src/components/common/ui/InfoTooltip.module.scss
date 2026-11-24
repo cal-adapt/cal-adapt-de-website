@@ -86,8 +86,8 @@
   &::before {
     left: 0;
     right: 0;
-    bottom: -#{spacer(3)};
-    height: #{spacer(3)};
+    bottom: calc(-1 * #{spacer(3)});
+    height: spacer(3);
   }
 
   &::after {
@@ -107,8 +107,8 @@
   &::before {
     left: 0;
     right: 0;
-    top: -#{spacer(3)};
-    height: #{spacer(3)};
+    top: calc(-1 * #{spacer(3)});
+    height: spacer(3);
   }
 
   &::after {
@@ -128,8 +128,8 @@
   &::before {
     top: 0;
     bottom: 0;
-    right: -#{spacer(3)};
-    width: #{spacer(3)};
+    right: calc(-1 * #{spacer(3)});
+    width: spacer(3);
   }
 
   &::after {
@@ -149,8 +149,8 @@
   &::before {
     top: 0;
     bottom: 0;
-    left: -#{spacer(3)};
-    width: #{spacer(3)};
+    left: calc(-1 * #{spacer(3)});
+    width: spacer(3);
   }
 
   &::after {

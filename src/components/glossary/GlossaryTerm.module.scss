@@ -48,8 +48,8 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: -#{spacer(3)};
-    height: #{spacer(3)};
+    top: calc(-1 * #{spacer(3)});
+    height: spacer(3);
   }
 }
 
@@ -70,4 +70,8 @@
   @include type-item(small);
   font-weight: font-weight(regular);
   color: color(grey-5);
+}
+
+.more {
+  @include type-item(small);
 }

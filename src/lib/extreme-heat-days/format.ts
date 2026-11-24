@@ -39,8 +39,8 @@ export function formatViewSubtitle(selections: ExtremeHeatDaysSelections): strin
   const metric = getHeatMetric(selections.climateVariable);
   const threshold = formatThresholdLabel(selections.threshold);
   const thresholdPhrase = selections.threshold.endsWith("pctl") ? `the ${threshold}` : threshold;
-  // The heatmap's statistic already names what is measured.
-  if (metric.chartKind === "heatmap") return `${metric.statisticLabel} above ${thresholdPhrase}`;
+  // The heatmap's statistic already names what is measured and ends in its verb ("tops").
+  if (metric.chartKind === "heatmap") return `${metric.statisticLabel} ${thresholdPhrase}`;
   const noun = metric.usesDuration
     ? `${formatDurationLabel(selections.duration)} ${metric.accessibleNoun}`
     : metric.accessibleNoun;
@@ -123,7 +123,7 @@ export function formatSeasonDescription(
   });
   return (
     `Heatmap for ${regionLabelFor(selections)}. ${formatViewSubtitle(selections)}, ` +
-    `as the percent of years in each 30-year window, by day of year (1 to 365) and global warming level ` +
+    `in each 30-year window, by day of year (1 to 365) and global warming level ` +
     `(${levels.map(formatGlobalWarmingLevel).join(", ")}). ${pattern.join(" ")}`
   );
 }

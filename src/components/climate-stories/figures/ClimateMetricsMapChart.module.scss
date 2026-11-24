@@ -22,6 +22,34 @@
   @include breakpoint(medium) {
     height: 480px;
   }
+
+  @include narrow-chart {
+    :global(.mapboxgl-ctrl-geocoder.mapboxgl-ctrl) {
+      width: calc(100cqw - 20px) !important;
+      min-width: 0;
+    }
+
+    :global(.mapboxgl-ctrl-geocoder.mapboxgl-ctrl-geocoder--collapsed) {
+      width: 36px !important;
+      min-width: 36px;
+    }
+
+    :global(.mapboxgl-ctrl-scale) {
+      display: none;
+    }
+  }
+
+  @include print {
+    :global(.mapboxgl-ctrl-top-right) {
+      display: none;
+    }
+
+    :global(.mapboxgl-canvas) {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
+    }
+  }
 }
 
 @container (min-width: 640px) {
@@ -30,6 +58,6 @@
     left: spacer(3);
     bottom: 36px; // above the Mapbox logo, which has to stay visible
     z-index: 2;
-    width: max-content;
+    width: 340px;
   }
 }

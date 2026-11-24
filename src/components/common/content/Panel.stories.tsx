@@ -40,9 +40,6 @@ export const Navigation: Story = {
         <li>
           <a href="#more-frequent-days">Extreme heat days will become more frequent</a>
         </li>
-        <li>
-          <a href="#breaking-records">Climate change is breaking records across California</a>
-        </li>
       </ol>
     ),
   },

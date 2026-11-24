@@ -128,6 +128,25 @@
   box-shadow: 0 0 4px rgba(240, 61, 62, 0.22);
 }
 
+/// Measured against the ChartFrame surface, not the viewport
+@mixin narrow-chart {
+  @container (max-width: 480px) {
+    @content;
+  }
+}
+
+/// Shared by the charts and their loading placeholder so nothing jumps on load.
+/// Narrow charts are taller to make room for wrapped titles
+@mixin chart-size {
+  aspect-ratio: 16 / 9;
+  min-height: 340px;
+  max-height: 540px;
+
+  @include narrow-chart {
+    min-height: 440px;
+  }
+}
+
 @mixin debug($text: null, $color: debug, $top: null, $left: null, $bottom: null, $right: null) {
   position: relative;
   outline: 1px solid color($color) !important;

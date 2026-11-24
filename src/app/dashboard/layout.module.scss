@@ -1,0 +1,43 @@
+@use "@/styles/abstracts" as *;
+
+// Viewport-locked frame: the sidebar fills the window height and only the
+// main content scrolls, so the sidebar stays fully visible on long pages.
+// The frame takes whatever height the site banner leaves, so the page itself
+// never scrolls even if the banner wraps or changes size
+:global(body):has(.frame) {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.frame {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.content {
+  @include flex(column);
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+// Printers need the whole page in normal flow, not one window-sized scroller
+@include print {
+  :global(body):has(.frame),
+  .frame,
+  .content,
+  .main {
+    display: block;
+    height: auto;
+    overflow: visible;
+  }
+}

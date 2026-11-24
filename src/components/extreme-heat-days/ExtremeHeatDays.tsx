@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import type { MDXComponents, MDXContent } from "mdx/types";
 
+import { CHART_SOURCE } from "@/components/common/charts/ChartFrame";
 import BetaFeedbackAlert from "@/components/common/content/BetaFeedbackAlert";
 import CitationLinks from "@/components/common/content/CitationLinks";
 import InterpretSection from "@/components/common/content/InterpretSection";
@@ -121,9 +122,11 @@ export default function ExtremeHeatDays() {
   const handleExportChart = useCallback(() => {
     const svg = chartContainerRef.current?.querySelector<SVGSVGElement>("svg");
     if (!svg) return;
-    exportSvgAsPng(svg, formatChartExportFilename(selections)).catch((error) => {
-      console.error("[extreme-heat-days] chart export failed:", error);
-    });
+    exportSvgAsPng(svg, formatChartExportFilename(selections), { footnote: CHART_SOURCE }).catch(
+      (error) => {
+        console.error("[extreme-heat-days] chart export failed:", error);
+      }
+    );
   }, [selections]);
 
   return (

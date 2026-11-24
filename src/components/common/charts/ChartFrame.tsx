@@ -9,8 +9,8 @@ import type { StacSeriesStatus, UseStacSeriesResult } from "@/hooks/use-stac-ser
 
 import styles from "./ChartFrame.module.scss";
 
-const DEFAULT_SOURCE =
-  "Source: Cal-Adapt. Data: WRF Downscaled CMIP6 Climate Projections (UCLA), WRF Derived Products (Cal-Adapt).";
+export const CHART_SOURCE =
+  "Source: Cal-Adapt\nData: WRF Downscaled CMIP6 Climate Projections (UCLA), WRF Derived Products (Cal-Adapt)";
 
 /** Tool chart views derive their title, labels, and colors from `selections`. */
 export interface StacChartViewProps<S, D> {
@@ -51,7 +51,7 @@ export default function ChartFrame({
   errorContent,
   noDataContent,
   warningContent,
-  source = DEFAULT_SOURCE,
+  source = CHART_SOURCE,
   chartContainerRef,
   id,
   labelledBy,
@@ -78,6 +78,7 @@ export default function ChartFrame({
     >
       <div ref={chartContainerRef} className={styles.surface}>
         {isSuccess && hasData && children}
+        {isSuccess && hasData && <p className={styles.source}>{source}</p>}
         {isLoading && (
           <div className={styles.loadingState}>
             <LoadingSpinner label={loadingLabel} />
@@ -105,8 +106,6 @@ export default function ChartFrame({
       )}
 
       {isSuccess && hasData && warningContent}
-
-      {isSuccess && hasData && <p className={styles.source}>{source}</p>}
     </section>
   );
 }

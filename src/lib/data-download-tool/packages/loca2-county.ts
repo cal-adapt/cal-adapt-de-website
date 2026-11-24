@@ -160,7 +160,9 @@ function buildCustomizeForm(
     { label: "Data format", value: "NetCDF" },
     {
       label: "Boundary type",
-      value: toSentenceCase(collection["caladapt:spatial_type"] ?? "") || "—",
+      // The catalog value is hyphenated ("spatial-aggregate"); show it as words
+      value:
+        toSentenceCase((collection["caladapt:spatial_type"] ?? "").replaceAll("-", " ")) || "—",
     },
     { label: "Units", value: "Metric" },
     { label: "Time span", value: formatTimeSpanLabel(collection) },

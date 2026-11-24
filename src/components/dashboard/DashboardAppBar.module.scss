@@ -9,6 +9,10 @@
   top: 0;
   border-bottom: 1px solid color(grey-2);
   z-index: z(2);
+
+  @include print {
+    display: none;
+  }
 }
 
 .left {

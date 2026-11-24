@@ -8,6 +8,10 @@
 .heading {
   @include type-item(heading-5);
   color: color(black);
+
+  @include print {
+    break-after: avoid;
+  }
 }
 
 .body {

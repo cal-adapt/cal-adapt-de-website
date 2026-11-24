@@ -5,7 +5,14 @@ export interface ExportSvgAsPngOptions {
   pixelRatio?: number;
   /** Background fill under the SVG. */
   background?: string;
+  /** Text drawn under the chart, e.g. the data source line. */
+  footnote?: string;
 }
+
+const FOOTNOTE_FONT_SIZE = 12;
+const FOOTNOTE_LINE_HEIGHT = 16;
+const FOOTNOTE_PADDING = 12;
+const FOOTNOTE_COLOR = "#51575e"; // grey-4
 
 /**
  * Rasterize an in-DOM SVG element to PNG and trigger a browser download.
@@ -17,11 +24,18 @@ export async function exportSvgAsPng(
   filename: string,
   options: ExportSvgAsPngOptions = {}
 ): Promise<void> {
-  const { pixelRatio = 2, background = "#ffffff" } = options;
+  const { pixelRatio = 2, background = "#ffffff", footnote } = options;
 
   const { width: cssWidth, height: cssHeight } = measureSvg(svg);
+  const footnoteFont = `${FOOTNOTE_FONT_SIZE}px ${window.getComputedStyle(svg).fontFamily}`;
+  const footnoteLines = footnote
+    ? wrapText(footnote, footnoteFont, cssWidth - FOOTNOTE_PADDING * 2)
+    : [];
+  const footnoteHeight = footnoteLines.length
+    ? footnoteLines.length * FOOTNOTE_LINE_HEIGHT + FOOTNOTE_PADDING * 2
+    : 0;
   const pngWidth = Math.max(1, Math.round(cssWidth * pixelRatio));
-  const pngHeight = Math.max(1, Math.round(cssHeight * pixelRatio));
+  const pngHeight = Math.max(1, Math.round((cssHeight + footnoteHeight) * pixelRatio));
 
   const svgMarkup = serializeWithInlinedStyles(svg, cssWidth, cssHeight);
 
@@ -41,7 +55,24 @@ export async function exportSvgAsPng(
     }
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, pngWidth, pngHeight);
-    ctx.drawImage(img, 0, 0, pngWidth, pngHeight);
+    ctx.drawImage(img, 0, 0, pngWidth, Math.round(cssHeight * pixelRatio));
+
+    if (footnoteLines.length) {
+      ctx.scale(pixelRatio, pixelRatio);
+      ctx.font = footnoteFont;
+      ctx.fillStyle = FOOTNOTE_COLOR;
+      ctx.textBaseline = "top";
+      footnoteLines.forEach((line, i) => {
+        ctx.fillText(
+          line,
+          FOOTNOTE_PADDING,
+          cssHeight +
+            FOOTNOTE_PADDING +
+            i * FOOTNOTE_LINE_HEIGHT +
+            (FOOTNOTE_LINE_HEIGHT - FOOTNOTE_FONT_SIZE) / 2
+        );
+      });
+    }
 
     const pngBlob = await canvasToBlob(canvas, "image/png");
     const pngUrl = URL.createObjectURL(pngBlob);
@@ -129,6 +160,29 @@ function inlineComputedStyles(source: Element, target: Element): void {
   for (let i = 0; i < n; i++) {
     inlineComputedStyles(sourceChildren[i], targetChildren[i]);
   }
+}
+
+/** Greedy word wrap using canvas text metrics. Keeps explicit `\n` breaks. */
+function wrapText(text: string, font: string, maxWidth: number): string[] {
+  const ctx = document.createElement("canvas").getContext("2d");
+  if (!ctx) return text.split("\n");
+  ctx.font = font;
+
+  const lines: string[] = [];
+  for (const paragraph of text.split("\n")) {
+    let line = "";
+    for (const word of paragraph.split(/\s+/).filter(Boolean)) {
+      const candidate = line ? `${line} ${word}` : word;
+      if (line && ctx.measureText(candidate).width > maxWidth) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = candidate;
+      }
+    }
+    lines.push(line);
+  }
+  return lines;
 }
 
 function loadImage(src: string): Promise<HTMLImageElement> {

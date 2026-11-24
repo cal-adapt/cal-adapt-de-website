@@ -1,15 +1,22 @@
 "use client";
 
 import clsx from "clsx";
-import type { CSSProperties, ReactNode } from "react";
+import type { AriaAttributes, CSSProperties, ReactNode } from "react";
 
 import Link from "@/components/common/ui/Link";
 
 import styles from "./Button.module.scss";
 
-export type ButtonVariant = "primary" | "secondary" | "tertiary" | "accent" | "skip" | "floating";
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "accent"
+  | "outline"
+  | "skip"
+  | "floating";
 
-export type ButtonSize = "small" | "large";
+export type ButtonSize = "compact" | "small" | "large";
 
 export type ButtonShape = "square" | "circle";
 
@@ -34,6 +41,11 @@ export interface ButtonProps {
   title?: string;
   ariaLabel?: string;
   ariaHidden?: boolean;
+  /** Link-only (`href` set): marks the link to the page or step the user is on. */
+  ariaCurrent?: AriaAttributes["aria-current"];
+  /** Button-only (no `href`): for disclosure toggles. */
+  ariaExpanded?: boolean;
+  ariaControls?: string;
 }
 
 function ButtonContent({
@@ -70,6 +82,9 @@ export default function Button({
   title,
   ariaLabel,
   ariaHidden,
+  ariaCurrent,
+  ariaExpanded,
+  ariaControls,
 }: ButtonProps) {
   const buttonClasses = clsx(
     styles.button,
@@ -112,6 +127,7 @@ export default function Button({
         title={title}
         aria-label={ariaLabel}
         aria-hidden={ariaHidden}
+        aria-current={ariaCurrent}
       >
         <ButtonContent prefix={prefix} suffix={suffix}>
           {children}
@@ -132,6 +148,8 @@ export default function Button({
       title={title}
       aria-label={ariaLabel}
       aria-hidden={ariaHidden}
+      aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
     >
       <ButtonContent prefix={prefix} suffix={suffix}>
         {children}

@@ -40,7 +40,7 @@ const climateStoryDefinitions = [
     title: "Extreme Heat in California",
     label: "Extreme Heat",
     hazard: "Heat",
-    lastUpdated: "August 18, 2026",
+    lastUpdated: "October 16, 2026",
     isNew: true,
     image: "/img/climate-stories/extreme-heat.webp",
     summary:
@@ -56,7 +56,7 @@ const climateStoryDefinitions = [
     hazard: "Precipitation",
     image: "/img/climate-stories/precipitation.webp",
     summary:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac eros felis. Duis id commodo dolor. Vestibulum ex velit, egestas ut quam eget, placerat hendrerit orci.",
+      "Explore present-day and future extreme precipitation events with Cal-Adapt’s projections and learn how these changes impact California.",
   },
 ] as const satisfies readonly ClimateStoryDefinition[];
 

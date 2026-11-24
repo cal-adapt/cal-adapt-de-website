@@ -11,6 +11,10 @@
   color: color(black);
   text-align: center;
   overflow: hidden;
+
+  @include print {
+    display: none;
+  }
 }
 
 .message {

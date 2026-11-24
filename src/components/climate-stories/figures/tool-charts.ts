@@ -17,6 +17,8 @@ import {
 } from "@/lib/hdd-cdd/options";
 import { selectionsToSearchParams as hddCddSelectionsToSearchParams } from "@/lib/hdd-cdd/search-params";
 
+import type { StoryFigureToolLink } from "../StoryFigure";
+
 import ClimateMetricsMapChart from "./ClimateMetricsMapChart";
 import ExtremeHeatChart from "./ExtremeHeatChart";
 import HddCddChart from "./HddCddChart";
@@ -74,4 +76,12 @@ export function storyToolHref<K extends StoryToolId>(
   const { navLink, toSearchParams } = storyToolCharts[tool];
   const query = toSearchParams(selections).toString();
   return query ? `${navLink.href}?${query}` : navLink.href;
+}
+
+/** An "Open in" link for a `StoryFigure` whose chart comes from another tool. */
+export function storyToolLink<K extends StoryToolId>(
+  tool: K,
+  selections: StoryToolSelections[K]
+): StoryFigureToolLink {
+  return { navLink: storyToolCharts[tool].navLink, href: storyToolHref(tool, selections) };
 }

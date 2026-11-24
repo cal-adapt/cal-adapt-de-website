@@ -3,16 +3,16 @@ import Link from "@/components/common/ui/Link";
 import {
   isNavGroup,
   type NavGroup,
-  navGroups,
   type NavItem,
   type NavLink,
   navLinks,
+  toolLinks,
 } from "@/config/navigation";
 
 import styles from "./Footer.module.scss";
 
 const footerNavConfig: NavItem[] = [
-  navGroups.tools,
+  { id: "tools", label: "Tools", links: toolLinks },
   navLinks.fourthAssessment,
   navLinks.guidance,
   navLinks.contact,

@@ -13,6 +13,7 @@ import Footer from "@/components/common/layout/Footer";
 import Alert from "@/components/common/ui/Alert";
 import Card from "@/components/common/ui/Card";
 import { mediaQueries } from "@/config/breakpoints";
+import { navLinks } from "@/config/navigation";
 import { analyticsCarouselData } from "@/data/home/analytics-carousel-data";
 import { genCarouselData } from "@/data/home/gen-carousel-data";
 
@@ -22,6 +23,32 @@ import ToolCarousel from "./ToolCarousel";
 
 import "aos/dist/aos.css";
 import styles from "./HomeClient.module.scss";
+
+const INTRO_CARDS = [
+  {
+    title: "tools",
+    description:
+      "Analyze extreme heat, precipitation, fire weather, and other emerging trends shaping California’s uncertain climate future.",
+    href: "#tools",
+    img: "/img/homepage-cards/card_1.png",
+    isNewTab: false,
+  },
+  {
+    title: "guidance",
+    description:
+      "Gain clarity on key concepts like uncertainty, Global Warming Levels, and other essential terms.",
+    href: navLinks.guidance.href,
+    img: "/img/homepage-cards/card_2.png",
+    isNewTab: true,
+  },
+  {
+    title: "data",
+    description: "Learn about the data sources, methods, analyses, and how to access them.",
+    href: navLinks.data.href,
+    img: "/img/homepage-cards/card_3.png",
+    isNewTab: true,
+  },
+];
 
 export default function HomeClient() {
   useEffect(() => {
@@ -66,27 +93,9 @@ export default function HomeClient() {
           <div>
             {!isMobile && (
               <div className={styles.cards}>
-                <Card
-                  description="Analyze extreme heat, precipitation, fire weather, and other emerging trends shaping California’s uncertain climate future."
-                  title="tools"
-                  href="#tools"
-                  img="/img/homepage-cards/card_1.png"
-                  isNewTab={false}
-                />
-                <Card
-                  description="Gain clarity on key concepts like uncertainty, Global Warming Levels, and other essential terms."
-                  title="guidance"
-                  href="https://analytics.cal-adapt.org/guidance/"
-                  img="/img/homepage-cards/card_2.png"
-                  isNewTab={true}
-                />
-                <Card
-                  description="Learn about the data sources, methods, analyses, and how to access them."
-                  title="data"
-                  href="https://analytics.cal-adapt.org/data/"
-                  img="/img/homepage-cards/card_3.png"
-                  isNewTab={true}
-                />
+                {INTRO_CARDS.map((card) => (
+                  <Card key={card.title} {...card} />
+                ))}
               </div>
             )}
             {isMobile && (
@@ -94,33 +103,11 @@ export default function HomeClient() {
                 <div style={{ padding: "0 30px" }}>
                   <div className="embla" ref={emblaRef}>
                     <div className="embla__container">
-                      <div className="embla__slide">
-                        <Card
-                          description="Analyze extreme heat, precipitation, fire weather, and other emerging trends shaping California’s uncertain climate future."
-                          title="tools"
-                          href="#tools"
-                          img="/img/homepage-cards/card_1.png"
-                          isNewTab={false}
-                        />
-                      </div>
-                      <div className="embla__slide">
-                        <Card
-                          description="Gain clarity on key concepts like uncertainty, Global Warming Levels, and other essential terms."
-                          title="guidance"
-                          href="https://analytics.cal-adapt.org/guidance/"
-                          img="/img/homepage-cards/card_2.png"
-                          isNewTab={true}
-                        />
-                      </div>
-                      <div className="embla__slide">
-                        <Card
-                          description="Learn about the data sources, methods, analyses, and how to access them."
-                          title="data"
-                          href="https://analytics.cal-adapt.org/data/"
-                          img="/img/homepage-cards/card_3.png"
-                          isNewTab={true}
-                        />
-                      </div>
+                      {INTRO_CARDS.map((card) => (
+                        <div key={card.title} className="embla__slide">
+                          <Card {...card} />
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>

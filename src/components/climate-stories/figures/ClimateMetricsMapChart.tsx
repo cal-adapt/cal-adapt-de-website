@@ -10,8 +10,6 @@ import type { ClimateMetricsMapSelections } from "@/lib/climate-metrics-map/opti
 
 import styles from "./ClimateMetricsMapChart.module.scss";
 
-const LEGEND_BAR_WIDTH = 300;
-
 export default function ClimateMetricsMapChart({
   selections,
 }: {
@@ -63,7 +61,7 @@ export default function ClimateMetricsMapChart({
             max={legendMax}
             tickStep={layer.legendTickStep}
             title={layer.description}
-            barWidth={LEGEND_BAR_WIDTH}
+            fill
           />
         </div>
       </div>

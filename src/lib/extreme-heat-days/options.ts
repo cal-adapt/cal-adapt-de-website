@@ -175,7 +175,7 @@ const EXTREME_HEAT_SEASON_METRIC: HeatmapMetricConfig = {
   collectionId: EHS_METRICS_STAC_COLLECTION_ID,
   valueColumn: "frequency_percent",
   usesDuration: false,
-  statisticLabel: "Multi-model mean of region-median exceedance frequency",
+  statisticLabel: "Percentage of years each day of the year tops",
   accessibleNoun: "extreme heat season",
   thresholdTooltip: "The daily maximum temperature a day must exceed to count as a hot day.",
   exportFilenamePrefix: "extreme-heat-season",

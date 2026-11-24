@@ -9,7 +9,7 @@ import { navLinks } from "@/config/navigation";
 import styles from "./page.module.scss";
 
 const INTRO =
-  "Find out how each climate variable in the Cal-Adapt tools is calculated. Search for a variable to open its data methods.";
+  "Data methods explain how each climate variable in Cal-Adapt is calculated, from the original climate model output to the transformed data product that you see in our tools. Search for a variable or browse by topic to see the data used, the calculation steps, and what the results mean.";
 
 export const metadata: Metadata = {
   title: `${navLinks.dataMethods.label} - ${SITE_TITLE}`,
