@@ -1,0 +1,245 @@
+// Domain data for the Annual Climate Projections tool.
+
+import type { SelectOption } from "@/components/common/form";
+import {
+  DEFAULT_SPATIAL_AGGREGATION,
+  getSpatialAggregation,
+  type RegionSelections,
+  type SpatialAggregationConfig,
+} from "@/lib/spatial-aggregations";
+
+/** Dynamical (WRF) or statistical (LOCA2-Hybrid) downscaling. */
+export type Ensemble = "wrf" | "loca2";
+
+/**
+ * User-controlled inputs that drive the tool. `ensemble` and `scenario` are
+ * only shown in the advanced view.
+ */
+export interface AnnualClimateProjectionsSelections {
+  /** Variable key, e.g. "max-temperature". Maps to a per-ensemble variable id. */
+  climateVariable: string;
+  /** STAC `boundary` id, e.g. "ca_counties". */
+  spatialAggregation: string;
+  location: string;
+  ensemble: Ensemble;
+  /** SSP id, e.g. "ssp370". */
+  scenario: string;
+}
+
+export interface VariableConfig {
+  /** `climateVariable` select value + URL `variable` param. */
+  value: string;
+  /** Dropdown label. */
+  label: string;
+  /** Start of the chart title, e.g. "Annual average maximum temperature". */
+  titleLabel: string;
+  /** Chart y-axis label. */
+  yAxisLabel: string;
+  /** Unit suffix for tooltip values. */
+  unit: string;
+  /** Data variable id for each ensemble; missing when the ensemble lacks it. */
+  variableIds: Partial<Record<Ensemble, string>>;
+}
+
+/** Variable registry keyed by `climateVariable` value. Order drives dropdown order. */
+export const VARIABLES: Readonly<Record<string, VariableConfig>> = {
+  "max-temperature": {
+    value: "max-temperature",
+    label: "Maximum temperature",
+    titleLabel: "Annual average maximum temperature",
+    yAxisLabel: "Temperature (°F)",
+    unit: "°F",
+    variableIds: { wrf: "t2max", loca2: "tasmax" },
+  },
+  "min-temperature": {
+    value: "min-temperature",
+    label: "Minimum temperature",
+    titleLabel: "Annual average minimum temperature",
+    yAxisLabel: "Temperature (°F)",
+    unit: "°F",
+    variableIds: { wrf: "t2min", loca2: "tasmin" },
+  },
+  temperature: {
+    value: "temperature",
+    label: "Air temperature",
+    titleLabel: "Annual average air temperature",
+    yAxisLabel: "Temperature (°F)",
+    unit: "°F",
+    variableIds: { wrf: "t2" },
+  },
+  "dew-point": {
+    value: "dew-point",
+    label: "Dew point temperature",
+    titleLabel: "Annual average dew point temperature",
+    yAxisLabel: "Temperature (°F)",
+    unit: "°F",
+    variableIds: { wrf: "dew_point" },
+  },
+  precipitation: {
+    value: "precipitation",
+    label: "Precipitation",
+    titleLabel: "Total annual precipitation",
+    yAxisLabel: "Precipitation (in)",
+    unit: "in",
+    variableIds: { wrf: "prec", loca2: "pr" },
+  },
+};
+
+const DEFAULT_VARIABLE = VARIABLES["max-temperature"];
+
+export function getVariable(climateVariable: string): VariableConfig {
+  return VARIABLES[climateVariable] ?? DEFAULT_VARIABLE;
+}
+
+/** Variables available for an ensemble, in dropdown order. */
+export function variableOptionsFor(ensemble: Ensemble): readonly SelectOption[] {
+  return Object.values(VARIABLES)
+    .filter((variable) => variable.variableIds[ensemble] != null)
+    .map((variable) => ({ value: variable.value, label: variable.label }));
+}
+
+/** Data variable id (e.g. "t2max") for the current selections. */
+export function variableIdFor(selections: AnnualClimateProjectionsSelections): string {
+  const variable = getVariable(selections.climateVariable);
+  return variable.variableIds[selections.ensemble] ?? "t2max";
+}
+
+export interface ScenarioConfig {
+  value: string;
+  label: string;
+}
+
+const SSP245: ScenarioConfig = { value: "ssp245", label: "SSP2-4.5" };
+const SSP370: ScenarioConfig = { value: "ssp370", label: "SSP3-7.0" };
+const SSP585: ScenarioConfig = { value: "ssp585", label: "SSP5-8.5" };
+
+export interface EnsembleConfig {
+  value: Ensemble;
+  label: string;
+  /** Dataset name shown under the label in the dropdown. */
+  description: string;
+  /** Scenarios available for this ensemble. WRF only has SSP3-7.0. */
+  scenarios: readonly ScenarioConfig[];
+  /** True when an observed (ERA5) series exists for this ensemble. */
+  hasObserved: boolean;
+  /** Source and dataset credit shown under the chart. */
+  chartSource: string;
+}
+
+export const ENSEMBLES: Readonly<Record<Ensemble, EnsembleConfig>> = {
+  wrf: {
+    value: "wrf",
+    label: "Dynamically Downscaled",
+    description: "CMIP6 model simulations downscaled using WRF",
+    scenarios: [SSP370],
+    hasObserved: true,
+    chartSource:
+      "Source: Cal-Adapt\nData: WRF Downscaled CMIP6 Climate Projections and ERA5 Reanalysis (UCLA), WRF Derived Products (Cal-Adapt)",
+  },
+  loca2: {
+    value: "loca2",
+    label: "Statistically Downscaled",
+    description: "CMIP6 model simulations downscaled using LOCA2-Hybrid",
+    scenarios: [SSP245, SSP370, SSP585],
+    hasObserved: false,
+    chartSource:
+      "Source: Cal-Adapt\nData: LOCA2-Hybrid Downscaled CMIP6 Climate Projections (UCSD), LOCA2 Derived Products (Cal-Adapt)",
+  },
+};
+
+export const ENSEMBLE_OPTIONS: readonly SelectOption[] = Object.values(ENSEMBLES).map(
+  (ensemble) => ({
+    value: ensemble.value,
+    label: ensemble.label,
+    description: ensemble.description,
+  })
+);
+
+export function isEnsemble(value: string): value is Ensemble {
+  return Object.hasOwn(ENSEMBLES, value);
+}
+
+export function scenarioOptionsFor(ensemble: Ensemble): readonly SelectOption[] {
+  return ENSEMBLES[ensemble].scenarios.map((scenario) => ({
+    value: scenario.value,
+    label: scenario.label,
+  }));
+}
+
+export function getScenario(ensemble: Ensemble, scenario: string): ScenarioConfig {
+  const scenarios = ENSEMBLES[ensemble].scenarios;
+  return scenarios.find((s) => s.value === scenario) ?? SSP370;
+}
+
+/** The whole state, as one region. Its CSVs are named `California_{variable}_{ssp}.csv`. */
+const STATE_AGGREGATION: SpatialAggregationConfig = {
+  value: "state",
+  label: "State",
+  description: "Statewide boundary of California",
+  regionSuffix: "",
+  locations: [{ value: "California", label: "California" }],
+  defaultLocation: "California",
+};
+
+/**
+ * Boundary types this tool has data for, in dropdown order. Unlike the heat and
+ * HDD/CDD tools, it adds the state and has no electric utilities (IOU/POUs).
+ */
+const SPATIAL_AGGREGATIONS: readonly SpatialAggregationConfig[] = [
+  STATE_AGGREGATION,
+  ...["ca_counties", "ca_watersheds", "forecast_zones", "electric_balancing_areas"].map(
+    getSpatialAggregation
+  ),
+];
+
+function getToolSpatialAggregation(value: string): SpatialAggregationConfig {
+  return SPATIAL_AGGREGATIONS.find((a) => a.value === value) ?? DEFAULT_SPATIAL_AGGREGATION;
+}
+
+export const SPATIAL_AGGREGATION_OPTIONS: readonly SelectOption[] = SPATIAL_AGGREGATIONS.map(
+  (aggregation) => ({
+    value: aggregation.value,
+    label: aggregation.label,
+    description: aggregation.description,
+  })
+);
+
+export function locationOptionsFor(spatialAggregation: string): readonly SelectOption[] {
+  return getToolSpatialAggregation(spatialAggregation).locations;
+}
+
+/** Region name as it appears in chart titles and CSV filenames, e.g. "Alameda County". */
+export function regionLabelFor(selections: RegionSelections): string {
+  const { regionSuffix } = getToolSpatialAggregation(selections.spatialAggregation);
+  return `${selections.location}${regionSuffix}`;
+}
+
+export const DEFAULT_SELECTIONS: AnnualClimateProjectionsSelections = {
+  climateVariable: DEFAULT_VARIABLE.value,
+  spatialAggregation: DEFAULT_SPATIAL_AGGREGATION.value,
+  location: "Alameda",
+  ensemble: "wrf",
+  scenario: SSP370.value,
+};
+
+/** Default location for a boundary type. Counties default to Alameda in this tool. */
+export function toolDefaultLocationFor(spatialAggregation: string): string {
+  return spatialAggregation === DEFAULT_SELECTIONS.spatialAggregation
+    ? DEFAULT_SELECTIONS.location
+    : getToolSpatialAggregation(spatialAggregation).defaultLocation;
+}
+
+/**
+ * Selections after switching ensemble: keeps the variable when the new
+ * ensemble has it, and falls back to a scenario the new ensemble offers.
+ */
+export function withEnsemble(
+  selections: AnnualClimateProjectionsSelections,
+  ensemble: Ensemble
+): AnnualClimateProjectionsSelections {
+  const variable = getVariable(selections.climateVariable);
+  const climateVariable =
+    variable.variableIds[ensemble] != null ? variable.value : DEFAULT_VARIABLE.value;
+  const scenario = getScenario(ensemble, selections.scenario).value;
+  return { ...selections, ensemble, climateVariable, scenario };
+}
