@@ -31,6 +31,16 @@ describe("selectionsFromSearchParams", () => {
       scenario: "ssp370",
     });
   });
+
+  it("offers the state but not electric utilities", () => {
+    expect(selectionsFromSearchParams(new URLSearchParams("aggregation=state"))).toMatchObject({
+      spatialAggregation: "state",
+      location: "California",
+    });
+    expect(selectionsFromSearchParams(new URLSearchParams("aggregation=ious_pous"))).toMatchObject({
+      spatialAggregation: DEFAULT_SELECTIONS.spatialAggregation,
+    });
+  });
 });
 
 describe("selectionsToSearchParams", () => {

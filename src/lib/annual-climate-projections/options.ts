@@ -1,7 +1,12 @@
 // Domain data for the Annual Climate Projections tool.
 
 import type { SelectOption } from "@/components/common/form";
-import { DEFAULT_SPATIAL_AGGREGATION, defaultLocationFor } from "@/lib/spatial-aggregations";
+import {
+  DEFAULT_SPATIAL_AGGREGATION,
+  getSpatialAggregation,
+  type RegionSelections,
+  type SpatialAggregationConfig,
+} from "@/lib/spatial-aggregations";
 
 /** Dynamical (WRF) or statistical (LOCA2-Hybrid) downscaling. */
 export type Ensemble = "wrf" | "loca2";
@@ -166,11 +171,48 @@ export function getScenario(ensemble: Ensemble, scenario: string): ScenarioConfi
   return scenarios.find((s) => s.value === scenario) ?? SSP370;
 }
 
-export {
-  locationOptionsFor,
-  regionLabelFor,
-  SPATIAL_AGGREGATION_OPTIONS,
-} from "@/lib/spatial-aggregations";
+/** The whole state, as one region. Its CSVs are named `California_{variable}_{ssp}.csv`. */
+const STATE_AGGREGATION: SpatialAggregationConfig = {
+  value: "state",
+  label: "State",
+  description: "All of California",
+  regionSuffix: "",
+  locations: [{ value: "California", label: "California" }],
+  defaultLocation: "California",
+};
+
+/**
+ * Boundary types this tool has data for, in dropdown order. Unlike the heat and
+ * HDD/CDD tools, it adds the state and has no electric utilities (IOU/POUs).
+ */
+const SPATIAL_AGGREGATIONS: readonly SpatialAggregationConfig[] = [
+  STATE_AGGREGATION,
+  ...["ca_counties", "ca_watersheds", "forecast_zones", "electric_balancing_areas"].map(
+    getSpatialAggregation
+  ),
+];
+
+function getToolSpatialAggregation(value: string): SpatialAggregationConfig {
+  return SPATIAL_AGGREGATIONS.find((a) => a.value === value) ?? DEFAULT_SPATIAL_AGGREGATION;
+}
+
+export const SPATIAL_AGGREGATION_OPTIONS: readonly SelectOption[] = SPATIAL_AGGREGATIONS.map(
+  (aggregation) => ({
+    value: aggregation.value,
+    label: aggregation.label,
+    description: aggregation.description,
+  })
+);
+
+export function locationOptionsFor(spatialAggregation: string): readonly SelectOption[] {
+  return getToolSpatialAggregation(spatialAggregation).locations;
+}
+
+/** Region name as it appears in chart titles and CSV filenames, e.g. "Alameda County". */
+export function regionLabelFor(selections: RegionSelections): string {
+  const { regionSuffix } = getToolSpatialAggregation(selections.spatialAggregation);
+  return `${selections.location}${regionSuffix}`;
+}
 
 export const DEFAULT_SELECTIONS: AnnualClimateProjectionsSelections = {
   climateVariable: DEFAULT_VARIABLE.value,
@@ -184,7 +226,7 @@ export const DEFAULT_SELECTIONS: AnnualClimateProjectionsSelections = {
 export function toolDefaultLocationFor(spatialAggregation: string): string {
   return spatialAggregation === DEFAULT_SELECTIONS.spatialAggregation
     ? DEFAULT_SELECTIONS.location
-    : defaultLocationFor(spatialAggregation);
+    : getToolSpatialAggregation(spatialAggregation).defaultLocation;
 }
 
 /**

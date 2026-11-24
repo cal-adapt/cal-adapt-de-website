@@ -50,6 +50,12 @@ describe("regionCsvFileName", () => {
     );
     expect(regionCsvFileName(DEFAULT_SELECTIONS, "observed")).toBe("Alameda_County_t2max_era5.csv");
     expect(regionCsvFileName(LOCA2_SSP245, "boundary")).toBe("Alameda_County_tasmax_ssp245.csv");
+    expect(
+      regionCsvFileName(
+        { ...DEFAULT_SELECTIONS, spatialAggregation: "state", location: "California" },
+        "boundary"
+      )
+    ).toBe("California_t2max_ssp370.csv");
   });
 });
 
