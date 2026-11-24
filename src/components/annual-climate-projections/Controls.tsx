@@ -39,6 +39,7 @@ export default function Controls({
   onShowSimulationsChange,
   disabled = false,
 }: ControlsProps) {
+  const locationOptions = locationOptionsFor(selections.spatialAggregation);
   const scenarioOptions = scenarioOptionsFor(selections.ensemble);
 
   return (
@@ -77,8 +78,9 @@ export default function Controls({
         <Select
           value={selections.location}
           onChange={(location) => onChange({ ...selections, location })}
-          options={locationOptionsFor(selections.spatialAggregation)}
-          disabled={disabled}
+          options={locationOptions}
+          // The state has only one location, California.
+          disabled={disabled || locationOptions.length < 2}
         />
       </FormField>
 
