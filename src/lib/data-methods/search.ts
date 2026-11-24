@@ -1,33 +1,31 @@
+import Fuse from "fuse.js";
+
 import type { DataMethodsEntry, DataMethodsTag } from "@/config/data-methods";
 
-function normalize(text: string): string {
-  return text.toLowerCase().replace(/\s+/g, " ").trim();
-}
-
-/** True when `text` contains `term`, or its singular form when `term` ends in "s". */
-function matchesTerm(text: string, term: string): boolean {
-  return (
-    text.includes(term) ||
-    (term.length > 1 && term.endsWith("s") && text.includes(term.slice(0, -1)))
-  );
-}
-
 /**
- * Entries matching every whitespace-separated term in `query` (case-insensitive
- * substring match against the page name, summary and keyword tags, with a trailing
- * "s" optional) and, when any `tags` are selected, carrying at least one of them.
+ * Entries matching `query` and, when any `tags` are selected, carrying at least
+ * one of them. Search is fuzzy (forgiving plurals and small typos) across the page
+ * name, keyword tags and summary; every word in the query must match somewhere.
+ * Results keep their display order.
  */
 export function filterDataMethodsEntries(
   entries: readonly DataMethodsEntry[],
   query: string,
   tags: readonly DataMethodsTag[] = []
 ): readonly DataMethodsEntry[] {
-  const terms = normalize(query).split(" ").filter(Boolean);
+  const tagged =
+    tags.length > 0
+      ? entries.filter((entry) => entry.tags.some((tag) => tags.includes(tag)))
+      : entries;
+  if (query.trim() === "") return tagged;
 
-  return entries.filter((entry) => {
-    if (tags.length > 0 && !entry.tags.some((tag) => tags.includes(tag))) return false;
-
-    const text = normalize(`${entry.page.label} ${entry.summary} ${entry.tags.join(" ")}`);
-    return terms.every((term) => matchesTerm(text, term));
+  const fuse = new Fuse(tagged, {
+    keys: ["page.label", "tags", "summary"],
+    threshold: 0.2,
+    ignoreLocation: true,
+    useTokenSearch: true,
+    tokenMatch: "all",
   });
+  const matches = new Set(fuse.search(query).map((result) => result.item));
+  return tagged.filter((entry) => matches.has(entry));
 }
