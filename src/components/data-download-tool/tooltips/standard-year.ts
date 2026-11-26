@@ -15,6 +15,5 @@ export const tooltipByLabel: Partial<Record<string, ReactNode>> = {
     "Global mean temperature increase relative to the 1850-1900 pre-industrial baseline",
   Years: "The 30-year historical or future period used to calculate the standard year",
   Variables: "Climate variables to include in export",
-  Percentiles:
-    "For each hour of the year, the value at this percentile of the 30 years of data for that hour, calculated separately for each model.",
+  Percentiles: "At the 90th percentile, each hour's value is higher than in 9 of 10 years.",
 };
