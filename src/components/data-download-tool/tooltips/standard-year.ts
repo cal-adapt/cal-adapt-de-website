@@ -16,5 +16,5 @@ export const tooltipByLabel: Partial<Record<string, ReactNode>> = {
   Years: "The 30-year historical or future period used to calculate the standard year",
   Variables: "Climate variables to include in export",
   Percentiles:
-    "Indicates where the profile falls within the range of model simulations at each global warming level",
+    "For each hour of the year, the value at this percentile of the 30 years of data for that hour, calculated separately for each model.",
 };
