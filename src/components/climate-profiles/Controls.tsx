@@ -103,7 +103,7 @@ export default function Controls({
             </FormField>
             <FormField
               label="Hot percentile"
-              hint={CONTROL_TOOLTIPS.percentile}
+              hint={CONTROL_TOOLTIPS.hotPercentile}
               hintVariant="tooltip"
             >
               <Select
@@ -115,7 +115,7 @@ export default function Controls({
             </FormField>
             <FormField
               label="Cold percentile"
-              hint={CONTROL_TOOLTIPS.percentile}
+              hint={CONTROL_TOOLTIPS.coldPercentile}
               hintVariant="tooltip"
             >
               <Select
