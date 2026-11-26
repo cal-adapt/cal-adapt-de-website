@@ -1,9 +1,18 @@
-import { type LucideIcon, Map as MapIcon, Sheet, Sun, Thermometer, Zap } from "lucide-react";
+import {
+  CalendarDays,
+  type LucideIcon,
+  Map as MapIcon,
+  Sheet,
+  Sun,
+  Thermometer,
+  Zap,
+} from "lucide-react";
 
 import type { ToolId } from "@/config/navigation";
 
 const TOOL_ICONS: Record<ToolId, LucideIcon> = {
   "climate-metrics-map": MapIcon,
+  "climate-profiles": CalendarDays,
   "data-download-tool": Sheet,
   "extreme-heat-days": Thermometer,
   "hdd-cdd": Zap,

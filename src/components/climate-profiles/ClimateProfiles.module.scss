@@ -1,0 +1,28 @@
+@use "@/styles/abstracts" as *;
+
+.betaBadge {
+  vertical-align: 33%;
+  margin-left: spacer(3);
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: spacer(8);
+  width: 100%;
+  align-items: start;
+}
+
+.viewArea {
+  @include flex(column, flex-start, stretch, spacer(4));
+  min-width: 0;
+}
+
+.chartActions {
+  @include flex(row, flex-end, center);
+  width: 100%;
+}
+
+.controlsArea {
+  width: 100%;
+}
