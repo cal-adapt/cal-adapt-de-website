@@ -12,5 +12,5 @@ export const tooltipByLabel: Partial<Record<string, ReactNode>> = {
     "Global mean temperature increase relative to the 1850-1900 pre-industrial baseline",
   Models: "Bias-adjusted, dynamically downscaled (WRF) climate simulations",
   Percentiles:
-    "Indicates where the profile falls within the range of model simulations at each global warming level",
+    "How extreme the profile is. At the 90th, each hour is hotter than in 9 of 10 years. At the 10th, colder.",
 };
