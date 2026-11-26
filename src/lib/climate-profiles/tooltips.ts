@@ -8,6 +8,6 @@ export const CONTROL_TOOLTIPS = {
   period: "Global mean temperature increase relative to the 1850-1900 pre-industrial baseline",
   model: "Bias-adjusted, dynamically downscaled (WRF) climate simulations",
   variable: "The type of climate data being displayed.",
-  // Empty until there's copy for it; an empty hint shows no (i) icon.
-  advancedView: "",
+  // Same pattern as the Annual Climate Projections tool's advanced view tooltip.
+  advancedView: "More options for users familiar with climate models and climate profiles.",
 };
