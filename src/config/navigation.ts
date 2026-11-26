@@ -138,6 +138,12 @@ export const navLinks = {
     href: "/dashboard/hdd-cdd",
     featureFlag: "__FF_HDD_CDD__",
   },
+  climateProfiles: {
+    id: "climate-profiles",
+    label: "Climate Profiles",
+    href: "/dashboard/climate-profiles",
+    featureFlag: "__FF_CLIMATE_PROFILES__",
+  },
   renewablesVisualizer: {
     id: "renewables-visualizer",
     label: "Renewables Visualizer",
@@ -221,9 +227,12 @@ export const navSections = {
     id: "beta-tools",
     label: "Beta Tools",
     beta: true,
-    links: [navLinks.extremeHeatDays, navLinks.hddCdd, navLinks.renewablesVisualizer].filter(
-      isNavLinkEnabled
-    ),
+    links: [
+      navLinks.extremeHeatDays,
+      navLinks.hddCdd,
+      navLinks.climateProfiles,
+      navLinks.renewablesVisualizer,
+    ].filter(isNavLinkEnabled),
   },
   guidance: {
     id: "guidance",

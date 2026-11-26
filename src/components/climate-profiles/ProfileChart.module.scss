@@ -1,0 +1,109 @@
+@use "@/styles/abstracts" as *;
+
+.root {
+  @include flex(column, flex-start, stretch, spacer(3));
+  width: 100%;
+}
+
+.title {
+  fill: color(black);
+  font-family: var(--font-family-base);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.subtitle {
+  fill: color(grey-4);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+}
+
+.swatch {
+  display: inline-block;
+  flex: none;
+  width: 16px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.chartContainer {
+  position: relative;
+  width: 100%;
+  @include chart-size;
+}
+
+.keyLabel {
+  fill: color(black);
+  font-family: var(--font-family-base);
+}
+
+.grid line {
+  stroke: color(grey-2);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.axisLine {
+  stroke: color(grey-4);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.tickLabel {
+  fill: color(grey-4);
+  font-family: var(--font-family-base);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.axisLabel {
+  fill: color(black);
+  font-family: var(--font-family-base);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.line {
+  fill: none;
+  stroke-linejoin: round;
+}
+
+.hoverGuide {
+  stroke: color(grey-4);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  pointer-events: none;
+}
+
+.tooltip {
+  position: absolute;
+  min-width: 200px;
+  padding: spacer(2) spacer(3);
+  border: 1px solid color(grey-2);
+  border-radius: rounded(2);
+  background: color(white);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.tooltipTitle {
+  margin-bottom: spacer(1);
+  font-weight: 600;
+}
+
+.tooltipRow {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: spacer(2);
+  align-items: center;
+}
+
+.tooltipLabel {
+  color: color(grey-4);
+}
+
+.tooltipValue {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
